@@ -1,7 +1,7 @@
 {
   "schema": "mfact.replay_report.v1",
   "status": "REPLAY_PASS",
-  "detail": "clean clone at v26.7.6-procint-certified rebuilt, kernel-admitted all witnesses, certify exit 0",
-  "tag": "v26.7.6-procint-certified",
-  "reportWrittenAtCommit": "b130f4a"
+  "detail": "clean clone at v26.7.7-procint-certified rebuilt, kernel-admitted all witnesses, certify exit 0",
+  "tag": "v26.7.7-procint-certified",
+  "reportWrittenAtCommit": "ff44b04"
 }
