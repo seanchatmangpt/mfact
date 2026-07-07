@@ -8,4 +8,439 @@ procint ontology rests only on the trusted axiom set
 `[propext, Classical.choice, Quot.sound]` and carries no transitive
 `sorryAx`. The build breaks on any drift between ontology and kernel. -/
 
+/-- info: 'ProcInt.CardBound.admits_max' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.admits_max
+
+/-- info: 'ProcInt.CardBound.admits_min' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.admits_min
+
+/-- info: 'ProcInt.CardBound.admits_of_widens' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.admits_of_widens
+
+/-- info: 'ProcInt.CardBound.sat_cardObjects_iff' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.sat_cardObjects_iff
+
+/-- info: 'ProcInt.CardBound.widens_refl' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.widens_refl
+
+/-- info: 'ProcInt.CardBound.widens_trans' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.CardBound.widens_trans
+
+/-- info: 'ProcInt.ChoiceGraph.minimal_hasEmptyPath' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.ChoiceGraph.minimal_hasEmptyPath
+
+/-- info: 'ProcInt.ChoiceGraph.minimal_valid' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.ChoiceGraph.minimal_valid
+
+/-- info: 'ProcInt.Event.simple_activity' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Event.simple_activity
+
+/-- info: 'ProcInt.Event.simple_lifecycle' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Event.simple_lifecycle
+
+/-- info: 'ProcInt.Event.simple_resource' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Event.simple_resource
+
+/-- info: 'ProcInt.Event.simple_timestamp' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Event.simple_timestamp
+
+/-- info: 'ProcInt.EventLog.eventCount_append' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.EventLog.eventCount_append
+
+/-- info: 'ProcInt.EventLog.eventCount_cons' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.EventLog.eventCount_cons
+
+/-- info: 'ProcInt.EventLog.eventCount_eq_zero' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.EventLog.eventCount_eq_zero
+
+/-- info: 'ProcInt.EventLog.eventCount_nil' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.EventLog.eventCount_nil
+
+/-- info: 'ProcInt.EventLog.wellFormed_append' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.EventLog.wellFormed_append
+
+/-- info: 'ProcInt.EventLog.wellFormed_cons' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.EventLog.wellFormed_cons
+
+/-- info: 'ProcInt.EventLog.wellFormed_nil' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.EventLog.wellFormed_nil
+
+/-- info: 'ProcInt.EventLog.wellFormed_sublist' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.EventLog.wellFormed_sublist
+
+/-- info: 'ProcInt.Marking.toInt_injective' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.Marking.toInt_injective
+
+/-- info: 'ProcInt.Move.cost_eq_zero_iff' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Move.cost_eq_zero_iff
+
+/-- info: 'ProcInt.Move.cost_le_one' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Move.cost_le_one
+
+/-- info: 'ProcInt.OCEL.e2oProj_length' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OCEL.e2oProj_length
+
+/-- info: 'ProcInt.OCEL.eventsOf_length_le' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OCEL.eventsOf_length_le
+
+/-- info: 'ProcInt.OCEL.interacts_self' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.OCEL.interacts_self
+
+/-- info: 'ProcInt.OCEL.interacts_symm' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.OCEL.interacts_symm
+
+/-- info: 'ProcInt.OCEL.mem_objectsOf' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.OCEL.mem_objectsOf
+
+/-- info: 'ProcInt.OCEL.objectsOf_length_le' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OCEL.objectsOf_length_le
+
+/-- info: 'ProcInt.OCEL.timeOrdered_nil' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.OCEL.timeOrdered_nil
+
+/-- info: 'ProcInt.OCEL.timeOrdered_singleton' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.OCEL.timeOrdered_singleton
+
+/-- info: 'ProcInt.OCPN.conforms_add' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.OCPN.conforms_add
+
+/-- info: 'ProcInt.OCPN.conforms_of_le' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.OCPN.conforms_of_le
+
+/-- info: 'ProcInt.OccurrenceNet.acyclic_no_self_flow' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OccurrenceNet.acyclic_no_self_flow
+
+/-- info: 'ProcInt.OccurrenceNet.causality_trans' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OccurrenceNet.causality_trans
+
+/-- info: 'ProcInt.OccurrenceNet.flow_causality' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OccurrenceNet.flow_causality
+
+/-- info: 'ProcInt.OccurrenceNet.flow_irrefl' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.OccurrenceNet.flow_irrefl
+
+/-- info: 'ProcInt.OcpqPredicate.sat_e2oRel_iff' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.OcpqPredicate.sat_e2oRel_iff
+
+/-- info: 'ProcInt.OcpqPredicate.sat_e2oRel_mem' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.OcpqPredicate.sat_e2oRel_mem
+
+/-- info: 'ProcInt.PetriNet.FiringSeq.snoc' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.snoc
+
+/-- info: 'ProcInt.PetriNet.fire_add_pre' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.fire_add_pre
+
+/-- info: 'ProcInt.PetriNet.firingSeq_reaches' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.firingSeq_reaches
+
+/-- info: 'ProcInt.PetriNet.flowEdge_inl_inr' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.flowEdge_inl_inr
+
+/-- info: 'ProcInt.PetriNet.flowEdge_inr_inl' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.flowEdge_inr_inl
+
+/-- info: 'ProcInt.PetriNet.flowEdge_irrefl' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.flowEdge_irrefl
+
+/-- info: 'ProcInt.PetriNet.not_flowEdge_inl_inl' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.not_flowEdge_inl_inl
+
+/-- info: 'ProcInt.PetriNet.not_flowEdge_inr_inr' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.not_flowEdge_inr_inr
+
+/-- info: 'ProcInt.PetriNet.pInvariant_reaches' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.pInvariant_reaches
+
+/-- info: 'ProcInt.PetriNet.pInvariant_step' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.pInvariant_step
+
+/-- info: 'ProcInt.PetriNet.reaches_firingSeq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.reaches_firingSeq
+
+/-- info: 'ProcInt.PetriNet.stateEquation_seq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.stateEquation_seq
+
+/-- info: 'ProcInt.PetriNet.stateEquation_step' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.stateEquation_step
+
+/-- info: 'ProcInt.PetriNet.step_deterministic' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.step_deterministic
+
+/-- info: 'ProcInt.PetriNet.tInvariant_reproduces' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.tInvariant_reproduces
+
+/-- info: 'ProcInt.Powl.WellFormed.xor_length' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Powl.WellFormed.xor_length
+
+/-- info: 'ProcInt.Powl.wellFormed_loop_atoms' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Powl.wellFormed_loop_atoms
+
+/-- info: 'ProcInt.Powl.wellFormed_po_emptyPrec' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Powl.wellFormed_po_emptyPrec
+
+/-- info: 'ProcInt.Powl.wellFormed_xor_pair' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Powl.wellFormed_xor_pair
+
+/-- info: 'ProcInt.ProcessTree.language_leaf_silent' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.ProcessTree.language_leaf_silent
+
+/-- info: 'ProcInt.ProcessTree.language_seq_assoc' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.ProcessTree.language_seq_assoc
+
+/-- info: 'ProcInt.ProcessTree.mem_language_seq_leaf' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.ProcessTree.mem_language_seq_leaf
+
+/-- info: 'ProcInt.Reach.trans' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Reach.trans
+
+/-- info: 'ProcInt.StochasticPetriNet.fireProb_le_one' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.StochasticPetriNet.fireProb_le_one
+
+/-- info: 'ProcInt.StochasticPetriNet.fireProb_sum' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.StochasticPetriNet.fireProb_sum
+
+/-- info: 'ProcInt.Trace.activities_append' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Trace.activities_append
+
+/-- info: 'ProcInt.Trace.activities_length' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Trace.activities_length
+
+/-- info: 'ProcInt.Trace.monotone_append' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_append
+
+/-- info: 'ProcInt.Trace.monotone_iff_pairwise' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_iff_pairwise
+
+/-- info: 'ProcInt.Trace.monotone_nil' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_nil
+
+/-- info: 'ProcInt.Trace.monotone_replicate' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_replicate
+
+/-- info: 'ProcInt.Trace.monotone_singleton' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_singleton
+
+/-- info: 'ProcInt.Trace.monotone_sublist' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.Trace.monotone_sublist
+
+/-- info: 'ProcInt.WfNet.Sound.enabled_of_transition' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.Sound.enabled_of_transition
+
+/-- info: 'ProcInt.WfNet.Sound.reaches_final' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.Sound.reaches_final
+
+/-- info: 'ProcInt.WfNet.finalMarking_sink' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.finalMarking_sink
+
+/-- info: 'ProcInt.WfNet.finalMarking_source' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.finalMarking_source
+
+/-- info: 'ProcInt.WfNet.initialMarking_ne_finalMarking' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.initialMarking_ne_finalMarking
+
+/-- info: 'ProcInt.WfNet.initialMarking_sink' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.initialMarking_sink
+
+/-- info: 'ProcInt.WfNet.initialMarking_source' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.initialMarking_source
+
+/-- info: 'ProcInt.WfNet.not_flowEdge_from_sink' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.not_flowEdge_from_sink
+
+/-- info: 'ProcInt.WfNet.not_flowEdge_to_source' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.not_flowEdge_to_source
+
+/-- info: 'ProcInt.WfNet.reaches_shortCircuit' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.reaches_shortCircuit
+
+/-- info: 'ProcInt.WfNet.shortCircuit_enabled_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_enabled_inl
+
+/-- info: 'ProcInt.WfNet.shortCircuit_enabled_star' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_enabled_star
+
+/-- info: 'ProcInt.WfNet.shortCircuit_post_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_post_inl
+
+/-- info: 'ProcInt.WfNet.shortCircuit_post_inr' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_post_inr
+
+/-- info: 'ProcInt.WfNet.shortCircuit_pre_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_pre_inl
+
+/-- info: 'ProcInt.WfNet.shortCircuit_pre_inr' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_pre_inr
+
+/-- info: 'ProcInt.WfNet.shortCircuit_step_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_step_inl
+
+/-- info: 'ProcInt.XesLifecycleTransition.asString_injective' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.XesLifecycleTransition.asString_injective
+
+/-- info: 'ProcInt.XesLifecycleTransition.asString_parse' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.XesLifecycleTransition.asString_parse
+
+/-- info: 'ProcInt.XesLifecycleTransition.parse_asString' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.XesLifecycleTransition.parse_asString
+
+/-- info: 'ProcInt.alignmentCost_append' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.alignmentCost_append
+
+/-- info: 'ProcInt.alignmentCost_zero_iff_all_costfree' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.alignmentCost_zero_iff_all_costfree
+
+/-- info: 'ProcInt.archived_only_deletes' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.archived_only_deletes
+
+/-- info: 'ProcInt.archived_terminal' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.archived_terminal
+
+/-- info: 'ProcInt.arity_one_or_two' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.arity_one_or_two
+
+/-- info: 'ProcInt.bpmnMinimal_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.bpmnMinimal_wellFormed
+
+/-- info: 'ProcInt.bpmn_empty_not_wellFormed' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.bpmn_empty_not_wellFormed
+
+/-- info: 'ProcInt.cell_dim' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.cell_dim
+
+/-- info: 'ProcInt.cell_subset' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.cell_subset
+
+/-- info: 'ProcInt.cell_subset_slice' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.cell_subset_slice
+
+/-- info: 'ProcInt.combinedScore_uniform' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.combinedScore_uniform
+
+/-- info: 'ProcInt.correlated_cons' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.correlated_cons
+
+/-- info: 'ProcInt.correlated_empty' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.correlated_empty
+
+/-- info: 'ProcInt.deleted_terminal' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.deleted_terminal
+
+/-- info: 'ProcInt.dependencyMeasure_antisymm' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.dependencyMeasure_antisymm
+
+/-- info: 'ProcInt.dependencyMeasure_lt_one' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.dependencyMeasure_lt_one
+
+/-- info: 'ProcInt.dependencyMeasure_self' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.dependencyMeasure_self
+
+/-- info: 'ProcInt.dfgOfTrace_edges_length' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.dfgOfTrace_edges_length
+
+/-- info: 'ProcInt.dfgOfTrace_freq_one' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.dfgOfTrace_freq_one
+
+/-- info: 'ProcInt.dfgOfTrace_nil' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.dfgOfTrace_nil
+
+/-- info: 'ProcInt.empty_length' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.empty_length
+
+/-- info: 'ProcInt.existence_append' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.existence_append
+
+/-- info: 'ProcInt.f1_le_one' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.f1_le_one
+
+/-- info: 'ProcInt.f1_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.f1_nonneg
+
+/-- info: 'ProcInt.fitness_le_one' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.fitness_le_one
+
+/-- info: 'ProcInt.fitness_mem_unitInterval' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.fitness_mem_unitInterval
+
+/-- info: 'ProcInt.fitness_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.fitness_nonneg
+
+/-- info: 'ProcInt.fitness_perfect' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.fitness_perfect
+
+/-- info: 'ProcInt.happensBefore_irrefl' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.happensBefore_irrefl
+
+/-- info: 'ProcInt.happensBefore_trans' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.happensBefore_trans
+
+/-- info: 'ProcInt.length_of_mem_interleavings' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.length_of_mem_interleavings
+
+/-- info: 'ProcInt.lifecycleStep_irrefl' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.lifecycleStep_irrefl
+
+/-- info: 'ProcInt.linked_nil' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.linked_nil
+
+/-- info: 'ProcInt.linked_singleton' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.linked_singleton
+
+/-- info: 'ProcInt.linked_tail' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.linked_tail
+
+/-- info: 'ProcInt.logProjection_length_le' depends on axioms: [propext] -/
+#guard_msgs in #print axioms ProcInt.logProjection_length_le
+
+/-- info: 'ProcInt.neg_one_lt_dependencyMeasure' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.neg_one_lt_dependencyMeasure
+
+/-- info: 'ProcInt.no_transition_to_created' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.no_transition_to_created
+
+/-- info: 'ProcInt.notCoexistence_comm' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.notCoexistence_comm
+
+/-- info: 'ProcInt.oneSubRatio_le_one' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.oneSubRatio_le_one
+
+/-- info: 'ProcInt.oneSubRatio_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.oneSubRatio_nonneg
+
+/-- info: 'ProcInt.precedence_concrete' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.precedence_concrete
+
+/-- info: 'ProcInt.push_bounded' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.push_bounded
+
+/-- info: 'ProcInt.push_not_full' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.push_not_full
+
+/-- info: 'ProcInt.response_concrete' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.response_concrete
+
+/-- info: 'ProcInt.seqLang_assoc' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.seqLang_assoc
+
+/-- info: 'ProcInt.sojourn_self' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.sojourn_self
+
+/-- info: 'ProcInt.succession_imp_response' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.succession_imp_response
+
+/-- info: 'ProcInt.uniformWeights_normalized' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.uniformWeights_normalized
+
+/-- info: 'ProcInt.unitRat_le_one' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.unitRat_le_one
+
+/-- info: 'ProcInt.unitRat_nonneg' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.unitRat_nonneg
+
+/-- info: 'ProcInt.weighSum_add' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.weighSum_add
+
+/-- info: 'ProcInt.wellPosed_prefixLen_pos' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.wellPosed_prefixLen_pos
+
 
