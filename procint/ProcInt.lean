@@ -42,6 +42,8 @@ import ProcInt.Analytics.Prediction
 import ProcInt.Analytics.Streaming
 import ProcInt.Analytics.Multiperspective
 import ProcInt.Analytics.Lifecycle
+import ProcInt.Fixtures.Positive
+import ProcInt.Fixtures.Negative
 import ProcInt.Registry.Algorithms
 import ProcInt.Registry.Breeds
 
