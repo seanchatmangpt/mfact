@@ -551,8 +551,10 @@ procint:Decl_WfNet_sound_iff_shortCircuit_live_bounded_statement a procint:Decl 
   procint:leanCode """/-- Crown-jewel statement (van der Aalst 1997, Lemma 8 / Theorem 11): a
 workflow net is sound iff its short-circuited net is live and bounded from
 the initial marking `[i]`. Stated here as a `Prop`; the proof is manufactured
-by a dedicated lane. -/
-def WfNet.sound_iff_shortCircuit_live_bounded_statement {P T : Type} [DecidableEq P]
+by a dedicated lane. Requires `[Finite T]`: without finitely many transitions
+there is a countermodel where `W.Sound` holds but the short-circuited net is
+unbounded (tokens accumulate through an infinite family of transition pairs). -/
+def WfNet.sound_iff_shortCircuit_live_bounded_statement {P T : Type} [DecidableEq P] [Finite T]
     (W : WfNet P T) : Prop :=
   W.Sound ↔ (W.shortCircuit.Live W.initialMarking ∧
     ∃ k, W.shortCircuit.Bounded W.initialMarking k)""" .

@@ -127,7 +127,8 @@ test:
     cd procint && /Users/sac/.elan/bin/lake test
     cd procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature
     grep -v "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=" release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env
-    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE=STATED\n' >> release/standing.env
+    CROWN_STATUS=$(python3 -c "import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')" 2>/dev/null || echo 'STATED')
+    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='$CROWN_STATUS'\n' >> release/standing.env
     @echo "correctness ladder: PASS (keys merged into standing.env)"
 
 # ── Agent cockpit (read-only diagnostics; nothing below dirties the tree) ──
