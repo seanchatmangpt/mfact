@@ -272,6 +272,23 @@ residual risk our pipeline does not eliminate, namely that a curated
 statement, though kernel-admitted, is itself a faithless or vacuous
 rendering of the intended theorem.
 
+\paragraph{Lean 4 automation infrastructure.} \textsf{mfact}'s trust
+boundary sits above an already-scrutinized kernel: Lean4Lean provides an
+independent, kernel-in-Lean typechecker whose verification effort has
+already located and fixed a soundness bug in the reference
+implementation~\cite{lean4lean2024}. The two dominant patterns for wiring
+language-model or solver automation into Lean~4 are in-process integration,
+as in Lean Copilot's LLM inference over an FFI boundary~\cite{leancopilot2024},
+and external bridging to automated theorem provers, as in
+Lean-auto~\cite{leanauto2025}. \textsf{mfact} adopts neither: candidates from
+any producer, language model or otherwise, are untrusted data admitted only
+through the gate of Section~\ref{sec:mfact}, so no automation tool sits on
+the trusted path regardless of how it is wired in. Infrastructure for
+premise and declaration search~\cite{leanexplore2025} and for large
+synthetic theorem corpora~\cite{mathlib4dataset2025} addresses problems
+\textsf{procint} does not currently have, since its statement corpus is
+curated from the RDF catalog rather than mined or synthesized.
+
 \paragraph{Process intelligence.}
 The mathematical canon \textsf{procint} formalizes is due to a small number
 of primary sources. Petri-net structure theory --- state equation,
@@ -504,6 +521,19 @@ Mathlib and CSLib at their pinned revisions, and the \texttt{lake}/\texttt{ggen}
 toolchain. The author reviewed and accepts responsibility for all submitted
 content, code, citations, and claims in this paper and in the accompanying
 repository.
+
+This separation is not precautionary in the abstract: general-purpose
+language models have a documented Lean~3/Lean~4 syntax-confusion failure
+mode, generating deprecated Lean~3 constructs despite explicit Lean~4
+instructions, and GPT-4-class and substantially smaller models have been
+reported at comparable, low accuracy on the MiniF2F-Valid
+benchmark~\cite{langconfusion2025}. Approaches that fine-tune a
+general-purpose model toward Lean~4 specifically~\cite{theoremllama2024} or
+pair a language model with solver-guided refinement~\cite{apollo2025} trade
+some of this untrusted-candidate distance for higher raw acceptance rates;
+\textsf{mfact} does not take that trade in the run reported here, since every
+candidate --- however produced --- passes through the same kernel-and-audit
+gate regardless of its source's measured reliability.
 
 \section{Evaluation}
 \label{sec:eval}

@@ -24,6 +24,7 @@ Lean admits, mfact certifies, and the manifest records standing.
 | ledgered fragments (`paper/*.tex` listed in `.mfact/artifacts.toml`) | **No** | rendered by ggen |
 | `procint/ProcInt/**/*.lean`, `procint/AxiomAudit.lean`, `procint/ProcInt.lean` | **No** | rendered by ggen |
 | `procint/Playground/**/*.lean` | **Yes** | hand-authored demo/examples surface — never ggen-rendered, never ledgered; ordinary code, edit freely |
+| `pylab/**` | **Yes** | hand-authored Python research/experimentation surface (TPOT2, pm4py, powl, ocpa, pddl-plus-parser) — never ggen-rendered, never ledgered; ordinary code, edit freely |
 | `release/release-manifest.json`, `release/gates.json`, `release/quadrature.*` | **No** | emitted by builders/certification |
 
 If a change affects standing, counts, theorem status, generated fragments,
@@ -53,6 +54,10 @@ standing, counts, audit status, or certification data, classify it as
 `ORPHAN_ARTIFACT_REFUSED` and either ledger it or refuse the task.
 
 `procint/Playground/**` is intentionally unledgered: it carries no standing,
+counts, or certification data, so its absence from `.mfact/artifacts.toml`
+is correct, not an omission. Do not add it to the ledger.
+
+`pylab/**` is likewise intentionally unledgered: it carries no standing,
 counts, or certification data, so its absence from `.mfact/artifacts.toml`
 is correct, not an omission. Do not add it to the ledger.
 
