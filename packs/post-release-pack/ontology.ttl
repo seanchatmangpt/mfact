@@ -3,24 +3,24 @@
 
 post:Meta a post:MetaNode ;
   post:releaseId "v26.7.7" ;
-  post:coreReleaseHash "e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d" ;
-  post:coreProven 145 ;
-  post:coreTotalDecls 318 ;
+  post:coreReleaseHash "b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465" ;
+  post:coreProven 197 ;
+  post:coreTotalDecls 388 ;
   post:statedCount 2 ;
-  post:renderedCommit "b130f4a" ;
+  post:renderedCommit "d10636b" ;
   post:coreTag "v26.7.7-procint-certified" ;
-  post:tagCommit "cbf0043" ;
-  post:tagGate "PASS" ;
-  post:packetHash "e3f7ea36babc0fb0ed8295585e03f027f8aad2ae7b06adaeeb9b75d951e6b87a" ;
+  post:tagCommit "6f4c370" ;
+  post:tagGate "FAIL" ;
+  post:packetHash "73ffe4f660991b75145dc87de98527717214ec260821004173896817bfd743a7" ;
   post:arxivStatus "ALIVE" ;
   post:arxivDetail "cold build PASS from untarred package (13 declared files)" ;
   post:arxivFileCount 13 ;
   post:tarballHash "bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5" ;
-  post:pdfHash "fd67d3932d367d000ab3aae15f31a425fbf44ffef2ce2f59e15b1a269e5cb97c" ;
+  post:pdfHash "52deed4fac55757f94f86bbcaf8b0ea3c78de245c469985b388abf540d243c00" ;
   post:replayStatus "REPLAY_PASS" ;
   post:replayStatusTex "REPLAY\\_PASS" ;
   post:docsLane "PASS" ;
-  post:crownStatus "STATED" ;
+  post:crownStatus "PROVEN" ;
   post:publication "PENDING_EXTERNAL_ACTUATION" ;
   post:publicationTex "PENDING\\_EXTERNAL\\_ACTUATION" ;
   post:postReleaseWitnesses 2 .
@@ -28,14 +28,14 @@ post:Meta a post:MetaNode ;
 post:Packet_github_push a post:Packet ;
   post:packetId "github_push" ;
   post:packetIdTex "github\\_push" ;
-  post:packetStatus "ALIVE" ;
+  post:packetStatus "BLOCKED" ;
   post:publication "PENDING_EXTERNAL_ACTUATION" .
 
 post:Req_github_push_0 a post:Requirement ;
   post:reqPacket "github_push" ;
   post:reqOrder 0 ;
   post:reqName "repo_clean" ;
-  post:reqMet "true" .
+  post:reqMet "false" .
 
 post:Req_github_push_1 a post:Requirement ;
   post:reqPacket "github_push" ;
@@ -47,13 +47,13 @@ post:Req_github_push_2 a post:Requirement ;
   post:reqPacket "github_push" ;
   post:reqOrder 2 ;
   post:reqName "tag_descends_from_rendered_commit" ;
-  post:reqMet "true" .
+  post:reqMet "false" .
 
 post:Req_github_push_3 a post:Requirement ;
   post:reqPacket "github_push" ;
   post:reqOrder 3 ;
   post:reqName "standin_has_release_tag" ;
-  post:reqMet "true" .
+  post:reqMet "false" .
 
 post:Packet_arxiv_upload a post:Packet ;
   post:packetId "arxiv_upload" ;
@@ -119,8 +119,8 @@ post:Obl_0 a post:Obligation ;
   post:oblOrder 0 ;
   post:oblName "sound_iff_shortCircuit_live_bounded" ;
   post:oblNameTex "sound\\_iff\\_shortCircuit\\_live\\_bounded" ;
-  post:oblStatus "STATED" ;
-  post:oblStatusTex "STATED" ;
+  post:oblStatus "PROVEN" ;
+  post:oblStatusTex "PROVEN" ;
   post:oblNote "the crown equivalence itself (van der Aalst 1997, Lemma 8)" .
 
 post:Obl_1 a post:Obligation ;
@@ -162,8 +162,8 @@ post:Ax_11 a post:ArxivFile ; post:fileOrder 11 ; post:fileName "publication_sta
 post:Ax_12 a post:ArxivFile ; post:fileOrder 12 ; post:fileName "replay_status.tex" .
 
 post:Sum_0 a post:Checksum ; post:sumOrder 0 ; post:sumFile "paper/arxiv-submission.tar.gz" ; post:sumHash "bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5" .
-post:Sum_1 a post:Checksum ; post:sumOrder 1 ; post:sumFile "paper/main.pdf" ; post:sumHash "fd67d3932d367d000ab3aae15f31a425fbf44ffef2ce2f59e15b1a269e5cb97c" .
-post:Sum_2 a post:Checksum ; post:sumOrder 2 ; post:sumFile "release/release-manifest.json" ; post:sumHash "729ce0d2d9ab90dd5abe4a19c995c46ffbd2da6c6e1e48b3252f60ab3a8f1ee6" .
+post:Sum_1 a post:Checksum ; post:sumOrder 1 ; post:sumFile "paper/main.pdf" ; post:sumHash "52deed4fac55757f94f86bbcaf8b0ea3c78de245c469985b388abf540d243c00" .
+post:Sum_2 a post:Checksum ; post:sumOrder 2 ; post:sumFile "release/release-manifest.json" ; post:sumHash "afa6bf8752a0a5f2f3b26efb582336c6e2594c9758e62e79e502c56981da1d34" .
 post:Step_0 a post:ReplayStep ; post:stepOrder 0 ; post:stepCmd "git clone <stand-in>/mfact-dryrun.git at tag v26.7.7-procint-certified" ; post:stepCmdTex "git clone \\textless stand-in\\textgreater /mfact-dryrun.git at tag v26.7.7-procint-certified" .
 post:Step_1 a post:ReplayStep ; post:stepOrder 1 ; post:stepCmd "just render && just build (pinned toolchain, lake exe cache get)" ; post:stepCmdTex "just render \\&\\& just build (pinned toolchain, lake exe cache get)" .
 post:Step_2 a post:ReplayStep ; post:stepOrder 2 ; post:stepCmd "just audit && just test" ; post:stepCmdTex "just audit \\&\\& just test" .

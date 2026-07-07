@@ -1,1 +1,1 @@
-mfact v26.7.7 — procint certified (145/318 proven, quadrature closed)
+mfact v26.7.7 — procint certified (197/388 proven, quadrature closed)

@@ -3,7 +3,8 @@ to: "paper/conclusion.tex"
 sparql:
   a_r: |
     PREFIX quad: <https://mfact.dev/quadrature#>
-    SELECT ?releaseTag WHERE { ?r a quad:Results ; quad:releaseTag ?releaseTag . }
+    SELECT ?releaseTag ?crownJewel WHERE { ?r a quad:Results ;
+      quad:releaseTag ?releaseTag ; quad:crownJewel ?crownJewel . }
 force: true
 skip_empty: true
 ---
@@ -30,11 +31,15 @@ boundary. The release also closes Standing Quadrature
 surfaces, the claim--evidence ledger, and the process-trace conformance
 theorems are connected by generated witnesses admitted by Lean.
 
-The crown-jewel workflow-net theorem remains intentionally classified as
-\emph{\CrownJewelStatus}: the short-circuit characterization of soundness
-by liveness and boundedness is preserved as a research obligation rather
-than reported as proven. This is not a release failure; it is the release
-boundary doing its job.
+The crown-jewel workflow-net theorem is classified as
+\emph{\CrownJewelStatus}{% if r.crownJewel == "PROVEN" %}: the short-circuit
+characterization of soundness by liveness and boundedness
+(van der Aalst 1997, Lemma~8 / Theorem~11) is a kernel-admitted,
+axiom-audited theorem in this release, assembled from independently
+proven directions rather than asserted{% else %}: the short-circuit
+characterization of soundness by liveness and boundedness is preserved as
+a research obligation rather than reported as proven{% endif %}. This is
+not a release failure; it is the release boundary doing its job either way.
 
 The broader result is a bounded response to the problem of generated
 formal content. Rice-style undecidability is not denied; arbitrary

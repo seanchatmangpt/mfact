@@ -7,7 +7,8 @@
 A finite, kernel-checked witness over the publication packet: no actuation
 packet self-actuates (publication is pending external actuation in every
 case, however ALIVE the packet's requirements), and the crown research
-theorem is never silently promoted past STATED. The lists below are
+lane's status is pinned to the catalog-derived value the template author
+last confirmed. The lists below are
 rendered from the same graph as `release/FINAL_STATUS.md`; a render in
 which either law fails makes the corresponding `rfl` proof false and the
 kernel refuses this file. -/
@@ -16,12 +17,12 @@ namespace ProcInt.Release
 
 /-- Packet identity of the post-release graph this witness was rendered from. -/
 def postReleasePacketHash : String :=
-  "e3f7ea36babc0fb0ed8295585e03f027f8aad2ae7b06adaeeb9b75d951e6b87a"
+  "73ffe4f660991b75145dc87de98527717214ec260821004173896817bfd743a7"
 
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [
   ("arxiv_upload", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
-  ("github_push", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
+  ("github_push", "BLOCKED", "PENDING_EXTERNAL_ACTUATION"),
   ("github_release", "ALIVE", "PENDING_EXTERNAL_ACTUATION")
 ]
 
@@ -32,22 +33,29 @@ theorem packets_never_self_actuate :
 
 /-- Crown research lane: (obligation name, catalog-derived status). -/
 def crownObligations : List (String × String) := [
-  ("sound_iff_shortCircuit_live_bounded", "STATED"),
+  ("sound_iff_shortCircuit_live_bounded", "PROVEN"),
   ("proper_completion_support", "PROVEN_SUPPORT"),
   ("dead_transition_support", "PROVEN_SUPPORT"),
   ("unfolding_correctness", "STATED")
 ]
 
 /-- The crown lane's aggregate status as recorded in the graph. -/
-def crownStatus : String := "STATED"
+def crownStatus : String := "PROVEN"
 
-/-- STATED is never silently promoted: the crown lane stands at STATED and
-the crown equivalence obligation itself is recorded as STATED. Promoting
-either requires the catalog to change, which re-renders this witness. -/
-theorem crown_not_promoted :
-    crownStatus = "STATED" ∧
+/-- The crown lane's status is pinned to a literal here, independently of
+the data-templated `crownStatus` def above: this `rfl` only type-checks
+when the catalog-derived value equals the literal this template hardcodes,
+so silently drifting the catalog value (up OR down) without a deliberate
+edit to THIS template is refused at `lake build` time, not merely rendered
+over. The crown equivalence obligation itself must carry the same status.
+As of this render the crown lane has been promoted to PROVEN: the crown
+equivalence (`ProcInt.WfNet.sound_iff_shortCircuit_live_bounded`, van der
+Aalst 1997, Lemma 8 / Theorem 11) is a kernel-admitted, axiom-audited
+theorem, not merely a stated obligation. -/
+theorem crown_status_promoted :
+    crownStatus = "PROVEN" ∧
     (crownObligations.filter (fun o => o.1 == "sound_iff_shortCircuit_live_bounded")
-      |>.all (fun o => o.2 == "STATED")) = true := by
+      |>.all (fun o => o.2 == "PROVEN")) = true := by
   exact ⟨rfl, rfl⟩
 
 end ProcInt.Release
@@ -57,5 +65,5 @@ end ProcInt.Release
 /-- info: 'ProcInt.Release.packets_never_self_actuate' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.Release.packets_never_self_actuate
 
-/-- info: 'ProcInt.Release.crown_not_promoted' does not depend on any axioms -/
-#guard_msgs in #print axioms ProcInt.Release.crown_not_promoted
+/-- info: 'ProcInt.Release.crown_status_promoted' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.crown_status_promoted

@@ -118,9 +118,20 @@ def decl_status(name):
                   + r'"[^.]*?procint:status "([^"]+)"', ttl, re.DOTALL)
     return {'proven': 'PROVEN_SUPPORT', 'stated': 'STATED'}.get(
         m.group(1) if m else '', 'NOT_FORMALIZED')
+def crown_decl_status(name):
+    # The crown equivalence obligation tracks the ASSEMBLED theorem (the
+    # actual iff proof), not the Prop-valued statement def it discharges —
+    # a def's own procint:status is always "stated"/"definition" regardless
+    # of whether a later theorem proves it, so checking the statement decl
+    # would never observe promotion to PROVEN.
+    m = re.search(r'procint:declName "ProcInt\.' + re.escape(name)
+                  + r'"[^.]*?procint:status "([^"]+)"', ttl, re.DOTALL)
+    return {'proven': 'PROVEN', 'stated': 'STATED'}.get(
+        m.group(1) if m else '', 'NOT_FORMALIZED')
+
+crown_obl_status = crown_decl_status('WfNet.sound_iff_shortCircuit_live_bounded')
 obligations = [
-    ('sound_iff_shortCircuit_live_bounded',
-     decl_status('WfNet.sound_iff_shortCircuit_live_bounded_statement'),
+    ('sound_iff_shortCircuit_live_bounded', crown_obl_status,
      'the crown equivalence itself (van der Aalst 1997, Lemma 8)'),
     ('proper_completion_support', decl_status('WfNet.Sound.reaches_final'),
      'soundness implies the final marking is reachable'),
@@ -129,6 +140,9 @@ obligations = [
     ('unfolding_correctness', decl_status('BranchingProcess.isUnfoldingOf_statement'),
      'branching-process unfolding statement (separate stated lane)'),
 ]
+# Aggregate crown-lane status: the headline lane is exactly the crown
+# equivalence obligation's own status — never asserted independently of it.
+crown_status = crown_obl_status
 
 # ---- Replay + docs lanes (upgraded only by their own gates' reports) ----
 rep = os.path.join(ROOT, 'release/replay_report.json')
@@ -171,7 +185,7 @@ L = ['@prefix post: <https://mfact.dev/postrelease#> .',
      f'  post:replayStatus "{replay}" ;',
      f'  post:replayStatusTex "{esc(replay.replace("_", chr(92) + "_"))}" ;',
      f'  post:docsLane "{docs}" ;',
-     '  post:crownStatus "STATED" ;',
+     f'  post:crownStatus "{crown_status}" ;',
      '  post:publication "PENDING_EXTERNAL_ACTUATION" ;',
      r'  post:publicationTex "PENDING\\_EXTERNAL\\_ACTUATION" ;',
      '  post:postReleaseWitnesses 2 .', '']
@@ -225,6 +239,6 @@ blocked = [pid for pid, reqs in packets if not all(m for _, m in reqs)]
 print(f'post-release graph: {OUT}')
 print(f'packet hash: {acc}')
 print(f'packets: {", ".join(pid + ("=ALIVE" if pid not in blocked else "=BLOCKED") for pid, _ in packets)}'
-      f' | arxiv={arxiv_status} replay={replay} docs={docs} crown=STATED')
+      f' | arxiv={arxiv_status} replay={replay} docs={docs} crown={crown_status}')
 if not PLAN and blocked:
     refuse('PUBLICATION_PACKET_BLOCKED', f'unmet requirements in: {blocked}')

@@ -488,6 +488,7 @@ import ProcInt.Petri.Net
 import ProcInt.Petri.Firing
 import ProcInt.Petri.Reachability
 import ProcInt.Petri.Boundedness
+import ProcInt.Petri.Covering
 import ProcInt.Workflow.WfNet
 import ProcInt.Workflow.ShortCircuit""" .
 
@@ -564,13 +565,15 @@ procint:Decl_crownJewel_status a procint:Decl ;
   procint:status "definition" ;
   procint:leanCode """/-- Ground-truth status of the crown-jewel theorem (van der Aalst 1997,
 Lemma 8 / Theorem 11: soundness iff liveness and boundedness of the
-short-circuited net) at this release. `"stated"` means the statement
-`WfNet.sound_iff_shortCircuit_live_bounded_statement` is formalized and
-type-checks, but no direction of the iff is discharged — this is not a
-proven theorem in this release, and the paper must not claim otherwise.
-Two supporting lemmas about `WfNet.Sound` (`reaches_final`,
-`enabled_of_transition`) are proven and audited. -/
-def crownJewel_status : String := "stated" """ .
+short-circuited net) at this release. `"proven"` means the statement
+`WfNet.sound_iff_shortCircuit_live_bounded_statement` is discharged in full
+by the kernel-admitted theorem `WfNet.sound_iff_shortCircuit_live_bounded`
+(both directions of the iff, for `[Finite T]`), audited to depend on only
+`[propext, Classical.choice, Quot.sound]`. This value is derived from the
+catalog, never asserted by hand; it must never regress from `"proven"` back
+to `"stated"` without the underlying theorem itself disappearing from the
+catalog. -/
+def crownJewel_status : String := "proven" """ .
 
 procint:Decl_WfNet_proper_of_bounded a procint:Decl ;
   procint:inModule "Workflow.Soundness" ;
@@ -741,3 +744,73 @@ procint:Decl_WfNet_live_of_sound a procint:Decl ;
       have hEnStar : W.shortCircuit.Enabled W.finalMarking (Sum.inr ()) :=
         WfNet.shortCircuit_enabled_star W
       exact ⟨W.finalMarking, hReachSCFinal, hEnStar⟩""" .
+
+procint:Decl_WfNet_bounded_of_sound a procint:Decl ;
+  procint:inModule "Workflow.Soundness" ;
+  procint:declOrder 9 ;
+  procint:declName "ProcInt.WfNet.bounded_of_sound" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.bounded_of_sound' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Final assembly (van der Aalst 1997, Verification of Workflow Nets,
+Lemma 8 / Theorem 11, the boundedness half of the "only if" direction):
+soundness implies boundedness of the short-circuited net. By contradiction:
+`unbounded_self_cover` applied to `W.shortCircuit` produces a self-covering
+pump `M`, `R ≠ 0` reachable from `[i]` inside the short-circuited net. The
+two projection steps (`shortCircuit_reaches_project`) translate this pump
+into a genuine original-net witness that the final marking `[o]` is
+coverable by a strictly larger marking `[o] + R`, `R ≠ 0`, from `[i]` —
+contradicting `Sound.proper_completion`. -/
+theorem WfNet.bounded_of_sound {P T : Type} [DecidableEq P] [Fintype T] {W : WfNet P T}
+    (h : W.Sound) : ∃ k, W.shortCircuit.Bounded W.initialMarking k := by
+  by_contra hcon
+  obtain ⟨M, R, hReachM, hReachMR, hRne⟩ :=
+    PetriNet.unbounded_self_cover W.shortCircuit W.initialMarking hcon
+  -- Project `M` back into the original net: `M` is net-reachable from `[i]`.
+  have hReachNetM : W.net.Reaches W.initialMarking M :=
+    WfNet.shortCircuit_reaches_project h.proper_completion M hReachM
+  -- Option-to-complete: from `M`, the original net reaches the final marking.
+  have hReachNetMFinal : W.net.Reaches M W.finalMarking :=
+    h.option_to_complete M hReachNetM
+  -- Embed that run into the short-circuited net, then shift it by `R`.
+  have hReachSCMFinal : W.shortCircuit.Reaches M W.finalMarking :=
+    WfNet.reaches_shortCircuit W hReachNetMFinal
+  have hReachSCShift : W.shortCircuit.Reaches (M + R) (W.finalMarking + R) :=
+    PetriNet.reaches_add W.shortCircuit R hReachSCMFinal
+  -- Chain: `[i] --SC--> M --SC--> M + R --SC--> [o] + R`.
+  have hReachSCTotal : W.shortCircuit.Reaches W.initialMarking (W.finalMarking + R) :=
+    (hReachM.trans hReachMR).trans hReachSCShift
+  -- Project the total run back into the original net.
+  have hReachNetTotal : W.net.Reaches W.initialMarking (W.finalMarking + R) :=
+    WfNet.shortCircuit_reaches_project h.proper_completion (W.finalMarking + R) hReachSCTotal
+  -- Proper completion forces `[o] + R = [o]`, hence `R = 0`, contradiction.
+  have hle : W.finalMarking ≤ W.finalMarking + R := le_self_add
+  have heq : W.finalMarking + R = W.finalMarking :=
+    h.proper_completion (W.finalMarking + R) hReachNetTotal hle
+  apply hRne
+  have h0 : W.finalMarking + R = W.finalMarking + 0 := by rwa [add_zero]
+  exact add_left_cancel h0""" .
+
+procint:Decl_WfNet_sound_iff_shortCircuit_live_bounded a procint:Decl ;
+  procint:inModule "Workflow.Soundness" ;
+  procint:declOrder 10 ;
+  procint:declName "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Crown-jewel theorem (van der Aalst 1997, Verification of Workflow Nets,
+Lemma 8 / Theorem 11): a workflow net is sound iff its short-circuited net is
+live and bounded from the initial marking `[i]`. Assembled from the three
+independently-proven directions: `live_of_sound` and `bounded_of_sound` give
+the "only if" direction (soundness implies liveness and boundedness of the
+short-circuited net); `sound_of_live_bounded` gives the "if" direction (the
+pump lemma `proper_of_bounded` supplies proper completion, and liveness
+supplies option-to-complete and no-dead-transitions). Requires `[Finite T]`
+(see `sound_iff_shortCircuit_live_bounded_statement`); `bounded_of_sound`
+needs a `Fintype T` instance, obtained noncomputably via `Fintype.ofFinite`. -/
+theorem WfNet.sound_iff_shortCircuit_live_bounded {P T : Type} [DecidableEq P] [Finite T]
+    (W : WfNet P T) : W.sound_iff_shortCircuit_live_bounded_statement := by
+  haveI := Fintype.ofFinite T
+  unfold WfNet.sound_iff_shortCircuit_live_bounded_statement
+  exact ⟨fun h => ⟨WfNet.live_of_sound h, WfNet.bounded_of_sound h⟩,
+    fun ⟨hl, hb⟩ => WfNet.sound_of_live_bounded hl hb⟩""" .

@@ -121,7 +121,9 @@ ok6 = step(6, 'Checking paper claims/evaluation', not unsupported)
 senv = dict(l.split('=', 1) for l in
             open(os.path.join(ROOT, 'release/standing.env'))
             if '=' in l and not l.startswith('#'))
-crown = 'stated' if 'def crownJewel_status : String := "stated"' in text else 'unknown'
+crown = ('proven' if 'def crownJewel_status : String := "proven"' in text
+         else 'stated' if 'def crownJewel_status : String := "stated"' in text
+         else 'unknown')
 tag = subprocess.run(['git', '-C', ROOT, 'describe', '--tags', '--abbrev=0'],
                      capture_output=True).stdout.decode().strip() or man['release']
 

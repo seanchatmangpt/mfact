@@ -1,0 +1,31 @@
+{
+  "builder": "scripts/build_verif.py",
+  "catalogHash": "8999674bf8d6db40cf2bc12b92da6aa3643a441c2ce0ff6749e1f9ed844f4255",
+  "catalogSource": "packs/lean-math-pack/fragments/verif.ttl",
+  "leanToolchainProcint": "leanprover/lean4:v4.31.0",
+  "leanToolchainVerify": null,
+  "obligations": [
+    {
+      "aeneasDecl": "TBD",
+      "aeneasModule": "Wasm4pmVerify.Generated",
+      "corrName": "token_replay_counts_corr",
+      "corrOrder": 1,
+      "evidence": {
+        "declared": true,
+        "extracted": false,
+        "proven": false,
+        "reason": "no verify/receipts/pipeline.json \u2014 charon/aeneas has not run",
+        "stated": false
+      },
+      "leanDecl": "ProcInt.ReplayCounts",
+      "rustFile": "wasm4pm-core/src/conformance_counts.rs",
+      "rustSymbol": "wasm4pm_core::conformance_counts",
+      "status": "DECLARED",
+      "subject": "verif:Obl_token_replay_counts_corr"
+    }
+  ],
+  "pipelineJsonExists": false,
+  "rustFileHashes": {
+    "wasm4pm-core/src/conformance_counts.rs": "0caaf0652ec0f42a2a192d9e426b8b210ed6cca830f645da3091cdbd78164279"
+  }
+}

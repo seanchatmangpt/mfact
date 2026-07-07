@@ -19,8 +19,8 @@ skip_empty: true
 # RENDERED by `ggen sync` from the post-release graph (post-release-pack) — DO NOT EDIT BY HAND
 # Crown research lane: proof obligations toward the WF-net soundness
 # equivalence. Statuses are derived by grepping the TTL declaration
-# catalog, never asserted; STATED is never silently promoted
-# (ProcInt.Release.crown_not_promoted is kernel-admitted over this list).
+# catalog, never asserted; the status is pinned, not silently promoted
+# (ProcInt.Release.crown_status_promoted is kernel-admitted over this list).
 {% for m in a_m %}
 [crown]
 release = "{{ m.releaseId }}"

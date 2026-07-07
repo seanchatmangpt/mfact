@@ -6,6 +6,7 @@ import ProcInt.Petri.Net
 import ProcInt.Petri.Firing
 import ProcInt.Petri.Reachability
 import ProcInt.Petri.Boundedness
+import ProcInt.Petri.Covering
 import ProcInt.Petri.StateEquation
 import ProcInt.Petri.Invariants
 import ProcInt.Petri.OCPN

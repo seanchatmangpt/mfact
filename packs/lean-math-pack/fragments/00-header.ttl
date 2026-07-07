@@ -1,2 +1,3 @@
 @prefix procint: <https://mfact.dev/procint#> .
+@prefix verif: <https://mfact.dev/verif#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .

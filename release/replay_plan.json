@@ -2,7 +2,7 @@
   "schema": "mfact.replay_plan.v1",
   "release": "v26.7.7",
   "tag": "v26.7.7-procint-certified",
-  "expectedCoreReleaseHash": "e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d",
+  "expectedCoreReleaseHash": "b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465",
   "status": "REPLAY_PASS",
   "gate": "a replay PASSES iff every step exits 0 and the replayed manifest foldHash equals expectedCoreReleaseHash",
   "steps": [

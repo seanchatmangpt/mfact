@@ -191,6 +191,96 @@ impossible since transition-list length strictly increases along `<` and
 instance : IsStronglyAtomic (PetriNet.Run N M0) :=
   IsStronglyAtomic.of_wellFounded_lt lt_wf
 
+/-- The prefix `r'.1.take i` of `r'`'s transition list, bundled back up as
+a run (valid by `isRun_of_prefix`). -/
+def takeRun (r' : PetriNet.Run N M0) (i : ℕ) : PetriNet.Run N M0 :=
+  ⟨r'.1.take i, isRun_of_prefix r'.2 (List.take_prefix _ _)⟩
+
+@[simp] theorem takeRun_val (r' : PetriNet.Run N M0) (i : ℕ) :
+    (takeRun r' i).1 = r'.1.take i := rfl
+
+/-- A prefix `σ'.take (i+1)` of `σ'` that is longer than a given prefix
+`σ`, viewed as a run (via `takeRun`), strictly between `⟨σ,…⟩` and
+`⟨σ',…⟩` in the run order — the key intermediate witness used to show
+that a cover step changes transition-list length by exactly one. -/
+theorem lt_take_succ_lt {r r' : PetriNet.Run N M0} (h : r < r') {i : ℕ}
+    (hi1 : r.1.length ≤ i) (hi2 : i + 1 < r'.1.length) :
+    r < takeRun r' (i + 1) ∧ takeRun r' (i + 1) < r' := by
+  have hle : r.1 <+: r'.1 := h.le
+  have hrlen : r.1.length ≤ r'.1.length := hle.length_le
+  have hσeq : r.1 = r'.1.take r.1.length := List.prefix_iff_eq_take.mp hle
+  have hpre1 : r.1 <+: r'.1.take (i + 1) := by
+    rw [hσeq]
+    exact List.take_prefix_take_left (by omega)
+  constructor
+  · refine ⟨hpre1, fun hcontra => ?_⟩
+    have hlen2 := hcontra.length_le
+    simp only [takeRun_val, List.length_take] at hlen2
+    omega
+  · refine ⟨List.take_prefix _ _, fun hcontra => ?_⟩
+    have hlen2 := hcontra.length_le
+    simp only [takeRun_val, List.length_take] at hlen2
+    omega
+
+/-- A cover step in the run order corresponds exactly to extending the
+transition list by one transition: `r ⋖ r'` iff `r'`'s list has length
+exactly one more than `r`'s. Given this, `r ⋖ r'` determines `r'` from `r`
+and a single transition `t` (`r'.1 = r.1 ++ [t]`), which is the fact used
+below to show the set of covers of any run is finite when `T` is finite. -/
+theorem covBy_iff_length_succ {r r' : PetriNet.Run N M0} (h : r < r') :
+    r ⋖ r' ↔ r'.1.length = r.1.length + 1 := by
+  constructor
+  · intro hcov
+    by_contra hne
+    have hlt := length_lt_of_lt h
+    have hgap : r.1.length + 1 < r'.1.length := by omega
+    obtain ⟨h1, h2⟩ := lt_take_succ_lt h (le_refl r.1.length) hgap
+    exact hcov.2 h1 h2
+  · intro hlen
+    refine ⟨h, fun c h1 h2 => ?_⟩
+    have hc1 := length_lt_of_lt h1
+    have hc2 := length_lt_of_lt h2
+    omega
+
+/-- Given `r ⋖ r'`, the extending transition, extracted as the element of
+`r'.1` at index `r.1.length` (the unique new entry, since `r'.1 = r.1 ++
+[this element]`). -/
+noncomputable def coverTransition {r r' : PetriNet.Run N M0} (h : r ⋖ r') : T :=
+  r'.1[r.1.length]'(by
+    have hlen := (covBy_iff_length_succ h.lt).mp h
+    omega)
+
+theorem coverTransition_spec {r r' : PetriNet.Run N M0} (h : r ⋖ r') :
+    r'.1 = r.1 ++ [coverTransition h] := by
+  have hlen := (covBy_iff_length_succ h.lt).mp h
+  have hpre : r.1 <+: r'.1 := h.le
+  apply List.ext_getElem
+  · simp [hlen]
+  · intro n h1 h2
+    rcases Nat.lt_or_ge n r.1.length with hn | hn
+    · rw [List.getElem_append_left hn]
+      exact (hpre.getElem hn).symm
+    · have hn' : n = r.1.length := by omega
+      subst hn'
+      simp [coverTransition, List.getElem_append_right]
+
+/-- **Local finiteness of the run order.** When `T` is finite, every run
+has only finitely many one-step extensions (covers): each cover is
+determined by the single transition it appends (`coverTransition`), an
+injective map into the finite type `T`. This is exactly the local
+finiteness hypothesis (`hfin`) required to apply Kőnig's infinity lemma
+(`exists_seq_covby_of_forall_covby_finite`) to the run order. -/
+theorem finite_setOf_covBy [Fintype T] (r : PetriNet.Run N M0) :
+    {x | r ⋖ x}.Finite := by
+  have hinj : Function.Injective (fun x : {x // r ⋖ x} => coverTransition x.2) := by
+    rintro ⟨r₁, h₁⟩ ⟨r₂, h₂⟩ heq
+    simp only at heq
+    have hσ : r₁.1 = r₂.1 := by
+      rw [coverTransition_spec h₁, coverTransition_spec h₂, heq]
+    exact Subtype.ext (Subtype.ext hσ)
+  have hfin : Finite {x : PetriNet.Run N M0 // r ⋖ x} := Finite.of_injective _ hinj
+  exact Set.finite_coe_iff.mp hfin
+
 end PetriNet.Run
 
 end ProcInt

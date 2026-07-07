@@ -31,7 +31,8 @@ skip_empty: true
 A finite, kernel-checked witness over the publication packet: no actuation
 packet self-actuates (publication is pending external actuation in every
 case, however ALIVE the packet's requirements), and the crown research
-theorem is never silently promoted past STATED. The lists below are
+lane's status is pinned to the catalog-derived value the template author
+last confirmed. The lists below are
 rendered from the same graph as `release/FINAL_STATUS.md`; a render in
 which either law fails makes the corresponding `rfl` proof false and the
 kernel refuses this file. -/
@@ -60,13 +61,20 @@ def crownObligations : List (String × String) := [
 /-- The crown lane's aggregate status as recorded in the graph. -/
 def crownStatus : String := "{% for m in a_meta %}{{ m.crownStatus }}{% endfor %}"
 
-/-- STATED is never silently promoted: the crown lane stands at STATED and
-the crown equivalence obligation itself is recorded as STATED. Promoting
-either requires the catalog to change, which re-renders this witness. -/
-theorem crown_not_promoted :
-    crownStatus = "STATED" ∧
+/-- The crown lane's status is pinned to a literal here, independently of
+the data-templated `crownStatus` def above: this `rfl` only type-checks
+when the catalog-derived value equals the literal this template hardcodes,
+so silently drifting the catalog value (up OR down) without a deliberate
+edit to THIS template is refused at `lake build` time, not merely rendered
+over. The crown equivalence obligation itself must carry the same status.
+As of this render the crown lane has been promoted to PROVEN: the crown
+equivalence (`ProcInt.WfNet.sound_iff_shortCircuit_live_bounded`, van der
+Aalst 1997, Lemma 8 / Theorem 11) is a kernel-admitted, axiom-audited
+theorem, not merely a stated obligation. -/
+theorem crown_status_promoted :
+    crownStatus = "PROVEN" ∧
     (crownObligations.filter (fun o => o.1 == "sound_iff_shortCircuit_live_bounded")
-      |>.all (fun o => o.2 == "STATED")) = true := by
+      |>.all (fun o => o.2 == "PROVEN")) = true := by
   exact ⟨rfl, rfl⟩
 
 end ProcInt.Release
@@ -76,5 +84,5 @@ end ProcInt.Release
 /-- info: 'ProcInt.Release.packets_never_self_actuate' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.Release.packets_never_self_actuate
 
-/-- info: 'ProcInt.Release.crown_not_promoted' does not depend on any axioms -/
-#guard_msgs in #print axioms ProcInt.Release.crown_not_promoted
+/-- info: 'ProcInt.Release.crown_status_promoted' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.crown_status_promoted

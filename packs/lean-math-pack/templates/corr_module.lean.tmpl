@@ -1,0 +1,56 @@
+---
+to: "dist/verif/lean/Wasm4pmVerify/Corr/{{ corrName }}.lean"
+sparql:
+  a_obligations: |
+    PREFIX verif: <https://mfact.dev/verif#>
+    SELECT ?corrName ?corrOrder ?rustSymbol ?rustFile ?leanDecl ?aeneasModule
+           ?aeneasDecl ?status ?obligationStatement
+    WHERE {
+      ?o a verif:CorrespondenceObligation ;
+         verif:corrName ?corrName ;
+         verif:corrOrder ?corrOrder ;
+         verif:rustSymbol ?rustSymbol ;
+         verif:rustFile ?rustFile ;
+         verif:leanDecl ?leanDecl ;
+         verif:aeneasModule ?aeneasModule ;
+         verif:aeneasDecl ?aeneasDecl ;
+         verif:status ?status ;
+         verif:obligationStatement ?obligationStatement .
+    }
+    ORDER BY ?corrOrder
+force: true
+skip_empty: true
+---
+-- RENDERED by `ggen sync` from the verif correspondence catalog (lean-math-pack,
+-- packs/lean-math-pack/fragments/verif.ttl). Candidate Lean: admitted only by
+-- `lake build` in the wasm4pm-compat verify/lean package. Do not edit by
+-- hand: candidates enter through the ontology, never here.
+--
+-- KNOWN DEVIATION from the correspondence-factory plan: the plan targets
+-- /Users/sac/wasm4pm-compat/verify/lean/Wasm4pmVerify/Corr/ directly
+-- (cross-repo absolute write). The installed ggen (26.7.4) hard-refuses
+-- absolute or ".."-traversing `to:` paths (error FM-WRITE-002: "path must
+-- be relative"; no config escape hatch found). This file therefore renders
+-- into dist/verif/lean/Wasm4pmVerify/Corr/ inside mfact; materializing it
+-- into wasm4pm-compat's verify/lean tree requires an explicit copy step
+-- (not wired into any `just` recipe yet — out of scope for this phase).
+--
+-- Status ladder (builder-derived, never hand-set past DECLARED):
+--   DECLARED -> EXTRACTED -> STATED -> PROVEN
+-- Rendering this file does NOT promote status; only scripts/build_verif.py may
+-- advance verif:status, from observed charon/aeneas/lake evidence. This is NOT
+-- a claim that Aeneas proves the Rust automatically — it is one stated
+-- refinement obligation between an extracted Rust image and an existing
+-- procint semantic object.
+--
+-- Correspondence target : {{ rustSymbol }} ({{ rustFile }}) <-> {{ leanDecl }}
+-- Aeneas image          : {{ aeneasModule }}.{{ aeneasDecl }}
+-- Rendered status        : {{ status }}
+import Mathlib
+import ProcInt.Conformance.TokenReplay
+
+namespace Wasm4pmVerify.Corr
+
+{{ obligationStatement }}
+
+end Wasm4pmVerify.Corr

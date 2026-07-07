@@ -129,14 +129,89 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.OcpqPredicate.sat_e2oRel_mem' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.OcpqPredicate.sat_e2oRel_mem
 
+/-- info: 'ProcInt.PetriNet.FiringSeq.append_singleton_inv' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.append_singleton_inv
+
+/-- info: 'ProcInt.PetriNet.FiringSeq.deterministic' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.deterministic
+
+/-- info: 'ProcInt.PetriNet.FiringSeq.nil_inv' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.nil_inv
+
 /-- info: 'ProcInt.PetriNet.FiringSeq.snoc' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.snoc
+
+/-- info: 'ProcInt.PetriNet.FiringSeq.split' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.split
+
+/-- info: 'ProcInt.PetriNet.FiringSeq.trans' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.FiringSeq.trans
+
+/-- info: 'ProcInt.PetriNet.Run.bot_val' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.bot_val
+
+/-- info: 'ProcInt.PetriNet.Run.covBy_iff_length_succ' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.covBy_iff_length_succ
+
+/-- info: 'ProcInt.PetriNet.Run.coverTransition_spec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.coverTransition_spec
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_bot' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_bot
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_eq_get' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_eq_get
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_eq_getElem' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_eq_getElem
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_eq_getElem'' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_eq_getElem'
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_eq_of_firingSeq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_eq_of_firingSeq
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_pairwise' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_pairwise
+
+/-- info: 'ProcInt.PetriNet.Run.endMarking_spec' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.endMarking_spec
+
+/-- info: 'ProcInt.PetriNet.Run.finite_setOf_covBy' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.finite_setOf_covBy
+
+/-- info: 'ProcInt.PetriNet.Run.isRun_of_prefix' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.isRun_of_prefix
+
+/-- info: 'ProcInt.PetriNet.Run.le_iff' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.le_iff
+
+/-- info: 'ProcInt.PetriNet.Run.length_lt_of_lt' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.length_lt_of_lt
+
+/-- info: 'ProcInt.PetriNet.Run.lt_take_succ_lt' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.lt_take_succ_lt
+
+/-- info: 'ProcInt.PetriNet.Run.lt_wf' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.lt_wf
+
+/-- info: 'ProcInt.PetriNet.Run.reaches_endMarking' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.reaches_endMarking
+
+/-- info: 'ProcInt.PetriNet.Run.takeRun_val' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.Run.takeRun_val
 
 /-- info: 'ProcInt.PetriNet.bounded_of_finite_reach' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.bounded_of_finite_reach
 
 /-- info: 'ProcInt.PetriNet.enabled_mono' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.enabled_mono
+
+/-- info: 'ProcInt.PetriNet.exists_infinite_injective_run' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.exists_infinite_injective_run
+
+/-- info: 'ProcInt.PetriNet.exists_run_endMarking_eq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.exists_run_endMarking_eq
 
 /-- info: 'ProcInt.PetriNet.fire_add_pre' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.fire_add_pre
@@ -159,6 +234,30 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.PetriNet.flowEdge_irrefl' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.flowEdge_irrefl
 
+/-- info: 'ProcInt.PetriNet.infinite_run_of_unbounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.infinite_run_of_unbounded
+
+/-- info: 'ProcInt.PetriNet.markingSeq_cons' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingSeq_cons
+
+/-- info: 'ProcInt.PetriNet.markingSeq_length' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingSeq_length
+
+/-- info: 'ProcInt.PetriNet.markingSeq_nil' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingSeq_nil
+
+/-- info: 'ProcInt.PetriNet.markingSeq_take' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingSeq_take
+
+/-- info: 'ProcInt.PetriNet.markingTrace_length' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingTrace_length
+
+/-- info: 'ProcInt.PetriNet.markingTrace_prefix_of_prefix' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingTrace_prefix_of_prefix
+
+/-- info: 'ProcInt.PetriNet.markingTrace_take' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.markingTrace_take
+
 /-- info: 'ProcInt.PetriNet.not_flowEdge_inl_inl' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.not_flowEdge_inl_inl
 
@@ -177,6 +276,9 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.PetriNet.reaches_firingSeq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.reaches_firingSeq
 
+/-- info: 'ProcInt.PetriNet.reaches_repetitionFree' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.reaches_repetitionFree
+
 /-- info: 'ProcInt.PetriNet.stateEquation_seq' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.stateEquation_seq
 
@@ -194,6 +296,9 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.PetriNet.tInvariant_reproduces' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.PetriNet.tInvariant_reproduces
+
+/-- info: 'ProcInt.PetriNet.unbounded_self_cover' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.PetriNet.unbounded_self_cover
 
 /-- info: 'ProcInt.Powl.WellFormed.xor_length' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.Powl.WellFormed.xor_length
@@ -254,6 +359,9 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.WfNet.Sound.reaches_final' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.Sound.reaches_final
+
+/-- info: 'ProcInt.WfNet.bounded_of_sound' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.bounded_of_sound
 
 /-- info: 'ProcInt.WfNet.finalMarking_sink' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.finalMarking_sink
@@ -317,6 +425,9 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.WfNet.shortCircuit_step_star' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_step_star
+
+/-- info: 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.sound_iff_shortCircuit_live_bounded
 
 /-- info: 'ProcInt.WfNet.sound_of_live_bounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.sound_of_live_bounded

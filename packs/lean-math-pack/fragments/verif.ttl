@@ -1,0 +1,45 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix verif: <https://mfact.dev/verif#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ── Family: verif (correspondence factory pilot) ────────────────────────────
+# Correspondence obligations between the extracted wasm4pm-core Rust image
+# (Charon/Aeneas, Lean backend) and existing procint semantic objects. This is
+# NOT "Aeneas proves the Rust automatically" — it is a stated, kernel-admitted
+# refinement obligation between an extracted image and a hand-authored Lean
+# model. Status ladder (builder-derived, never hand-set past DECLARED):
+# DECLARED -> EXTRACTED -> STATED -> PROVEN. See
+# /Users/sac/.claude/plans/ok-so-which-should-toasty-axolotl.md Part C/D.
+
+# ═══ D1: token-replay counts ═══
+
+verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
+  verif:corrOrder 1 ;
+  verif:corrName "token_replay_counts_corr" ;
+  verif:rustSymbol "wasm4pm_core::conformance_counts" ;
+  verif:rustFile "wasm4pm-core/src/conformance_counts.rs" ;
+  verif:leanDecl "ProcInt.ReplayCounts" ;
+  verif:aeneasModule "Wasm4pmVerify.Generated" ;
+  verif:aeneasDecl "TBD" ;
+  # verif:status is NOT asserted here — it is a builder-derived field, owned
+  # exclusively by scripts/build_verif.py, which emits it into the sibling
+  # generated fragment fragments/verif-status.generated.ttl (same subject
+  # IRI, this predicate only) from observed evidence. Defaults to "DECLARED"
+  # when no charon/aeneas/lake evidence exists yet. Never hand-set here.
+  verif:obligationStatement """/-- Correspondence obligation D1 (token-replay counts): the extracted
+wasm4pm-core `conformance_counts.rs` integer fitness_num/fitness_den functions
+correspond to ProcInt's `ReplayCounts`/`fitness` (Rozinat and van der Aalst
+2008, Conformance Checking of Processes Based on Monitoring Real Behavior).
+Candidate until Charon/Aeneas extraction lands in
+Wasm4pmVerify.Generated (aeneasDecl is TBD — no pipeline.json receipt yet);
+the statement below targets the existing procint model directly and will be
+rebased onto the extracted image's abstraction function once Abs.lean exists.
+This does not claim Aeneas proves the Rust automatically; it states one
+refinement obligation between the extracted image and procint's admitted
+ReplayCounts/fitness model. -/
+theorem token_replay_counts_corr
+    (c : ProcInt.ReplayCounts) (num den : ℕ) (hden : den ≠ 0)
+    (hnum : (num : ℚ) / (den : ℚ) = ProcInt.fitness c) :
+    ProcInt.fitness c = (num : ℚ) / (den : ℚ) := by
+  sorry""" ;
+  verif:note "Pilot correspondence obligation (D1 of the plan's Part D ordering). rustFile is wasm4pm-core/src/conformance_counts.rs (already split out of the wasm4pm-compat façade per Part A), which holds the ReplayCounts{produced,consumed,missing,remaining} struct and fitness_num/fitness_den integer functions; leanDecl joins procint:Decl_ReplayCounts (packs/lean-math-pack/fragments/conformance.ttl, module Conformance.TokenReplay). Status stays DECLARED until scripts/build_verif.py observes real charon/aeneas/lake evidence; the sorry-bodied theorem above is a statement placeholder, not a proof." .

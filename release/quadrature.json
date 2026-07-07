@@ -1,26 +1,26 @@
 {
   "schema": "mfact.quadrature.v1",
   "release_id": "v26.7.7",
-  "run_identifier": "150c342",
+  "run_identifier": "d10636b",
   "slogan": "ggen renders. Lean admits. mfact certifies.",
   "surfaces": {
-    "ttl": { "proven_decls": 160 },
-    "lean": { "rendered_decls": 160 },
-    "manifest": { "proven_artifacts": 160 },
+    "ttl": { "proven_decls": 197 },
+    "lean": { "rendered_decls": 197 },
+    "manifest": { "proven_artifacts": 197 },
     "process": { "events": 10 },
     "paper": { "claims": 5, "evaluation_numbers": 6 }
   },
   "edges": [
-    { "pair": "ttl_to_lean", "label": "TTL to Lean", "count": 160, "result": "PASS" },
-    { "pair": "lean_to_audit", "label": "Lean to Audit", "count": 160, "result": "PASS" },
-    { "pair": "audit_to_manifest", "label": "Audit to Manifest", "count": 160, "result": "PASS" },
+    { "pair": "ttl_to_lean", "label": "TTL to Lean", "count": 197, "result": "PASS" },
+    { "pair": "lean_to_audit", "label": "Lean to Audit", "count": 197, "result": "PASS" },
+    { "pair": "audit_to_manifest", "label": "Audit to Manifest", "count": 197, "result": "PASS" },
     { "pair": "manifest_to_paper", "label": "Manifest to Paper", "count": 6, "result": "PASS" },
-    { "pair": "artifact_to_process", "label": "Artifact to Process Event", "count": 215, "result": "PASS" },
+    { "pair": "artifact_to_process", "label": "Artifact to Process Event", "count": 253, "result": "PASS" },
     { "pair": "claim_to_evidence", "label": "Claim to Evidence", "count": 5, "result": "PASS" }
   ],
   "claims": [
     { "id": "C1", "text": "mfact framework with axiom-free no_valid_objection", "evidence": "mfact/AxiomAudit.lean" },
-    { "id": "C2", "text": "procint corpus: 160 kernel-admitted, axiom-audited theorems", "evidence": "release/release-manifest.json#artifacts" },
+    { "id": "C2", "text": "procint corpus: 197 kernel-admitted, axiom-audited theorems", "evidence": "release/release-manifest.json#artifacts" },
     { "id": "C3", "text": "proven/stated split enforced by release gate (2 stated)", "evidence": "release/release-manifest.json#statedNotProven" },
     { "id": "C4", "text": "evaluation numbers rendered from the manifest", "evidence": "paper/evaluation.tex" },
     { "id": "C5", "text": "negative controls: the gate refuses (exit 1/2)", "evidence": "release/certify.log" }

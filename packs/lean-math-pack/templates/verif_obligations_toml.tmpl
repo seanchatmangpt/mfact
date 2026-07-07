@@ -1,0 +1,48 @@
+---
+to: "research/verif/obligations.toml"
+sparql:
+  a_m: |
+    PREFIX verif: <https://mfact.dev/verif#>
+    SELECT (COUNT(?o) AS ?obligationCount)
+    WHERE { ?o a verif:CorrespondenceObligation . }
+  obligations: |
+    PREFIX verif: <https://mfact.dev/verif#>
+    SELECT ?corrOrder ?corrName ?status ?leanDecl ?rustSymbol ?rustFile
+           ?aeneasModule ?aeneasDecl
+    WHERE {
+      ?o a verif:CorrespondenceObligation ;
+         verif:corrOrder ?corrOrder ;
+         verif:corrName ?corrName ;
+         verif:status ?status ;
+         verif:leanDecl ?leanDecl ;
+         verif:rustSymbol ?rustSymbol ;
+         verif:rustFile ?rustFile ;
+         verif:aeneasModule ?aeneasModule ;
+         verif:aeneasDecl ?aeneasDecl .
+    }
+    ORDER BY ?corrOrder
+force: true
+skip_empty: true
+---
+# RENDERED by `ggen sync` from the verif correspondence catalog (lean-math-pack) — DO NOT EDIT BY HAND
+# Correspondence factory lane: wasm4pm-core (Rust, Charon/Aeneas-extracted)
+# <-> procint (Lean, kernel-admitted) obligations. Statuses are derived by
+# scripts/build_verif.py from observed evidence (charon/aeneas exit codes,
+# lake build result, per-obligation sorryAx check), never asserted; the
+# status ladder DECLARED -> EXTRACTED -> STATED -> PROVEN has no silent
+# promotion (mirrors research/wfnet/obligations.toml's crown-status lane).
+{% for m in a_m %}
+[catalog]
+obligation_count = {{ m.obligationCount }}
+{% endfor %}
+{% for o in obligations %}[[obligation]]
+order = {{ o.corrOrder }}
+name = "{{ o.corrName }}"
+status = "{{ o.status }}"
+lean_decl = "{{ o.leanDecl }}"
+rust_symbol = "{{ o.rustSymbol }}"
+rust_file = "{{ o.rustFile }}"
+aeneas_module = "{{ o.aeneasModule }}"
+aeneas_decl = "{{ o.aeneasDecl }}"
+
+{% endfor %}

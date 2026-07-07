@@ -15,30 +15,30 @@ quad:Result a quad:Results ;
   quad:untracedArtifacts 0 ;
   quad:unclassifiedRefusals 0 ;
   quad:releaseId "v26.7.7" ;
-  quad:runId "150c342" ;
-  quad:ttlCount 160 ;
-  quad:leanCount 160 ;
-  quad:manifestCount 160 ;
-  quad:auditCount 160 ;
+  quad:runId "d10636b" ;
+  quad:ttlCount 197 ;
+  quad:leanCount 197 ;
+  quad:manifestCount 197 ;
+  quad:auditCount 197 ;
   quad:claimCount 5 ;
   quad:evalCount 6 ;
   quad:eventCount 10 ;
   quad:releaseTag "v26.7.7-procint-certified" ;
-  quad:foldHash "d33e8c3dc2483e21a73e31272521e3ae04b6dbecc332010f9e06f8319321bd9d" ;
+  quad:foldHash "b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465" ;
   quad:sorryCount 0 ;
   quad:admitCount 0 ;
   quad:statedCount 2 ;
-  quad:totalDecls 340 ;
+  quad:totalDecls 388 ;
   quad:axiomAudit "PASS" ;
   quad:fixtures "PASS" ;
   quad:certified "PASS" ;
-  quad:crownJewel "STATED" .
+  quad:crownJewel "PROVEN" .
 
 quad:Edge_ttl_to_lean a quad:EdgePair ;
   quad:pairKey "ttl_to_lean" ;
   quad:pairLabel "TTL to Lean" ;
   quad:pairLabelTex "TTL $\\rightarrow$ Lean" ;
-  quad:count 160 ;
+  quad:count 197 ;
   quad:result "PASS" ;
   quad:order 1 .
 
@@ -46,7 +46,7 @@ quad:Edge_lean_to_audit a quad:EdgePair ;
   quad:pairKey "lean_to_audit" ;
   quad:pairLabel "Lean to Audit" ;
   quad:pairLabelTex "Lean $\\rightarrow$ Audit" ;
-  quad:count 160 ;
+  quad:count 197 ;
   quad:result "PASS" ;
   quad:order 2 .
 
@@ -54,7 +54,7 @@ quad:Edge_audit_to_manifest a quad:EdgePair ;
   quad:pairKey "audit_to_manifest" ;
   quad:pairLabel "Audit to Manifest" ;
   quad:pairLabelTex "Audit $\\rightarrow$ Manifest" ;
-  quad:count 160 ;
+  quad:count 197 ;
   quad:result "PASS" ;
   quad:order 3 .
 
@@ -70,7 +70,7 @@ quad:Edge_artifact_to_process a quad:EdgePair ;
   quad:pairKey "artifact_to_process" ;
   quad:pairLabel "Artifact to Process Event" ;
   quad:pairLabelTex "Artifact $\\rightarrow$ Process Event" ;
-  quad:count 215 ;
+  quad:count 253 ;
   quad:result "PASS" ;
   quad:order 5 .
 
@@ -90,7 +90,7 @@ quad:Claim_C1 a quad:Claim ;
 
 quad:Claim_C2 a quad:Claim ;
   quad:claimId "C2" ;
-  quad:claimText "procint corpus: 160 kernel-admitted, axiom-audited theorems" ;
+  quad:claimText "procint corpus: 197 kernel-admitted, axiom-audited theorems" ;
   quad:evidenceRef "release/release-manifest.json#artifacts" ;
   quad:order 2 .
 
@@ -152,9 +152,34 @@ quad:T_ProcInt_OccurrenceNet_flow_causality a quad:TtlProvenDecl ; quad:declName
 quad:T_ProcInt_OccurrenceNet_flow_irrefl a quad:TtlProvenDecl ; quad:declName "ProcInt.OccurrenceNet.flow_irrefl" .
 quad:T_ProcInt_OcpqPredicate_sat_e2oRel_iff a quad:TtlProvenDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_iff" .
 quad:T_ProcInt_OcpqPredicate_sat_e2oRel_mem a quad:TtlProvenDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_mem" .
+quad:T_ProcInt_PetriNet_FiringSeq_append_singleton_inv a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.append_singleton_inv" .
+quad:T_ProcInt_PetriNet_FiringSeq_deterministic a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.deterministic" .
+quad:T_ProcInt_PetriNet_FiringSeq_nil_inv a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.nil_inv" .
 quad:T_ProcInt_PetriNet_FiringSeq_snoc a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.snoc" .
+quad:T_ProcInt_PetriNet_FiringSeq_split a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.split" .
+quad:T_ProcInt_PetriNet_FiringSeq_trans a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.trans" .
+quad:T_ProcInt_PetriNet_Run_bot_val a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.bot_val" .
+quad:T_ProcInt_PetriNet_Run_covBy_iff_length_succ a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.covBy_iff_length_succ" .
+quad:T_ProcInt_PetriNet_Run_coverTransition_spec a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.coverTransition_spec" .
+quad:T_ProcInt_PetriNet_Run_endMarking_bot a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_bot" .
+quad:T_ProcInt_PetriNet_Run_endMarking_eq_get a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_get" .
+quad:T_ProcInt_PetriNet_Run_endMarking_eq_getElem a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem" .
+quad:T_ProcInt_PetriNet_Run_endMarking_eq_getElem_ a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem'" .
+quad:T_ProcInt_PetriNet_Run_endMarking_eq_of_firingSeq a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_of_firingSeq" .
+quad:T_ProcInt_PetriNet_Run_endMarking_pairwise a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_pairwise" .
+quad:T_ProcInt_PetriNet_Run_endMarking_spec a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_spec" .
+quad:T_ProcInt_PetriNet_Run_finite_setOf_covBy a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.finite_setOf_covBy" .
+quad:T_ProcInt_PetriNet_Run_isRun_of_prefix a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.isRun_of_prefix" .
+quad:T_ProcInt_PetriNet_Run_le_iff a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.le_iff" .
+quad:T_ProcInt_PetriNet_Run_length_lt_of_lt a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.length_lt_of_lt" .
+quad:T_ProcInt_PetriNet_Run_lt_take_succ_lt a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.lt_take_succ_lt" .
+quad:T_ProcInt_PetriNet_Run_lt_wf a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.lt_wf" .
+quad:T_ProcInt_PetriNet_Run_reaches_endMarking a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.reaches_endMarking" .
+quad:T_ProcInt_PetriNet_Run_takeRun_val a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.Run.takeRun_val" .
 quad:T_ProcInt_PetriNet_bounded_of_finite_reach a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.bounded_of_finite_reach" .
 quad:T_ProcInt_PetriNet_enabled_mono a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.enabled_mono" .
+quad:T_ProcInt_PetriNet_exists_infinite_injective_run a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.exists_infinite_injective_run" .
+quad:T_ProcInt_PetriNet_exists_run_endMarking_eq a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.exists_run_endMarking_eq" .
 quad:T_ProcInt_PetriNet_fire_add_pre a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.fire_add_pre" .
 quad:T_ProcInt_PetriNet_fire_pre_self a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.fire_pre_self" .
 quad:T_ProcInt_PetriNet_firingSeq_reaches a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.firingSeq_reaches" .
@@ -162,18 +187,28 @@ quad:T_ProcInt_PetriNet_firingSeq_support_subset a quad:TtlProvenDecl ; quad:dec
 quad:T_ProcInt_PetriNet_flowEdge_inl_inr a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inl_inr" .
 quad:T_ProcInt_PetriNet_flowEdge_inr_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inr_inl" .
 quad:T_ProcInt_PetriNet_flowEdge_irrefl a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_irrefl" .
+quad:T_ProcInt_PetriNet_infinite_run_of_unbounded a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.infinite_run_of_unbounded" .
+quad:T_ProcInt_PetriNet_markingSeq_cons a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_cons" .
+quad:T_ProcInt_PetriNet_markingSeq_length a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_length" .
+quad:T_ProcInt_PetriNet_markingSeq_nil a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_nil" .
+quad:T_ProcInt_PetriNet_markingSeq_take a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_take" .
+quad:T_ProcInt_PetriNet_markingTrace_length a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_length" .
+quad:T_ProcInt_PetriNet_markingTrace_prefix_of_prefix a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_prefix_of_prefix" .
+quad:T_ProcInt_PetriNet_markingTrace_take a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_take" .
 quad:T_ProcInt_PetriNet_not_flowEdge_inl_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inl_inl" .
 quad:T_ProcInt_PetriNet_not_flowEdge_inr_inr a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inr_inr" .
 quad:T_ProcInt_PetriNet_pInvariant_reaches a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.pInvariant_reaches" .
 quad:T_ProcInt_PetriNet_pInvariant_step a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.pInvariant_step" .
 quad:T_ProcInt_PetriNet_reaches_add a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_add" .
 quad:T_ProcInt_PetriNet_reaches_firingSeq a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_firingSeq" .
+quad:T_ProcInt_PetriNet_reaches_repetitionFree a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_repetitionFree" .
 quad:T_ProcInt_PetriNet_stateEquation_seq a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.stateEquation_seq" .
 quad:T_ProcInt_PetriNet_stateEquation_step a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.stateEquation_step" .
 quad:T_ProcInt_PetriNet_step_add a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.step_add" .
 quad:T_ProcInt_PetriNet_step_deterministic a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.step_deterministic" .
 quad:T_ProcInt_PetriNet_step_pre_self a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.step_pre_self" .
 quad:T_ProcInt_PetriNet_tInvariant_reproduces a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.tInvariant_reproduces" .
+quad:T_ProcInt_PetriNet_unbounded_self_cover a quad:TtlProvenDecl ; quad:declName "ProcInt.PetriNet.unbounded_self_cover" .
 quad:T_ProcInt_Powl_WellFormed_xor_length a quad:TtlProvenDecl ; quad:declName "ProcInt.Powl.WellFormed.xor_length" .
 quad:T_ProcInt_Powl_wellFormed_loop_atoms a quad:TtlProvenDecl ; quad:declName "ProcInt.Powl.wellFormed_loop_atoms" .
 quad:T_ProcInt_Powl_wellFormed_po_emptyPrec a quad:TtlProvenDecl ; quad:declName "ProcInt.Powl.wellFormed_po_emptyPrec" .
@@ -194,6 +229,7 @@ quad:T_ProcInt_Trace_monotone_singleton a quad:TtlProvenDecl ; quad:declName "Pr
 quad:T_ProcInt_Trace_monotone_sublist a quad:TtlProvenDecl ; quad:declName "ProcInt.Trace.monotone_sublist" .
 quad:T_ProcInt_WfNet_Sound_enabled_of_transition a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.Sound.enabled_of_transition" .
 quad:T_ProcInt_WfNet_Sound_reaches_final a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.Sound.reaches_final" .
+quad:T_ProcInt_WfNet_bounded_of_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:T_ProcInt_WfNet_finalMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:T_ProcInt_WfNet_finalMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
 quad:T_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
@@ -215,6 +251,7 @@ quad:T_ProcInt_WfNet_shortCircuit_reaches_project a quad:TtlProvenDecl ; quad:de
 quad:T_ProcInt_WfNet_shortCircuit_seq_split a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:T_ProcInt_WfNet_shortCircuit_step_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
 quad:T_ProcInt_WfNet_shortCircuit_step_star a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:T_ProcInt_WfNet_sound_iff_shortCircuit_live_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded" .
 quad:T_ProcInt_WfNet_sound_of_live_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:T_ProcInt_XesLifecycleTransition_asString_injective a quad:TtlProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:T_ProcInt_XesLifecycleTransition_asString_parse a quad:TtlProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .
@@ -312,9 +349,34 @@ quad:M_ProcInt_OccurrenceNet_flow_causality a quad:ManifestProvenDecl ; quad:dec
 quad:M_ProcInt_OccurrenceNet_flow_irrefl a quad:ManifestProvenDecl ; quad:declName "ProcInt.OccurrenceNet.flow_irrefl" .
 quad:M_ProcInt_OcpqPredicate_sat_e2oRel_iff a quad:ManifestProvenDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_iff" .
 quad:M_ProcInt_OcpqPredicate_sat_e2oRel_mem a quad:ManifestProvenDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_mem" .
+quad:M_ProcInt_PetriNet_FiringSeq_append_singleton_inv a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.append_singleton_inv" .
+quad:M_ProcInt_PetriNet_FiringSeq_deterministic a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.deterministic" .
+quad:M_ProcInt_PetriNet_FiringSeq_nil_inv a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.nil_inv" .
 quad:M_ProcInt_PetriNet_FiringSeq_snoc a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.snoc" .
+quad:M_ProcInt_PetriNet_FiringSeq_split a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.split" .
+quad:M_ProcInt_PetriNet_FiringSeq_trans a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.trans" .
+quad:M_ProcInt_PetriNet_Run_bot_val a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.bot_val" .
+quad:M_ProcInt_PetriNet_Run_covBy_iff_length_succ a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.covBy_iff_length_succ" .
+quad:M_ProcInt_PetriNet_Run_coverTransition_spec a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.coverTransition_spec" .
+quad:M_ProcInt_PetriNet_Run_endMarking_bot a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_bot" .
+quad:M_ProcInt_PetriNet_Run_endMarking_eq_get a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_get" .
+quad:M_ProcInt_PetriNet_Run_endMarking_eq_getElem a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem" .
+quad:M_ProcInt_PetriNet_Run_endMarking_eq_getElem_ a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem'" .
+quad:M_ProcInt_PetriNet_Run_endMarking_eq_of_firingSeq a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_of_firingSeq" .
+quad:M_ProcInt_PetriNet_Run_endMarking_pairwise a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_pairwise" .
+quad:M_ProcInt_PetriNet_Run_endMarking_spec a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_spec" .
+quad:M_ProcInt_PetriNet_Run_finite_setOf_covBy a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.finite_setOf_covBy" .
+quad:M_ProcInt_PetriNet_Run_isRun_of_prefix a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.isRun_of_prefix" .
+quad:M_ProcInt_PetriNet_Run_le_iff a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.le_iff" .
+quad:M_ProcInt_PetriNet_Run_length_lt_of_lt a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.length_lt_of_lt" .
+quad:M_ProcInt_PetriNet_Run_lt_take_succ_lt a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.lt_take_succ_lt" .
+quad:M_ProcInt_PetriNet_Run_lt_wf a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.lt_wf" .
+quad:M_ProcInt_PetriNet_Run_reaches_endMarking a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.reaches_endMarking" .
+quad:M_ProcInt_PetriNet_Run_takeRun_val a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.Run.takeRun_val" .
 quad:M_ProcInt_PetriNet_bounded_of_finite_reach a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.bounded_of_finite_reach" .
 quad:M_ProcInt_PetriNet_enabled_mono a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.enabled_mono" .
+quad:M_ProcInt_PetriNet_exists_infinite_injective_run a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.exists_infinite_injective_run" .
+quad:M_ProcInt_PetriNet_exists_run_endMarking_eq a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.exists_run_endMarking_eq" .
 quad:M_ProcInt_PetriNet_fire_add_pre a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.fire_add_pre" .
 quad:M_ProcInt_PetriNet_fire_pre_self a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.fire_pre_self" .
 quad:M_ProcInt_PetriNet_firingSeq_reaches a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.firingSeq_reaches" .
@@ -322,18 +384,28 @@ quad:M_ProcInt_PetriNet_firingSeq_support_subset a quad:ManifestProvenDecl ; qua
 quad:M_ProcInt_PetriNet_flowEdge_inl_inr a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inl_inr" .
 quad:M_ProcInt_PetriNet_flowEdge_inr_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inr_inl" .
 quad:M_ProcInt_PetriNet_flowEdge_irrefl a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.flowEdge_irrefl" .
+quad:M_ProcInt_PetriNet_infinite_run_of_unbounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.infinite_run_of_unbounded" .
+quad:M_ProcInt_PetriNet_markingSeq_cons a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_cons" .
+quad:M_ProcInt_PetriNet_markingSeq_length a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_length" .
+quad:M_ProcInt_PetriNet_markingSeq_nil a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_nil" .
+quad:M_ProcInt_PetriNet_markingSeq_take a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingSeq_take" .
+quad:M_ProcInt_PetriNet_markingTrace_length a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_length" .
+quad:M_ProcInt_PetriNet_markingTrace_prefix_of_prefix a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_prefix_of_prefix" .
+quad:M_ProcInt_PetriNet_markingTrace_take a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.markingTrace_take" .
 quad:M_ProcInt_PetriNet_not_flowEdge_inl_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inl_inl" .
 quad:M_ProcInt_PetriNet_not_flowEdge_inr_inr a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inr_inr" .
 quad:M_ProcInt_PetriNet_pInvariant_reaches a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.pInvariant_reaches" .
 quad:M_ProcInt_PetriNet_pInvariant_step a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.pInvariant_step" .
 quad:M_ProcInt_PetriNet_reaches_add a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_add" .
 quad:M_ProcInt_PetriNet_reaches_firingSeq a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_firingSeq" .
+quad:M_ProcInt_PetriNet_reaches_repetitionFree a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.reaches_repetitionFree" .
 quad:M_ProcInt_PetriNet_stateEquation_seq a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.stateEquation_seq" .
 quad:M_ProcInt_PetriNet_stateEquation_step a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.stateEquation_step" .
 quad:M_ProcInt_PetriNet_step_add a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.step_add" .
 quad:M_ProcInt_PetriNet_step_deterministic a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.step_deterministic" .
 quad:M_ProcInt_PetriNet_step_pre_self a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.step_pre_self" .
 quad:M_ProcInt_PetriNet_tInvariant_reproduces a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.tInvariant_reproduces" .
+quad:M_ProcInt_PetriNet_unbounded_self_cover a quad:ManifestProvenDecl ; quad:declName "ProcInt.PetriNet.unbounded_self_cover" .
 quad:M_ProcInt_Powl_WellFormed_xor_length a quad:ManifestProvenDecl ; quad:declName "ProcInt.Powl.WellFormed.xor_length" .
 quad:M_ProcInt_Powl_wellFormed_loop_atoms a quad:ManifestProvenDecl ; quad:declName "ProcInt.Powl.wellFormed_loop_atoms" .
 quad:M_ProcInt_Powl_wellFormed_po_emptyPrec a quad:ManifestProvenDecl ; quad:declName "ProcInt.Powl.wellFormed_po_emptyPrec" .
@@ -354,6 +426,7 @@ quad:M_ProcInt_Trace_monotone_singleton a quad:ManifestProvenDecl ; quad:declNam
 quad:M_ProcInt_Trace_monotone_sublist a quad:ManifestProvenDecl ; quad:declName "ProcInt.Trace.monotone_sublist" .
 quad:M_ProcInt_WfNet_Sound_enabled_of_transition a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.Sound.enabled_of_transition" .
 quad:M_ProcInt_WfNet_Sound_reaches_final a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.Sound.reaches_final" .
+quad:M_ProcInt_WfNet_bounded_of_sound a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:M_ProcInt_WfNet_finalMarking_sink a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:M_ProcInt_WfNet_finalMarking_source a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
 quad:M_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
@@ -375,6 +448,7 @@ quad:M_ProcInt_WfNet_shortCircuit_reaches_project a quad:ManifestProvenDecl ; qu
 quad:M_ProcInt_WfNet_shortCircuit_seq_split a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:M_ProcInt_WfNet_shortCircuit_step_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
 quad:M_ProcInt_WfNet_shortCircuit_step_star a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:M_ProcInt_WfNet_sound_iff_shortCircuit_live_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded" .
 quad:M_ProcInt_WfNet_sound_of_live_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:M_ProcInt_XesLifecycleTransition_asString_injective a quad:ManifestProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:M_ProcInt_XesLifecycleTransition_asString_parse a quad:ManifestProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .
@@ -472,9 +546,34 @@ quad:A_ProcInt_OccurrenceNet_flow_causality a quad:AuditedDecl ; quad:declName "
 quad:A_ProcInt_OccurrenceNet_flow_irrefl a quad:AuditedDecl ; quad:declName "ProcInt.OccurrenceNet.flow_irrefl" .
 quad:A_ProcInt_OcpqPredicate_sat_e2oRel_iff a quad:AuditedDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_iff" .
 quad:A_ProcInt_OcpqPredicate_sat_e2oRel_mem a quad:AuditedDecl ; quad:declName "ProcInt.OcpqPredicate.sat_e2oRel_mem" .
+quad:A_ProcInt_PetriNet_FiringSeq_append_singleton_inv a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.append_singleton_inv" .
+quad:A_ProcInt_PetriNet_FiringSeq_deterministic a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.deterministic" .
+quad:A_ProcInt_PetriNet_FiringSeq_nil_inv a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.nil_inv" .
 quad:A_ProcInt_PetriNet_FiringSeq_snoc a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.snoc" .
+quad:A_ProcInt_PetriNet_FiringSeq_split a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.split" .
+quad:A_ProcInt_PetriNet_FiringSeq_trans a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.FiringSeq.trans" .
+quad:A_ProcInt_PetriNet_Run_bot_val a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.bot_val" .
+quad:A_ProcInt_PetriNet_Run_covBy_iff_length_succ a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.covBy_iff_length_succ" .
+quad:A_ProcInt_PetriNet_Run_coverTransition_spec a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.coverTransition_spec" .
+quad:A_ProcInt_PetriNet_Run_endMarking_bot a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_bot" .
+quad:A_ProcInt_PetriNet_Run_endMarking_eq_get a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_get" .
+quad:A_ProcInt_PetriNet_Run_endMarking_eq_getElem a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem" .
+quad:A_ProcInt_PetriNet_Run_endMarking_eq_getElem_ a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_getElem'" .
+quad:A_ProcInt_PetriNet_Run_endMarking_eq_of_firingSeq a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_eq_of_firingSeq" .
+quad:A_ProcInt_PetriNet_Run_endMarking_pairwise a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_pairwise" .
+quad:A_ProcInt_PetriNet_Run_endMarking_spec a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.endMarking_spec" .
+quad:A_ProcInt_PetriNet_Run_finite_setOf_covBy a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.finite_setOf_covBy" .
+quad:A_ProcInt_PetriNet_Run_isRun_of_prefix a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.isRun_of_prefix" .
+quad:A_ProcInt_PetriNet_Run_le_iff a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.le_iff" .
+quad:A_ProcInt_PetriNet_Run_length_lt_of_lt a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.length_lt_of_lt" .
+quad:A_ProcInt_PetriNet_Run_lt_take_succ_lt a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.lt_take_succ_lt" .
+quad:A_ProcInt_PetriNet_Run_lt_wf a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.lt_wf" .
+quad:A_ProcInt_PetriNet_Run_reaches_endMarking a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.reaches_endMarking" .
+quad:A_ProcInt_PetriNet_Run_takeRun_val a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.Run.takeRun_val" .
 quad:A_ProcInt_PetriNet_bounded_of_finite_reach a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.bounded_of_finite_reach" .
 quad:A_ProcInt_PetriNet_enabled_mono a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.enabled_mono" .
+quad:A_ProcInt_PetriNet_exists_infinite_injective_run a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.exists_infinite_injective_run" .
+quad:A_ProcInt_PetriNet_exists_run_endMarking_eq a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.exists_run_endMarking_eq" .
 quad:A_ProcInt_PetriNet_fire_add_pre a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.fire_add_pre" .
 quad:A_ProcInt_PetriNet_fire_pre_self a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.fire_pre_self" .
 quad:A_ProcInt_PetriNet_firingSeq_reaches a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.firingSeq_reaches" .
@@ -482,18 +581,28 @@ quad:A_ProcInt_PetriNet_firingSeq_support_subset a quad:AuditedDecl ; quad:declN
 quad:A_ProcInt_PetriNet_flowEdge_inl_inr a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inl_inr" .
 quad:A_ProcInt_PetriNet_flowEdge_inr_inl a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.flowEdge_inr_inl" .
 quad:A_ProcInt_PetriNet_flowEdge_irrefl a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.flowEdge_irrefl" .
+quad:A_ProcInt_PetriNet_infinite_run_of_unbounded a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.infinite_run_of_unbounded" .
+quad:A_ProcInt_PetriNet_markingSeq_cons a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingSeq_cons" .
+quad:A_ProcInt_PetriNet_markingSeq_length a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingSeq_length" .
+quad:A_ProcInt_PetriNet_markingSeq_nil a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingSeq_nil" .
+quad:A_ProcInt_PetriNet_markingSeq_take a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingSeq_take" .
+quad:A_ProcInt_PetriNet_markingTrace_length a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingTrace_length" .
+quad:A_ProcInt_PetriNet_markingTrace_prefix_of_prefix a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingTrace_prefix_of_prefix" .
+quad:A_ProcInt_PetriNet_markingTrace_take a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.markingTrace_take" .
 quad:A_ProcInt_PetriNet_not_flowEdge_inl_inl a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inl_inl" .
 quad:A_ProcInt_PetriNet_not_flowEdge_inr_inr a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.not_flowEdge_inr_inr" .
 quad:A_ProcInt_PetriNet_pInvariant_reaches a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.pInvariant_reaches" .
 quad:A_ProcInt_PetriNet_pInvariant_step a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.pInvariant_step" .
 quad:A_ProcInt_PetriNet_reaches_add a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.reaches_add" .
 quad:A_ProcInt_PetriNet_reaches_firingSeq a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.reaches_firingSeq" .
+quad:A_ProcInt_PetriNet_reaches_repetitionFree a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.reaches_repetitionFree" .
 quad:A_ProcInt_PetriNet_stateEquation_seq a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.stateEquation_seq" .
 quad:A_ProcInt_PetriNet_stateEquation_step a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.stateEquation_step" .
 quad:A_ProcInt_PetriNet_step_add a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.step_add" .
 quad:A_ProcInt_PetriNet_step_deterministic a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.step_deterministic" .
 quad:A_ProcInt_PetriNet_step_pre_self a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.step_pre_self" .
 quad:A_ProcInt_PetriNet_tInvariant_reproduces a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.tInvariant_reproduces" .
+quad:A_ProcInt_PetriNet_unbounded_self_cover a quad:AuditedDecl ; quad:declName "ProcInt.PetriNet.unbounded_self_cover" .
 quad:A_ProcInt_Powl_WellFormed_xor_length a quad:AuditedDecl ; quad:declName "ProcInt.Powl.WellFormed.xor_length" .
 quad:A_ProcInt_Powl_wellFormed_loop_atoms a quad:AuditedDecl ; quad:declName "ProcInt.Powl.wellFormed_loop_atoms" .
 quad:A_ProcInt_Powl_wellFormed_po_emptyPrec a quad:AuditedDecl ; quad:declName "ProcInt.Powl.wellFormed_po_emptyPrec" .
@@ -514,6 +623,7 @@ quad:A_ProcInt_Trace_monotone_singleton a quad:AuditedDecl ; quad:declName "Proc
 quad:A_ProcInt_Trace_monotone_sublist a quad:AuditedDecl ; quad:declName "ProcInt.Trace.monotone_sublist" .
 quad:A_ProcInt_WfNet_Sound_enabled_of_transition a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.Sound.enabled_of_transition" .
 quad:A_ProcInt_WfNet_Sound_reaches_final a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.Sound.reaches_final" .
+quad:A_ProcInt_WfNet_bounded_of_sound a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:A_ProcInt_WfNet_finalMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:A_ProcInt_WfNet_finalMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
 quad:A_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
@@ -535,6 +645,7 @@ quad:A_ProcInt_WfNet_shortCircuit_reaches_project a quad:AuditedDecl ; quad:decl
 quad:A_ProcInt_WfNet_shortCircuit_seq_split a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:A_ProcInt_WfNet_shortCircuit_step_inl a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
 quad:A_ProcInt_WfNet_shortCircuit_step_star a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:A_ProcInt_WfNet_sound_iff_shortCircuit_live_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded" .
 quad:A_ProcInt_WfNet_sound_of_live_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:A_ProcInt_XesLifecycleTransition_asString_injective a quad:AuditedDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:A_ProcInt_XesLifecycleTransition_asString_parse a quad:AuditedDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .

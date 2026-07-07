@@ -1,6 +1,6 @@
 # Standing Quadrature — v26.7.7
 
-`PASS` (run `150c342`). ggen renders. Lean admits. mfact certifies.
+`PASS` (run `d10636b`). ggen renders. Lean admits. mfact certifies.
 
 The release is not evaluated only by whether Lean builds. It is evaluated
 by whether the declaration catalog, admitted Lean corpus, process
@@ -15,11 +15,11 @@ diverges.
 
 | Surface pair | Count | Result |
 |---|---:|---|
-| TTL to Lean | 160 | PASS |
-| Lean to Audit | 160 | PASS |
-| Audit to Manifest | 160 | PASS |
+| TTL to Lean | 197 | PASS |
+| Lean to Audit | 197 | PASS |
+| Audit to Manifest | 197 | PASS |
 | Manifest to Paper | 6 | PASS |
-| Artifact to Process Event | 215 | PASS |
+| Artifact to Process Event | 253 | PASS |
 | Claim to Evidence | 5 | PASS |
 
 ## Traced paper claims
@@ -27,13 +27,13 @@ diverges.
 | Claim | Evidence |
 |---|---|
 | C1: mfact framework with axiom-free no_valid_objection | `mfact/AxiomAudit.lean` |
-| C2: procint corpus: 160 kernel-admitted, axiom-audited theorems | `release/release-manifest.json#artifacts` |
+| C2: procint corpus: 197 kernel-admitted, axiom-audited theorems | `release/release-manifest.json#artifacts` |
 | C3: proven/stated split enforced by release gate (2 stated) | `release/release-manifest.json#statedNotProven` |
 | C4: evaluation numbers rendered from the manifest | `paper/evaluation.tex` |
 | C5: negative controls: the gate refuses (exit 1/2) | `release/certify.log` |
 
 ## Surfaces
 
-- TTL catalog: 160 proven declarations
+- TTL catalog: 197 proven declarations
 - Paper: 5 traced claims, 6 evaluation numbers checked against the manifest
 - Process: 10 run events (receipt-chain append order; no wall clock)
