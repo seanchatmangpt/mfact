@@ -172,7 +172,7 @@ All 6 superseded in 32f4718 by direct theorem proof.
 - **Applied into d7752a5**: AGENTS.md pylab row, .gitignore rules, justfile groups, paper/refs.bib/main.tex related-work
 - **Dropped as stale**: no other fragments
 
-## CROWN_RAIL Status Block
+## CROWN_RAIL Status Block (Historical — see correction below)
 
 ```
 CROWN_RAIL: ALIVE
@@ -184,6 +184,60 @@ Proof verified per Phase 1 outputs:
   - Quadrature surface pairs all PASS
   - Axiom footprint clean (3 axioms only)
   - Manifest foldHash stable across d7752a5
+
+CORRESPONDENCE_RAIL: DECLARED
+
+Verif scaffold present (verif-receipt.json lists token_replay_counts_corr obligation).
+D1 (Aeneas extraction) not reached; charon/aeneas pipeline not run.
+Status: DECLARED (verif infrastructure in place, extraction pending external actuation).
+
+PUBLICATION_RAIL: PENDING_EXTERNAL_ACTUATION
+
+Packets ready (arxiv, github-release). User actuation required.
+```
+
+## Standing Correction Notice
+
+**Error at Commit 39940290 (3994029)**
+
+The CROWN_RAIL status block above incorrectly claimed `ALIVE` at commit 39940290. The true status at that commit was **CROWN_RAIL: BLOCKED** due to a statement boundary mismatch.
+
+**Root Cause of Misstatement**
+
+The Phase 2 evidence documents a statement repair: the [Finite T] constraint was added to the WfNet type in the TTL fragment (`packs/lean-math-pack/fragments/workflow.ttl`), necessitating re-rendering of the Soundness theorem. At the commit when this review was created, the statement and theorem proof boundary had not yet reached full correspondence. The interpretation error was in claiming `ALIVE` without verifying that the statement change propagated cleanly through the render–admit–manifest pipeline at that exact point.
+
+**Repair Sequence**
+
+The following commits resolved the blocker:
+
+1. **150c342**: `chore(release): promote WfNet [Finite T] + 6 new Petri lemmas into v26.7.7 cycle`
+   - Added `[Finite T]` constraint to the TTL statement
+   - 6 infrastructure lemmas rendered and admitted
+   
+2. **32f4718**: `feat(procint): prove the crown-jewel WF-net soundness theorem (STATED -> PROVEN)`
+   - Closed all proof obligations for `sound_iff_shortCircuit_live_bounded`
+   - Verified by Lean kernel; axiom footprint {propext, Classical.choice, Quot.sound}
+   - Regenerated artifacts (manifest, AxiomAudit, Quadrature)
+   - Quadrature surface pairs: all PASS
+   
+3. **d7752a5**: `chore: merge worthwhile pieces of stashed WIP...`
+   - Paper prose stabilized; no volatile standing values
+   - Release manifest foldHash stable
+
+**Corrected Standing Block**
+
+```
+CROWN_RAIL: ALIVE [CORRECTED]
+
+True status achieved via repair sequence 150c342 → 32f4718 → d7752a5:
+  - Statement boundary resolved: [Finite T] constraint in TTL, re-rendered cleanly
+  - Proof complete and kernel-verified (Soundness.lean)
+  - No hand-edits to rendered output (just regen-check: PASS)
+  - Axiom footprint minimal and audited (3 axioms only)
+  - Manifest foldHash: b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465
+  - Quadrature surface pairs: all PASS (TTL→Lean, Lean→Audit, Audit→Manifest, Manifest→Paper, Artifact→Evidence, Claim→Evidence)
+  - Certified standing: PROOF_MANIFEST=PASS, STANDING_QUADRATURE=PASS
+  - Post-Release status: 197 proven declarations (including crown theorem), 2 stated declarations
 
 CORRESPONDENCE_RAIL: DECLARED
 
