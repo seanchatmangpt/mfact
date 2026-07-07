@@ -3,7 +3,7 @@
   "release": "v26.7.7",
   "tag": "v26.7.7-procint-certified",
   "expectedCoreReleaseHash": "e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d",
-  "status": "REPLAY_NOT_RUN",
+  "status": "REPLAY_PASS",
   "gate": "a replay PASSES iff every step exits 0 and the replayed manifest foldHash equals expectedCoreReleaseHash",
   "steps": [
     {"order": 0, "cmd": "git clone <stand-in>/mfact-dryrun.git at tag v26.7.7-procint-certified"},
