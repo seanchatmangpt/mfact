@@ -53,5 +53,15 @@ def WfNet.sound_iff_shortCircuit_live_bounded_statement {P T : Type} [DecidableE
   W.Sound ↔ (W.shortCircuit.Live W.initialMarking ∧
     ∃ k, W.shortCircuit.Bounded W.initialMarking k)
 
+/-- Ground-truth status of the crown-jewel theorem (van der Aalst 1997,
+Lemma 8 / Theorem 11: soundness iff liveness and boundedness of the
+short-circuited net) at this release. `"stated"` means the statement
+`WfNet.sound_iff_shortCircuit_live_bounded_statement` is formalized and
+type-checks, but no direction of the iff is discharged — this is not a
+proven theorem in this release, and the paper must not claim otherwise.
+Two supporting lemmas about `WfNet.Sound` (`reaches_final`,
+`enabled_of_transition`) are proven and audited. -/
+def crownJewel_status : String := "stated" 
+
 
 end ProcInt
