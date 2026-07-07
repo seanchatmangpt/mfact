@@ -44,3 +44,18 @@ arxiv-package:
 # Print the standing report.
 standing:
     @cat /Users/sac/mfact/STANDING.md
+
+# The decisive lock: regenerate everything from source and refuse on drift.
+# Hand-edited generated output cannot pass admission.
+regen-check:
+    cat /Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl > /Users/sac/praxis/packs/lean-math-pack/ontology.ttl
+    python3 /Users/sac/mfact/scripts/build_quadrature.py > /dev/null
+    rm -f /Users/sac/mfact/ggen.lock
+    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
+    cd /Users/sac/mfact && git diff --exit-code -- procint/ProcInt procint/AxiomAudit.lean procint/ProcInt.lean paper/generated || (echo "REFUSED: GENERATED_OUTPUT_DRIFT — hand edit or stale render detected above" && exit 1)
+    @echo "regen-check: no generated drift"
+
+# Volatile standing claims must not appear in hand-authored prose.
+prose-lint:
+    @! grep -nE '(^|[^0-9])(145|309)([^0-9]|$)|ff62f3e5|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
+    @echo "prose-lint: clean"

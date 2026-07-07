@@ -76,8 +76,9 @@ ok4 = step(4, 'Reading release manifest', not man_gap and not untraced and state
 receipt_ok = subprocess.run(
     ['/Users/sac/praxis/target/debug/ggen', 'receipt', 'verify'],
     cwd=ROOT, capture_output=True).returncode == 0
-head = subprocess.run(['git', '-C', ROOT, 'rev-parse', '--short', 'HEAD'],
-                      capture_output=True, check=True).stdout.decode().strip()
+# Run identity comes from the manifest (recorded at manifest generation),
+# NOT the live git HEAD — regeneration must be idempotent for regen-check.
+head = man.get('runIdentifier', 'unknown')[:7]
 events = ['TtlCatalogLoaded', 'LeanRendered', 'LakeBuildPassed',
           'SorryAuditPassed', 'AxiomAuditPassed', 'NegativeFixturesPassed',
           'ManifestGenerated', 'PaperEvidenceGenerated',
