@@ -1,0 +1,34 @@
+# RENDERED by `ggen sync` from the post-release graph (post-release-pack) — DO NOT EDIT BY HAND
+# Crown research lane: proof obligations toward the WF-net soundness
+# equivalence. Statuses are derived by grepping the TTL declaration
+# catalog, never asserted; STATED is never silently promoted
+# (ProcInt.Release.crown_not_promoted is kernel-admitted over this list).
+
+[crown]
+release = "v26.7.6"
+status = "STATED"
+
+[[obligation]]
+order = 0
+name = "sound_iff_shortCircuit_live_bounded"
+status = "STATED"
+note = "the crown equivalence itself (van der Aalst 1997, Lemma 8)"
+
+[[obligation]]
+order = 1
+name = "proper_completion_support"
+status = "PROVEN_SUPPORT"
+note = "soundness implies the final marking is reachable"
+
+[[obligation]]
+order = 2
+name = "dead_transition_support"
+status = "PROVEN_SUPPORT"
+note = "soundness implies every transition can fire"
+
+[[obligation]]
+order = 3
+name = "unfolding_correctness"
+status = "STATED"
+note = "branching-process unfolding statement (separate stated lane)"
+

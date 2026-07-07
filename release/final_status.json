@@ -1,0 +1,31 @@
+{
+  "schema": "mfact.final_status.v1",
+  "core": {
+    "status": "ALIVE",
+    "release": "v26.7.6",
+    "coreReleaseHash": "a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86",
+    "coreProven": 145,
+    "coreTotalDecls": 318,
+    "stated": 2,
+    "renderedCommit": "bdd8e99",
+    "tag": "v26.7.6-procint-certified",
+    "tagCommit": "1712d76",
+    "renderedCommitIsAncestorOfTag": "PASS"
+  },
+  "publicationPacket": {
+    "packetHash": "9c787499b845d2dcbe4212ac416f3469f0849b187bfcf80b21bf60d2313ada29",
+    "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
+    "arxivPacket": "ALIVE",
+    "packets": [
+      {"id": "arxiv_upload", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
+      {"id": "github_push", "status": "BLOCKED", "publication": "PENDING_EXTERNAL_ACTUATION"},
+      {"id": "github_release", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"}
+    ]
+  },
+  "auxiliaryLanes": {
+    "replay": "REPLAY_NOT_RUN",
+    "docsLane": "PLANNED",
+    "wfnetCrownTheorem": "STATED",
+    "nextDomainFoundry": "PLANNED"
+  }
+}

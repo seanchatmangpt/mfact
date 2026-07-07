@@ -1,0 +1,42 @@
+{
+  "schema": "mfact.publication_plan.v1",
+  "law": "packets never self-actuate; publication is always the user's action",
+  "packets": [
+    {
+      "id": "arxiv_upload",
+      "status": "ALIVE",
+      "publication": "PENDING_EXTERNAL_ACTUATION",
+      "requires": [
+        {"name": "tarball_exists", "met": true},
+        {"name": "cold_build_passed", "met": true},
+        {"name": "pdf_exists", "met": true},
+        {"name": "certified", "met": true},
+        {"name": "user_actuation", "met": false}
+      ]
+    },
+    {
+      "id": "github_push",
+      "status": "BLOCKED",
+      "publication": "PENDING_EXTERNAL_ACTUATION",
+      "requires": [
+        {"name": "repo_clean", "met": false},
+        {"name": "tag_exists", "met": true},
+        {"name": "tag_descends_from_rendered_commit", "met": true},
+        {"name": "dry_run_push_passed", "met": true},
+        {"name": "user_actuation", "met": false}
+      ]
+    },
+    {
+      "id": "github_release",
+      "status": "ALIVE",
+      "publication": "PENDING_EXTERNAL_ACTUATION",
+      "requires": [
+        {"name": "certified", "met": true},
+        {"name": "controls_refused", "met": true},
+        {"name": "quadrature_pass", "met": true},
+        {"name": "gates_pass", "met": true},
+        {"name": "user_actuation", "met": false}
+      ]
+    }
+  ]
+}

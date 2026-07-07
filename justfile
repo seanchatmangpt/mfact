@@ -21,7 +21,9 @@ manifest:
 
 # Certify the release: exit 0 iff all gates pass.
 certify: build audit
-    cd /Users/sac/mfact/mfact && ./.lake/build/bin/mfact certify /Users/sac/mfact/release/release-manifest.json /Users/sac/mfact/release/gates.json
+    cd /Users/sac/mfact/mfact && ./.lake/build/bin/mfact certify /Users/sac/mfact/release/release-manifest.json /Users/sac/mfact/release/gates.json > /Users/sac/mfact/release/certify.log 2> /Users/sac/mfact/release/certify.stderr && cat /Users/sac/mfact/release/certify.stderr >> /Users/sac/mfact/release/certify.log && rm /Users/sac/mfact/release/certify.stderr
+    bash /Users/sac/mfact/scripts/certify_negative_controls.sh >> /Users/sac/mfact/release/certify.log 2>&1
+    @grep "^certified:" /Users/sac/mfact/release/certify.log
 
 # Standing Quadrature: close the TTL x Lean x Manifest x Process x Paper
 # cross-product, render the artifacts, kernel-admit the witness.
@@ -38,7 +40,7 @@ quadrature-negative-controls:
 
 # Package the paper for arXiv (no submission).
 arxiv-package:
-    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex
+    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && COPYFILE_DISABLE=1 tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex publication_status.tex replay_status.tex
     @tar tzf /Users/sac/mfact/paper/arxiv-submission.tar.gz
 
 # Print the standing report.
@@ -99,6 +101,23 @@ release:
     just certify
     just arxiv-package
     @python3 /Users/sac/mfact/scripts/report.py status --write
+
+# Post-release publication packet: builder reads downstream receipts only,
+# ggen renders the packet surfaces, Lean admits the PostRelease witness,
+# the ledger records. Publication itself stays PENDING_EXTERNAL_ACTUATION.
+manufacture-post-release:
+    python3 /Users/sac/mfact/scripts/build_post_release.py
+    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
+    cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build PostRelease
+    python3 /Users/sac/mfact/scripts/build_ledger.py > /dev/null
+    grep -v "^POST_RELEASE_PACKET\|^PUBLICATION_ACTUATION=\|^ARXIV_PACKET=\|^GITHUB_PUSH_PACKET=\|^GITHUB_RELEASE_PACKET=\|^INDEPENDENT_REPLAY=\|^NEXT_DOMAIN_FOUNDRY=" /Users/sac/mfact/release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ /Users/sac/mfact/release/standing.env
+    python3 -c "import json; d=json.load(open('/Users/sac/mfact/release/final_status.json')); p={x['id']:x['status'] for x in d['publicationPacket']['packets']}; print('POST_RELEASE_PACKET_HASH='+d['publicationPacket']['packetHash']); print('PUBLICATION_ACTUATION='+d['publicationPacket']['publicationActuation']); print('ARXIV_PACKET='+p['arxiv_upload']); print('GITHUB_PUSH_PACKET='+p['github_push']); print('GITHUB_RELEASE_PACKET='+p['github_release']); print('INDEPENDENT_REPLAY='+d['auxiliaryLanes']['replay']); print('NEXT_DOMAIN_FOUNDRY='+d['auxiliaryLanes']['nextDomainFoundry'])" >> /Users/sac/mfact/release/standing.env
+    @cat /Users/sac/mfact/release/FINAL_STATUS.md
+
+# Independent replay gate: clone the stand-in at the release tag into a
+# scratch tree and re-run the rail there; write replay_report.json here.
+independent-replay:
+    bash /Users/sac/mfact/scripts/independent_replay.sh
 
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:

@@ -670,6 +670,14 @@ negative-control script that demonstrates the gate refusing a
   \InputIfFileExists{availability}{}{}
 \fi
 
+\ifreleasebuild
+  \input{publication_status}
+  \input{replay_status}
+\else
+  \InputIfFileExists{publication_status}{}{}
+  \InputIfFileExists{replay_status}{}{}
+\fi
+
 \section{Conclusion}
 
 \ifreleasebuild

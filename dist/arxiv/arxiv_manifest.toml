@@ -1,0 +1,26 @@
+# arXiv submission packet manifest — rendered from the post-release graph.
+# The declared file list originates in .mfact/arxiv.toml (single source);
+# this manifest is the packet-side attestation of what was packed.
+[packet]
+release = "v26.7.6"
+tarball = "paper/arxiv-submission.tar.gz"
+tarball_blake3 = "ee760a19638fa0b643ce1de22ab8fc23a1f754fd06e889720b89488a817ab49c"
+status = "ALIVE"
+declared_file_count = 13
+actuation = "PENDING_EXTERNAL_ACTUATION"
+
+files = [
+  "README_REPRODUCIBILITY.md",
+  "main.tex",
+  "main.bbl",
+  "refs.bib",
+  "release_macros.tex",
+  "evaluation.tex",
+  "quadrature.tex",
+  "final_status.tex",
+  "availability.tex",
+  "conclusion.tex",
+  "crown_jewel_status.tex",
+  "publication_status.tex",
+  "replay_status.tex",
+]

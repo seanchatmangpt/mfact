@@ -30,3 +30,7 @@ roots = ["ProcInt.Release.Quadrature"]
 [[lean_lib]]
 name = "Tests"
 roots = ["ProcInt.Tests"]
+
+[[lean_lib]]
+name = "PostRelease"
+roots = ["ProcInt.Release.PostRelease"]

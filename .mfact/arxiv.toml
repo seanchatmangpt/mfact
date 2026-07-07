@@ -1,0 +1,13 @@
+# Single source of truth for the arXiv packet file list.
+# The arxiv-package recipe, the post-release builder, and the cold-build
+# check all read THIS list — never duplicate it in scripts or templates.
+# ARXIV_DECLARED_FILES == ARXIV_TARBALL_FILES == ARXIV_COLD_BUILD_INPUTS.
+[arxiv]
+tarball = "paper/arxiv-submission.tar.gz"
+root_files = ["README_REPRODUCIBILITY.md"]
+paper_files = [
+  "main.tex", "main.bbl", "refs.bib",
+  "release_macros.tex", "evaluation.tex", "quadrature.tex",
+  "final_status.tex", "availability.tex", "conclusion.tex",
+  "crown_jewel_status.tex", "publication_status.tex", "replay_status.tex",
+]

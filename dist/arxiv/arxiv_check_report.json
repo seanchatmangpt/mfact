@@ -1,0 +1,11 @@
+{
+  "schema": "mfact.arxiv_check.v1",
+  "release": "v26.7.6",
+  "status": "ALIVE",
+  "detail": "cold build PASS from untarred package (13 declared files)",
+  "declaredFileCount": 13,
+  "tarballBlake3": "ee760a19638fa0b643ce1de22ab8fc23a1f754fd06e889720b89488a817ab49c",
+  "pdfBlake3": "91a98227f5eb460dbfd4449a8307d8364458e4f0f9e4d67bccf47d45dcc73123",
+  "gates": ["declared==packed", "no absolute local paths", "cold latexmk build from untarred package"],
+  "actuation": "PENDING_EXTERNAL_ACTUATION"
+}
