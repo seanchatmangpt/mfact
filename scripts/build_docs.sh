@@ -20,6 +20,8 @@ cd "$DOCBUILD" || { write_report BLOCKED "docbuild/ missing"; exit 0; }
 start=$(date +%s)
 LOG="$ROOT/release/docs_build.log"
 {
+  # No git remote by dry-run doctrine; link sources as local files.
+  export DOCGEN_SRC=file
   MATHLIB_NO_CACHE_ON_UPDATE=1 "$LAKE" update doc-gen4 &&
   "$LAKE" build ProcInt:docs
 } > "$LOG" 2>&1 &
