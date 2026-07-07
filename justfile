@@ -7,7 +7,7 @@ default:
 # Merge pack fragments into the pack ontology, then render via ggen.
 render:
     cat /Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl > /Users/sac/praxis/packs/lean-math-pack/ontology.ttl
-    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run
+    cd /Users/sac/mfact && ggen sync run
 
 # Full build: procint package, then the mfact package (AxiomAudit + mfact lib).
 build:
@@ -34,9 +34,13 @@ certify: build audit
 standing-quadrature:
     python3 /Users/sac/mfact/scripts/build_quadrature.py
     rm -f /Users/sac/mfact/ggen.lock
-    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
+    cd /Users/sac/mfact && ggen sync run > /dev/null
     cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build Quadrature
     @cat /Users/sac/mfact/release/quadrature.env
+
+# Hand-authored demo surface — never feeds standing, gates, or the manifest.
+playground:
+    cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build Playground
 
 # Negative controls for the quadrature gate (must REFUSE on poisoned copies).
 quadrature-negative-controls:
@@ -58,7 +62,7 @@ regen-check:
     cat /Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl > /Users/sac/praxis/packs/lean-math-pack/ontology.ttl
     python3 /Users/sac/mfact/scripts/build_quadrature.py > /dev/null
     rm -f /Users/sac/mfact/ggen.lock
-    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
+    cd /Users/sac/mfact && ggen sync run > /dev/null
     python3 /Users/sac/mfact/scripts/build_ledger.py > /dev/null
     cd /Users/sac/mfact && git diff --exit-code -- $(grep '^path = ' /Users/sac/mfact/.mfact/artifacts.toml | cut -d'"' -f2 | grep -v 'standing.env\|artifacts.toml' | sort -u | tr '\n' ' ') || (echo "REFUSED: ARTIFACT_DRIFT_REFUSED — unreplayable edit or stale render detected above" && exit 1)
     @echo "regen-check: all ledgered artifacts reproducible from source"
@@ -143,7 +147,7 @@ release:
 manufacture-post-release:
     python3 /Users/sac/mfact/scripts/build_post_release.py
     rm -f /Users/sac/mfact/ggen.lock
-    cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
+    cd /Users/sac/mfact && ggen sync run > /dev/null
     cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build PostRelease
     python3 /Users/sac/mfact/scripts/build_ledger.py > /dev/null
     grep -v "^POST_RELEASE_PACKET\|^PUBLICATION_ACTUATION=\|^ARXIV_PACKET=\|^GITHUB_PUSH_PACKET=\|^GITHUB_RELEASE_PACKET=\|^INDEPENDENT_REPLAY=\|^NEXT_DOMAIN_FOUNDRY=" /Users/sac/mfact/release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ /Users/sac/mfact/release/standing.env

@@ -34,3 +34,7 @@ roots = ["ProcInt.Tests"]
 [[lean_lib]]
 name = "PostRelease"
 roots = ["ProcInt.Release.PostRelease"]
+
+[[lean_lib]]
+name = "Playground"
+roots = ["ProcInt.Playground"]
