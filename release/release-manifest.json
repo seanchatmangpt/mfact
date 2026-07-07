@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "c7d4dd09ed78a4ad42a81a6facb5c0bcc629dc26",
+  "runIdentifier": "bdd8e9964f355799c43611e7277a6a9df4b1fff9",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -2071,6 +2071,12 @@
       "proven": true
     },
     {
+      "name": "ProcInt.ocelOracle",
+      "hash": "18c442567754a80d066bb603621fba77349862b61dc4ecb6e3f03cf022e85a6e",
+      "axioms": [],
+      "proven": false
+    },
+    {
       "name": "ProcInt.oneSubRatio_le_one",
       "hash": "9b07d3aa6cbb41d115aefb0e8552d9fa8c334843df7cd30799539a27afbfdf1a",
       "axioms": [
@@ -2142,6 +2148,12 @@
       "proven": true
     },
     {
+      "name": "ProcInt.seqNet",
+      "hash": "e2d88d19e4b4deaa2578ed48ee2ead6499f880df4d24f1db1b2abd59c7b56114",
+      "axioms": [],
+      "proven": false
+    },
+    {
       "name": "ProcInt.sojourn",
       "hash": "b9cbae5c8b02ec51ca4bf60919ec574c2b3a8ed796ffb4788ea1e994825ee120",
       "axioms": [],
@@ -2158,6 +2170,48 @@
       "hash": "a68b5bc63297de48595e7593281c84901bc17b990b8ad28b0bcb1ebb1a1317eb",
       "axioms": [],
       "proven": true
+    },
+    {
+      "name": "ProcInt.testSurface",
+      "hash": "b72bef8f85cb3bbb1a71beca4b27e7b9140d8217e5455eca8e1fdeb6e0116670",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_fitness_oracles",
+      "hash": "5ee23386f34c357e5abad15dea4f39b431afb5df67be3a521057ecaf9b472acf",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_model_oracles",
+      "hash": "a0f47a12b4b956c145edc152164835d87842deac48996fae220efc80059e43ea",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_ocel_projections",
+      "hash": "d9976636ab19f97f4b9c88ff4d0aa47cbef77c0383696f776b6fe02b7d9676d2",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_perfect_alignment",
+      "hash": "f99d767a61f2e5b848796323a6b00ca1de856fec0bad3d241ca68353d05690c0",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_seqNet_enabled",
+      "hash": "42bfcda1accae0c9ca0ed3ec0eb4c84a774f9e0620af0122584ba59d0ab58ce3",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.test_trace_oracles",
+      "hash": "b4533508d50478c8113db80118397dd1cc2116012ecffcc3ea42e71154861cd8",
+      "axioms": [],
+      "proven": false
     },
     {
       "name": "ProcInt.uniformWeights",
@@ -2420,6 +2474,36 @@
       "kind": "kernelCheck",
       "subject": "Petri.Unfolding",
       "hash": "a1b07e297946933b9f55bf76dd94e2f4e641e61d0d57c689e2b7afda8cedc63e"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests",
+      "hash": "17f6fe22a181472684bfedb3ec1b89b50b8abb7886f58c0d2ae193047980cacf"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.Conformance",
+      "hash": "056e5f90061f443fd339699bd8193975c8214736314c6c4e359c1926d1e0d0f0"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.Logs",
+      "hash": "c4b1e0cfefa6937c3ed54ee1bd37a3990332caa8ae4dda44def9481815c6809c"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.Models",
+      "hash": "b37170d54d07ae4fba50b5da18aafacb55ad99fe741fe418df49faa7ae03c51a"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.Ocel",
+      "hash": "dff5ff9d7cf1222dfd8a8f8a9df9da00b9d4935ff1afa192562537a511d5fbe3"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.Petri",
+      "hash": "352372bb26a08247963914d4499aa0d8faf9b85edacdb32b4838b8ee6efd8866"
     },
     {
       "kind": "kernelCheck",
@@ -3191,5 +3275,5 @@
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
     "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
   ],
-  "foldHash": "ff62f3e569af99977c2e7f5eb0b96efd835d00d530a39b442551654ae385605e"
+  "foldHash": "a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86"
 }

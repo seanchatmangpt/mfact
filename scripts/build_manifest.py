@@ -29,9 +29,11 @@ for b in blocks:
         code = re.search(r'procint:leanCode """(.*)"""', b, re.DOTALL)
         status = re.search(r'procint:status "([^"]+)"', b)
         audit = re.search(r'procint:auditMsg "([^"]*)"', b)
+        kind = re.search(r'procint:declKind "([^"]+)"', b)
         if name and code and status:
             decls.append({'name': name.group(1), 'code': code.group(1),
                           'status': status.group(1),
+                          'kind': kind.group(1) if kind else 'def',
                           'auditMsg': audit.group(1) if audit else None})
     if re.search(r'a procint:Module\s*;', b):
         m = re.search(r'procint:moduleId "([^"]+)"', b)
@@ -96,9 +98,12 @@ gates = {
     'sorryFree': True,       # verified: 0 semantic sorry/admit in corpus
     'axiomsClean': True,     # verified: lake build AxiomAudit green, both packages
     'fixturesPass': True,    # verified: Fixtures.Positive + .Negative build green
+    # example/guard fixtures are kernel-verified at elaboration but are
+    # anonymous to #print axioms — excluded from the audit-evidence
+    # obligation by KIND, not by naming convention.
     'evidenceComplete': all(bool(d['auditMsg']) for d in decls
                             if d['status'] == 'proven'
-                            and not d['name'].startswith('ProcInt.example_')),
+                            and d['kind'] not in ('example', 'guard')),
 }
 json.dump(gates, open(OUT_GATES, 'w'), indent=2)
 print(f"artifacts={len(artifacts)} proven={sum(1 for a in artifacts if a['proven'])} "

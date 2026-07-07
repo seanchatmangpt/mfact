@@ -2,8 +2,8 @@
 
 [packs.lean-math-pack]
 source = "path:/Users/sac/praxis/packs/lean-math-pack"
-content_hash = "blake3:c75c85297bdb6633e85c03baf81fa6ce89ea75c10521626dfb5b3a5099f42e6d"
+content_hash = "blake3:36349e9ccb8fe80361a4c044dca3383f3a064b7b268e44073432079ec67cdc8b"
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:2b8268b6ce5e759f3b04d44b61b1ce04a5a427710c498f62bf00bd107af13f2b"
+content_hash = "blake3:8311b6d464051f753d0691bef84a1dc3d54ed00eef1c47845fa351750e75d715"

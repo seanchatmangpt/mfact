@@ -45,6 +45,12 @@ import ProcInt.Analytics.Multiperspective
 import ProcInt.Analytics.Lifecycle
 import ProcInt.Fixtures.Positive
 import ProcInt.Fixtures.Negative
+import ProcInt.Tests.Petri
+import ProcInt.Tests.Logs
+import ProcInt.Tests.Conformance
+import ProcInt.Tests.Ocel
+import ProcInt.Tests.Models
+import ProcInt.Tests
 import ProcInt.Registry.Algorithms
 import ProcInt.Registry.Breeds
 

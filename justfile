@@ -57,7 +57,16 @@ regen-check:
     cd /Users/sac/mfact && git diff --exit-code -- $(grep '^path = ' /Users/sac/mfact/.mfact/artifacts.toml | cut -d'"' -f2 | grep -v 'standing.env\|artifacts.toml' | sort -u | tr '\n' ' ') || (echo "REFUSED: ARTIFACT_DRIFT_REFUSED — unreplayable edit or stale render detected above" && exit 1)
     @echo "regen-check: all ledgered artifacts reproducible from source"
 
+# Correctness ladder: lake test drives the whole fixture surface; PROCINT_*
+# standing keys are merged only from real exit codes, never asserted.
+test:
+    cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake test
+    cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature
+    grep -v "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=" /Users/sac/mfact/release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ /Users/sac/mfact/release/standing.env
+    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE=STATED\n' >> /Users/sac/mfact/release/standing.env
+    @echo "correctness ladder: PASS (keys merged into standing.env)"
+
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:
-    @! grep -nE '(^|[^0-9])(145|309)([^0-9]|$)|ff62f3e5|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
+    @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|a138ee84|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
     @echo "prose-lint: clean"

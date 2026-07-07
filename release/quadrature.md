@@ -1,6 +1,6 @@
 # Standing Quadrature — v26.7.6
 
-`PASS` (run `c7d4dd0`). ggen renders. Lean admits. mfact certifies.
+`PASS` (run `bdd8e99`). ggen renders. Lean admits. mfact certifies.
 
 The release is not evaluated only by whether Lean builds. It is evaluated
 by whether the declaration catalog, admitted Lean corpus, process
@@ -19,7 +19,7 @@ diverges.
 | Lean to Audit | 145 | PASS |
 | Audit to Manifest | 145 | PASS |
 | Manifest to Paper | 6 | PASS |
-| Artifact to Process Event | 193 | PASS |
+| Artifact to Process Event | 199 | PASS |
 | Claim to Evidence | 5 | PASS |
 
 ## Traced paper claims

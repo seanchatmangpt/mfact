@@ -18,12 +18,12 @@
 \toprule
 Metric & Value \\
 \midrule
-Lines of Lean (\texttt{ProcInt/}) & 3{,}481 \\
-Declarations recorded in the ontology & 309 \\
-Modules & 44 \\
+Lines of Lean (\texttt{ProcInt/}) & 4{,}274 \\
+Declarations recorded in the ontology & 318 \\
+Modules & 50 \\
 Theorems kernel-admitted and axiom-audited (\emph{proven}) & 145 \\
 Statements formalized but not discharged (\emph{stated}) & 2 \\
-Definitions and structures & 162 \\
+Definitions, structures, and test oracles & 171 \\
 \bottomrule
 \end{tabular}
 \caption{Corpus size and the proven/stated/definition split, as recorded
@@ -76,9 +76,9 @@ if either rejection ever silently stops happening.
 \paragraph{Certification.} \texttt{mfact certify release-manifest.json
 gates.json} exits 0 with \texttt{sorryFree}, \texttt{axiomsClean},
 \texttt{fixturesPass}, and \texttt{evidenceComplete} all true. The
-genesis-folded release hash (BLAKE3, folded over all 309 artifact hashes
+genesis-folded release hash (BLAKE3, folded over all 318 artifact hashes
 in name order, seed \texttt{"mfact-v26.7.6-genesis"}) is
-\texttt{ff62f3e5...385605e} (truncated; full value in
+\texttt{a138ee84...79fd86} (truncated; full value in
 \texttt{release-manifest.json}). Both negative controls behaved as
 required: flipping \texttt{sorryFree} to false in a copy of the gates
 file causes \texttt{mfact certify} to exit 1 with an explicit gate-failure

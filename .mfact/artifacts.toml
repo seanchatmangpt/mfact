@@ -29,13 +29,13 @@ content_hash = "blake3:8d710c8d394ae7c8cc0e8aa320a2ae9967a09b6e3a852dd41e50a1cea
 path = "paper/quadrature.tex"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:c7d4a6a1907aebd708599633f8b00a3f0dafe6f5213e782e249a9f5e878008ba"
+content_hash = "blake3:82b248f1c0639dbaa178f5f86d1b00e7f29afb2d0222b09bac31e72bfb6d5120"
 
 [[artifact]]
 path = "paper/release_macros.tex"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:3a2b4bf2623e75e2212d23f8eac150c6fae97f40a74071c9ea45eb42f9503b45"
+content_hash = "blake3:1551358de9435c81919121d4a25c4ceef059019c09b5383a8771bb3715008802"
 
 [[artifact]]
 path = "procint/AxiomAudit.lean"
@@ -47,7 +47,7 @@ content_hash = "blake3:66a403e432dd56d86d636c34628d1f516962f1b5d9b82a1f1e2e8b5ed
 path = "procint/ProcInt.lean"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/lean-math-pack"
-content_hash = "blake3:91cdb5840c264053ac106bf8aa25b7560520aa08dff8b1f6fb906ef59d3c824e"
+content_hash = "blake3:26fb7940678a36e1baf26ba5762fce35b6e34ce936cdae454c49ddda29feec4a"
 
 [[artifact]]
 path = "procint/ProcInt/Analytics/Causality.lean"
@@ -305,7 +305,43 @@ content_hash = "blake3:11a5633ca0b3fc84bab83428b73941a04df0bdbcf686d48fb368cccfe
 path = "procint/ProcInt/Release/Quadrature.lean"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:980290aefce88550b231770939c29dc76a36631598449413c1716f0134fc64f9"
+content_hash = "blake3:522ac19872be841c7b1eda3ee0e4c8bf4cf20f997559ea08f50e78c616a17696"
+
+[[artifact]]
+path = "procint/ProcInt/Tests.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:80c33898543203adf57e681bbbadd81303f06ba4187822d307647d9025530a7e"
+
+[[artifact]]
+path = "procint/ProcInt/Tests/Conformance.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:91481d0587c4df8f6662b35531857e52089b81aabfbb66b3620c4fc636ace905"
+
+[[artifact]]
+path = "procint/ProcInt/Tests/Logs.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:0bc77e24d15769736431e58287617693ee91a876628830f440b919a925101409"
+
+[[artifact]]
+path = "procint/ProcInt/Tests/Models.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:64709782b7e0447bc52f2661b959b64b3a6d6b7c7aad142b30951d84a6e78e44"
+
+[[artifact]]
+path = "procint/ProcInt/Tests/Ocel.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:501e4e2bbdaf6c4168925df9ce247e3539b7963b297e48020c2d65d5841c8b46"
+
+[[artifact]]
+path = "procint/ProcInt/Tests/Petri.lean"
+producer = "ggen"
+pack = "/Users/sac/praxis/packs/lean-math-pack"
+content_hash = "blake3:d37513237988e36b5ed1ae9002f588707c2f99a120ca48d830e01132b303f463"
 
 [[artifact]]
 path = "procint/ProcInt/Workflow/Flow.lean"
@@ -341,25 +377,25 @@ content_hash = "blake3:8e591aa31e7c391fa2e5e54be0f88f35681d74a4e1bae12863a80e350
 path = "release/quadrature.json"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:b5d8e7acaf0ad8a809a670c2a2a88a366bdea24ae383e698ecfad6e7d79046db"
+content_hash = "blake3:a5fbeafd162b2f0d881d5b2eb97f1af6e40ba3d7ed645137afef744f0b3a0c4d"
 
 [[artifact]]
 path = "release/quadrature.md"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/quadrature-pack"
-content_hash = "blake3:765df0ceead1ea6a122c0d6c4159c517c91842f0338500dc2ab599db23c4e7e6"
+content_hash = "blake3:530dcb916089b24087ee0624d9142257acd7a13beb0407813d81191bd2363158"
 
 [[artifact]]
 path = "paper/evaluation.tex"
 producer = "scripts (manifest-derived; numbers verified by quadrature eval check)"
 sources = ["release/release-manifest.json"]
-content_hash = "blake3:d3538f359bc148dd3fed4cdad27715e6f524f497216bac2929754758b3a63711"
+content_hash = "blake3:901c513e52f7f24fa87b01253397cbcc748309650f0c8960748694ff5ebde64e"
 
 [[artifact]]
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:28cedb1c536c961ced4ba9c7b4b7ab311f761f8dfda2da1c3b4276072bdf7436"
+content_hash = "blake3:c07897846c90d9a044176b42928876b35f5d5a84a4a85e42a891fd24b466bf2c"
 
 [[artifact]]
 path = "release/gates.json"
@@ -371,4 +407,4 @@ content_hash = "blake3:e6b57cddbfc5cf16b9fe698294a01ea61bce217cab3c4b20b7f6c5bdb
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:fb9043a10198555224850564489152fc59aa401ec9bdc11231a21c8800e69764"
+content_hash = "blake3:6ce7c0bfe40fca6aca48cb0a6f1a715946b1e0f8782e3c1301a428b281bb6e8f"

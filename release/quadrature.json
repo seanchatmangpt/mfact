@@ -1,7 +1,7 @@
 {
   "schema": "mfact.quadrature.v1",
   "release_id": "v26.7.6",
-  "run_identifier": "c7d4dd0",
+  "run_identifier": "bdd8e99",
   "slogan": "ggen renders. Lean admits. mfact certifies.",
   "surfaces": {
     "ttl": { "proven_decls": 145 },
@@ -15,7 +15,7 @@
     { "pair": "lean_to_audit", "label": "Lean to Audit", "count": 145, "result": "PASS" },
     { "pair": "audit_to_manifest", "label": "Audit to Manifest", "count": 145, "result": "PASS" },
     { "pair": "manifest_to_paper", "label": "Manifest to Paper", "count": 6, "result": "PASS" },
-    { "pair": "artifact_to_process", "label": "Artifact to Process Event", "count": 193, "result": "PASS" },
+    { "pair": "artifact_to_process", "label": "Artifact to Process Event", "count": 199, "result": "PASS" },
     { "pair": "claim_to_evidence", "label": "Claim to Evidence", "count": 5, "result": "PASS" }
   ],
   "claims": [

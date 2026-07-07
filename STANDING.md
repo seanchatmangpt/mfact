@@ -53,9 +53,11 @@ in each fragment file; the totals row is independently taken from
 | Models (DFG/CausalNet/BPMN/Declare) | 4 | 37 | 15 | 0 | 22 |
 | Analytics | 8 | 55 | 20 | 0 | 35 |
 | Fixtures\* | 2 | 4 | 0 | 0 | 0 |
-| **Total** | **44** | **309** | **145** | **2** | **162** |
+| Tests (correctness ladder)\* | 6 | 9 | 0 | 0 | 9 |
+| **Total** | **50** | **318** | **145** | **2** | **171** |
 
-\* The 4 fixture declarations are `example`s (Lean's anonymous-declaration
+\* The fixture and test-oracle declarations are `example`s and `#guard`s
+(Lean's anonymous-declaration
 form): they are kernel-verified — the corpus does not build if they stop
 type-checking or a negative fixture stops failing — but `#print axioms`
 cannot target an anonymous declaration, so they are not part of the
@@ -118,8 +120,8 @@ axioms at all**.
 
 `mfact certify release-manifest.json gates.json` — exit 0.
 Genesis-folded release hash (BLAKE3, seed `mfact-v26.7.6-genesis`, folded
-over all 309 artifact hashes in name order):
-`ff62f3e569af99977c2e7f5eb0b96efd835d00d530a39b442551654ae385605e`.
+over all 318 artifact hashes in name order):
+`a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86`.
 
 Negative controls (the gate must be able to fail, or it certifies
 nothing):
