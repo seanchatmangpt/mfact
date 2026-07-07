@@ -4,8 +4,8 @@
   "status": "ALIVE",
   "detail": "cold build PASS from untarred package (13 declared files)",
   "declaredFileCount": 13,
-  "tarballBlake3": "6a3e355ea7bc9f47757eebdb859f21aa294432df8c273b7bd7c9afeeea9ff840",
-  "pdfBlake3": "ca665c75b88d8a30a73c41b78eaaf7ddc73104c41d14f25e7abf4fdd401a395b",
+  "tarballBlake3": "bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5",
+  "pdfBlake3": "fd67d3932d367d000ab3aae15f31a425fbf44ffef2ce2f59e15b1a269e5cb97c",
   "gates": ["declared==packed", "no absolute local paths", "cold latexmk build from untarred package"],
   "actuation": "PENDING_EXTERNAL_ACTUATION"
 }
