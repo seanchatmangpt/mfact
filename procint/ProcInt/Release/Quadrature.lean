@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Standing Quadrature witness — v26.7.7 (run 1654a9b)
+/-! # Standing Quadrature witness — v26.7.7 (run 150c342)
 
 A finite, kernel-checked witness that the release's surfaces cohere:
 the TTL declaration catalog, the release manifest, and the axiom audit
@@ -105,16 +105,23 @@ def ttlProvenDecls : List String := [
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.live_of_sound",
   "ProcInt.WfNet.not_flowEdge_from_sink",
   "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.proper_of_bounded",
   "ProcInt.WfNet.reaches_shortCircuit",
   "ProcInt.WfNet.shortCircuit_enabled_inl",
   "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_fire_star",
   "ProcInt.WfNet.shortCircuit_post_inl",
   "ProcInt.WfNet.shortCircuit_post_inr",
   "ProcInt.WfNet.shortCircuit_pre_inl",
   "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_reaches_project",
+  "ProcInt.WfNet.shortCircuit_seq_split",
   "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.WfNet.shortCircuit_step_star",
+  "ProcInt.WfNet.sound_of_live_bounded",
   "ProcInt.XesLifecycleTransition.asString_injective",
   "ProcInt.XesLifecycleTransition.asString_parse",
   "ProcInt.XesLifecycleTransition.parse_asString",
@@ -262,16 +269,23 @@ def manifestProvenDecls : List String := [
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.live_of_sound",
   "ProcInt.WfNet.not_flowEdge_from_sink",
   "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.proper_of_bounded",
   "ProcInt.WfNet.reaches_shortCircuit",
   "ProcInt.WfNet.shortCircuit_enabled_inl",
   "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_fire_star",
   "ProcInt.WfNet.shortCircuit_post_inl",
   "ProcInt.WfNet.shortCircuit_post_inr",
   "ProcInt.WfNet.shortCircuit_pre_inl",
   "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_reaches_project",
+  "ProcInt.WfNet.shortCircuit_seq_split",
   "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.WfNet.shortCircuit_step_star",
+  "ProcInt.WfNet.sound_of_live_bounded",
   "ProcInt.XesLifecycleTransition.asString_injective",
   "ProcInt.XesLifecycleTransition.asString_parse",
   "ProcInt.XesLifecycleTransition.parse_asString",
@@ -419,16 +433,23 @@ def auditedDecls : List String := [
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.live_of_sound",
   "ProcInt.WfNet.not_flowEdge_from_sink",
   "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.proper_of_bounded",
   "ProcInt.WfNet.reaches_shortCircuit",
   "ProcInt.WfNet.shortCircuit_enabled_inl",
   "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_fire_star",
   "ProcInt.WfNet.shortCircuit_post_inl",
   "ProcInt.WfNet.shortCircuit_post_inr",
   "ProcInt.WfNet.shortCircuit_pre_inl",
   "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_reaches_project",
+  "ProcInt.WfNet.shortCircuit_seq_split",
   "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.WfNet.shortCircuit_step_star",
+  "ProcInt.WfNet.sound_of_live_bounded",
   "ProcInt.XesLifecycleTransition.asString_injective",
   "ProcInt.XesLifecycleTransition.asString_parse",
   "ProcInt.XesLifecycleTransition.parse_asString",
@@ -497,7 +518,7 @@ every audited declaration has a TTL origin. -/
 theorem ttl_audit_closed : ttlProvenDecls = auditedDecls := by rfl
 
 /-- Cardinality of the closed proven surface. -/
-theorem provenSurface_count : ttlProvenDecls.length = 153 := by rfl
+theorem provenSurface_count : ttlProvenDecls.length = 160 := by rfl
 
 /-- Paper-claim surface: (claim id, evidence reference) pairs. -/
 def paperClaims : List (String × String) := [

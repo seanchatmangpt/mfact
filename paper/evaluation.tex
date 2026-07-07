@@ -18,10 +18,10 @@
 \toprule
 Metric & Value \\
 \midrule
-Lines of Lean (\texttt{ProcInt/}) & 6{,}711 \\
-Declarations recorded in the ontology & 333 \\
+Lines of Lean (\texttt{ProcInt/}) & 7{,}204 \\
+Declarations recorded in the ontology & 340 \\
 Modules & 51 \\
-Theorems kernel-admitted and axiom-audited (\emph{proven}) & 153 \\
+Theorems kernel-admitted and axiom-audited (\emph{proven}) & 160 \\
 Statements formalized but not discharged (\emph{stated}) & 2 \\
 Definitions, structures, and test oracles & 178 \\
 \bottomrule
@@ -41,14 +41,14 @@ Axiom footprint of proven theorems & Count \\
 No axioms & 37 \\
 \texttt{propext} & 28 \\
 \texttt{Quot.sound}, \texttt{propext} & 26 \\
-\texttt{Classical.choice}, \texttt{Quot.sound}, \texttt{propext} & 62 \\
+\texttt{Classical.choice}, \texttt{Quot.sound}, \texttt{propext} & 69 \\
 \midrule
-Total proven & 153 \\
+Total proven & 160 \\
 Unauthorized axioms found & 0 \\
 Transitive \texttt{sorryAx} found & 0 \\
 \bottomrule
 \end{tabular}
-\caption{Axiom-audit result over all 153 proven theorems. Every set is a
+\caption{Axiom-audit result over all 160 proven theorems. Every set is a
 subset of the trusted \{\texttt{propext}, \texttt{Classical.choice},
 \texttt{Quot.sound}\}; \texttt{no\_valid\_objection}
 (Section~\ref{sec:mfact}) is the strongest case, depending on none of them.}
@@ -76,9 +76,9 @@ if either rejection ever silently stops happening.
 \paragraph{Certification.} \texttt{mfact certify release-manifest.json
 gates.json} exits 0 with \texttt{sorryFree}, \texttt{axiomsClean},
 \texttt{fixturesPass}, and \texttt{evidenceComplete} all true. The
-genesis-folded release hash (BLAKE3, folded over all 333 artifact hashes
+genesis-folded release hash (BLAKE3, folded over all 340 artifact hashes
 in name order, seed \texttt{"mfact-v26.7.6-genesis"}) is
-\texttt{a61fe6f5...2d768d} (truncated; full value in
+\texttt{d33e8c3d...21bd9d} (truncated; full value in
 \texttt{release-manifest.json}). Both negative controls behaved as
 required: flipping \texttt{sorryFree} to false in a copy of the gates
 file causes \texttt{mfact certify} to exit 1 with an explicit gate-failure

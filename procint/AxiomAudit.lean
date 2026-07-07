@@ -270,11 +270,17 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.WfNet.initialMarking_source' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.initialMarking_source
 
+/-- info: 'ProcInt.WfNet.live_of_sound' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.live_of_sound
+
 /-- info: 'ProcInt.WfNet.not_flowEdge_from_sink' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.not_flowEdge_from_sink
 
 /-- info: 'ProcInt.WfNet.not_flowEdge_to_source' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.not_flowEdge_to_source
+
+/-- info: 'ProcInt.WfNet.proper_of_bounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.proper_of_bounded
 
 /-- info: 'ProcInt.WfNet.reaches_shortCircuit' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.reaches_shortCircuit
@@ -284,6 +290,9 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.WfNet.shortCircuit_enabled_star' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_enabled_star
+
+/-- info: 'ProcInt.WfNet.shortCircuit_fire_star' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_fire_star
 
 /-- info: 'ProcInt.WfNet.shortCircuit_post_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_post_inl
@@ -297,8 +306,20 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.WfNet.shortCircuit_pre_inr' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_pre_inr
 
+/-- info: 'ProcInt.WfNet.shortCircuit_reaches_project' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_reaches_project
+
+/-- info: 'ProcInt.WfNet.shortCircuit_seq_split' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_seq_split
+
 /-- info: 'ProcInt.WfNet.shortCircuit_step_inl' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_step_inl
+
+/-- info: 'ProcInt.WfNet.shortCircuit_step_star' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.shortCircuit_step_star
+
+/-- info: 'ProcInt.WfNet.sound_of_live_bounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.sound_of_live_bounded
 
 /-- info: 'ProcInt.XesLifecycleTransition.asString_injective' depends on axioms: [propext] -/
 #guard_msgs in #print axioms ProcInt.XesLifecycleTransition.asString_injective

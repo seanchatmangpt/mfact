@@ -15,20 +15,20 @@ quad:Result a quad:Results ;
   quad:untracedArtifacts 0 ;
   quad:unclassifiedRefusals 0 ;
   quad:releaseId "v26.7.7" ;
-  quad:runId "1654a9b" ;
-  quad:ttlCount 153 ;
-  quad:leanCount 153 ;
-  quad:manifestCount 153 ;
-  quad:auditCount 153 ;
+  quad:runId "150c342" ;
+  quad:ttlCount 160 ;
+  quad:leanCount 160 ;
+  quad:manifestCount 160 ;
+  quad:auditCount 160 ;
   quad:claimCount 5 ;
   quad:evalCount 6 ;
   quad:eventCount 10 ;
   quad:releaseTag "v26.7.7-procint-certified" ;
-  quad:foldHash "a61fe6f5fe2568ddabbc974a4e0eb5144d91d6550f48d59f42359de60c2d768d" ;
+  quad:foldHash "d33e8c3dc2483e21a73e31272521e3ae04b6dbecc332010f9e06f8319321bd9d" ;
   quad:sorryCount 0 ;
   quad:admitCount 0 ;
   quad:statedCount 2 ;
-  quad:totalDecls 333 ;
+  quad:totalDecls 340 ;
   quad:axiomAudit "PASS" ;
   quad:fixtures "PASS" ;
   quad:certified "PASS" ;
@@ -38,7 +38,7 @@ quad:Edge_ttl_to_lean a quad:EdgePair ;
   quad:pairKey "ttl_to_lean" ;
   quad:pairLabel "TTL to Lean" ;
   quad:pairLabelTex "TTL $\\rightarrow$ Lean" ;
-  quad:count 153 ;
+  quad:count 160 ;
   quad:result "PASS" ;
   quad:order 1 .
 
@@ -46,7 +46,7 @@ quad:Edge_lean_to_audit a quad:EdgePair ;
   quad:pairKey "lean_to_audit" ;
   quad:pairLabel "Lean to Audit" ;
   quad:pairLabelTex "Lean $\\rightarrow$ Audit" ;
-  quad:count 153 ;
+  quad:count 160 ;
   quad:result "PASS" ;
   quad:order 2 .
 
@@ -54,7 +54,7 @@ quad:Edge_audit_to_manifest a quad:EdgePair ;
   quad:pairKey "audit_to_manifest" ;
   quad:pairLabel "Audit to Manifest" ;
   quad:pairLabelTex "Audit $\\rightarrow$ Manifest" ;
-  quad:count 153 ;
+  quad:count 160 ;
   quad:result "PASS" ;
   quad:order 3 .
 
@@ -70,7 +70,7 @@ quad:Edge_artifact_to_process a quad:EdgePair ;
   quad:pairKey "artifact_to_process" ;
   quad:pairLabel "Artifact to Process Event" ;
   quad:pairLabelTex "Artifact $\\rightarrow$ Process Event" ;
-  quad:count 208 ;
+  quad:count 215 ;
   quad:result "PASS" ;
   quad:order 5 .
 
@@ -90,7 +90,7 @@ quad:Claim_C1 a quad:Claim ;
 
 quad:Claim_C2 a quad:Claim ;
   quad:claimId "C2" ;
-  quad:claimText "procint corpus: 153 kernel-admitted, axiom-audited theorems" ;
+  quad:claimText "procint corpus: 160 kernel-admitted, axiom-audited theorems" ;
   quad:evidenceRef "release/release-manifest.json#artifacts" ;
   quad:order 2 .
 
@@ -199,16 +199,23 @@ quad:T_ProcInt_WfNet_finalMarking_source a quad:TtlProvenDecl ; quad:declName "P
 quad:T_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:T_ProcInt_WfNet_initialMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:T_ProcInt_WfNet_initialMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
+quad:T_ProcInt_WfNet_live_of_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.live_of_sound" .
 quad:T_ProcInt_WfNet_not_flowEdge_from_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_from_sink" .
 quad:T_ProcInt_WfNet_not_flowEdge_to_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_to_source" .
+quad:T_ProcInt_WfNet_proper_of_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.proper_of_bounded" .
 quad:T_ProcInt_WfNet_reaches_shortCircuit a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.reaches_shortCircuit" .
 quad:T_ProcInt_WfNet_shortCircuit_enabled_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_inl" .
 quad:T_ProcInt_WfNet_shortCircuit_enabled_star a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_star" .
+quad:T_ProcInt_WfNet_shortCircuit_fire_star a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_fire_star" .
 quad:T_ProcInt_WfNet_shortCircuit_post_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inl" .
 quad:T_ProcInt_WfNet_shortCircuit_post_inr a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inr" .
 quad:T_ProcInt_WfNet_shortCircuit_pre_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inl" .
 quad:T_ProcInt_WfNet_shortCircuit_pre_inr a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inr" .
+quad:T_ProcInt_WfNet_shortCircuit_reaches_project a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_reaches_project" .
+quad:T_ProcInt_WfNet_shortCircuit_seq_split a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:T_ProcInt_WfNet_shortCircuit_step_inl a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
+quad:T_ProcInt_WfNet_shortCircuit_step_star a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:T_ProcInt_WfNet_sound_of_live_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:T_ProcInt_XesLifecycleTransition_asString_injective a quad:TtlProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:T_ProcInt_XesLifecycleTransition_asString_parse a quad:TtlProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .
 quad:T_ProcInt_XesLifecycleTransition_parse_asString a quad:TtlProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.parse_asString" .
@@ -352,16 +359,23 @@ quad:M_ProcInt_WfNet_finalMarking_source a quad:ManifestProvenDecl ; quad:declNa
 quad:M_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:M_ProcInt_WfNet_initialMarking_sink a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:M_ProcInt_WfNet_initialMarking_source a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
+quad:M_ProcInt_WfNet_live_of_sound a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.live_of_sound" .
 quad:M_ProcInt_WfNet_not_flowEdge_from_sink a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_from_sink" .
 quad:M_ProcInt_WfNet_not_flowEdge_to_source a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_to_source" .
+quad:M_ProcInt_WfNet_proper_of_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.proper_of_bounded" .
 quad:M_ProcInt_WfNet_reaches_shortCircuit a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.reaches_shortCircuit" .
 quad:M_ProcInt_WfNet_shortCircuit_enabled_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_inl" .
 quad:M_ProcInt_WfNet_shortCircuit_enabled_star a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_star" .
+quad:M_ProcInt_WfNet_shortCircuit_fire_star a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_fire_star" .
 quad:M_ProcInt_WfNet_shortCircuit_post_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inl" .
 quad:M_ProcInt_WfNet_shortCircuit_post_inr a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inr" .
 quad:M_ProcInt_WfNet_shortCircuit_pre_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inl" .
 quad:M_ProcInt_WfNet_shortCircuit_pre_inr a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inr" .
+quad:M_ProcInt_WfNet_shortCircuit_reaches_project a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_reaches_project" .
+quad:M_ProcInt_WfNet_shortCircuit_seq_split a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:M_ProcInt_WfNet_shortCircuit_step_inl a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
+quad:M_ProcInt_WfNet_shortCircuit_step_star a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:M_ProcInt_WfNet_sound_of_live_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:M_ProcInt_XesLifecycleTransition_asString_injective a quad:ManifestProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:M_ProcInt_XesLifecycleTransition_asString_parse a quad:ManifestProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .
 quad:M_ProcInt_XesLifecycleTransition_parse_asString a quad:ManifestProvenDecl ; quad:declName "ProcInt.XesLifecycleTransition.parse_asString" .
@@ -505,16 +519,23 @@ quad:A_ProcInt_WfNet_finalMarking_source a quad:AuditedDecl ; quad:declName "Pro
 quad:A_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:A_ProcInt_WfNet_initialMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:A_ProcInt_WfNet_initialMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
+quad:A_ProcInt_WfNet_live_of_sound a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.live_of_sound" .
 quad:A_ProcInt_WfNet_not_flowEdge_from_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_from_sink" .
 quad:A_ProcInt_WfNet_not_flowEdge_to_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.not_flowEdge_to_source" .
+quad:A_ProcInt_WfNet_proper_of_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.proper_of_bounded" .
 quad:A_ProcInt_WfNet_reaches_shortCircuit a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.reaches_shortCircuit" .
 quad:A_ProcInt_WfNet_shortCircuit_enabled_inl a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_inl" .
 quad:A_ProcInt_WfNet_shortCircuit_enabled_star a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_enabled_star" .
+quad:A_ProcInt_WfNet_shortCircuit_fire_star a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_fire_star" .
 quad:A_ProcInt_WfNet_shortCircuit_post_inl a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inl" .
 quad:A_ProcInt_WfNet_shortCircuit_post_inr a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_post_inr" .
 quad:A_ProcInt_WfNet_shortCircuit_pre_inl a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inl" .
 quad:A_ProcInt_WfNet_shortCircuit_pre_inr a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_pre_inr" .
+quad:A_ProcInt_WfNet_shortCircuit_reaches_project a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_reaches_project" .
+quad:A_ProcInt_WfNet_shortCircuit_seq_split a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_seq_split" .
 quad:A_ProcInt_WfNet_shortCircuit_step_inl a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_inl" .
+quad:A_ProcInt_WfNet_shortCircuit_step_star a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.shortCircuit_step_star" .
+quad:A_ProcInt_WfNet_sound_of_live_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.sound_of_live_bounded" .
 quad:A_ProcInt_XesLifecycleTransition_asString_injective a quad:AuditedDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_injective" .
 quad:A_ProcInt_XesLifecycleTransition_asString_parse a quad:AuditedDecl ; quad:declName "ProcInt.XesLifecycleTransition.asString_parse" .
 quad:A_ProcInt_XesLifecycleTransition_parse_asString a quad:AuditedDecl ; quad:declName "ProcInt.XesLifecycleTransition.parse_asString" .

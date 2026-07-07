@@ -1,0 +1,50 @@
+{"generation": 0, "target": "nat_add_comm", "genome": ["omega", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["aesop", "simp", "rcases x with x | x"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["trivial"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["aesop", "rcases x with x | x", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["constructor", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["constructor", "aesop", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["aesop"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 0, "target": "nat_add_comm", "genome": ["constructor", "aesop", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["rcases x with x | x", "aesop"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["aesop", "simp", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["rcases x with x | x"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["simp", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["decide", "trivial"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["constructor", "aesop", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["simp", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["aesop"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 1, "target": "nat_add_comm", "genome": ["rfl", "aesop", "aesop", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["rfl", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["simp", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["simp", "rcases x with x | x", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["simp", "decide", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["omega", "aesop", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["rcases x with x | x"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["aesop", "rcases x with x | x", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 2, "target": "nat_add_comm", "genome": ["aesop", "aesop", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["rcases x with x | x", "simp", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["intro x", "aesop", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["omega", "rfl", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["constructor", "rfl", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["simp", "simp", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["rfl", "simp", "rcases x with x | x"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["simp", "simp", "omega"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["rcases x with x | x"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["simp", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 3, "target": "nat_add_comm", "genome": ["constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["constructor", "rfl", "rfl", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["rcases x with x | x", "simp", "decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["intro x", "decide", "constructor"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["decide"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["constructor", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["omega"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}
+{"generation": 4, "target": "nat_add_comm", "genome": ["rcases x with x | x", "rfl", "simp"], "kernel_accepted": false, "shaping_score": null, "stderr_head": ""}

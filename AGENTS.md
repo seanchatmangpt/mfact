@@ -58,6 +58,9 @@ is correct, not an omission. Do not add it to the ledger.
 
 ## Rules
 
+- **No direct pyproject.toml modifications:** Do not edit `pyproject.toml` files directly to manage Python dependencies. Use `uv add` or other package manager commands via a `just` recipe instead.
+- **No unrequested Lean-Python integration:** Do not implement custom Lean 4 integration infrastructure (such as LSP clients or subprocess runners for Lean) in the Python workspace (`pylab/`) unless explicitly requested.
+- **Deprecate `l2p`:** Do not install, reference, or use the `l2p` planning library.
 - Never manually write release counts, hashes, theorem totals, sorry counts,
   audit status, fixture status, quadrature status, or crown-jewel status —
   these come only from generated files.

@@ -5153,6 +5153,101 @@ procint:Decl_WfNet_shortCircuit_enabled_star a procint:Decl ;
 theorem WfNet.shortCircuit_enabled_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
     W.shortCircuit.Enabled W.finalMarking (Sum.inr ()) := le_refl _""" .
 
+procint:Decl_WfNet_shortCircuit_fire_star a procint:Decl ;
+  procint:inModule "Workflow.ShortCircuit" ;
+  procint:declOrder 10 ;
+  procint:declName "ProcInt.WfNet.shortCircuit_fire_star" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.shortCircuit_fire_star' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Firing the fresh transition `t*` at the final marking `[o]` lands back at
+the initial marking `[i]`, closing the cycle (van der Aalst 1997, the `N̄`
+construction). -/
+theorem WfNet.shortCircuit_fire_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
+    W.shortCircuit.fire W.finalMarking (Sum.inr ()) = W.initialMarking := by
+  have h := W.shortCircuit.fire_pre_self (Sum.inr () : T ⊕ Unit)
+  rwa [W.shortCircuit_pre_inr, W.shortCircuit_post_inr] at h""" .
+
+procint:Decl_WfNet_shortCircuit_step_star a procint:Decl ;
+  procint:inModule "Workflow.ShortCircuit" ;
+  procint:declOrder 11 ;
+  procint:declName "ProcInt.WfNet.shortCircuit_step_star" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.shortCircuit_step_star' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- The fresh transition `t*` steps the short-circuited net from the final
+marking `[o]` back to the initial marking `[i]`. -/
+theorem WfNet.shortCircuit_step_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
+    W.shortCircuit.Step W.finalMarking (Sum.inr ()) W.initialMarking :=
+  ⟨W.shortCircuit_enabled_star, (W.shortCircuit_fire_star).symm⟩""" .
+
+procint:Decl_WfNet_shortCircuit_seq_split a procint:Decl ;
+  procint:inModule "Workflow.ShortCircuit" ;
+  procint:declOrder 12 ;
+  procint:declName "ProcInt.WfNet.shortCircuit_seq_split" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.shortCircuit_seq_split' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Split a short-circuited firing sequence at the first occurrence of the
+fresh transition `t*`: either the whole run stays inside the original net, or
+it reaches, entirely inside the original net, a marking that already covers
+the final marking `[o]` (the point right before `t*` first fires). -/
+theorem WfNet.shortCircuit_seq_split {P T : Type} [DecidableEq P] {W : WfNet P T}
+    {M M' : Marking P} {σ : List (T ⊕ Unit)}
+    (h : W.shortCircuit.FiringSeq M σ M') :
+    (∃ σ', W.net.FiringSeq M σ' M') ∨
+      (∃ M1, W.net.Reaches M M1 ∧ W.finalMarking ≤ M1) := by
+  induction h with
+  | nil M => exact Or.inl ⟨[], .nil M⟩
+  | @cons Ma Mb Mc t σ' hstep hrest ih =>
+      cases t with
+      | inl t0 =>
+          have hstep0 : W.net.Step Ma t0 Mb := (WfNet.shortCircuit_step_inl W Ma Mb t0).mp hstep
+          rcases ih with ⟨σ0, hσ0⟩ | ⟨M1, hReach, hle⟩
+          · exact Or.inl ⟨t0 :: σ0, .cons hstep0 hσ0⟩
+          · exact Or.inr ⟨M1, Relation.ReflTransGen.head ⟨t0, hstep0⟩ hReach, hle⟩
+      | inr u =>
+          obtain ⟨⟩ := u
+          have hEnabled : W.shortCircuit.Enabled Ma (Sum.inr ()) := hstep.1
+          have hle : W.finalMarking ≤ Ma := hEnabled
+          exact Or.inr ⟨Ma, Relation.ReflTransGen.refl, hle⟩""" .
+
+procint:Decl_WfNet_shortCircuit_reaches_project a procint:Decl ;
+  procint:inModule "Workflow.ShortCircuit" ;
+  procint:declOrder 13 ;
+  procint:declName "ProcInt.WfNet.shortCircuit_reaches_project" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.shortCircuit_reaches_project' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- If every original-net marking reachable from `[i]` and covering `[o]`
+already equals `[o]` (proper completion), then every short-circuited run from
+`[i]` is in fact a run of the original net (`t*` never needs to fire, since
+firing it would require having already reached `[o]`, at which point it just
+loops back to `[i]`). Stated generally over the hypothesis `H` so it can be
+reused both from `proper_of_bounded` and from `Sound.proper_completion`. -/
+theorem WfNet.shortCircuit_reaches_project {P T : Type} [DecidableEq P] {W : WfNet P T}
+    (H : ∀ M, W.net.Reaches W.initialMarking M → W.finalMarking ≤ M → M = W.finalMarking) :
+    ∀ M, W.shortCircuit.Reaches W.initialMarking M → W.net.Reaches W.initialMarking M := by
+  intro M h
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | @tail Mprev M hprev hstep ih =>
+      obtain ⟨t, ht⟩ := hstep
+      cases t with
+      | inl t =>
+          have ht' : W.net.Step Mprev t M := (WfNet.shortCircuit_step_inl W Mprev M t).mp ht
+          exact ih.tail ⟨t, ht'⟩
+      | inr u =>
+          obtain ⟨u⟩ := u
+          have hEnabled : W.shortCircuit.Enabled Mprev (Sum.inr ()) := ht.1
+          have hle : W.finalMarking ≤ Mprev := hEnabled
+          have hMprevEq : Mprev = W.finalMarking := H Mprev ih hle
+          have hfire : M = W.shortCircuit.fire Mprev (Sum.inr ()) := ht.2
+          have hMeq : M = W.initialMarking := by
+            rw [hfire, hMprevEq, W.shortCircuit_fire_star]
+          rw [hMeq]
+          exact Relation.ReflTransGen.refl""" .
+
 # ═══ Module 33: Workflow.Soundness ═══
 
 procint:Mod_Workflow_Soundness a procint:Module ;
@@ -5248,3 +5343,173 @@ proven theorem in this release, and the paper must not claim otherwise.
 Two supporting lemmas about `WfNet.Sound` (`reaches_final`,
 `enabled_of_transition`) are proven and audited. -/
 def crownJewel_status : String := "stated" """ .
+
+procint:Decl_WfNet_proper_of_bounded a procint:Decl ;
+  procint:inModule "Workflow.Soundness" ;
+  procint:declOrder 6 ;
+  procint:declName "ProcInt.WfNet.proper_of_bounded" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.proper_of_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- The pump lemma (van der Aalst 1997, Lemma 8, proper-completion
+direction): if the short-circuited net is bounded from `[i]`, then every
+original-net marking reachable from `[i]` that covers the final marking `[o]`
+already equals `[o]`. If it didn't, the surplus `R = M - [o]` would be
+nonzero, and repeatedly running the original run followed by `t*` (which
+resets `[o] + n•R` back to `[i] + n•R`) would pump an unbounded number of
+tokens into `R`'s support, contradicting boundedness. -/
+theorem WfNet.proper_of_bounded {P T : Type} [DecidableEq P] {W : WfNet P T} {k : ℕ}
+    (hb : W.shortCircuit.Bounded W.initialMarking k) :
+    ∀ M, W.net.Reaches W.initialMarking M → W.finalMarking ≤ M → M = W.finalMarking := by
+  intro M hReach0 hle
+  by_contra hne
+  -- Decompose the surplus.
+  set R : Marking P := M - W.finalMarking with hRdef
+  have hMeq : W.finalMarking + R = M := by
+    rw [hRdef]; exact add_tsub_cancel_of_le hle
+  have hRne : R ≠ 0 := by
+    intro hR0
+    apply hne
+    rw [← hMeq, hR0, add_zero]
+  -- The embedding of the original run into the short-circuited net.
+  have hReachSC : W.shortCircuit.Reaches W.initialMarking M :=
+    WfNet.reaches_shortCircuit W hReach0
+  have hStepStar : W.shortCircuit.Step W.finalMarking (Sum.inr ()) W.initialMarking :=
+    WfNet.shortCircuit_step_star W
+  -- Pumping: reachability of `[i] + n • R` for every `n`.
+  have hpump : ∀ n : ℕ, W.shortCircuit.Reaches W.initialMarking (W.initialMarking + n • R) := by
+    intro n
+    induction n with
+    | zero =>
+        show W.shortCircuit.Reaches W.initialMarking (W.initialMarking + (0 : ℕ) • R)
+        simp only [zero_smul, add_zero]
+        exact Relation.ReflTransGen.refl
+    | succ n ih =>
+        have hReachSC' :
+            W.shortCircuit.Reaches (W.initialMarking + n • R) (M + n • R) :=
+          PetriNet.reaches_add W.shortCircuit (n • R) hReachSC
+        have hStep' :
+            W.shortCircuit.Step (W.finalMarking + (n + 1) • R) (Sum.inr ())
+              (W.initialMarking + (n + 1) • R) :=
+          PetriNet.step_add W.shortCircuit ((n + 1) • R) hStepStar
+        have hEq1 : M + n • R = W.finalMarking + (n + 1) • R := by
+          rw [← hMeq, succ_nsmul]
+          abel
+        have hReachSC'' :
+            W.shortCircuit.Reaches (W.initialMarking + n • R)
+              (W.finalMarking + (n + 1) • R) := by
+          rw [← hEq1]; exact hReachSC'
+        have hstep2 :
+            W.shortCircuit.Reaches (W.finalMarking + (n + 1) • R)
+              (W.initialMarking + (n + 1) • R) :=
+          Relation.ReflTransGen.single ⟨Sum.inr (), hStep'⟩
+        exact ih.trans (hReachSC''.trans hstep2)
+  -- A place in the support of the (nonzero) surplus grows without bound.
+  obtain ⟨p, hp⟩ := Finsupp.ne_iff.mp hRne
+  simp only [Finsupp.coe_zero, Pi.zero_apply] at hp
+  have hp1 : 1 ≤ R p := Nat.one_le_iff_ne_zero.mpr hp
+  have hbig := hb (W.initialMarking + (k + 1) • R) (hpump (k + 1)) p
+  have hcontra : k + 1 ≤ (W.initialMarking + (k + 1) • R) p := by
+    rw [Finsupp.add_apply, Finsupp.smul_apply]
+    calc k + 1 = (k + 1) * 1 := by ring
+      _ ≤ (k + 1) * R p := by exact Nat.mul_le_mul_left _ hp1
+      _ = (k + 1) • R p := by rw [smul_eq_mul]
+      _ ≤ W.initialMarking p + (k + 1) • R p := Nat.le_add_left _ _
+  omega""" .
+
+procint:Decl_WfNet_sound_of_live_bounded a procint:Decl ;
+  procint:inModule "Workflow.Soundness" ;
+  procint:declOrder 7 ;
+  procint:declName "ProcInt.WfNet.sound_of_live_bounded" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.sound_of_live_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Stage B assembly (van der Aalst 1997, Lemma 8 / Theorem 11, the "if"
+direction): liveness and boundedness of the short-circuited net imply
+soundness of the workflow net. Proper completion is the pump lemma
+(`proper_of_bounded`); option-to-complete and no-dead-transitions both use
+liveness of the short-circuited net together with `shortCircuit_seq_split`
+(to peel off the run up to the *first* occurrence of the fresh transition
+`t*`, staying entirely inside the original net) or, when the liveness
+witness is already anchored at `[i]`, the simpler
+`shortCircuit_reaches_project`. -/
+theorem WfNet.sound_of_live_bounded {P T : Type} [DecidableEq P] {W : WfNet P T}
+    (hl : W.shortCircuit.Live W.initialMarking)
+    (hb : ∃ k, W.shortCircuit.Bounded W.initialMarking k) :
+    W.Sound := by
+  obtain ⟨k, hbk⟩ := hb
+  have hproper : ∀ M, W.net.Reaches W.initialMarking M → W.finalMarking ≤ M → M = W.finalMarking :=
+    WfNet.proper_of_bounded hbk
+  refine ⟨?_, hproper, ?_⟩
+  · -- option_to_complete : ∀ M, Reaches [i] M → Reaches M [o]
+    intro M hReach
+    have hReachSC : W.shortCircuit.Reaches W.initialMarking M :=
+      WfNet.reaches_shortCircuit W hReach
+    obtain ⟨M', hReachMM', hEnM'⟩ := hl M hReachSC (Sum.inr ())
+    have hle : W.finalMarking ≤ M' := hEnM'
+    obtain ⟨σ, hσ⟩ := PetriNet.reaches_firingSeq hReachMM'
+    rcases WfNet.shortCircuit_seq_split hσ with ⟨σ', hσ'⟩ | ⟨M1, hReachMM1, hleM1⟩
+    · -- the whole M --σ'--> M' run avoids t*: it lives entirely in the
+      -- original net, so M' itself is net-reachable from [i] and from M.
+      have hReachNetMM' : W.net.Reaches M M' := PetriNet.firingSeq_reaches hσ'
+      have hReachInitM' : W.net.Reaches W.initialMarking M' := hReach.trans hReachNetMM'
+      have hM'eq : M' = W.finalMarking := hproper M' hReachInitM' hle
+      rwa [hM'eq] at hReachNetMM'
+    · -- t* fires somewhere in the run; M1 is the marking right before its
+      -- *first* occurrence, reached from M entirely inside the original net.
+      have hReachInitM1 : W.net.Reaches W.initialMarking M1 := hReach.trans hReachMM1
+      have hM1eq : M1 = W.finalMarking := hproper M1 hReachInitM1 hleM1
+      rwa [hM1eq] at hReachMM1
+  · -- no_dead_transitions : ∀ t, ∃ M M', Reaches [i] M ∧ Step M t M'
+    intro t
+    have hReach0 : W.shortCircuit.Reaches W.initialMarking W.initialMarking :=
+      Relation.ReflTransGen.refl
+    obtain ⟨M', hReachM', hEnM'⟩ := hl W.initialMarking hReach0 (Sum.inl t)
+    have hReachNetM' : W.net.Reaches W.initialMarking M' :=
+      WfNet.shortCircuit_reaches_project hproper M' hReachM'
+    have hEnNetM' : W.net.Enabled M' t := (WfNet.shortCircuit_enabled_inl W M' t).mp hEnM'
+    exact ⟨M', W.net.fire M' t, hReachNetM', ⟨hEnNetM', rfl⟩⟩""" .
+
+procint:Decl_WfNet_live_of_sound a procint:Decl ;
+  procint:inModule "Workflow.Soundness" ;
+  procint:declOrder 8 ;
+  procint:declName "ProcInt.WfNet.live_of_sound" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.WfNet.live_of_sound' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem WfNet.live_of_sound {P T : Type} [DecidableEq P] {W : WfNet P T}
+    (h : W.Sound) : W.shortCircuit.Live W.initialMarking := by
+  intro M hReachSC t'
+  have hReachNetM : W.net.Reaches W.initialMarking M :=
+    WfNet.shortCircuit_reaches_project h.proper_completion M hReachSC
+  cases t' with
+  | inl t =>
+      -- route M to final marking inside the original net
+      have hReachFinal : W.net.Reaches M W.finalMarking :=
+        h.option_to_complete M hReachNetM
+      -- fire t* to loop back to initial marking
+      have hStepStar : W.shortCircuit.Step W.finalMarking (Sum.inr ()) W.initialMarking :=
+        WfNet.shortCircuit_step_star W
+      -- t is enabled at some marking reachable from initial marking
+      obtain ⟨M'', hReachM'', hEnM''⟩ := h.enabled_of_transition t
+      -- assemble: M --(SC)--> finalMarking --t*--> initialMarking --(SC)--> M''
+      have hReachSC1 : W.shortCircuit.Reaches M W.finalMarking :=
+        WfNet.reaches_shortCircuit W hReachFinal
+      have hReachSC2 : W.shortCircuit.Reaches W.finalMarking W.initialMarking :=
+        Relation.ReflTransGen.single ⟨Sum.inr (), hStepStar⟩
+      have hReachSC3 : W.shortCircuit.Reaches W.initialMarking M'' :=
+        WfNet.reaches_shortCircuit W hReachM''
+      have hReachTotal : W.shortCircuit.Reaches M M'' :=
+        (hReachSC1.trans hReachSC2).trans hReachSC3
+      have hEnSC : W.shortCircuit.Enabled M'' (Sum.inl t) :=
+        (WfNet.shortCircuit_enabled_inl W M'' t).mpr hEnM''
+      exact ⟨M'', hReachTotal, hEnSC⟩
+  | inr u =>
+      obtain ⟨⟩ := u
+      have hReachFinal : W.net.Reaches M W.finalMarking :=
+        h.option_to_complete M hReachNetM
+      have hReachSCFinal : W.shortCircuit.Reaches M W.finalMarking :=
+        WfNet.reaches_shortCircuit W hReachFinal
+      have hEnStar : W.shortCircuit.Enabled W.finalMarking (Sum.inr ()) :=
+        WfNet.shortCircuit_enabled_star W
+      exact ⟨W.finalMarking, hReachSCFinal, hEnStar⟩""" .

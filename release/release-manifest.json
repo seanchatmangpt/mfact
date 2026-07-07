@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "1654a9b5f80588175c3610db2623590bc2b674a9",
+  "runIdentifier": "150c34256338f43fb1ee546e7064213831805050",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -1609,6 +1609,16 @@
       "proven": true
     },
     {
+      "name": "ProcInt.WfNet.live_of_sound",
+      "hash": "cbc058db866f7a1f3b9ba29232558f7d6e6ec9d6374ccd4cd6b4cec24de12c2c",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
       "name": "ProcInt.WfNet.not_flowEdge_from_sink",
       "hash": "793477afdce84bad63595591d0fa5d0079edcd369a831d80f5f5406f47b7ad97",
       "axioms": [
@@ -1622,6 +1632,16 @@
       "hash": "ae4d2ac2edd9285c985d5ddbffe1ce113d0f9d4e538f0b9ce5b62e57f6a54f71",
       "axioms": [
         "propext",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
+      "name": "ProcInt.WfNet.proper_of_bounded",
+      "hash": "ca0280071fc4501158439f500b8af52762747b4ff9e85613851a83fdcdb759b9",
+      "axioms": [
+        "propext",
+        "Classical.choice",
         "Quot.sound"
       ],
       "proven": true
@@ -1655,6 +1675,16 @@
     {
       "name": "ProcInt.WfNet.shortCircuit_enabled_star",
       "hash": "e5adee2bfa5ee0d9e797a9bc9f702b2998e05f84378f624789d42dffec9c78bc",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
+      "name": "ProcInt.WfNet.shortCircuit_fire_star",
+      "hash": "866b722c0389717cb82129e3a3e42f294cf15ef292ff2b82e42e7f3ee3b72e05",
       "axioms": [
         "propext",
         "Classical.choice",
@@ -1703,8 +1733,38 @@
       "proven": true
     },
     {
+      "name": "ProcInt.WfNet.shortCircuit_reaches_project",
+      "hash": "e28cdbfbf049fe7508a4f91f4d62c8f58f7665ff03b684df5f3b5a5d6df5a9bc",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
+      "name": "ProcInt.WfNet.shortCircuit_seq_split",
+      "hash": "1f0a072a067f6a366d25a403348998015c4c8331d3578b354468d9e67c0d684d",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
       "name": "ProcInt.WfNet.shortCircuit_step_inl",
       "hash": "9e9fe022690f33c4996cc2ae839eb503da69e0a7181c1b622d6b59303448701c",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
+    },
+    {
+      "name": "ProcInt.WfNet.shortCircuit_step_star",
+      "hash": "2eea7d633a7c15a265eacee5544fb737ee0f5fc9a397aa99574b3261713c0da7",
       "axioms": [
         "propext",
         "Classical.choice",
@@ -1717,6 +1777,16 @@
       "hash": "0cd1d85bf97d7e0b4b137b8196514661fad9a4d02d381411d6904b673d909507",
       "axioms": [],
       "proven": false
+    },
+    {
+      "name": "ProcInt.WfNet.sound_of_live_bounded",
+      "hash": "5e5acc5c05ae2a8d57a63fd856ebfdff2cd0f009ea5a896aa51ef068a5a303eb",
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "proven": true
     },
     {
       "name": "ProcInt.XesAttribute",
@@ -3088,6 +3158,11 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.live_of_sound",
+      "hash": "cbc058db866f7a1f3b9ba29232558f7d6e6ec9d6374ccd4cd6b4cec24de12c2c"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.WfNet.not_flowEdge_from_sink",
       "hash": "793477afdce84bad63595591d0fa5d0079edcd369a831d80f5f5406f47b7ad97"
     },
@@ -3095,6 +3170,11 @@
       "kind": "axiomAudit",
       "subject": "ProcInt.WfNet.not_flowEdge_to_source",
       "hash": "ae4d2ac2edd9285c985d5ddbffe1ce113d0f9d4e538f0b9ce5b62e57f6a54f71"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.proper_of_bounded",
+      "hash": "ca0280071fc4501158439f500b8af52762747b4ff9e85613851a83fdcdb759b9"
     },
     {
       "kind": "axiomAudit",
@@ -3110,6 +3190,11 @@
       "kind": "axiomAudit",
       "subject": "ProcInt.WfNet.shortCircuit_enabled_star",
       "hash": "e5adee2bfa5ee0d9e797a9bc9f702b2998e05f84378f624789d42dffec9c78bc"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.shortCircuit_fire_star",
+      "hash": "866b722c0389717cb82129e3a3e42f294cf15ef292ff2b82e42e7f3ee3b72e05"
     },
     {
       "kind": "axiomAudit",
@@ -3133,8 +3218,28 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.shortCircuit_reaches_project",
+      "hash": "e28cdbfbf049fe7508a4f91f4d62c8f58f7665ff03b684df5f3b5a5d6df5a9bc"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.shortCircuit_seq_split",
+      "hash": "1f0a072a067f6a366d25a403348998015c4c8331d3578b354468d9e67c0d684d"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.WfNet.shortCircuit_step_inl",
       "hash": "9e9fe022690f33c4996cc2ae839eb503da69e0a7181c1b622d6b59303448701c"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.shortCircuit_step_star",
+      "hash": "2eea7d633a7c15a265eacee5544fb737ee0f5fc9a397aa99574b3261713c0da7"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.sound_of_live_bounded",
+      "hash": "5e5acc5c05ae2a8d57a63fd856ebfdff2cd0f009ea5a896aa51ef068a5a303eb"
     },
     {
       "kind": "axiomAudit",
@@ -3441,5 +3546,5 @@
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
     "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
   ],
-  "foldHash": "a61fe6f5fe2568ddabbc974a4e0eb5144d91d6550f48d59f42359de60c2d768d"
+  "foldHash": "d33e8c3dc2483e21a73e31272521e3ae04b6dbecc332010f9e06f8319321bd9d"
 }

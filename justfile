@@ -53,6 +53,11 @@ audit:
 manifest:
     python3 scripts/build_manifest.py
 
+# Regenerate paper/evaluation.tex's derived tables/foldHash mention from the
+# release manifest (never hand-edit those numbers; see AGENTS.md).
+eval-tex:
+    python3 scripts/build_evaluation_tex.py
+
 # Certify the release: exit 0 iff all gates pass.
 certify: build audit
     cd mfact && ./.lake/build/bin/mfact certify ../release/release-manifest.json ../release/gates.json > ../release/certify.log 2> ../release/certify.stderr && cat ../release/certify.stderr >> ../release/certify.log && rm ../release/certify.stderr

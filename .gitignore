@@ -8,6 +8,14 @@ paper/*.fdb_latexmk
 paper/*.bbl
 paper/*.blg
 
+# Editor swap files (accidentally tracked once — never again)
+*.swp
+*.swo
+
+# Python bytecode cache (scripts/ is stdlib-only but still emits this)
+__pycache__/
+*.pyc
+
 # Ephemeral cockpit reports (certified status lives in release/)
 .mfact/reports/
 release/docs_build.log

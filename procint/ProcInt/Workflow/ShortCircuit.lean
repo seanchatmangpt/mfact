@@ -70,5 +70,72 @@ theorem WfNet.reaches_shortCircuit {P T : Type} [DecidableEq P] (W : WfNet P T)
 theorem WfNet.shortCircuit_enabled_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
     W.shortCircuit.Enabled W.finalMarking (Sum.inr ()) := le_refl _
 
+/-- Firing the fresh transition `t*` at the final marking `[o]` lands back at
+the initial marking `[i]`, closing the cycle (van der Aalst 1997, the `N̄`
+construction). -/
+theorem WfNet.shortCircuit_fire_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
+    W.shortCircuit.fire W.finalMarking (Sum.inr ()) = W.initialMarking := by
+  have h := W.shortCircuit.fire_pre_self (Sum.inr () : T ⊕ Unit)
+  rwa [W.shortCircuit_pre_inr, W.shortCircuit_post_inr] at h
+
+/-- The fresh transition `t*` steps the short-circuited net from the final
+marking `[o]` back to the initial marking `[i]`. -/
+theorem WfNet.shortCircuit_step_star {P T : Type} [DecidableEq P] (W : WfNet P T) :
+    W.shortCircuit.Step W.finalMarking (Sum.inr ()) W.initialMarking :=
+  ⟨W.shortCircuit_enabled_star, (W.shortCircuit_fire_star).symm⟩
+
+/-- Split a short-circuited firing sequence at the first occurrence of the
+fresh transition `t*`: either the whole run stays inside the original net, or
+it reaches, entirely inside the original net, a marking that already covers
+the final marking `[o]` (the point right before `t*` first fires). -/
+theorem WfNet.shortCircuit_seq_split {P T : Type} [DecidableEq P] {W : WfNet P T}
+    {M M' : Marking P} {σ : List (T ⊕ Unit)}
+    (h : W.shortCircuit.FiringSeq M σ M') :
+    (∃ σ', W.net.FiringSeq M σ' M') ∨
+      (∃ M1, W.net.Reaches M M1 ∧ W.finalMarking ≤ M1) := by
+  induction h with
+  | nil M => exact Or.inl ⟨[], .nil M⟩
+  | @cons Ma Mb Mc t σ' hstep hrest ih =>
+      cases t with
+      | inl t0 =>
+          have hstep0 : W.net.Step Ma t0 Mb := (WfNet.shortCircuit_step_inl W Ma Mb t0).mp hstep
+          rcases ih with ⟨σ0, hσ0⟩ | ⟨M1, hReach, hle⟩
+          · exact Or.inl ⟨t0 :: σ0, .cons hstep0 hσ0⟩
+          · exact Or.inr ⟨M1, Relation.ReflTransGen.head ⟨t0, hstep0⟩ hReach, hle⟩
+      | inr u =>
+          obtain ⟨⟩ := u
+          have hEnabled : W.shortCircuit.Enabled Ma (Sum.inr ()) := hstep.1
+          have hle : W.finalMarking ≤ Ma := hEnabled
+          exact Or.inr ⟨Ma, Relation.ReflTransGen.refl, hle⟩
+
+/-- If every original-net marking reachable from `[i]` and covering `[o]`
+already equals `[o]` (proper completion), then every short-circuited run from
+`[i]` is in fact a run of the original net (`t*` never needs to fire, since
+firing it would require having already reached `[o]`, at which point it just
+loops back to `[i]`). Stated generally over the hypothesis `H` so it can be
+reused both from `proper_of_bounded` and from `Sound.proper_completion`. -/
+theorem WfNet.shortCircuit_reaches_project {P T : Type} [DecidableEq P] {W : WfNet P T}
+    (H : ∀ M, W.net.Reaches W.initialMarking M → W.finalMarking ≤ M → M = W.finalMarking) :
+    ∀ M, W.shortCircuit.Reaches W.initialMarking M → W.net.Reaches W.initialMarking M := by
+  intro M h
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | @tail Mprev M hprev hstep ih =>
+      obtain ⟨t, ht⟩ := hstep
+      cases t with
+      | inl t =>
+          have ht' : W.net.Step Mprev t M := (WfNet.shortCircuit_step_inl W Mprev M t).mp ht
+          exact ih.tail ⟨t, ht'⟩
+      | inr u =>
+          obtain ⟨u⟩ := u
+          have hEnabled : W.shortCircuit.Enabled Mprev (Sum.inr ()) := ht.1
+          have hle : W.finalMarking ≤ Mprev := hEnabled
+          have hMprevEq : Mprev = W.finalMarking := H Mprev ih hle
+          have hfire : M = W.shortCircuit.fire Mprev (Sum.inr ()) := ht.2
+          have hMeq : M = W.initialMarking := by
+            rw [hfire, hMprevEq, W.shortCircuit_fire_star]
+          rw [hMeq]
+          exact Relation.ReflTransGen.refl
+
 
 end ProcInt
