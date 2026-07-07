@@ -7,6 +7,19 @@ import ProcInt.Playground.LogsModelsWalkthrough
 import ProcInt.Playground.AnalyticsWalkthrough
 import ProcInt.Playground.OcelWalkthrough
 import ProcInt.Playground.FoundationsRegistryWalkthrough
+import ProcInt.Playground.AlignmentWalkthrough
+import ProcInt.Playground.QualityWalkthrough
+import ProcInt.Playground.XesWalkthrough
+import ProcInt.Playground.CausalNetWalkthrough
+import ProcInt.Playground.ChoiceGraphWalkthrough
+import ProcInt.Playground.DeclareWalkthrough
+import ProcInt.Playground.PowlProcessTreeWalkthrough
+import ProcInt.Playground.OcelLifecycleRelationsWalkthrough
+import ProcInt.Playground.PetriReachabilityWalkthrough
+import ProcInt.Playground.PetriAdvancedWalkthrough
+import ProcInt.Playground.WorkflowAdvancedWalkthrough
+import ProcInt.Playground.AnalyticsRelationsWalkthrough
+import ProcInt.Playground.AnalyticsTemporalWalkthrough
 
 /-! # ProcInt.Playground
 

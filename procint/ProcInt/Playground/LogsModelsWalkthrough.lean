@@ -71,6 +71,26 @@ ledgered `dfgOfTrace_edges_length` law, instantiated on this case. -/
 example : orderDfg.edges.length = 2 :=
   dfgOfTrace_edges_length orderTrace.activities
 
+/-- A second occurrence of the same order-fulfillment case, so the
+directly-follows relation actually gets observed twice. -/
+def orderTrace2 : Trace Activity where
+  caseId := "order-2"
+  events := [Event.simple orderPlaced 10, Event.simple paymentReceived 11,
+             Event.simple orderShipped 12]
+
+/-- The two-case log: `dfgOfTrace` only discovers from a single trace
+(single-case discovery, per its own doc comment), so multi-case discovery
+is the union of each case's edges — exactly what `discover_ocel_dfg`
+(dfg.rs) does across cases. -/
+def orderDfgMulti : Dfg Activity :=
+  ⟨(dfgOfTrace orderTrace.activities).edges ++ (dfgOfTrace orderTrace2.activities).edges⟩
+
+/-- With two cases both going `orderPlaced → paymentReceived`, the merged
+DFG now shows the frequency-weighted part of `Dfg.weight` that a
+single-trace discovery can never exercise (every edge there has weight 1
+by `dfgOfTrace_freq_one`). -/
+example : orderDfgMulti.weight orderPlaced paymentReceived = 2 := by decide
+
 -- The registry entry for the algorithm this file's `Dfg` discovery exercises.
 #eval alg_dfg.label
 

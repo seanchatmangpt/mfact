@@ -3,11 +3,14 @@
 import ProcInt
 import ProcInt.Playground.LogsModelsWalkthrough
 
-/-! # Playground: slicing the order-fulfillment case by activity
+/-! # Playground: slicing the order-fulfillment cases two ways
 
-A `ProcessCube` (`ProcInt.Analytics.Cube`) over the same order-fulfillment
-trace from `LogsModelsWalkthrough`, dimensioned by activity — the
-`CubeDimensionKind.activity` view of van der Aalst's process cubes. -/
+A `ProcessCube` (`ProcInt.Analytics.Cube`) over the order-fulfillment
+events from `LogsModelsWalkthrough`, dimensioned two independent ways: by
+activity (`CubeDimensionKind.activity`) and, over both cases pooled
+together, by which case each event belongs to (`CubeDimensionKind.time`-
+style grouping) — a genuinely cross-cutting second dimension, not just a
+restatement of the first. -/
 
 namespace ProcInt.Playground
 
@@ -31,5 +34,29 @@ example (e : Event Activity) (h : e ∈ orderCube.cell .paymentReceived) :
 example (e : Event Activity) (h : e ∈ orderCube.cell .orderPlaced) :
     e ∈ orderCube.slice [.orderPlaced, .paymentReceived] :=
   cell_subset_slice h (by simp)
+
+/-- Which case an event belongs to, by its timestamp window
+(`order-1`: t < 10, `order-2`: t ≥ 10) — a dimension independent of
+activity, so this cube actually cross-cuts the activity-dimensioned one
+above instead of restating it. -/
+def caseOf (e : Event Activity) : String :=
+  if e.timestamp < 10 then "order-1" else "order-2"
+
+/-- Both order-fulfillment cases pooled, cubed by case. -/
+def casesCube : ProcessCube (Event Activity) String where
+  events := orderTrace.events ++ orderTrace2.events
+  dim := caseOf
+
+-- Each case cell has exactly its own 3 events.
+#eval (casesCube.cell "order-1").length
+#eval (casesCube.cell "order-2").length
+
+/-- The `order-1` cell is disjoint from the `order-2` cell: no event's case
+label is both — an immediate consequence of `cell_dim` on each side. -/
+example (e : Event Activity) (h1 : e ∈ casesCube.cell "order-1")
+    (h2 : e ∈ casesCube.cell "order-2") : False := by
+  have := cell_dim h1
+  have := cell_dim h2
+  simp_all
 
 end ProcInt.Playground

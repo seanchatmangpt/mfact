@@ -7,19 +7,20 @@ import ProcInt.Playground.ConformanceWalkthrough
 
 `ProcInt.Foundations.Metric` supplies the unit-interval carrier
 (`UnitRat`) every conformance metric lives in, and the `AlgorithmSpec`/
-`BreedSpec` record shapes the registry catalogs. This file wraps the
+`BreedSpec` record shapes the registry catalogs. This file packages the
 `fitness` value from `ConformanceWalkthrough` into a `UnitRat` using the
-ledgered `fitness_mem_unitInterval` proof, and looks up two registry
-entries from the same family of algorithms this playground exercises. -/
+ledgered `ReplayCounts.fitnessUnit` helper (`Conformance.Quality`), and
+looks up two registry entries from the same family of algorithms this
+playground exercises. -/
 
 namespace ProcInt.Playground
 
 /-- The token-replay fitness of `sampleReplay` (`ConformanceWalkthrough`),
-packaged as a `UnitRat` via the ledgered metric-law proof
-`fitness_mem_unitInterval` — this is the carrier every conformance metric
+packaged as a `UnitRat` via the ledgered `ReplayCounts.fitnessUnit`
+(`Conformance.Quality`) — this is the carrier every conformance metric
 (fitness, precision, generalization, simplicity) is required to live in. -/
 def sampleFitnessUnit : UnitRat :=
-  ⟨fitness sampleReplay, fitness_mem_unitInterval sampleReplay⟩
+  sampleReplay.fitnessUnit
 
 example : (sampleFitnessUnit : ℚ) = 67 / 80 := by
   show fitness sampleReplay = 67 / 80
