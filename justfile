@@ -66,6 +66,40 @@ test:
     printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE=STATED\n' >> /Users/sac/mfact/release/standing.env
     @echo "correctness ladder: PASS (keys merged into standing.env)"
 
+# ── Agent cockpit (read-only diagnostics; nothing below dirties the tree) ──
+# Agents actuate only through just recipes. status/next/trace/why/doctor are
+# READ-ONLY; only check/release write the ephemeral .mfact/reports/latest.*.
+
+status:
+    @python3 /Users/sac/mfact/scripts/report.py status
+
+next:
+    @python3 /Users/sac/mfact/scripts/report.py next
+
+doctor:
+    @python3 /Users/sac/mfact/scripts/report.py doctor
+
+trace target:
+    @python3 /Users/sac/mfact/scripts/report.py trace {{target}}
+
+why target:
+    @python3 /Users/sac/mfact/scripts/report.py why {{target}}
+
+# Full admission sweep; the only diagnostic allowed to write reports.
+check:
+    just regen-check
+    just build
+    just test
+    just prose-lint
+    @python3 /Users/sac/mfact/scripts/report.py status --write
+
+# check → certify → paper packaging. External actuation stays with the user.
+release:
+    just check
+    just certify
+    just arxiv-package
+    @python3 /Users/sac/mfact/scripts/report.py status --write
+
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:
     @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|a138ee84|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)

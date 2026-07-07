@@ -67,7 +67,42 @@ Typed refusal vocabulary: `HAND_CODED_GENERATED_OUTPUT`,
 `GENERATED_OUTPUT_DRIFT`, `MISSING_GGEN_SOURCE`, `MISSING_GGEN_TEMPLATE`,
 `ORPHAN_GENERATED_FILE`, `UNREGISTERED_PAPER_FRAGMENT`,
 `UNSUPPORTED_STANDING_CLAIM`, `STATED_PROMOTED_TO_PROVEN`,
-`MANUAL_RELEASE_COUNT`, `MANUAL_RELEASE_HASH`.
+`MANUAL_RELEASE_COUNT`, `MANUAL_RELEASE_HASH`,
+`RECEIPT_RECURSION_REFUSED`, `SOURCE_CHANGE_ASSERTION_UNSUPPORTED` (planned:
+`MFACT_SOURCE_CHANGED=1` will require a changed source/template/TTL in the
+same commit, not a bare assertion).
+
+## Agent cockpit
+
+Agents actuate only through `just` recipes. Do not call raw lake/ggen/mfact
+commands unless a recipe explicitly instructs it for debugging. If a task
+needs a new actuation path, add a `just` recipe first, then use it. Final
+reports name the recipes used, not an ad hoc shell history.
+`just status/next/doctor/trace/why` are READ-ONLY — they never dirty the
+tree. Only `just check` / `just release` write `.mfact/reports/latest.*`
+(ephemeral, gitignored, never ledgered). Certified status lives only in
+`release/` artifacts.
+
+## Core release identity (frozen)
+
+The v26.7.6 core release is tag `v26.7.6-procint-certified`:
+`CORE_RELEASE_HASH` = the manifest foldHash, `CORE_PROVEN`,
+`CORE_TOTAL_DECLS` as recorded in `release/release-manifest.json` at the
+tagged commit. **Post-release artifacts must not mutate the identity of the
+core certified release they report.** If an operation would change the core
+foldHash, proven count, decl count, or manifest, either refuse it as
+`RECEIPT_RECURSION_REFUSED` or promote it explicitly into a new core
+certification cycle with new manifest values — never both silently.
+Post-release witnesses (e.g. `ProcInt.Release.PostRelease`) are counted as
+`POST_RELEASE_WITNESSES`, never folded into `CORE_PROVEN`. The core tag is
+pinned to the core release commit and is not moved by packet work; packets
+get their own tags and their own packet hashes.
+
+Status taxonomy: `ALIVE`, `PARTIAL_ALIVE`, `BLOCKED`, `BLOCKED_EXTERNAL`,
+`BUILD_BROKEN`, `REFUSED`, `PENDING_EXTERNAL_ACTUATION` (packet complete,
+actuation is the user's), `VALID` (scoped, evidence-backed), `UNSUPPORTED`
+(claim without evidence — must not ship), `PLANNED` (declared, not built),
+`STATED` (formalized, not proven), `REPLAY_NOT_RUN`, `IN_PROGRESS`.
 
 ## Completion report
 

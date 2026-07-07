@@ -7,3 +7,6 @@ paper/*.fls
 paper/*.fdb_latexmk
 paper/*.bbl
 paper/*.blg
+
+# Ephemeral cockpit reports (certified status lives in release/)
+.mfact/reports/
