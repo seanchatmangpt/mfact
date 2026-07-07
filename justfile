@@ -120,6 +120,14 @@ manufacture-post-release:
 independent-replay:
     bash /Users/sac/mfact/scripts/independent_replay.sh
 
+# doc-gen4 lane: HTML API docs (multi-hour; never blocks the release).
+docs:
+    bash /Users/sac/mfact/scripts/build_docs.sh
+
+# Honest docs standing from the lane's own report, never asserted.
+docs-check:
+    @python3 -c "import json; d=json.load(open('/Users/sac/mfact/release/docs_report.json')); print('LEAN_HTML_DOCS='+d['LEAN_HTML_DOCS']); print(d['detail'])" 2>/dev/null || echo "LEAN_HTML_DOCS=PLANNED (no report yet — run 'just docs')"
+
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:
     @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|a138ee84|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
