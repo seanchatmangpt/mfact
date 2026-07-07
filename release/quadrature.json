@@ -1,7 +1,7 @@
 {
   "schema": "mfact.quadrature.v1",
   "release_id": "v26.7.7",
-  "run_identifier": "d10636b",
+  "run_identifier": "3994029",
   "slogan": "ggen renders. Lean admits. mfact certifies.",
   "surfaces": {
     "ttl": { "proven_decls": 197 },

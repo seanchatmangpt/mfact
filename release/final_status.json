@@ -3,17 +3,17 @@
   "core": {
     "status": "ALIVE",
     "release": "v26.7.7",
-    "coreReleaseHash": "b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465",
+    "coreReleaseHash": "c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0",
     "coreProven": 197,
     "coreTotalDecls": 388,
     "stated": 2,
-    "renderedCommit": "d10636b",
+    "renderedCommit": "3994029",
     "tag": "v26.7.7-procint-certified",
     "tagCommit": "6f4c370",
     "renderedCommitIsAncestorOfTag": "FAIL"
   },
   "publicationPacket": {
-    "packetHash": "73ffe4f660991b75145dc87de98527717214ec260821004173896817bfd743a7",
+    "packetHash": "041926326e80761c4b868bcd21151f617572a6dc27689c9d85adf1eb46d7f334",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
     "arxivPacket": "ALIVE",
     "packets": [

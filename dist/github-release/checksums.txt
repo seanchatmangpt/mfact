@@ -1,3 +1,3 @@
 bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5  paper/arxiv-submission.tar.gz
 52deed4fac55757f94f86bbcaf8b0ea3c78de245c469985b388abf540d243c00  paper/main.pdf
-afa6bf8752a0a5f2f3b26efb582336c6e2594c9758e62e79e502c56981da1d34  release/release-manifest.json
+59d50003f9f05092400d07a34b175531ae9e47e21aadc47daa52175cb05576ca  release/release-manifest.json

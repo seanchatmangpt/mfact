@@ -2,12 +2,12 @@
 
 [packs.lean-math-pack]
 source = "path:/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:60ad1cbc46160800942299235311c22a69986d75139c1b10d8f382725b04dd48"
+content_hash = "blake3:35b9d823ca38d328643459d16f6b7ff7121365f9bf4c212320c617a4b14daf41"
 
 [packs.post-release-pack]
 source = "path:/Users/sac/mfact/packs/post-release-pack"
-content_hash = "blake3:b1c0bb729a29816c5cac8743a3d17d4fef0047e27214b640bf99a1d5159ef1b0"
+content_hash = "blake3:77a9df54d3c19583b98083dc0bfadfff46b726a58dd160ee641788610838185b"
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:c97fda13f6d217af37505cf07b3463b9cf9fe0fd60c952b923f34139172395ee"
+content_hash = "blake3:a565551b3588f7c33e7a8b73a1c943a3a1c9ec908e1e0130fca90eb6bacb17c4"

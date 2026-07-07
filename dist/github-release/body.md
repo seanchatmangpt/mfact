@@ -12,7 +12,7 @@ Lean admits; mfact certifies.
   (the WF-net soundness equivalence remains PROVEN)
 - Standing Quadrature closed: TTL x Lean x Manifest x ProcessEvidence x
   PaperClaims, zero orphans, kernel-admitted witness
-- Genesis-folded release hash: `b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465`
+- Genesis-folded release hash: `c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0`
 
 Reproduce: see `README_REPRODUCIBILITY.md` and `release/replay_plan.json`
 at tag `v26.7.7-procint-certified`.
@@ -22,7 +22,7 @@ at tag `v26.7.7-procint-certified`.
 ```
 bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5  paper/arxiv-submission.tar.gz
 52deed4fac55757f94f86bbcaf8b0ea3c78de245c469985b388abf540d243c00  paper/main.pdf
-afa6bf8752a0a5f2f3b26efb582336c6e2594c9758e62e79e502c56981da1d34  release/release-manifest.json
+59d50003f9f05092400d07a34b175531ae9e47e21aadc47daa52175cb05576ca  release/release-manifest.json
 ```
 
 This packet was manufactured; publishing it is a human action

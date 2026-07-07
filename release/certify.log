@@ -3,7 +3,7 @@
   "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"],
  "schema": "mfact.release.v1",
  "release": "v26.7.7",
- "foldHash": "b29ffd32eea280bc12e4b5f57562da5641d5a588bb16e1c3598d166163843465",
+ "foldHash": "c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0",
  "evidence":
  [{"subject": "Analytics.Causality",
    "kind": "kernelCheck",
@@ -1943,7 +1943,7 @@
    "axioms": ["propext", "Classical.choice", "Quot.sound"]},
   {"proven": false,
    "name": "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement",
-   "hash": "0cd1d85bf97d7e0b4b137b8196514661fad9a4d02d381411d6904b673d909507",
+   "hash": "c81355752e00d15f63632d821d2d7551980c67ceec396e2664122c9f7bc0d0f7",
    "axioms": []},
   {"proven": true,
    "name": "ProcInt.WfNet.sound_of_live_bounded",
