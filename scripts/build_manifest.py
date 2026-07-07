@@ -7,7 +7,7 @@ evidence record; every field is computed, never asserted."""
 import re, json, subprocess, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ONTOLOGY = '/Users/sac/praxis/packs/lean-math-pack/ontology.ttl'
+ONTOLOGY = '/Users/sac/mfact/packs/lean-math-pack/ontology.ttl'
 OUT_MANIFEST = os.path.join(ROOT, 'release/release-manifest.json')
 OUT_GATES = os.path.join(ROOT, 'release/gates.json')
 

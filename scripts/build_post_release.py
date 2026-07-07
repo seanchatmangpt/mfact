@@ -22,7 +22,7 @@ used before the paper fragments exist); default = full run with the gate.
 import json, os, re, subprocess, sys, tarfile, tempfile, tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = '/Users/sac/praxis/packs/post-release-pack/ontology.ttl'
+OUT = '/Users/sac/mfact/packs/post-release-pack/ontology.ttl'
 PLAN = '--plan' in sys.argv
 
 def b3(data: bytes) -> str:
@@ -112,7 +112,7 @@ packets = [
 ]
 
 # ---- Crown research lane: statuses derived from the TTL catalog ----
-ttl = open('/Users/sac/praxis/packs/lean-math-pack/ontology.ttl', encoding='utf-8').read()
+ttl = open('/Users/sac/mfact/packs/lean-math-pack/ontology.ttl', encoding='utf-8').read()
 def decl_status(name):
     m = re.search(r'procint:declName "ProcInt\.' + re.escape(name)
                   + r'"[^.]*?procint:status "([^"]+)"', ttl, re.DOTALL)

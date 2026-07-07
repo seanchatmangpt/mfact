@@ -24,7 +24,7 @@ for path in sorted(outputs):
     lines += ['[[artifact]]',
               f'path = "{path}"',
               'producer = "ggen"',
-              f'pack = "/Users/sac/praxis/packs/{PACK_OF(path)}"',
+              f'pack = "/Users/sac/mfact/packs/{PACK_OF(path)}"',
               f'content_hash = "blake3:{outputs[path]}"', '']
 
 def b3(path):

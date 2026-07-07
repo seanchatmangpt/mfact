@@ -13,9 +13,9 @@ import re, json, subprocess, os, sys, glob
 ROOT = os.environ.get('MFACT_ROOT',
                       os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ONTOLOGY = os.environ.get('QUAD_ONTOLOGY',
-                          '/Users/sac/praxis/packs/lean-math-pack/ontology.ttl')
+                          '/Users/sac/mfact/packs/lean-math-pack/ontology.ttl')
 QUAD_TTL = os.environ.get('QUAD_OUT',
-                          '/Users/sac/praxis/packs/quadrature-pack/ontology.ttl')
+                          '/Users/sac/mfact/packs/quadrature-pack/ontology.ttl')
 MANIFEST = os.path.join(ROOT, 'release/release-manifest.json')
 EVAL_TEX = os.environ.get('QUAD_EVAL_TEX',
                           os.path.join(ROOT, 'paper/evaluation.tex'))
@@ -74,7 +74,7 @@ ok4 = step(4, 'Reading release manifest', not man_gap and not untraced and state
 
 # ---- [5] Process evidence ----
 receipt_ok = subprocess.run(
-    ['/Users/sac/praxis/target/debug/ggen', 'receipt', 'verify'],
+    ['ggen', 'receipt', 'verify'],
     cwd=ROOT, capture_output=True).returncode == 0
 # Run identity comes from the manifest (recorded at manifest generation),
 # NOT the live git HEAD — regeneration must be idempotent for regen-check.

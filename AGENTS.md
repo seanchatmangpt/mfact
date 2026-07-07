@@ -16,8 +16,8 @@ Lean admits, mfact certifies, and the manifest records standing.
 
 | Surface | Edit? | Role |
 |---|---|---|
-| `/Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl` | Yes | source declaration catalog |
-| `/Users/sac/praxis/packs/{lean-math-pack,quadrature-pack}/templates/*.tmpl` | Yes | projection templates |
+| `/Users/sac/mfact/packs/lean-math-pack/fragments/*.ttl` | Yes | source declaration catalog |
+| `/Users/sac/mfact/packs/{lean-math-pack,quadrature-pack}/templates/*.tmpl` | Yes | projection templates |
 | `scripts/*.py`, `scripts/*.sh` | Yes | builders, gates, controls |
 | `paper/main.tex` | Limited | stable prose spine only — no volatile numbers |
 | `paper/refs.bib`, `README*`, `STANDING.md` prose | Yes | narrative (no standing values by hand) |

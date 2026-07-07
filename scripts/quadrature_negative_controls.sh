@@ -35,7 +35,7 @@ else
 fi
 
 # Control 3: fake proven TTL decl with no rendered Lean symbol (catalog COPY).
-cp /Users/sac/praxis/packs/lean-math-pack/ontology.ttl "$SCRATCH/catalog.ttl"
+cp /Users/sac/mfact/packs/lean-math-pack/ontology.ttl "$SCRATCH/catalog.ttl"
 cat >> "$SCRATCH/catalog.ttl" <<'TTL'
 
 procint:Decl_fake_orphan a procint:Decl ;

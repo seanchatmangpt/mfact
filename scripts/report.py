@@ -172,7 +172,6 @@ def cmd_why(rep, target):
 def cmd_doctor(rep):
     probes = [
         ('lake (elan shim)', '/Users/sac/.elan/bin/lake'),
-        ('ggen', '/Users/sac/praxis/target/debug/ggen'),
         ('b3sum', shutil.which('b3sum')),
         ('latexmk', shutil.which('latexmk')),
         ('just', shutil.which('just')),
@@ -182,6 +181,37 @@ def cmd_doctor(rep):
         present = bool(path) and os.path.exists(path)
         ok &= present
         print(f"{'OK    ' if present else 'MISSING'} {name}  {path or ''}")
+
+    # ggen is resolved via PATH, not a pinned praxis path — it's installed
+    # globally with `just install-ggen` (praxis/justfile) from the praxis
+    # ggen crate. mfact only depends on the command existing and matching
+    # what render/regen-check actually invoke (`ggen`), not on praxis's
+    # target/ directory.
+    ggen_path = shutil.which('ggen')
+    ok &= bool(ggen_path)
+    if ggen_path:
+        ver = subprocess.run([ggen_path, '--version'], capture_output=True, text=True, timeout=5).stdout.strip()
+        print(f"OK     ggen  {ggen_path}  ({ver or 'version unknown'})")
+    else:
+        print("MISSING ggen  not on PATH — run `just install-ggen` in praxis")
+
+    # procint/mfact toolchain — verify the pinned lean-toolchain is actually
+    # installed via elan, not merely that the elan shim binary exists.
+    elan = shutil.which('elan') or '/Users/sac/.elan/bin/elan'
+    installed = []
+    if os.path.exists(elan):
+        out = subprocess.run([elan, 'toolchain', 'list'], capture_output=True, text=True, timeout=5).stdout
+        installed = [line.split()[0] for line in out.splitlines() if line.strip()]
+    for tc_file in ('procint/lean-toolchain', 'mfact/lean-toolchain'):
+        p = os.path.join(ROOT, tc_file)
+        if not os.path.exists(p):
+            continue
+        pinned = open(p).read().strip()
+        match = pinned in installed
+        ok &= match
+        print(f"{'OK    ' if match else 'FAIL  '} {tc_file}  pinned={pinned}"
+              + ("" if match else f"  NOT INSTALLED (elan toolchain list: {installed})"))
+
     for f in ('release/release-manifest.json', 'release/gates.json', 'release/standing.env',
               'release/quadrature.json', '.mfact/artifacts.toml', '.ggen-v2/receipt.json'):
         present = os.path.exists(os.path.join(ROOT, f))
@@ -192,6 +222,24 @@ def cmd_doctor(rep):
           f"tag gate: {c['tag']} @ {c['tagCommit']} descends from rendered commit {c['renderedCommit']}")
     for k, v in rep['gates'].items():
         print(f"{'OK    ' if v else 'FAIL  '} gate {k}")
+
+    # Local pack sources (ggen.toml [packs]) — mfact vendors its own pack
+    # ontology/templates under mfact/packs/, resolved via ggen.toml.
+    print("--- pack sources ---")
+    pack_paths = re.findall(r'^\S+\s*=\s*\{\s*path\s*=\s*"([^"]+)"',
+                             open(os.path.join(ROOT, 'ggen.toml')).read(), re.M) \
+        if os.path.exists(os.path.join(ROOT, 'ggen.toml')) else []
+    for p in pack_paths:
+        present = os.path.isdir(p)
+        ok &= present
+        print(f"{'OK    ' if present else 'MISSING'} pack  {p}")
+    lock = os.path.join(ROOT, 'ggen.lock')
+    print(f"{'OK    ' if os.path.exists(lock) else 'MISSING'} ggen.lock  {lock}")
+    claude = os.path.join(ROOT, 'CLAUDE.md')
+    if os.path.exists(claude):
+        head = open(claude).read().strip()
+        print(f"{'OK    ' if head == '@AGENTS.md' else 'WARN  '} CLAUDE.md is @AGENTS.md import: {head!r}")
+
     if not ok:
         sys.exit(1)
 
