@@ -14,7 +14,7 @@ say() { echo "$1" | tee -a "$LOG"; }
 echo "=== Quadrature negative controls ($(git -C /Users/sac/mfact rev-parse --short HEAD)) ===" > "$LOG"
 
 # Control 1: corrupt one evaluation number (proven count 145 -> 144) in a COPY.
-sed 's/145/144/g' /Users/sac/mfact/paper/generated/evaluation.tex > "$SCRATCH/eval.tex"
+sed 's/145/144/g' /Users/sac/mfact/paper/evaluation.tex > "$SCRATCH/eval.tex"
 QUAD_EVAL_TEX="$SCRATCH/eval.tex" QUAD_OUT="$SCRATCH/q1.ttl" python3 "$BUILDER" >> "$LOG" 2>&1
 rc=$?
 if [ $rc -eq 2 ] && grep -q 'unsupported_eval' "$LOG"; then

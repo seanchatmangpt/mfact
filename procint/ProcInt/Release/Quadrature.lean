@@ -480,7 +480,7 @@ def paperClaims : List (String × String) := [
   ("C1", "mfact/AxiomAudit.lean"),
   ("C2", "release/release-manifest.json#artifacts"),
   ("C3", "release/release-manifest.json#statedNotProven"),
-  ("C4", "paper/generated/evaluation.tex"),
+  ("C4", "paper/evaluation.tex"),
   ("C5", "release/certify.log")
 ]
 

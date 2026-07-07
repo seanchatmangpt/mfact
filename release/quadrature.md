@@ -29,7 +29,7 @@ diverges.
 | C1: mfact framework with axiom-free no_valid_objection | `mfact/AxiomAudit.lean` |
 | C2: procint corpus: 145 kernel-admitted, axiom-audited theorems | `release/release-manifest.json#artifacts` |
 | C3: proven/stated split enforced by release gate (2 stated) | `release/release-manifest.json#statedNotProven` |
-| C4: evaluation numbers rendered from the manifest | `paper/generated/evaluation.tex` |
+| C4: evaluation numbers rendered from the manifest | `paper/evaluation.tex` |
 | C5: negative controls: the gate refuses (exit 1/2) | `release/certify.log` |
 
 ## Surfaces

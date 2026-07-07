@@ -34,12 +34,14 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 
-% Release-mode guard: release builds hard-fail on missing generated
-% fragments; draft builds show placeholders. Volatile standing claims live
-% only in generated/ (see generated/FRAGMENT_CONTRACT.md).
+% Release-mode guard: release builds hard-fail on missing rendered
+% fragments; draft builds show placeholders. There are no generated files —
+% only artifacts with receipts: authority comes from the .mfact/artifacts.toml
+% ledger, not from paths or headers. Volatile standing claims live only in
+% ledgered, ggen-rendered fragments.
 \newif\ifreleasebuild
 \releasebuildtrue
-\input{generated/release_macros}
+\input{release_macros}
 
 \title{Receipted Mathematical Manufacturing:\\A Lean 4 Pipeline for Process Intelligence\\
 \large mfact manufactures procint}
@@ -512,19 +514,19 @@ generation pipeline fails closed: if the manifest is absent or stale, this
 section does not render and the paper does not build for release.
 
 \ifreleasebuild
-  \input{generated/evaluation}
+  \input{evaluation}
 \else
-  \InputIfFileExists{generated/evaluation}{}{%
-  \begin{center}\fbox{\itshape Draft build: generated/evaluation.tex missing.}\end{center}}
+  \InputIfFileExists{evaluation}{}{%
+  \begin{center}\fbox{\itshape Draft build: evaluation.tex missing.}\end{center}}
 \fi
 
 \paragraph{Final status.} Table below is generated from the release
 manifest and standing records; no cell is hand-authored.
 \ifreleasebuild
-  \input{generated/final_status}
+  \input{final_status}
 \else
-  \InputIfFileExists{generated/final_status}{}{%
-  \begin{center}\fbox{\itshape Draft build: generated/final\_status.tex missing.}\end{center}}
+  \InputIfFileExists{final_status}{}{%
+  \begin{center}\fbox{\itshape Draft build: final\_status.tex missing.}\end{center}}
 \fi
 
 \subsection{Standing Quadrature}
@@ -550,10 +552,10 @@ number, a claim with no evidence, a catalog declaration with no rendered
 symbol) each cause a typed refusal.
 
 \ifreleasebuild
-  \input{generated/quadrature}
+  \input{quadrature}
 \else
-  \InputIfFileExists{generated/quadrature}{}{%
-  \begin{center}\itshape Draft build: generated/quadrature.tex missing.\end{center}}
+  \InputIfFileExists{quadrature}{}{%
+  \begin{center}\itshape Draft build: quadrature.tex missing.\end{center}}
 \fi
 
 \section{Falsifier and Valid Objection Surface}
@@ -588,9 +590,9 @@ The short-circuit soundness characterization is reported per direction. If
 only one direction is admitted at release time, the claim is that direction
 and nothing more; the converse remains a stated obligation in the manifest.
 \ifreleasebuild
-  \input{generated/crown_jewel_status}
+  \input{crown_jewel_status}
 \else
-  \InputIfFileExists{generated/crown_jewel_status}{}{}
+  \InputIfFileExists{crown_jewel_status}{}{}
 \fi
 
 \paragraph{What admission does not check.}
@@ -663,18 +665,18 @@ negative-control script that demonstrates the gate refusing a
 \end{itemize}
 
 \ifreleasebuild
-  \input{generated/availability}
+  \input{availability}
 \else
-  \InputIfFileExists{generated/availability}{}{}
+  \InputIfFileExists{availability}{}{}
 \fi
 
 \section{Conclusion}
 
 \ifreleasebuild
-  \input{generated/conclusion}
+  \input{conclusion}
 \else
-  \InputIfFileExists{generated/conclusion}{}{%
-  \begin{center}\fbox{\itshape Draft build: generated/conclusion.tex missing.}\end{center}}
+  \InputIfFileExists{conclusion}{}{%
+  \begin{center}\fbox{\itshape Draft build: conclusion.tex missing.}\end{center}}
 \fi
 
 \bibliographystyle{plain}

@@ -21,7 +21,7 @@ Lean admits, mfact certifies, and the manifest records standing.
 | `scripts/*.py`, `scripts/*.sh` | Yes | builders, gates, controls |
 | `paper/main.tex` | Limited | stable prose spine only — no volatile numbers |
 | `paper/refs.bib`, `README*`, `STANDING.md` prose | Yes | narrative (no standing values by hand) |
-| `paper/generated/*.tex` | **No** | rendered by ggen |
+| ledgered fragments (`paper/*.tex` listed in `.mfact/artifacts.toml`) | **No** | rendered by ggen |
 | `procint/ProcInt/**/*.lean`, `procint/AxiomAudit.lean`, `procint/ProcInt.lean` | **No** | rendered by ggen |
 | `release/release-manifest.json`, `release/gates.json`, `release/quadrature.*` | **No** | emitted by builders/certification |
 
@@ -37,6 +37,19 @@ declaration or template, then rerun the pipeline.
 4. `just manifest && just certify` if release standing changed.
 5. `just regen-check` — hand-edited generated output cannot pass admission.
 6. Report commands run and resulting standing.
+
+## Ledger law
+
+There are no generated files; there are only artifacts with receipts.
+All repository files are first-class and live at canonical paths. Do not
+rely on directories, file headers, or path naming to decide authority —
+authority comes from the artifact ledger (`.mfact/artifacts.toml`). If a
+file is ledgered as produced by ggen or a builder script, do not patch it
+directly as a final solution: modify its declared sources or template,
+re-render, and verify `just regen-check` passes (any unreplayable edit is
+`ARTIFACT_DRIFT_REFUSED`). If a file is NOT ledgered but contains release
+standing, counts, audit status, or certification data, classify it as
+`ORPHAN_ARTIFACT_REFUSED` and either ledger it or refuse the task.
 
 ## Rules
 

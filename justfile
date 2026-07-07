@@ -38,22 +38,24 @@ quadrature-negative-controls:
 
 # Package the paper for arXiv (no submission).
 arxiv-package:
-    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib $(cd /Users/sac/mfact/paper && ls generated/*.tex)
+    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex
     @tar tzf /Users/sac/mfact/paper/arxiv-submission.tar.gz
 
 # Print the standing report.
 standing:
     @cat /Users/sac/mfact/STANDING.md
 
-# The decisive lock: regenerate everything from source and refuse on drift.
-# Hand-edited generated output cannot pass admission.
+# The decisive lock: re-render every ledgered artifact from its declared
+# sources and refuse on drift. An unreplayable edit cannot pass admission.
+# Authority is the ledger (.mfact/artifacts.toml), not paths or headers.
 regen-check:
     cat /Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl > /Users/sac/praxis/packs/lean-math-pack/ontology.ttl
     python3 /Users/sac/mfact/scripts/build_quadrature.py > /dev/null
     rm -f /Users/sac/mfact/ggen.lock
     cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
-    cd /Users/sac/mfact && git diff --exit-code -- procint/ProcInt procint/AxiomAudit.lean procint/ProcInt.lean paper/generated || (echo "REFUSED: GENERATED_OUTPUT_DRIFT — hand edit or stale render detected above" && exit 1)
-    @echo "regen-check: no generated drift"
+    python3 /Users/sac/mfact/scripts/build_ledger.py > /dev/null
+    cd /Users/sac/mfact && git diff --exit-code -- $(grep '^path = ' /Users/sac/mfact/.mfact/artifacts.toml | cut -d'"' -f2 | grep -v 'standing.env\|artifacts.toml' | sort -u | tr '\n' ' ') || (echo "REFUSED: ARTIFACT_DRIFT_REFUSED — unreplayable edit or stale render detected above" && exit 1)
+    @echo "regen-check: all ledgered artifacts reproducible from source"
 
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:

@@ -1,4 +1,4 @@
-=== Quadrature negative controls (c7d4dd0) ===
+=== Quadrature negative controls (c23b6a7) ===
 refusal: standing quadrature open. Orphans:
   unsupported_eval: ['proven']
 [1/7] Loading TTL declaration catalog..............PASS
@@ -16,7 +16,7 @@ CONTROL1(corrupt eval number): PASS - typed refusal exit 2, unsupported_eval det
 [5/7] Reading process evidence.....................PASS
 [6/7] Checking paper claims/evaluation.............PASS
 [7/7] Generating quadrature witness graph..........PASS
-quadrature graph: /var/folders/s6/jqyw48zs39z38b_3f6f_x2sc0000gn/T/tmp.jHFZFYjhv6/q2.ttl (proven surface = 145)
+quadrature graph: /var/folders/s6/jqyw48zs39z38b_3f6f_x2sc0000gn/T/tmp.HgSnMcT7ra/q2.ttl (proven surface = 145)
 CONTROL2(fake claim, no evidence): PASS - claim_to_evidence edge FAIL + orphan_paper_claims > 0
 refusal: standing quadrature open. Orphans:
   ttl_without_lean: ['ProcInt.fake_orphan_theorem_zzz']

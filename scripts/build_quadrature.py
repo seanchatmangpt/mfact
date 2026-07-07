@@ -18,7 +18,7 @@ QUAD_TTL = os.environ.get('QUAD_OUT',
                           '/Users/sac/praxis/packs/quadrature-pack/ontology.ttl')
 MANIFEST = os.path.join(ROOT, 'release/release-manifest.json')
 EVAL_TEX = os.environ.get('QUAD_EVAL_TEX',
-                          os.path.join(ROOT, 'paper/generated/evaluation.tex'))
+                          os.path.join(ROOT, 'paper/evaluation.tex'))
 AUDIT_LEAN = os.path.join(ROOT, 'procint/AxiomAudit.lean')
 
 def step(n, label, ok):
@@ -94,7 +94,7 @@ claims = [
     ('C3', 'proven/stated split enforced by release gate (2 stated)',
      'release/release-manifest.json#statedNotProven'),
     ('C4', 'evaluation numbers rendered from the manifest',
-     'paper/generated/evaluation.tex'),
+     'paper/evaluation.tex'),
     ('C5', 'negative controls: the gate refuses (exit 1/2)',
      'release/certify.log'),
 ]
