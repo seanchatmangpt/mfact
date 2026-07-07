@@ -6,7 +6,7 @@ content_hash = "blake3:36349e9ccb8fe80361a4c044dca3383f3a064b7b268e44073432079ec
 
 [packs.post-release-pack]
 source = "path:/Users/sac/praxis/packs/post-release-pack"
-content_hash = "blake3:f377d887026ef4d6d9f382add927453aeb17ff9f04c9ddba8f507e9f0c11acc0"
+content_hash = "blake3:4fc16da0c641b7b7bea6ce5db74ff9446c2c19b0b4c735858143cf1f80167d38"
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/praxis/packs/quadrature-pack"

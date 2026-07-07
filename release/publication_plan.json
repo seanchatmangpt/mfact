@@ -16,13 +16,13 @@
     },
     {
       "id": "github_push",
-      "status": "BLOCKED",
+      "status": "ALIVE",
       "publication": "PENDING_EXTERNAL_ACTUATION",
       "requires": [
-        {"name": "repo_clean", "met": false},
+        {"name": "repo_clean", "met": true},
         {"name": "tag_exists", "met": true},
         {"name": "tag_descends_from_rendered_commit", "met": true},
-        {"name": "standin_has_release_tag", "met": false},
+        {"name": "standin_has_release_tag", "met": true},
         {"name": "user_actuation", "met": false}
       ]
     },

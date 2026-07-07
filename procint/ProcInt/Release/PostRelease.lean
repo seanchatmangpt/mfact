@@ -21,7 +21,7 @@ def postReleasePacketHash : String :=
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [
   ("arxiv_upload", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
-  ("github_push", "BLOCKED", "PENDING_EXTERNAL_ACTUATION"),
+  ("github_push", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
   ("github_release", "ALIVE", "PENDING_EXTERNAL_ACTUATION")
 ]
 
