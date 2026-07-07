@@ -38,7 +38,7 @@ quadrature-negative-controls:
 
 # Package the paper for arXiv (no submission).
 arxiv-package:
-    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib generated/evaluation.tex generated/quadrature.tex
+    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && tar czf arxiv-submission.tar.gz -C /Users/sac/mfact README_REPRODUCIBILITY.md -C /Users/sac/mfact/paper main.tex main.bbl refs.bib $(cd /Users/sac/mfact/paper && ls generated/*.tex)
     @tar tzf /Users/sac/mfact/paper/arxiv-submission.tar.gz
 
 # Print the standing report.

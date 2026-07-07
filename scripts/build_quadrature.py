@@ -116,6 +116,14 @@ if not fold_ok:
     unsupported.append('foldHash prefix')
 ok6 = step(6, 'Checking paper claims/evaluation', not unsupported)
 
+# ---- release-status fields for the paper fragments ----
+senv = dict(l.split('=', 1) for l in
+            open(os.path.join(ROOT, 'release/standing.env'))
+            if '=' in l and not l.startswith('#'))
+crown = 'stated' if 'def crownJewel_status : String := "stated"' in text else 'unknown'
+tag = subprocess.run(['git', '-C', ROOT, 'describe', '--tags', '--abbrev=0'],
+                     capture_output=True).stdout.decode().strip() or man['release']
+
 # ---- results ----
 closed = all([ok1, ok2, ok3, ok4, ok5, ok6])
 res = {
@@ -168,7 +176,17 @@ L = ['@prefix quad: <https://mfact.dev/quadrature#> .',
      f'  quad:auditCount {len(audited)} ;',
      f'  quad:claimCount {len(claims)} ;',
      f'  quad:evalCount {len(expect) + 1} ;',
-     f'  quad:eventCount {len(events)} .', '']
+     f'  quad:eventCount {len(events)} ;',
+     f'  quad:releaseTag "{tag}" ;',
+     f'  quad:foldHash "{man["foldHash"]}" ;',
+     f'  quad:sorryCount {senv.get("SORRY_COUNT", "UNKNOWN").strip()} ;',
+     f'  quad:admitCount {senv.get("ADMIT_COUNT", "UNKNOWN").strip()} ;',
+     f'  quad:statedCount {len(man["statedNotProven"])} ;',
+     f'  quad:totalDecls {len(man["artifacts"])} ;',
+     f'  quad:axiomAudit "{senv.get("AXIOM_AUDIT", "UNKNOWN").strip()}" ;',
+     f'  quad:fixtures "{senv.get("NEGATIVE_FIXTURES", "UNKNOWN").strip()}" ;',
+     f'  quad:certified "{senv.get("CERTIFIED_RELEASE", "UNKNOWN").strip()}" ;',
+     f'  quad:crownJewel "{crown.upper()}" .', '']
 for i, (k, lab, textex, cnt, ok) in enumerate(edges, 1):
     L += [f'quad:Edge_{k} a quad:EdgePair ;',
           f'  quad:pairKey "{k}" ;', f'  quad:pairLabel "{lab}" ;',
