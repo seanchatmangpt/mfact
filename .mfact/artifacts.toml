@@ -491,4 +491,4 @@ content_hash = "blake3:e6b57cddbfc5cf16b9fe698294a01ea61bce217cab3c4b20b7f6c5bdb
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:ae0e2a485fbf8ab7f8f39194c4c9bc34502e71538354045f06ffa9165a6f1e4c"
+content_hash = "blake3:e1e68be6e13a97de0937d441fc690f6c4aa1381addf760d3ee046961c171ddee"
