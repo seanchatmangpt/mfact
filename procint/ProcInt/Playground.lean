@@ -2,6 +2,11 @@
 -- Edits here are ordinary code review, not artifact drift.
 import ProcInt.Playground.ConformanceWalkthrough
 import ProcInt.Playground.PetriFiringWalkthrough
+import ProcInt.Playground.WorkflowNetWalkthrough
+import ProcInt.Playground.LogsModelsWalkthrough
+import ProcInt.Playground.AnalyticsWalkthrough
+import ProcInt.Playground.OcelWalkthrough
+import ProcInt.Playground.FoundationsRegistryWalkthrough
 
 /-! # ProcInt.Playground
 
