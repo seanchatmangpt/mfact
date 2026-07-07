@@ -89,7 +89,7 @@ ok5 = step(5, 'Reading process evidence', receipt_ok)
 claims = [
     ('C1', 'mfact framework with axiom-free no_valid_objection',
      'mfact/AxiomAudit.lean'),
-    ('C2', 'procint corpus: 145 kernel-admitted, axiom-audited theorems',
+    ('C2', f'procint corpus: {len(man_proven)} kernel-admitted, axiom-audited theorems',
      'release/release-manifest.json#artifacts'),
     ('C3', 'proven/stated split enforced by release gate (2 stated)',
      'release/release-manifest.json#statedNotProven'),

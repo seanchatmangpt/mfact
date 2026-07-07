@@ -65,13 +65,13 @@ content_hash = "blake3:6efb0898c98bbe08def3ee926fefcba2171c5f7eef6b8233bf1e288ae
 path = "paper/quadrature.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:82b248f1c0639dbaa178f5f86d1b00e7f29afb2d0222b09bac31e72bfb6d5120"
+content_hash = "blake3:d477f5751a319768d66a5c123ae0d88ebc2d68f443bd0d5ed5e97bca5205acd3"
 
 [[artifact]]
 path = "paper/release_macros.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:8cb66811ba29c879e5cfdb4e771565d7659bb74c2ade46d0a8ede03334ab5c4f"
+content_hash = "blake3:1a1ea67afdee871c6f565aa6a82fd9599b79af4337d9808ad1439c468eec801c"
 
 [[artifact]]
 path = "paper/replay_status.tex"
@@ -83,7 +83,7 @@ content_hash = "blake3:747601c08cdacd13a5aaa70d49728e81f3d2344e01f4ce255f098a7bb
 path = "procint/AxiomAudit.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:66a403e432dd56d86d636c34628d1f516962f1b5d9b82a1f1e2e8b5ed002f709"
+content_hash = "blake3:0990819613a1860375bf9973e668c82216406fd7e9db40d2477d577e999dd37e"
 
 [[artifact]]
 path = "procint/ProcInt.lean"
@@ -281,13 +281,13 @@ content_hash = "blake3:688d6a73077174bfd4718f7f8094e6d4b5658cbc94f11306a64711514
 path = "procint/ProcInt/Petri/Boundedness.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:be8fa7d202f59d5313969265b3a0b59874b1d8f1e47bc0eae5c93764602be463"
+content_hash = "blake3:9b30ac240a2e8d057bc20f8141c4790913dfe9b29b406525c27bcf669e7c5d52"
 
 [[artifact]]
 path = "procint/ProcInt/Petri/Firing.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:127b160b17932ce383f8a95898f40ec5e11e09740e934a6e161db2e795b8623c"
+content_hash = "blake3:47f3387111fdbe9eaaf87aa7ae7d4f6671fc228462092eac1f9d5e25d7860e49"
 
 [[artifact]]
 path = "procint/ProcInt/Petri/Invariants.lean"
@@ -311,7 +311,7 @@ content_hash = "blake3:5f730a493cf61b9e354cbee6c85ad331f433dc7fd5a9d258bc38993f9
 path = "procint/ProcInt/Petri/Reachability.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:31a93a007dc7ed2ed0c6c0fbc6f08a251900ee67eae10413bc20d6058f702ca0"
+content_hash = "blake3:21d4448269004daebf809046a2aceb9b9bbf38774a814e8062f9a5a057b23dd9"
 
 [[artifact]]
 path = "procint/ProcInt/Petri/StateEquation.lean"
@@ -359,7 +359,7 @@ content_hash = "blake3:5f07dfbc2fa19096670240a0c87b3a237260bb3a0ba62a9c22a434586
 path = "procint/ProcInt/Release/Quadrature.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:74bf65663f121aa15ca43cc69f311554375601c434b1ef34767147d6f301c639"
+content_hash = "blake3:e95fd08159f63ce09453680c96d806d678c357077135cdc0500f3df95825847f"
 
 [[artifact]]
 path = "procint/ProcInt/Tests.lean"
@@ -449,13 +449,13 @@ content_hash = "blake3:8e591aa31e7c391fa2e5e54be0f88f35681d74a4e1bae12863a80e350
 path = "release/quadrature.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:76dcc75d35bf700770d8dab687195d65f59ce79784dcfdd4b9eaf46d6c08f2cf"
+content_hash = "blake3:b77a55c211d8a06c181c0e009a891f7993f62a34aef62b68a8f37e4d3c55c022"
 
 [[artifact]]
 path = "release/quadrature.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:ff508eba37ed582a419ed99ce56450f2cf6328d2f2de99b7f5c8a6b85fb8199f"
+content_hash = "blake3:debb9e436d2eb341e618987b9abb16d201618a229a853d4359732ceec54a712e"
 
 [[artifact]]
 path = "release/replay_plan.json"
@@ -479,13 +479,13 @@ content_hash = "blake3:2a688e45f5bd4d1a547266ae4029b5661c5ebedfbfcb10a1c3bc65970
 path = "paper/evaluation.tex"
 producer = "scripts (manifest-derived; numbers verified by quadrature eval check)"
 sources = ["release/release-manifest.json"]
-content_hash = "blake3:f915d9174f98a91adc38e32befbe641d373558b104c084f1557d07acd804ff20"
+content_hash = "blake3:b9a967a325dc5586967b322dbb3d29e41fd4689300379605542aa3a5c9c340e3"
 
 [[artifact]]
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:8f0f00eca5a6f4021421316408c644dda264528f2a2f571ad73633e263cb6c6c"
+content_hash = "blake3:93e09a5666822f1dfe5b13be8fa2b8b68f178f1fa3d46fc5693706942ef0d852"
 
 [[artifact]]
 path = "release/gates.json"

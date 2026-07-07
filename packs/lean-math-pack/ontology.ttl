@@ -3882,6 +3882,65 @@ theorem PetriNet.fire_add_pre {P T : Type} (N : PetriNet P T)
   show M - N.pre t + N.post t + N.pre t = M + N.post t
   rw [add_right_comm, tsub_add_cancel_of_le h']""" .
 
+procint:Decl_enabled_mono a procint:Decl ;
+  procint:inModule "Petri.Firing" ;
+  procint:declOrder 6 ;
+  procint:declName "ProcInt.PetriNet.enabled_mono" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.enabled_mono' depends on axioms: [propext, Quot.sound]" ;
+  procint:leanCode """theorem PetriNet.enabled_mono {P T : Type} (N : PetriNet P T)
+    {M M' : Marking P} {t : T}
+    (h : N.Enabled M t) (hle : M ≤ M') : N.Enabled M' t :=
+  le_trans h hle""" .
+
+procint:Decl_step_add a procint:Decl ;
+  procint:inModule "Petri.Firing" ;
+  procint:declOrder 7 ;
+  procint:declName "ProcInt.PetriNet.step_add" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.step_add' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Firing is compatible with adding an arbitrary marking offset: if `t`
+takes `M` to `M'`, it also takes `M + A` to `M' + A`. Used to transport a
+firing step along a place-wise token increase (e.g. when comparing markings
+that differ by an invariant offset). -/
+theorem PetriNet.step_add {P T : Type} (N : PetriNet P T)
+    {M M' : Marking P} {t : T} (A : Marking P)
+    (h : N.Step M t M') : N.Step (M + A) t (M' + A) := by
+  obtain ⟨hen, hfire⟩ := h
+  have hle : N.pre t ≤ M + A := hen.trans le_self_add
+  refine ⟨hle, ?_⟩
+  show M' + A = (M + A) - N.pre t + N.post t
+  rw [hfire]
+  show M - N.pre t + N.post t + A = (M + A) - N.pre t + N.post t
+  have hkey : (M + A) - N.pre t = M - N.pre t + A := by
+    rw [add_comm M A, add_tsub_assoc_of_le hen A, add_comm A]
+  rw [hkey, add_right_comm]""" .
+
+procint:Decl_fire_pre_self a procint:Decl ;
+  procint:inModule "Petri.Firing" ;
+  procint:declOrder 8 ;
+  procint:declName "ProcInt.PetriNet.fire_pre_self" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.fire_pre_self' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem PetriNet.fire_pre_self {P T : Type} (N : PetriNet P T) (t : T) :
+    N.fire (N.pre t) t = N.post t := by
+  show N.pre t - N.pre t + N.post t = N.post t
+  rw [tsub_self, zero_add]""" .
+
+procint:Decl_step_pre_self a procint:Decl ;
+  procint:inModule "Petri.Firing" ;
+  procint:declOrder 9 ;
+  procint:declName "ProcInt.PetriNet.step_pre_self" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.step_pre_self' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem PetriNet.step_pre_self {P T : Type} (N : PetriNet P T) (t : T) :
+    N.Step (N.pre t) t (N.post t) :=
+  ⟨le_refl (N.pre t), (N.fire_pre_self t).symm⟩""" .
+
 # ═══ Decls: Petri.Reachability ═════════════════════════════════════════
 
 procint:Decl_Reaches a procint:Decl ;
@@ -3960,6 +4019,59 @@ theorem PetriNet.reaches_firingSeq {P T : Type} {N : PetriNet P T}
       obtain ⟨t, ht⟩ := hstep
       exact ⟨σ ++ [t], hσ.snoc ht⟩""" .
 
+procint:Decl_reaches_add a procint:Decl ;
+  procint:inModule "Petri.Reachability" ;
+  procint:declOrder 6 ;
+  procint:declName "ProcInt.PetriNet.reaches_add" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.reaches_add' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """/-- Reachability is stable under adding a constant offset to both markings:
+if M' is reachable from M, then M' + A is reachable from M + A (Stage A
+infrastructure lemma — token-conserving translation of reachability facts,
+Murata 1989 section II.D). -/
+theorem PetriNet.reaches_add {P T : Type} (N : PetriNet P T)
+    {M M' : Marking P} (A : Marking P) (h : N.Reaches M M') :
+    N.Reaches (M + A) (M' + A) := by
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | tail _ hstep ih =>
+      obtain ⟨t, ht⟩ := hstep
+      exact Relation.ReflTransGen.tail ih ⟨t, N.step_add A ht⟩""" .
+
+procint:Decl_firingSeq_support_subset a procint:Decl ;
+  procint:inModule "Petri.Reachability" ;
+  procint:declOrder 7 ;
+  procint:declName "ProcInt.PetriNet.firingSeq_support_subset" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.firingSeq_support_subset' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem PetriNet.firingSeq_support_subset {P T : Type} [Fintype T] [DecidableEq P]
+    {N : PetriNet P T} {M0 M : Marking P} {σ : List T}
+    (h : N.FiringSeq M0 σ M) :
+    M.support ⊆ M0.support ∪ Finset.univ.biUnion (fun t => (N.post t).support) := by
+  induction h with
+  | nil M => exact Finset.subset_union_left
+  | @cons Ma Mb Mc t σ' hstep _ ih =>
+      -- hstep : N.Step Ma t Mb, ih : Mc.support ⊆ Mb.support ∪ univ.biUnion post
+      have hfire : Mb = Ma - N.pre t + N.post t := hstep.2
+      have hsub1 : Mb.support ⊆ (Ma - N.pre t).support ∪ (N.post t).support := by
+        rw [hfire]; exact Finsupp.support_add
+      have hsub2 : (Ma - N.pre t).support ⊆ Ma.support := Finsupp.support_tsub
+      have hpost : (N.post t).support ⊆ Finset.univ.biUnion (fun t => (N.post t).support) :=
+        Finset.subset_biUnion_of_mem (fun t => (N.post t).support) (Finset.mem_univ t)
+      have hMb : Mb.support ⊆ Ma.support ∪ Finset.univ.biUnion (fun t => (N.post t).support) := by
+        intro x hx
+        rcases Finset.mem_union.mp (hsub1 hx) with hx' | hx'
+        · exact Finset.mem_union_left _ (hsub2 hx')
+        · exact Finset.mem_union_right _ (hpost hx')
+      intro x hx
+      rcases Finset.mem_union.mp (ih hx) with hx' | hx'
+      · rcases Finset.mem_union.mp (hMb hx') with hx'' | hx''
+        · exact Finset.mem_union_left _ hx''
+        · exact Finset.mem_union_right _ hx''
+      · exact Finset.mem_union_right _ hx'""" .
+
 # ═══ Decls: Petri.Boundedness ══════════════════════════════════════════
 
 procint:Decl_Bounded a procint:Decl ;
@@ -3985,6 +4097,53 @@ can eventually be enabled again (Murata 1989, section IV, L4-liveness — the
 liveness clause of van der Aalst 1997 WF-net soundness). -/
 def PetriNet.Live {P T : Type} (N : PetriNet P T) (M₀ : Marking P) : Prop :=
   ∀ M, N.Reaches M₀ M → ∀ t, ∃ M', N.Reaches M M' ∧ N.Enabled M' t""" .
+
+procint:Decl_Marking_exists_le_of_support_subset a procint:Decl ;
+  procint:inModule "Petri.Boundedness" ;
+  procint:declOrder 3 ;
+  procint:declName "ProcInt.Marking.exists_le_of_support_subset" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.Marking.exists_le_of_support_subset' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem Marking.exists_le_of_support_subset {P : Type} [DecidableEq P]
+    (S : Finset P) (f : ℕ → Marking P) (hf : ∀ n, (f n).support ⊆ S) :
+    ∃ m n : ℕ, m < n ∧ f m ≤ f n := by
+  classical
+  -- restrict each marking to the finite index type `{x // x ∈ S}`
+  let g : ℕ → ({x // x ∈ S} →₀ ℕ) := fun n => (f n).subtypeDomain (· ∈ S)
+  obtain ⟨m, n, hmn, hle⟩ := wellQuasiOrdered_le g
+  refine ⟨m, n, hmn, ?_⟩
+  rw [Finsupp.le_def]
+  intro p
+  by_cases hp : p ∈ S
+  · have := (Finsupp.le_def).mp hle ⟨p, hp⟩
+    simpa [g, Finsupp.subtypeDomain_apply] using this
+  · have hmp : (f m) p = 0 := by
+      by_contra h
+      exact hp (hf m (Finsupp.mem_support_iff.mpr h))
+    simp [hmp]""" .
+
+procint:Decl_bounded_of_finite_reach a procint:Decl ;
+  procint:inModule "Petri.Boundedness" ;
+  procint:declOrder 4 ;
+  procint:declName "ProcInt.PetriNet.bounded_of_finite_reach" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "'ProcInt.PetriNet.bounded_of_finite_reach' depends on axioms: [propext, Classical.choice, Quot.sound]" ;
+  procint:leanCode """theorem PetriNet.bounded_of_finite_reach {P T : Type} [DecidableEq P]
+    (N : PetriNet P T) (M₀ : Marking P)
+    (hfin : {M | N.Reaches M₀ M}.Finite) :
+    ∃ k, N.Bounded M₀ k := by
+  refine ⟨hfin.toFinset.sup (fun N' => N'.support.sup N'), ?_⟩
+  intro M hM p
+  have hMmem : M ∈ hfin.toFinset := hfin.mem_toFinset.mpr hM
+  by_cases hp : p ∈ M.support
+  · calc M p ≤ M.support.sup (⇑M) := Finset.le_sup hp
+      _ ≤ hfin.toFinset.sup (fun N' => N'.support.sup N') :=
+        Finset.le_sup (f := fun N' => N'.support.sup (⇑N')) hMmem
+  · have : M p = 0 := by simpa using hp
+    rw [this]
+    exact Nat.zero_le _""" .
 @prefix procint: <https://mfact.dev/procint#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 

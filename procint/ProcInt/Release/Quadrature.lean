@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Standing Quadrature witness — v26.7.7 (run 614c101)
+/-! # Standing Quadrature witness — v26.7.7 (run 1654a9b)
 
 A finite, kernel-checked witness that the release's surfaces cohere:
 the TTL declaration catalog, the release manifest, and the axiom audit
@@ -38,6 +38,7 @@ def ttlProvenDecls : List String := [
   "ProcInt.EventLog.wellFormed_cons",
   "ProcInt.EventLog.wellFormed_nil",
   "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.exists_le_of_support_subset",
   "ProcInt.Marking.toInt_injective",
   "ProcInt.Move.cost_eq_zero_iff",
   "ProcInt.Move.cost_le_one",
@@ -58,8 +59,12 @@ def ttlProvenDecls : List String := [
   "ProcInt.OcpqPredicate.sat_e2oRel_iff",
   "ProcInt.OcpqPredicate.sat_e2oRel_mem",
   "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.bounded_of_finite_reach",
+  "ProcInt.PetriNet.enabled_mono",
   "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.fire_pre_self",
   "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.firingSeq_support_subset",
   "ProcInt.PetriNet.flowEdge_inl_inr",
   "ProcInt.PetriNet.flowEdge_inr_inl",
   "ProcInt.PetriNet.flowEdge_irrefl",
@@ -67,10 +72,13 @@ def ttlProvenDecls : List String := [
   "ProcInt.PetriNet.not_flowEdge_inr_inr",
   "ProcInt.PetriNet.pInvariant_reaches",
   "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_add",
   "ProcInt.PetriNet.reaches_firingSeq",
   "ProcInt.PetriNet.stateEquation_seq",
   "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_add",
   "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.step_pre_self",
   "ProcInt.PetriNet.tInvariant_reproduces",
   "ProcInt.Powl.WellFormed.xor_length",
   "ProcInt.Powl.wellFormed_loop_atoms",
@@ -187,6 +195,7 @@ def manifestProvenDecls : List String := [
   "ProcInt.EventLog.wellFormed_cons",
   "ProcInt.EventLog.wellFormed_nil",
   "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.exists_le_of_support_subset",
   "ProcInt.Marking.toInt_injective",
   "ProcInt.Move.cost_eq_zero_iff",
   "ProcInt.Move.cost_le_one",
@@ -207,8 +216,12 @@ def manifestProvenDecls : List String := [
   "ProcInt.OcpqPredicate.sat_e2oRel_iff",
   "ProcInt.OcpqPredicate.sat_e2oRel_mem",
   "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.bounded_of_finite_reach",
+  "ProcInt.PetriNet.enabled_mono",
   "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.fire_pre_self",
   "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.firingSeq_support_subset",
   "ProcInt.PetriNet.flowEdge_inl_inr",
   "ProcInt.PetriNet.flowEdge_inr_inl",
   "ProcInt.PetriNet.flowEdge_irrefl",
@@ -216,10 +229,13 @@ def manifestProvenDecls : List String := [
   "ProcInt.PetriNet.not_flowEdge_inr_inr",
   "ProcInt.PetriNet.pInvariant_reaches",
   "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_add",
   "ProcInt.PetriNet.reaches_firingSeq",
   "ProcInt.PetriNet.stateEquation_seq",
   "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_add",
   "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.step_pre_self",
   "ProcInt.PetriNet.tInvariant_reproduces",
   "ProcInt.Powl.WellFormed.xor_length",
   "ProcInt.Powl.wellFormed_loop_atoms",
@@ -336,6 +352,7 @@ def auditedDecls : List String := [
   "ProcInt.EventLog.wellFormed_cons",
   "ProcInt.EventLog.wellFormed_nil",
   "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.exists_le_of_support_subset",
   "ProcInt.Marking.toInt_injective",
   "ProcInt.Move.cost_eq_zero_iff",
   "ProcInt.Move.cost_le_one",
@@ -356,8 +373,12 @@ def auditedDecls : List String := [
   "ProcInt.OcpqPredicate.sat_e2oRel_iff",
   "ProcInt.OcpqPredicate.sat_e2oRel_mem",
   "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.bounded_of_finite_reach",
+  "ProcInt.PetriNet.enabled_mono",
   "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.fire_pre_self",
   "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.firingSeq_support_subset",
   "ProcInt.PetriNet.flowEdge_inl_inr",
   "ProcInt.PetriNet.flowEdge_inr_inl",
   "ProcInt.PetriNet.flowEdge_irrefl",
@@ -365,10 +386,13 @@ def auditedDecls : List String := [
   "ProcInt.PetriNet.not_flowEdge_inr_inr",
   "ProcInt.PetriNet.pInvariant_reaches",
   "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_add",
   "ProcInt.PetriNet.reaches_firingSeq",
   "ProcInt.PetriNet.stateEquation_seq",
   "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_add",
   "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.step_pre_self",
   "ProcInt.PetriNet.tInvariant_reproduces",
   "ProcInt.Powl.WellFormed.xor_length",
   "ProcInt.Powl.wellFormed_loop_atoms",
@@ -473,7 +497,7 @@ every audited declaration has a TTL origin. -/
 theorem ttl_audit_closed : ttlProvenDecls = auditedDecls := by rfl
 
 /-- Cardinality of the closed proven surface. -/
-theorem provenSurface_count : ttlProvenDecls.length = 145 := by rfl
+theorem provenSurface_count : ttlProvenDecls.length = 153 := by rfl
 
 /-- Paper-claim surface: (claim id, evidence reference) pairs. -/
 def paperClaims : List (String × String) := [

@@ -22,5 +22,38 @@ liveness clause of van der Aalst 1997 WF-net soundness). -/
 def PetriNet.Live {P T : Type} (N : PetriNet P T) (M₀ : Marking P) : Prop :=
   ∀ M, N.Reaches M₀ M → ∀ t, ∃ M', N.Reaches M M' ∧ N.Enabled M' t
 
+theorem Marking.exists_le_of_support_subset {P : Type} [DecidableEq P]
+    (S : Finset P) (f : ℕ → Marking P) (hf : ∀ n, (f n).support ⊆ S) :
+    ∃ m n : ℕ, m < n ∧ f m ≤ f n := by
+  classical
+  -- restrict each marking to the finite index type `{x // x ∈ S}`
+  let g : ℕ → ({x // x ∈ S} →₀ ℕ) := fun n => (f n).subtypeDomain (· ∈ S)
+  obtain ⟨m, n, hmn, hle⟩ := wellQuasiOrdered_le g
+  refine ⟨m, n, hmn, ?_⟩
+  rw [Finsupp.le_def]
+  intro p
+  by_cases hp : p ∈ S
+  · have := (Finsupp.le_def).mp hle ⟨p, hp⟩
+    simpa [g, Finsupp.subtypeDomain_apply] using this
+  · have hmp : (f m) p = 0 := by
+      by_contra h
+      exact hp (hf m (Finsupp.mem_support_iff.mpr h))
+    simp [hmp]
+
+theorem PetriNet.bounded_of_finite_reach {P T : Type} [DecidableEq P]
+    (N : PetriNet P T) (M₀ : Marking P)
+    (hfin : {M | N.Reaches M₀ M}.Finite) :
+    ∃ k, N.Bounded M₀ k := by
+  refine ⟨hfin.toFinset.sup (fun N' => N'.support.sup N'), ?_⟩
+  intro M hM p
+  have hMmem : M ∈ hfin.toFinset := hfin.mem_toFinset.mpr hM
+  by_cases hp : p ∈ M.support
+  · calc M p ≤ M.support.sup (⇑M) := Finset.le_sup hp
+      _ ≤ hfin.toFinset.sup (fun N' => N'.support.sup N') :=
+        Finset.le_sup (f := fun N' => N'.support.sup (⇑N')) hMmem
+  · have : M p = 0 := by simpa using hp
+    rw [this]
+    exact Nat.zero_le _
+
 
 end ProcInt

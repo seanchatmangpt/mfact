@@ -18,12 +18,12 @@
 \toprule
 Metric & Value \\
 \midrule
-Lines of Lean (\texttt{ProcInt/}) & 4{,}274 \\
-Declarations recorded in the ontology & 318 \\
-Modules & 50 \\
-Theorems kernel-admitted and axiom-audited (\emph{proven}) & 145 \\
+Lines of Lean (\texttt{ProcInt/}) & 6{,}711 \\
+Declarations recorded in the ontology & 333 \\
+Modules & 51 \\
+Theorems kernel-admitted and axiom-audited (\emph{proven}) & 153 \\
 Statements formalized but not discharged (\emph{stated}) & 2 \\
-Definitions, structures, and test oracles & 171 \\
+Definitions, structures, and test oracles & 178 \\
 \bottomrule
 \end{tabular}
 \caption{Corpus size and the proven/stated/definition split, as recorded
@@ -40,15 +40,15 @@ Axiom footprint of proven theorems & Count \\
 \midrule
 No axioms & 37 \\
 \texttt{propext} & 28 \\
-\texttt{propext}, \texttt{Quot.sound} & 25 \\
-\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} & 55 \\
+\texttt{Quot.sound}, \texttt{propext} & 26 \\
+\texttt{Classical.choice}, \texttt{Quot.sound}, \texttt{propext} & 62 \\
 \midrule
-Total proven & 145 \\
+Total proven & 153 \\
 Unauthorized axioms found & 0 \\
 Transitive \texttt{sorryAx} found & 0 \\
 \bottomrule
 \end{tabular}
-\caption{Axiom-audit result over all 145 proven theorems. Every set is a
+\caption{Axiom-audit result over all 153 proven theorems. Every set is a
 subset of the trusted \{\texttt{propext}, \texttt{Classical.choice},
 \texttt{Quot.sound}\}; \texttt{no\_valid\_objection}
 (Section~\ref{sec:mfact}) is the strongest case, depending on none of them.}
@@ -76,9 +76,9 @@ if either rejection ever silently stops happening.
 \paragraph{Certification.} \texttt{mfact certify release-manifest.json
 gates.json} exits 0 with \texttt{sorryFree}, \texttt{axiomsClean},
 \texttt{fixturesPass}, and \texttt{evidenceComplete} all true. The
-genesis-folded release hash (BLAKE3, folded over all 318 artifact hashes
+genesis-folded release hash (BLAKE3, folded over all 333 artifact hashes
 in name order, seed \texttt{"mfact-v26.7.6-genesis"}) is
-\texttt{e25724e8...3c080d} (truncated; full value in
+\texttt{a61fe6f5...2d768d} (truncated; full value in
 \texttt{release-manifest.json}). Both negative controls behaved as
 required: flipping \texttt{sorryFree} to false in a copy of the gates
 file causes \texttt{mfact certify} to exit 1 with an explicit gate-failure
