@@ -69,13 +69,14 @@ for kind, subj, seed in [
 
 # genesis fold, exactly matching praxis src/chain.rs:
 # genesis = blake3(seed); fold(prev, event) = blake3(prev_hex_bytes || event_bytes)
-acc = b3(b'mfact-v26.7.6-genesis')
+RELEASE = 'v26.7.7'
+acc = b3(f'mfact-{RELEASE}-genesis'.encode())
 for a in artifacts:
     acc = b3(acc.encode('ascii') + a['hash'].encode('ascii'))
 
 manifest = {
     'schema': 'mfact.release.v1',
-    'release': 'v26.7.6',
+    'release': RELEASE,
     'declarationSource': 'RDF_TTL',
     'leanSourceOrigin': 'GGEN_RENDERED_FROM_TTL',
     'trustedBase': ['Lean 4 kernel (v4.31.0)', 'Mathlib (fabf563a)',

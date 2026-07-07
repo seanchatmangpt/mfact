@@ -2,9 +2,9 @@
 # The declared file list originates in .mfact/arxiv.toml (single source);
 # this manifest is the packet-side attestation of what was packed.
 [packet]
-release = "v26.7.6"
+release = "v26.7.7"
 tarball = "paper/arxiv-submission.tar.gz"
-tarball_blake3 = "ee760a19638fa0b643ce1de22ab8fc23a1f754fd06e889720b89488a817ab49c"
+tarball_blake3 = "876670fc4d7e5e39830b20c4203c506bf8018654f24da4bc340cc03254af6dd7"
 status = "ALIVE"
 declared_file_count = 13
 actuation = "PENDING_EXTERNAL_ACTUATION"

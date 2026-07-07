@@ -2,29 +2,29 @@
   "schema": "mfact.final_status.v1",
   "core": {
     "status": "ALIVE",
-    "release": "v26.7.6",
-    "coreReleaseHash": "a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86",
+    "release": "v26.7.7",
+    "coreReleaseHash": "e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d",
     "coreProven": 145,
     "coreTotalDecls": 318,
     "stated": 2,
-    "renderedCommit": "bdd8e99",
-    "tag": "v26.7.6-procint-certified",
-    "tagCommit": "1712d76",
+    "renderedCommit": "b130f4a",
+    "tag": "v26.7.7-procint-certified",
+    "tagCommit": "b130f4a",
     "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
-    "packetHash": "9c787499b845d2dcbe4212ac416f3469f0849b187bfcf80b21bf60d2313ada29",
+    "packetHash": "b3a86d6f8f0ac496264bcd23fb2dc1b43d9488223eaab8ebddf232bad58db887",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
     "arxivPacket": "ALIVE",
     "packets": [
       {"id": "arxiv_upload", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
-      {"id": "github_push", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
+      {"id": "github_push", "status": "BLOCKED", "publication": "PENDING_EXTERNAL_ACTUATION"},
       {"id": "github_release", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"}
     ]
   },
   "auxiliaryLanes": {
     "replay": "REPLAY_NOT_RUN",
-    "docsLane": "PLANNED",
+    "docsLane": "IN_PROGRESS",
     "wfnetCrownTheorem": "STATED",
     "nextDomainFoundry": "PLANNED"
   }

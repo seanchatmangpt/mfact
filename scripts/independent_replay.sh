@@ -6,19 +6,19 @@
 # statuses are REPLAY_PASS / REPLAY_FAIL / REPLAY_NOT_RUN, never asserted.
 set -u
 REAL=/Users/sac/mfact
-TAG=v26.7.6-procint-certified
+TAG=v26.7.7-procint-certified
 STANDIN="${MFACT_STANDIN:?set MFACT_STANDIN to the bare stand-in path}"
 BUDGET="${REPLAY_BUDGET_SECS:-5400}"
 REPORT="$REAL/release/replay_report.json"
 LAKE=/Users/sac/.elan/bin/lake
 
 write_report() { # status detail
-  python3 - "$1" "$2" <<'EOF'
+  python3 - "$1" "$2" "$TAG" <<'EOF'
 import json, subprocess, sys
 rid = subprocess.run(['git','-C','/Users/sac/mfact','rev-parse','--short','HEAD'],
                      capture_output=True, text=True).stdout.strip()
 json.dump({'schema': 'mfact.replay_report.v1', 'status': sys.argv[1],
-           'detail': sys.argv[2], 'tag': 'v26.7.6-procint-certified',
+           'detail': sys.argv[2], 'tag': sys.argv[3],
            'reportWrittenAtCommit': rid},
           open('/Users/sac/mfact/release/replay_report.json','w'), indent=2)
 EOF

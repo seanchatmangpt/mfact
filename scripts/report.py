@@ -13,7 +13,6 @@ is asserted."""
 import json, os, re, shutil, subprocess, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CORE_TAG = 'v26.7.6-procint-certified'
 
 def read_env(path):
     kv = {}
@@ -57,6 +56,7 @@ def gather():
     gates = read_json(os.path.join(ROOT, 'release/gates.json')) or {}
     quad = read_json(os.path.join(ROOT, 'release/quadrature.json')) or {}
     man = read_json(os.path.join(ROOT, 'release/release-manifest.json')) or {}
+    CORE_TAG = f"{man.get('release', 'unknown')}-procint-certified"
     rendered = man.get('runIdentifier', '')[:7]
     _, tag_commit = git('rev-list', '-n', '1', CORE_TAG)
     anc, _ = git('merge-base', '--is-ancestor', man.get('runIdentifier', 'HEAD'), tag_commit or 'HEAD')
@@ -195,6 +195,26 @@ def cmd_doctor(rep):
     if not ok:
         sys.exit(1)
 
+def cmd_theorem_status(rep):
+    c = rep['core']
+    env = rep['standingEnv']
+    print(f"PROVEN_AUDITED: {c['coreProven']}")
+    print(f"STATED: {len(c['statedNotProven'])}")
+    print(f"TOTAL_DECLS: {c['coreTotalDecls']}")
+    for k in ('PROCINT_SEMANTIC_FIXTURES', 'PROCINT_NEGATIVE_FIXTURES',
+              'PROCINT_ORACLE_CASES', 'PROCINT_AXIOM_AUDIT',
+              'PROCINT_CROSS_SURFACE_CONFORMANCE'):
+        if k in env:
+            print(f"{k}={env[k]}")
+    print(f"WFNET_CROWN_EQUIVALENCE={env.get('WFNET_CROWN_EQUIVALENCE', 'UNKNOWN')}")
+    for name in c['statedNotProven']:
+        print(f"stated: {name}")
+    q = rep['quadratureResults']
+    print(f"witness ProcInt.Release.Quadrature: {q.get('standing_quadrature', 'UNKNOWN')}")
+    print(f"witness ProcInt.Release.PostRelease: "
+          f"{'RENDERED' if os.path.exists(os.path.join(ROOT, 'procint/ProcInt/Release/PostRelease.lean')) else 'ABSENT'}"
+          f" (admitted by lake build PostRelease; statuses in release/final_status.json)")
+
 def write_reports(rep):
     d = os.path.join(ROOT, '.mfact/reports')
     os.makedirs(d, exist_ok=True)
@@ -223,8 +243,12 @@ if __name__ == '__main__':
         cmd_why(rep, args[1])
     elif cmd == 'doctor':
         cmd_doctor(rep)
+    elif cmd == 'theorem-status':
+        cmd_theorem_status(rep)
+    elif cmd == 'write':
+        write = True
     else:
-        print(f"usage: report.py [status|next|trace <path>|why <path>|doctor] [--write]")
+        print(f"usage: report.py [status|next|trace <path>|why <path>|doctor|theorem-status|write] [--write]")
         sys.exit(2)
     if write:
         write_reports(rep)

@@ -85,7 +85,7 @@ tree. Only `just check` / `just release` write `.mfact/reports/latest.*`
 
 ## Core release identity (frozen)
 
-The v26.7.6 core release is tag `v26.7.6-procint-certified`:
+The v26.7.7 core release is tag `v26.7.7-procint-certified`:
 `CORE_RELEASE_HASH` = the manifest foldHash, `CORE_PROVEN`,
 `CORE_TOTAL_DECLS` as recorded in `release/release-manifest.json` at the
 tagged commit. **Post-release artifacts must not mutate the identity of the
@@ -103,6 +103,28 @@ Status taxonomy: `ALIVE`, `PARTIAL_ALIVE`, `BLOCKED`, `BLOCKED_EXTERNAL`,
 actuation is the user's), `VALID` (scoped, evidence-backed), `UNSUPPORTED`
 (claim without evidence — must not ship), `PLANNED` (declared, not built),
 `STATED` (formalized, not proven), `REPLAY_NOT_RUN`, `IN_PROGRESS`.
+
+## Agent actuation constitution
+
+Agents actuate only through just recipes.
+
+Do not call raw Lake, ggen, mfact, LaTeX, git, or packaging commands as
+the final actuation path unless a just recipe or doctor report explicitly
+instructs it.
+
+If a new actuation path is needed, add a just recipe first.
+
+Final reports must name just recipes used, not ad hoc shell history.
+
+Diagnostic commands (`status`, `next`, `trace`, `why`, `doctor`,
+`theorem-status`, `proof-blockers`, `fixtures`, `docs-check`) are
+read-only. Only `report-write`, `check`, and `release` write the
+ephemeral cockpit reports; only the manufacturing recipes write ledgered
+artifacts.
+
+No standing value may be inferred from terminal prose. Standing comes
+from the manifest, ledger, audit, fixture keys, quadrature report, and
+certified status artifacts.
 
 ## Completion report
 

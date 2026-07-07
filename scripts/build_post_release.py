@@ -23,7 +23,6 @@ import json, os, re, subprocess, sys, tarfile, tempfile, tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = '/Users/sac/praxis/packs/post-release-pack/ontology.ttl'
-CORE_TAG = 'v26.7.6-procint-certified'
 PLAN = '--plan' in sys.argv
 
 def b3(data: bytes) -> str:
@@ -45,6 +44,8 @@ def git(*args):
 man_path = os.path.join(ROOT, 'release/release-manifest.json')
 core_manifest_hash_before = b3_file(man_path)
 man = json.load(open(man_path))
+RELEASE = man['release']
+CORE_TAG = f'{RELEASE}-procint-certified'
 gates = json.load(open(os.path.join(ROOT, 'release/gates.json')))
 quad = json.load(open(os.path.join(ROOT, 'release/quadrature.json')))
 core_proven = sum(1 for a in man['artifacts'] if a['proven'])
@@ -91,11 +92,17 @@ if not PLAN:
     arxiv_status, arxiv_detail = 'ALIVE', \
         f'cold build PASS from untarred package ({len(declared)} declared files)'
 
+standin = os.environ.get('MFACT_STANDIN', '')
+_ls = subprocess.run(['git', 'ls-remote', '--tags', standin], capture_output=True) \
+    if standin else None
+standin_has_tag = bool(_ls and _ls.returncode == 0
+                       and f'refs/tags/{CORE_TAG}' in _ls.stdout.decode())
+
 # ---- Actuation packets: requirements evaluated, never self-actuated ----
 packets = [
     ('github_push', [('repo_clean', dirty == ''), ('tag_exists', bool(tag_commit)),
                      ('tag_descends_from_rendered_commit', tag_gate == 'PASS'),
-                     ('dry_run_push_passed', True)]),  # receipts: stand-in refs updated this session
+                     ('standin_has_release_tag', standin_has_tag)]),
     ('arxiv_upload', [('tarball_exists', bool(tar_hash)),
                       ('cold_build_passed', arxiv_status == 'ALIVE'),
                       ('pdf_exists', bool(pdf_hash)), ('certified', cert_ok)]),
@@ -125,12 +132,16 @@ obligations = [
 
 # ---- Replay + docs lanes (upgraded only by their own gates' reports) ----
 rep = os.path.join(ROOT, 'release/replay_report.json')
-replay = json.load(open(rep))['status'] if os.path.exists(rep) else 'REPLAY_NOT_RUN'
+replay = 'REPLAY_NOT_RUN'
+if os.path.exists(rep):
+    _r = json.load(open(rep))
+    # A replay receipt binds to ITS tag; a prior release's PASS is not ours.
+    replay = _r['status'] if _r.get('tag') == CORE_TAG else 'REPLAY_NOT_RUN'
 docs_rep = os.path.join(ROOT, 'release/docs_report.json')
 docs = json.load(open(docs_rep))['LEAN_HTML_DOCS'] if os.path.exists(docs_rep) else 'PLANNED'
 
 # ---- Packet identity: fold over evidence INPUTS, never over outputs ----
-acc = b3(b'mfact-v26.7.6-postrelease-genesis')
+acc = b3(f'mfact-{RELEASE}-postrelease-genesis'.encode())
 for h in [man['foldHash'], core_manifest_hash_before, tar_hash or '0'*64,
           pdf_hash or '0'*64, b3_file(os.path.join(ROOT, 'release/quadrature.json')),
           b3(('cert_ok=%s;controls_ok=%s' % (cert_ok, controls_ok)).encode())]:

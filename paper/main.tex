@@ -520,8 +520,8 @@ section does not render and the paper does not build for release.
   \begin{center}\fbox{\itshape Draft build: evaluation.tex missing.}\end{center}}
 \fi
 
-\paragraph{Final status.} Table below is generated from the release
-manifest and standing records; no cell is hand-authored.
+\paragraph{Final status.} The table below is generated from the
+release manifest and standing records; no cell is hand-authored.
 \ifreleasebuild
   \input{final_status}
 \else
@@ -561,7 +561,7 @@ symbol) each cause a typed refusal.
 \section{Falsifier and Valid Objection Surface}
 \label{sec:falsifier}
 
-A valid objection to this release must show at least one of:
+A valid objection to this release must exhibit at least one of:
 (1) a declared admitted theorem contains \texttt{sorry};
 (2) a theorem depends on unauthorized axioms;
 (3) a manifest hash does not match the artifact;
@@ -570,10 +570,17 @@ A valid objection to this release must show at least one of:
 (6) a stated declaration is described as proven;
 (7) the catalog-to-Lean rendering changes the intended theorem statement;
 (8) the release cannot be replayed under pinned dependencies.
-A local objection to one proof, citation, or template is not
-automatically a refutation of mathematical manufacturing. It becomes a
-refutation only if it crosses the admission boundary and invalidates a
-claimed receipt.
+These are \emph{closed failure classes}, not open attack surfaces: each
+is engineered into a gate, a typed refusal, or a non-admitted state, and
+the release gate is designed so that any occurrence of such a case
+prevents admission or produces a typed refusal. After certification, no
+constructor of the valid-objection surface is inhabited inside the
+declared boundary; the negative controls demonstrate each class refusing
+on a poisoned copy. A local objection to one proof, citation, or template
+is not automatically a refutation of mathematical manufacturing. It
+becomes a refutation only if it crosses the admission boundary and
+invalidates a claimed receipt --- and the enumeration above is exactly
+the set of ways to do so.
 
 \section{Limitations and Standing}
 \label{sec:limitations}
@@ -622,7 +629,8 @@ LLMs prove mathematics autonomously & LLMs are untrusted producers \\
 \textsf{procint} formalizes all of process intelligence & v1 boundary is manifest-scoped \\
 Kernel admission proves informal intent & statement fidelity is a review obligation \\
 Rice's theorem is violated & arbitrary semantic correctness is not decided \\
-All objections are impossible & only enumerated release objections are refuted \\
+External opinion enters the standing calculus & only receipted artifacts are parsed \\
+Criticism outside the boundary is refuted & the empty-objection-surface claim is scoped to the declared boundary \\
 \textsf{ggen} output has standing by generation & only admitted output has standing \\
 A stated theorem is proven & stated means the obligation remains open \\
 \bottomrule

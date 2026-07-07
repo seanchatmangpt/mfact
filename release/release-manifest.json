@@ -1,6 +1,6 @@
 {
   "schema": "mfact.release.v1",
-  "release": "v26.7.6",
+  "release": "v26.7.7",
   "declarationSource": "RDF_TTL",
   "leanSourceOrigin": "GGEN_RENDERED_FROM_TTL",
   "trustedBase": [
@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "bdd8e9964f355799c43611e7277a6a9df4b1fff9",
+  "runIdentifier": "b130f4a54ff572d09d266e7d5b4d16f6dce2ac38",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -3275,5 +3275,5 @@
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
     "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
   ],
-  "foldHash": "a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86"
+  "foldHash": "e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d"
 }

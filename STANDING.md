@@ -1,6 +1,6 @@
 # mfact/procint — Standing Report
 
-Release `v26.7.6`. Every field below is computed from a build, an audit, or
+Release `v26.7.7`. Every field below is computed from a build, an audit, or
 a git commit — nothing here is asserted in prose. Machine-checkable form:
 `release/standing.env`. Full manifest: `release/release-manifest.json`.
 
@@ -119,9 +119,9 @@ axioms at all**.
 ## Certification
 
 `mfact certify release-manifest.json gates.json` — exit 0.
-Genesis-folded release hash (BLAKE3, seed `mfact-v26.7.6-genesis`, folded
+Genesis-folded release hash (BLAKE3, seed `mfact-v26.7.7-genesis`, folded
 over all 318 artifact hashes in name order):
-`a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86`.
+`e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d`.
 
 Negative controls (the gate must be able to fail, or it certifies
 nothing):

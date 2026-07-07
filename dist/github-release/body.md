@@ -1,4 +1,4 @@
-# mfact v26.7.6 — procint certified release
+# mfact v26.7.7 — procint certified release
 
 `mfact` manufactures `procint`: a Lean 4 process-intelligence corpus whose
 declarations live in an RDF/Turtle catalog, are rendered by `ggen`, admitted
@@ -12,17 +12,17 @@ Lean admits; mfact certifies.
   (the WF-net soundness equivalence remains STATED)
 - Standing Quadrature closed: TTL x Lean x Manifest x ProcessEvidence x
   PaperClaims, zero orphans, kernel-admitted witness
-- Genesis-folded release hash: `a138ee84d0c08e0e946e0d0bb805a563b8304cf268eb97e6b9784bd36279fd86`
+- Genesis-folded release hash: `e25724e88d4b2ee396b7442d5604dafa1b6da9fd6c61614ebd4062ad073c080d`
 
 Reproduce: see `README_REPRODUCIBILITY.md` and `release/replay_plan.json`
-at tag `v26.7.6-procint-certified`.
+at tag `v26.7.7-procint-certified`.
 
 ## Checksums (BLAKE3)
 
 ```
-ee760a19638fa0b643ce1de22ab8fc23a1f754fd06e889720b89488a817ab49c  paper/arxiv-submission.tar.gz
-91a98227f5eb460dbfd4449a8307d8364458e4f0f9e4d67bccf47d45dcc73123  paper/main.pdf
-c07897846c90d9a044176b42928876b35f5d5a84a4a85e42a891fd24b466bf2c  release/release-manifest.json
+876670fc4d7e5e39830b20c4203c506bf8018654f24da4bc340cc03254af6dd7  paper/arxiv-submission.tar.gz
+4387bba903f51937c6763ea68610b09bd7676f1dde8b3ab55df6c8a3bfdae995  paper/main.pdf
+729ce0d2d9ab90dd5abe4a19c995c46ffbd2da6c6e1e48b3252f60ab3a8f1ee6  release/release-manifest.json
 ```
 
 This packet was manufactured; publishing it is a human action

@@ -2,10 +2,10 @@
 \paragraph{Independent replay.}
 The replay lane is upgraded only by its own gate's report, never asserted:
 its current standing is \texttt{REPLAY\_NOT\_RUN}. The
-gate clones the repository at tag \texttt{v26.7.6-procint-certified}
+gate clones the repository at tag \texttt{v26.7.7-procint-certified}
 into a scratch tree and re-runs the manufacturing rail there:
 \begin{enumerate}
-  \item \texttt{git clone \textless stand-in\textgreater /mfact-dryrun.git at tag v26.7.6-procint-certified}
+  \item \texttt{git clone \textless stand-in\textgreater /mfact-dryrun.git at tag v26.7.7-procint-certified}
   \item \texttt{just render \&\& just build (pinned toolchain, lake exe cache get)}
   \item \texttt{just audit \&\& just test}
   \item \texttt{just certify (exit 0 required)}

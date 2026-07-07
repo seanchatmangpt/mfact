@@ -68,7 +68,7 @@ argument, per `mfact/Mfact/Cli.lean`).
 Expected output: exit code `0`, with a line on stderr of the form:
 
 ```
-certified: v26.7.6 (proven <N>/<M>, objection type uninhabited)
+certified: v26.7.7 (proven <N>/<M>, objection type uninhabited)
 ```
 
 (`gates.json` must have all four gates — `sorryFree`, `axiomsClean`,

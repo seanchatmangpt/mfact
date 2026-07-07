@@ -2,7 +2,7 @@
 -- Candidate Lean: admitted only by `lake build PostRelease`.
 -- ggen renders; Lean admits; mfact certifies.
 
-/-! # Post-release witness — v26.7.6
+/-! # Post-release witness — v26.7.7
 
 A finite, kernel-checked witness over the publication packet: no actuation
 packet self-actuates (publication is pending external actuation in every
@@ -16,12 +16,12 @@ namespace ProcInt.Release
 
 /-- Packet identity of the post-release graph this witness was rendered from. -/
 def postReleasePacketHash : String :=
-  "9c787499b845d2dcbe4212ac416f3469f0849b187bfcf80b21bf60d2313ada29"
+  "b3a86d6f8f0ac496264bcd23fb2dc1b43d9488223eaab8ebddf232bad58db887"
 
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [
   ("arxiv_upload", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
-  ("github_push", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
+  ("github_push", "BLOCKED", "PENDING_EXTERNAL_ACTUATION"),
   ("github_release", "ALIVE", "PENDING_EXTERNAL_ACTUATION")
 ]
 

@@ -1,6 +1,9 @@
 # mfact overnight recipes — deterministic generation rail.
 # Lean toolchain is invoked via the absolute elan shim (off $PATH by design).
 
+default:
+    @just status
+
 # Merge pack fragments into the pack ontology, then render via ggen.
 render:
     cat /Users/sac/praxis/packs/lean-math-pack/fragments/*.ttl > /Users/sac/praxis/packs/lean-math-pack/ontology.ttl
@@ -30,6 +33,7 @@ certify: build audit
 # ggen renders. Lean admits. mfact certifies.
 standing-quadrature:
     python3 /Users/sac/mfact/scripts/build_quadrature.py
+    rm -f /Users/sac/mfact/ggen.lock
     cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
     cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build Quadrature
     @cat /Users/sac/mfact/release/quadrature.env
@@ -87,20 +91,51 @@ trace target:
 why target:
     @python3 /Users/sac/mfact/scripts/report.py why {{target}}
 
+theorem-status:
+    @python3 /Users/sac/mfact/scripts/report.py theorem-status
+
+# Crown research lane ladder — projected from the rendered obligations
+# (catalog-derived; STATED never promoted). No asserted statuses.
+proof-blockers:
+    @cat /Users/sac/mfact/research/wfnet/obligations.toml
+
+# Correctness-ladder standing (exit-code-backed PROCINT_* keys).
+fixtures:
+    @grep "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=" /Users/sac/mfact/release/standing.env
+
+# Aliases in the sanctioned actuation vocabulary.
+negative: quadrature-negative-controls
+quadrature: standing-quadrature
+
+paper:
+    cd /Users/sac/mfact/paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null
+    @echo "paper: main.pdf rebuilt"
+
+paper-check: prose-lint paper
+
+# The only diagnostic allowed to write ephemeral cockpit reports.
+report-write:
+    @python3 /Users/sac/mfact/scripts/report.py write
+
 # Full admission sweep; the only diagnostic allowed to write reports.
 check:
     just regen-check
     just build
     just test
-    just prose-lint
+    just paper-check
     @python3 /Users/sac/mfact/scripts/report.py status --write
+    @echo "CHECK=PASS"
+    @echo "NEXT=just release"
 
 # check → certify → paper packaging. External actuation stays with the user.
 release:
     just check
     just certify
+    just manufacture-post-release
     just arxiv-package
     @python3 /Users/sac/mfact/scripts/report.py status --write
+    @echo "release/FINAL_STATUS.md"
+    @grep -m1 "^CORE_RELEASE=" /Users/sac/mfact/release/FINAL_STATUS.md || true
 
 # Post-release publication packet: builder reads downstream receipts only,
 # ggen renders the packet surfaces, Lean admits the PostRelease witness,
@@ -130,5 +165,5 @@ docs-check:
 
 # Volatile standing claims must not appear in hand-authored prose.
 prose-lint:
-    @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|a138ee84|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
+    @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|e25724e8|CERTIFIED_RELEASE=PASS' /Users/sac/mfact/paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
     @echo "prose-lint: clean"
