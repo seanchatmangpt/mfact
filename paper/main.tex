@@ -395,11 +395,19 @@ independent, soundness is \emph{not} a single conjunction-shaped definition
 but three separately named predicates --- option to complete, proper
 completion, and no dead transitions --- with \texttt{Sound} as their
 explicit conjunction. This keeps partial results honest: a lemma about one
-clause is stated about that clause. The crown-jewel target of the run is the
-short-circuit characterization (soundness of \(N\) iff liveness and
-boundedness of the short-circuited net, \cite{vanderaalst1997}, Lemma~8);
-its per-direction status at release time is recorded in the manifest and
-reported in Section~\ref{sec:eval}, not asserted here.
+clause is stated about that clause.
+
+The crown-jewel target of the run is van der Aalst's soundness
+characterization (Lemma~8~\cite{vanderaalst1997}): soundness of a workflow net
+iff liveness and boundedness of its short-circuited net. The original
+statement over arbitrary (possibly infinite) transition sets is false; a
+countermodel exists where infinitely many transition pairs route unbounded
+tokens through a net without deadlock, violating the original characterization.
+We repaired this by adding a finiteness constraint on the transition set
+(\(\text{Finite } T\)). The admitted theorem in \textsf{procint} is the
+finite-transition WF-net soundness characterization; its per-direction status
+at release time is recorded in the manifest and reported in
+Section~\ref{sec:eval}, not asserted here.
 
 \paragraph{Conformance.}
 Alignments follow Carmona et al.~\cite{carmona2018}: moves are synchronous,
