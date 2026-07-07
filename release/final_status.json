@@ -18,7 +18,7 @@
     "arxivPacket": "ALIVE",
     "packets": [
       {"id": "arxiv_upload", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
-      {"id": "github_push", "status": "BLOCKED", "publication": "PENDING_EXTERNAL_ACTUATION"},
+      {"id": "github_push", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
       {"id": "github_release", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"}
     ]
   },
