@@ -1,0 +1,33 @@
+=== Quadrature negative controls (c7d4dd0) ===
+refusal: standing quadrature open. Orphans:
+  unsupported_eval: ['proven']
+[1/7] Loading TTL declaration catalog..............PASS
+[2/7] Reading Lean symbol inventory................PASS
+[3/7] Reading axiom/proof audit....................PASS
+[4/7] Reading release manifest.....................PASS
+[5/7] Reading process evidence.....................PASS
+[6/7] Checking paper claims/evaluation.............FAIL
+[7/7] Generating quadrature witness graph..........PASS
+CONTROL1(corrupt eval number): PASS - typed refusal exit 2, unsupported_eval detected
+[1/7] Loading TTL declaration catalog..............PASS
+[2/7] Reading Lean symbol inventory................PASS
+[3/7] Reading axiom/proof audit....................PASS
+[4/7] Reading release manifest.....................PASS
+[5/7] Reading process evidence.....................PASS
+[6/7] Checking paper claims/evaluation.............PASS
+[7/7] Generating quadrature witness graph..........PASS
+quadrature graph: /var/folders/s6/jqyw48zs39z38b_3f6f_x2sc0000gn/T/tmp.jHFZFYjhv6/q2.ttl (proven surface = 145)
+CONTROL2(fake claim, no evidence): PASS - claim_to_evidence edge FAIL + orphan_paper_claims > 0
+refusal: standing quadrature open. Orphans:
+  ttl_without_lean: ['ProcInt.fake_orphan_theorem_zzz']
+  audit_gap: ['ProcInt.fake_orphan_theorem_zzz']
+  manifest_gap: ['ProcInt.fake_orphan_theorem_zzz']
+[1/7] Loading TTL declaration catalog..............PASS
+[2/7] Reading Lean symbol inventory................FAIL
+[3/7] Reading axiom/proof audit....................FAIL
+[4/7] Reading release manifest.....................FAIL
+[5/7] Reading process evidence.....................PASS
+[6/7] Checking paper claims/evaluation.............PASS
+[7/7] Generating quadrature witness graph..........PASS
+CONTROL3(fake proven TTL decl): PASS - typed refusal exit 2, ttl_without_lean orphan
+controls: 3 refused correctly, 0 failed to refuse

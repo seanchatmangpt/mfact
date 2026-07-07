@@ -10,9 +10,30 @@ This report certifies exactly what the gates below check: that the named
 declarations kernel-admit under the pinned toolchain, that their axiom
 footprint is the trusted set, that the named fixtures build, and that the
 release manifest is internally consistent. It does not certify that the
-ontology-authored statements are a faithful rendering of the cited primary
+catalog-curated statements are a faithful rendering of the cited primary
 literature (Section "Limitations and Standing" of the paper) — that is a
 citation-review obligation, not a theorem this pipeline can discharge.
+
+## Source Origin
+
+The canonical source of `procint` is not handwritten `.lean` files. It is
+the RDF/Turtle declaration catalog (`packs/lean-math-pack`). Declaration
+bodies were curated into the catalog by LLM-assisted lanes under human
+review (each candidate kernel-verified via `lake env lean` on a scratch
+file before being recorded — LLMs are untrusted candidate producers).
+ggen renders the Lean modules, the root import index, the axiom-audit
+guard, and the registry tables from that catalog. The rendered Lean is a
+candidate artifact: it is not trusted because it was rendered. It acquires
+standing only through Lean kernel admission, the Lake build, the no-sorry
+audit, the axiom audit, the negative fixtures, and release certification.
+
+ggen renders. Lean admits. mfact certifies.
+
+`DECLARATION_SOURCE=RDF_TTL`
+`LEAN_SOURCE_ORIGIN=GGEN_RENDERED_FROM_TTL`
+`GGEN_RENDERED_LEAN_SOURCE=TRUE`
+`GGEN_CERTIFIED_MATHEMATICS=FALSE`
+`LEAN_KERNEL_ADMITTED=TRUE`
 
 ## Ladder (per module family)
 
@@ -57,7 +78,7 @@ unfolding-correctness statement in the Petri-net seed lane).
 ## Refusal / repair log
 
 Three cross-family bugs were found and fixed at the fragment level (never
-by hand-editing generated `.lean` files), each re-rendered and rebuilt
+by hand-editing the assembled `.lean` files directly), each re-rendered and rebuilt
 before proceeding:
 
 1. `Workflow.Soundness` — missing `import ProcInt.Petri.Boundedness`
@@ -128,3 +149,19 @@ report (`TYPE_INVENTORY_HASH`, `GGEN_MODULE_GENERATION`, `LEAN_BUILD`,
 Every field there is computed by the commands recorded in
 `release/certify.log` and `generated/evaluation.tex`'s header comment,
 never typed from memory.
+
+## Standing Quadrature
+
+`STANDING_QUADRATURE=PASS` (`release/quadrature.env`, `release/quadrature.json`,
+`release/quadrature.md`). The release closes the cross-product between five
+surfaces — TTL declaration catalog, admitted Lean corpus, release manifest,
+process evidence, paper claims — with zero orphans on every edge. Closure is
+kernel-checked: `procint/ProcInt/Release/Quadrature.lean` (rendered by ggen
+from the quadrature graph) proves the catalog/manifest/audit proven-surfaces
+pairwise equal by `rfl`, proves every traced paper claim carries evidence,
+and proves the manufacturing run trace monotone and conformant to its
+declared Declare process model — procint models the process by which mfact
+manufactured procint. Three negative controls (corrupted evaluation number,
+evidence-free claim, orphan catalog declaration) each produce a typed
+refusal (`release/quadrature-negative-controls.log`). Reproduce:
+`just standing-quadrature`.

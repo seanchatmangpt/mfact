@@ -21,3 +21,7 @@ name = "ProcInt"
 
 [[lean_lib]]
 name = "AxiomAudit"
+
+[[lean_lib]]
+name = "Quadrature"
+roots = ["ProcInt.Release.Quadrature"]

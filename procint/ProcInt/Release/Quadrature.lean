@@ -1,0 +1,591 @@
+-- RENDERED by `ggen sync` from the quadrature graph (quadrature-pack).
+-- Candidate Lean: admitted only by `lake build Quadrature`.
+-- ggen renders; Lean admits; mfact certifies.
+import Mathlib
+import ProcInt
+
+/-! # Standing Quadrature witness — v26.7.6 (run c7d4dd0)
+
+A finite, kernel-checked witness that the release's surfaces cohere:
+the TTL declaration catalog, the release manifest, and the axiom audit
+list exactly the same proven declarations (closure by `rfl` on equal
+generated lists — any orphan on either side makes the lists differ and the
+kernel refuses this file); every traced paper claim carries a non-empty
+evidence reference; and the manufacturing run itself is a monotone
+`procint` trace conforming to a declared process model. -/
+
+namespace ProcInt.Release
+
+/-- TTL-catalog surface: declarations recorded as proven (name-sorted). -/
+def ttlProvenDecls : List String := [
+  "ProcInt.CardBound.admits_max",
+  "ProcInt.CardBound.admits_min",
+  "ProcInt.CardBound.admits_of_widens",
+  "ProcInt.CardBound.sat_cardObjects_iff",
+  "ProcInt.CardBound.widens_refl",
+  "ProcInt.CardBound.widens_trans",
+  "ProcInt.ChoiceGraph.minimal_hasEmptyPath",
+  "ProcInt.ChoiceGraph.minimal_valid",
+  "ProcInt.Event.simple_activity",
+  "ProcInt.Event.simple_lifecycle",
+  "ProcInt.Event.simple_resource",
+  "ProcInt.Event.simple_timestamp",
+  "ProcInt.EventLog.eventCount_append",
+  "ProcInt.EventLog.eventCount_cons",
+  "ProcInt.EventLog.eventCount_eq_zero",
+  "ProcInt.EventLog.eventCount_nil",
+  "ProcInt.EventLog.wellFormed_append",
+  "ProcInt.EventLog.wellFormed_cons",
+  "ProcInt.EventLog.wellFormed_nil",
+  "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.toInt_injective",
+  "ProcInt.Move.cost_eq_zero_iff",
+  "ProcInt.Move.cost_le_one",
+  "ProcInt.OCEL.e2oProj_length",
+  "ProcInt.OCEL.eventsOf_length_le",
+  "ProcInt.OCEL.interacts_self",
+  "ProcInt.OCEL.interacts_symm",
+  "ProcInt.OCEL.mem_objectsOf",
+  "ProcInt.OCEL.objectsOf_length_le",
+  "ProcInt.OCEL.timeOrdered_nil",
+  "ProcInt.OCEL.timeOrdered_singleton",
+  "ProcInt.OCPN.conforms_add",
+  "ProcInt.OCPN.conforms_of_le",
+  "ProcInt.OccurrenceNet.acyclic_no_self_flow",
+  "ProcInt.OccurrenceNet.causality_trans",
+  "ProcInt.OccurrenceNet.flow_causality",
+  "ProcInt.OccurrenceNet.flow_irrefl",
+  "ProcInt.OcpqPredicate.sat_e2oRel_iff",
+  "ProcInt.OcpqPredicate.sat_e2oRel_mem",
+  "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.flowEdge_inl_inr",
+  "ProcInt.PetriNet.flowEdge_inr_inl",
+  "ProcInt.PetriNet.flowEdge_irrefl",
+  "ProcInt.PetriNet.not_flowEdge_inl_inl",
+  "ProcInt.PetriNet.not_flowEdge_inr_inr",
+  "ProcInt.PetriNet.pInvariant_reaches",
+  "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_firingSeq",
+  "ProcInt.PetriNet.stateEquation_seq",
+  "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.tInvariant_reproduces",
+  "ProcInt.Powl.WellFormed.xor_length",
+  "ProcInt.Powl.wellFormed_loop_atoms",
+  "ProcInt.Powl.wellFormed_po_emptyPrec",
+  "ProcInt.Powl.wellFormed_xor_pair",
+  "ProcInt.ProcessTree.language_leaf_silent",
+  "ProcInt.ProcessTree.language_seq_assoc",
+  "ProcInt.ProcessTree.mem_language_seq_leaf",
+  "ProcInt.Reach.trans",
+  "ProcInt.StochasticPetriNet.fireProb_le_one",
+  "ProcInt.StochasticPetriNet.fireProb_sum",
+  "ProcInt.Trace.activities_append",
+  "ProcInt.Trace.activities_length",
+  "ProcInt.Trace.monotone_append",
+  "ProcInt.Trace.monotone_iff_pairwise",
+  "ProcInt.Trace.monotone_nil",
+  "ProcInt.Trace.monotone_replicate",
+  "ProcInt.Trace.monotone_singleton",
+  "ProcInt.Trace.monotone_sublist",
+  "ProcInt.WfNet.Sound.enabled_of_transition",
+  "ProcInt.WfNet.Sound.reaches_final",
+  "ProcInt.WfNet.finalMarking_sink",
+  "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.initialMarking_ne_finalMarking",
+  "ProcInt.WfNet.initialMarking_sink",
+  "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.not_flowEdge_from_sink",
+  "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.reaches_shortCircuit",
+  "ProcInt.WfNet.shortCircuit_enabled_inl",
+  "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_post_inl",
+  "ProcInt.WfNet.shortCircuit_post_inr",
+  "ProcInt.WfNet.shortCircuit_pre_inl",
+  "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.XesLifecycleTransition.asString_injective",
+  "ProcInt.XesLifecycleTransition.asString_parse",
+  "ProcInt.XesLifecycleTransition.parse_asString",
+  "ProcInt.alignmentCost_append",
+  "ProcInt.alignmentCost_zero_iff_all_costfree",
+  "ProcInt.archived_only_deletes",
+  "ProcInt.archived_terminal",
+  "ProcInt.arity_one_or_two",
+  "ProcInt.bpmnMinimal_wellFormed",
+  "ProcInt.bpmn_empty_not_wellFormed",
+  "ProcInt.cell_dim",
+  "ProcInt.cell_subset",
+  "ProcInt.cell_subset_slice",
+  "ProcInt.combinedScore_uniform",
+  "ProcInt.correlated_cons",
+  "ProcInt.correlated_empty",
+  "ProcInt.deleted_terminal",
+  "ProcInt.dependencyMeasure_antisymm",
+  "ProcInt.dependencyMeasure_lt_one",
+  "ProcInt.dependencyMeasure_self",
+  "ProcInt.dfgOfTrace_edges_length",
+  "ProcInt.dfgOfTrace_freq_one",
+  "ProcInt.dfgOfTrace_nil",
+  "ProcInt.empty_length",
+  "ProcInt.existence_append",
+  "ProcInt.f1_le_one",
+  "ProcInt.f1_nonneg",
+  "ProcInt.fitness_le_one",
+  "ProcInt.fitness_mem_unitInterval",
+  "ProcInt.fitness_nonneg",
+  "ProcInt.fitness_perfect",
+  "ProcInt.happensBefore_irrefl",
+  "ProcInt.happensBefore_trans",
+  "ProcInt.length_of_mem_interleavings",
+  "ProcInt.lifecycleStep_irrefl",
+  "ProcInt.linked_nil",
+  "ProcInt.linked_singleton",
+  "ProcInt.linked_tail",
+  "ProcInt.logProjection_length_le",
+  "ProcInt.neg_one_lt_dependencyMeasure",
+  "ProcInt.no_transition_to_created",
+  "ProcInt.notCoexistence_comm",
+  "ProcInt.oneSubRatio_le_one",
+  "ProcInt.oneSubRatio_nonneg",
+  "ProcInt.precedence_concrete",
+  "ProcInt.push_bounded",
+  "ProcInt.push_not_full",
+  "ProcInt.response_concrete",
+  "ProcInt.seqLang_assoc",
+  "ProcInt.sojourn_self",
+  "ProcInt.succession_imp_response",
+  "ProcInt.uniformWeights_normalized",
+  "ProcInt.unitRat_le_one",
+  "ProcInt.unitRat_nonneg",
+  "ProcInt.weighSum_add",
+  "ProcInt.wellPosed_prefixLen_pos"
+]
+
+/-- Release-manifest surface: artifacts recorded as proven (name-sorted). -/
+def manifestProvenDecls : List String := [
+  "ProcInt.CardBound.admits_max",
+  "ProcInt.CardBound.admits_min",
+  "ProcInt.CardBound.admits_of_widens",
+  "ProcInt.CardBound.sat_cardObjects_iff",
+  "ProcInt.CardBound.widens_refl",
+  "ProcInt.CardBound.widens_trans",
+  "ProcInt.ChoiceGraph.minimal_hasEmptyPath",
+  "ProcInt.ChoiceGraph.minimal_valid",
+  "ProcInt.Event.simple_activity",
+  "ProcInt.Event.simple_lifecycle",
+  "ProcInt.Event.simple_resource",
+  "ProcInt.Event.simple_timestamp",
+  "ProcInt.EventLog.eventCount_append",
+  "ProcInt.EventLog.eventCount_cons",
+  "ProcInt.EventLog.eventCount_eq_zero",
+  "ProcInt.EventLog.eventCount_nil",
+  "ProcInt.EventLog.wellFormed_append",
+  "ProcInt.EventLog.wellFormed_cons",
+  "ProcInt.EventLog.wellFormed_nil",
+  "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.toInt_injective",
+  "ProcInt.Move.cost_eq_zero_iff",
+  "ProcInt.Move.cost_le_one",
+  "ProcInt.OCEL.e2oProj_length",
+  "ProcInt.OCEL.eventsOf_length_le",
+  "ProcInt.OCEL.interacts_self",
+  "ProcInt.OCEL.interacts_symm",
+  "ProcInt.OCEL.mem_objectsOf",
+  "ProcInt.OCEL.objectsOf_length_le",
+  "ProcInt.OCEL.timeOrdered_nil",
+  "ProcInt.OCEL.timeOrdered_singleton",
+  "ProcInt.OCPN.conforms_add",
+  "ProcInt.OCPN.conforms_of_le",
+  "ProcInt.OccurrenceNet.acyclic_no_self_flow",
+  "ProcInt.OccurrenceNet.causality_trans",
+  "ProcInt.OccurrenceNet.flow_causality",
+  "ProcInt.OccurrenceNet.flow_irrefl",
+  "ProcInt.OcpqPredicate.sat_e2oRel_iff",
+  "ProcInt.OcpqPredicate.sat_e2oRel_mem",
+  "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.flowEdge_inl_inr",
+  "ProcInt.PetriNet.flowEdge_inr_inl",
+  "ProcInt.PetriNet.flowEdge_irrefl",
+  "ProcInt.PetriNet.not_flowEdge_inl_inl",
+  "ProcInt.PetriNet.not_flowEdge_inr_inr",
+  "ProcInt.PetriNet.pInvariant_reaches",
+  "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_firingSeq",
+  "ProcInt.PetriNet.stateEquation_seq",
+  "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.tInvariant_reproduces",
+  "ProcInt.Powl.WellFormed.xor_length",
+  "ProcInt.Powl.wellFormed_loop_atoms",
+  "ProcInt.Powl.wellFormed_po_emptyPrec",
+  "ProcInt.Powl.wellFormed_xor_pair",
+  "ProcInt.ProcessTree.language_leaf_silent",
+  "ProcInt.ProcessTree.language_seq_assoc",
+  "ProcInt.ProcessTree.mem_language_seq_leaf",
+  "ProcInt.Reach.trans",
+  "ProcInt.StochasticPetriNet.fireProb_le_one",
+  "ProcInt.StochasticPetriNet.fireProb_sum",
+  "ProcInt.Trace.activities_append",
+  "ProcInt.Trace.activities_length",
+  "ProcInt.Trace.monotone_append",
+  "ProcInt.Trace.monotone_iff_pairwise",
+  "ProcInt.Trace.monotone_nil",
+  "ProcInt.Trace.monotone_replicate",
+  "ProcInt.Trace.monotone_singleton",
+  "ProcInt.Trace.monotone_sublist",
+  "ProcInt.WfNet.Sound.enabled_of_transition",
+  "ProcInt.WfNet.Sound.reaches_final",
+  "ProcInt.WfNet.finalMarking_sink",
+  "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.initialMarking_ne_finalMarking",
+  "ProcInt.WfNet.initialMarking_sink",
+  "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.not_flowEdge_from_sink",
+  "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.reaches_shortCircuit",
+  "ProcInt.WfNet.shortCircuit_enabled_inl",
+  "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_post_inl",
+  "ProcInt.WfNet.shortCircuit_post_inr",
+  "ProcInt.WfNet.shortCircuit_pre_inl",
+  "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.XesLifecycleTransition.asString_injective",
+  "ProcInt.XesLifecycleTransition.asString_parse",
+  "ProcInt.XesLifecycleTransition.parse_asString",
+  "ProcInt.alignmentCost_append",
+  "ProcInt.alignmentCost_zero_iff_all_costfree",
+  "ProcInt.archived_only_deletes",
+  "ProcInt.archived_terminal",
+  "ProcInt.arity_one_or_two",
+  "ProcInt.bpmnMinimal_wellFormed",
+  "ProcInt.bpmn_empty_not_wellFormed",
+  "ProcInt.cell_dim",
+  "ProcInt.cell_subset",
+  "ProcInt.cell_subset_slice",
+  "ProcInt.combinedScore_uniform",
+  "ProcInt.correlated_cons",
+  "ProcInt.correlated_empty",
+  "ProcInt.deleted_terminal",
+  "ProcInt.dependencyMeasure_antisymm",
+  "ProcInt.dependencyMeasure_lt_one",
+  "ProcInt.dependencyMeasure_self",
+  "ProcInt.dfgOfTrace_edges_length",
+  "ProcInt.dfgOfTrace_freq_one",
+  "ProcInt.dfgOfTrace_nil",
+  "ProcInt.empty_length",
+  "ProcInt.existence_append",
+  "ProcInt.f1_le_one",
+  "ProcInt.f1_nonneg",
+  "ProcInt.fitness_le_one",
+  "ProcInt.fitness_mem_unitInterval",
+  "ProcInt.fitness_nonneg",
+  "ProcInt.fitness_perfect",
+  "ProcInt.happensBefore_irrefl",
+  "ProcInt.happensBefore_trans",
+  "ProcInt.length_of_mem_interleavings",
+  "ProcInt.lifecycleStep_irrefl",
+  "ProcInt.linked_nil",
+  "ProcInt.linked_singleton",
+  "ProcInt.linked_tail",
+  "ProcInt.logProjection_length_le",
+  "ProcInt.neg_one_lt_dependencyMeasure",
+  "ProcInt.no_transition_to_created",
+  "ProcInt.notCoexistence_comm",
+  "ProcInt.oneSubRatio_le_one",
+  "ProcInt.oneSubRatio_nonneg",
+  "ProcInt.precedence_concrete",
+  "ProcInt.push_bounded",
+  "ProcInt.push_not_full",
+  "ProcInt.response_concrete",
+  "ProcInt.seqLang_assoc",
+  "ProcInt.sojourn_self",
+  "ProcInt.succession_imp_response",
+  "ProcInt.uniformWeights_normalized",
+  "ProcInt.unitRat_le_one",
+  "ProcInt.unitRat_nonneg",
+  "ProcInt.weighSum_add",
+  "ProcInt.wellPosed_prefixLen_pos"
+]
+
+/-- Axiom-audit surface: declarations with a recorded audit message (name-sorted). -/
+def auditedDecls : List String := [
+  "ProcInt.CardBound.admits_max",
+  "ProcInt.CardBound.admits_min",
+  "ProcInt.CardBound.admits_of_widens",
+  "ProcInt.CardBound.sat_cardObjects_iff",
+  "ProcInt.CardBound.widens_refl",
+  "ProcInt.CardBound.widens_trans",
+  "ProcInt.ChoiceGraph.minimal_hasEmptyPath",
+  "ProcInt.ChoiceGraph.minimal_valid",
+  "ProcInt.Event.simple_activity",
+  "ProcInt.Event.simple_lifecycle",
+  "ProcInt.Event.simple_resource",
+  "ProcInt.Event.simple_timestamp",
+  "ProcInt.EventLog.eventCount_append",
+  "ProcInt.EventLog.eventCount_cons",
+  "ProcInt.EventLog.eventCount_eq_zero",
+  "ProcInt.EventLog.eventCount_nil",
+  "ProcInt.EventLog.wellFormed_append",
+  "ProcInt.EventLog.wellFormed_cons",
+  "ProcInt.EventLog.wellFormed_nil",
+  "ProcInt.EventLog.wellFormed_sublist",
+  "ProcInt.Marking.toInt_injective",
+  "ProcInt.Move.cost_eq_zero_iff",
+  "ProcInt.Move.cost_le_one",
+  "ProcInt.OCEL.e2oProj_length",
+  "ProcInt.OCEL.eventsOf_length_le",
+  "ProcInt.OCEL.interacts_self",
+  "ProcInt.OCEL.interacts_symm",
+  "ProcInt.OCEL.mem_objectsOf",
+  "ProcInt.OCEL.objectsOf_length_le",
+  "ProcInt.OCEL.timeOrdered_nil",
+  "ProcInt.OCEL.timeOrdered_singleton",
+  "ProcInt.OCPN.conforms_add",
+  "ProcInt.OCPN.conforms_of_le",
+  "ProcInt.OccurrenceNet.acyclic_no_self_flow",
+  "ProcInt.OccurrenceNet.causality_trans",
+  "ProcInt.OccurrenceNet.flow_causality",
+  "ProcInt.OccurrenceNet.flow_irrefl",
+  "ProcInt.OcpqPredicate.sat_e2oRel_iff",
+  "ProcInt.OcpqPredicate.sat_e2oRel_mem",
+  "ProcInt.PetriNet.FiringSeq.snoc",
+  "ProcInt.PetriNet.fire_add_pre",
+  "ProcInt.PetriNet.firingSeq_reaches",
+  "ProcInt.PetriNet.flowEdge_inl_inr",
+  "ProcInt.PetriNet.flowEdge_inr_inl",
+  "ProcInt.PetriNet.flowEdge_irrefl",
+  "ProcInt.PetriNet.not_flowEdge_inl_inl",
+  "ProcInt.PetriNet.not_flowEdge_inr_inr",
+  "ProcInt.PetriNet.pInvariant_reaches",
+  "ProcInt.PetriNet.pInvariant_step",
+  "ProcInt.PetriNet.reaches_firingSeq",
+  "ProcInt.PetriNet.stateEquation_seq",
+  "ProcInt.PetriNet.stateEquation_step",
+  "ProcInt.PetriNet.step_deterministic",
+  "ProcInt.PetriNet.tInvariant_reproduces",
+  "ProcInt.Powl.WellFormed.xor_length",
+  "ProcInt.Powl.wellFormed_loop_atoms",
+  "ProcInt.Powl.wellFormed_po_emptyPrec",
+  "ProcInt.Powl.wellFormed_xor_pair",
+  "ProcInt.ProcessTree.language_leaf_silent",
+  "ProcInt.ProcessTree.language_seq_assoc",
+  "ProcInt.ProcessTree.mem_language_seq_leaf",
+  "ProcInt.Reach.trans",
+  "ProcInt.StochasticPetriNet.fireProb_le_one",
+  "ProcInt.StochasticPetriNet.fireProb_sum",
+  "ProcInt.Trace.activities_append",
+  "ProcInt.Trace.activities_length",
+  "ProcInt.Trace.monotone_append",
+  "ProcInt.Trace.monotone_iff_pairwise",
+  "ProcInt.Trace.monotone_nil",
+  "ProcInt.Trace.monotone_replicate",
+  "ProcInt.Trace.monotone_singleton",
+  "ProcInt.Trace.monotone_sublist",
+  "ProcInt.WfNet.Sound.enabled_of_transition",
+  "ProcInt.WfNet.Sound.reaches_final",
+  "ProcInt.WfNet.finalMarking_sink",
+  "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.initialMarking_ne_finalMarking",
+  "ProcInt.WfNet.initialMarking_sink",
+  "ProcInt.WfNet.initialMarking_source",
+  "ProcInt.WfNet.not_flowEdge_from_sink",
+  "ProcInt.WfNet.not_flowEdge_to_source",
+  "ProcInt.WfNet.reaches_shortCircuit",
+  "ProcInt.WfNet.shortCircuit_enabled_inl",
+  "ProcInt.WfNet.shortCircuit_enabled_star",
+  "ProcInt.WfNet.shortCircuit_post_inl",
+  "ProcInt.WfNet.shortCircuit_post_inr",
+  "ProcInt.WfNet.shortCircuit_pre_inl",
+  "ProcInt.WfNet.shortCircuit_pre_inr",
+  "ProcInt.WfNet.shortCircuit_step_inl",
+  "ProcInt.XesLifecycleTransition.asString_injective",
+  "ProcInt.XesLifecycleTransition.asString_parse",
+  "ProcInt.XesLifecycleTransition.parse_asString",
+  "ProcInt.alignmentCost_append",
+  "ProcInt.alignmentCost_zero_iff_all_costfree",
+  "ProcInt.archived_only_deletes",
+  "ProcInt.archived_terminal",
+  "ProcInt.arity_one_or_two",
+  "ProcInt.bpmnMinimal_wellFormed",
+  "ProcInt.bpmn_empty_not_wellFormed",
+  "ProcInt.cell_dim",
+  "ProcInt.cell_subset",
+  "ProcInt.cell_subset_slice",
+  "ProcInt.combinedScore_uniform",
+  "ProcInt.correlated_cons",
+  "ProcInt.correlated_empty",
+  "ProcInt.deleted_terminal",
+  "ProcInt.dependencyMeasure_antisymm",
+  "ProcInt.dependencyMeasure_lt_one",
+  "ProcInt.dependencyMeasure_self",
+  "ProcInt.dfgOfTrace_edges_length",
+  "ProcInt.dfgOfTrace_freq_one",
+  "ProcInt.dfgOfTrace_nil",
+  "ProcInt.empty_length",
+  "ProcInt.existence_append",
+  "ProcInt.f1_le_one",
+  "ProcInt.f1_nonneg",
+  "ProcInt.fitness_le_one",
+  "ProcInt.fitness_mem_unitInterval",
+  "ProcInt.fitness_nonneg",
+  "ProcInt.fitness_perfect",
+  "ProcInt.happensBefore_irrefl",
+  "ProcInt.happensBefore_trans",
+  "ProcInt.length_of_mem_interleavings",
+  "ProcInt.lifecycleStep_irrefl",
+  "ProcInt.linked_nil",
+  "ProcInt.linked_singleton",
+  "ProcInt.linked_tail",
+  "ProcInt.logProjection_length_le",
+  "ProcInt.neg_one_lt_dependencyMeasure",
+  "ProcInt.no_transition_to_created",
+  "ProcInt.notCoexistence_comm",
+  "ProcInt.oneSubRatio_le_one",
+  "ProcInt.oneSubRatio_nonneg",
+  "ProcInt.precedence_concrete",
+  "ProcInt.push_bounded",
+  "ProcInt.push_not_full",
+  "ProcInt.response_concrete",
+  "ProcInt.seqLang_assoc",
+  "ProcInt.sojourn_self",
+  "ProcInt.succession_imp_response",
+  "ProcInt.uniformWeights_normalized",
+  "ProcInt.unitRat_le_one",
+  "ProcInt.unitRat_nonneg",
+  "ProcInt.weighSum_add",
+  "ProcInt.wellPosed_prefixLen_pos"
+]
+
+/-- TTL → Manifest closure: the two surfaces list exactly the same proven
+declarations. An orphan on either side falsifies this equation and the
+kernel refuses the witness. -/
+theorem ttl_manifest_closed : ttlProvenDecls = manifestProvenDecls := by rfl
+
+/-- TTL → Audit closure: every proven declaration is axiom-audited and
+every audited declaration has a TTL origin. -/
+theorem ttl_audit_closed : ttlProvenDecls = auditedDecls := by rfl
+
+/-- Cardinality of the closed proven surface. -/
+theorem provenSurface_count : ttlProvenDecls.length = 145 := by rfl
+
+/-- Paper-claim surface: (claim id, evidence reference) pairs. -/
+def paperClaims : List (String × String) := [
+  ("C1", "mfact/AxiomAudit.lean"),
+  ("C2", "release/release-manifest.json#artifacts"),
+  ("C3", "release/release-manifest.json#statedNotProven"),
+  ("C4", "paper/generated/evaluation.tex"),
+  ("C5", "release/certify.log")
+]
+
+/-- Claim → Evidence closure: every traced paper claim carries a non-empty
+evidence reference. -/
+theorem claims_all_evidenced :
+    paperClaims.all (fun c => !c.2.isEmpty) = true := by rfl
+
+/-! ## The manufacturing run as a procint process model
+
+The run that produced this release, as a `procint` trace (ordinal
+timestamps = receipt-chain append order; no wall clock enters the
+artifact), checked against a declared process model with the corpus's own
+`DeclareConstraint` semantics. procint models the process by which mfact
+manufactured procint. -/
+
+/-- The release run trace. -/
+def runTrace : Trace String := ⟨"mfact-run", [
+  Event.simple "TtlCatalogLoaded" 0,
+  Event.simple "LeanRendered" 1,
+  Event.simple "LakeBuildPassed" 2,
+  Event.simple "SorryAuditPassed" 3,
+  Event.simple "AxiomAuditPassed" 4,
+  Event.simple "NegativeFixturesPassed" 5,
+  Event.simple "ManifestGenerated" 6,
+  Event.simple "PaperEvidenceGenerated" 7,
+  Event.simple "CertifiedReleaseConstructed" 8,
+  Event.simple "QuadratureClosed" 9
+]⟩
+
+/-- Activity projection of the run trace, as a literal list. -/
+def runActivities : List String := [
+  "TtlCatalogLoaded",
+  "LeanRendered",
+  "LakeBuildPassed",
+  "SorryAuditPassed",
+  "AxiomAuditPassed",
+  "NegativeFixturesPassed",
+  "ManifestGenerated",
+  "PaperEvidenceGenerated",
+  "CertifiedReleaseConstructed",
+  "QuadratureClosed"
+]
+
+/-- The literal projection is definitionally the trace's projection. -/
+theorem runActivities_eq : runTrace.activities = runActivities := by rfl
+
+/-- The run trace is timestamp-monotone. -/
+theorem runTrace_monotone : runTrace.Monotone := by
+  unfold Trace.Monotone
+  decide
+
+/-- Run-model conformance: succession(TtlCatalogLoaded, LeanRendered) holds on the release run trace. -/
+theorem run_conforms_c1 :
+    (DeclareConstraint.mk .succession "TtlCatalogLoaded" (some "LeanRendered")).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: succession(LeanRendered, LakeBuildPassed) holds on the release run trace. -/
+theorem run_conforms_c2 :
+    (DeclareConstraint.mk .succession "LeanRendered" (some "LakeBuildPassed")).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: succession(LakeBuildPassed, AxiomAuditPassed) holds on the release run trace. -/
+theorem run_conforms_c3 :
+    (DeclareConstraint.mk .succession "LakeBuildPassed" (some "AxiomAuditPassed")).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: succession(ManifestGenerated, CertifiedReleaseConstructed) holds on the release run trace. -/
+theorem run_conforms_c4 :
+    (DeclareConstraint.mk .succession "ManifestGenerated" (some "CertifiedReleaseConstructed")).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: succession(CertifiedReleaseConstructed, QuadratureClosed) holds on the release run trace. -/
+theorem run_conforms_c5 :
+    (DeclareConstraint.mk .succession "CertifiedReleaseConstructed" (some "QuadratureClosed")).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: existence(SorryAuditPassed) holds on the release run trace. -/
+theorem run_conforms_c6 :
+    (DeclareConstraint.mk .existence "SorryAuditPassed" none).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: existence(NegativeFixturesPassed) holds on the release run trace. -/
+theorem run_conforms_c7 :
+    (DeclareConstraint.mk .existence "NegativeFixturesPassed" none).Satisfies runActivities := by
+  decide
+
+/-- Run-model conformance: existence(PaperEvidenceGenerated) holds on the release run trace. -/
+theorem run_conforms_c8 :
+    (DeclareConstraint.mk .existence "PaperEvidenceGenerated" none).Satisfies runActivities := by
+  decide
+
+
+end ProcInt.Release
+
+/-! ## Self-audit: the quadrature witness is axiom-pure. -/
+
+/-- info: 'ProcInt.Release.ttl_manifest_closed' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.ttl_manifest_closed
+
+/-- info: 'ProcInt.Release.ttl_audit_closed' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.ttl_audit_closed
+
+/-- info: 'ProcInt.Release.claims_all_evidenced' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.claims_all_evidenced
+
+/-- info: 'ProcInt.Release.runTrace_monotone' does not depend on any axioms -/
+#guard_msgs in #print axioms ProcInt.Release.runTrace_monotone

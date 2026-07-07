@@ -1,6 +1,18 @@
 {
   "schema": "mfact.release.v1",
   "release": "v26.7.6",
+  "declarationSource": "RDF_TTL",
+  "leanSourceOrigin": "GGEN_RENDERED_FROM_TTL",
+  "trustedBase": [
+    "Lean 4 kernel (v4.31.0)",
+    "Mathlib (fabf563a)",
+    "CSLib (1dbda533)",
+    "lake build toolchain"
+  ],
+  "llmTrustedBase": false,
+  "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
+  "runIdentifier": "c7d4dd09ed78a4ad42a81a6facb5c0bcc629dc26",
+  "quadrature": "release/quadrature.json",
   "artifacts": [
     {
       "name": "ProcInt.AlgorithmSpec",
@@ -3166,8 +3178,8 @@
     },
     {
       "kind": "buildReceipt",
-      "subject": "procint (8605 jobs)",
-      "hash": "5a2fc14913f954a0bd59c3e68f079db9446a87c4ac10934ef129d721e0890c40"
+      "subject": "procint",
+      "hash": "152e0b1935f1f0d36709dcc428d4258ebe8c39963a270c4fd997c633912ca8c3"
     },
     {
       "kind": "buildReceipt",

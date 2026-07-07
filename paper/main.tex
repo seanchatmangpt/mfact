@@ -34,7 +34,8 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 
-\title{mfact/procint: Lean 4 Mathematical Manufacturing\\for Process Intelligence}
+\title{Receipted Mathematical Manufacturing:\\A Lean 4 Pipeline for Process Intelligence\\
+\large mfact manufactures procint}
 \author{Sean Chatman}
 \date{}
 
@@ -42,38 +43,74 @@
 \maketitle
 
 \begin{abstract}
-We describe \textsf{mfact}, a small Lean~4 framework for \emph{mathematical
-manufacturing}: producing formal libraries where generation and standing are
-kept strictly separate. Untrusted producers (including LLM agents) emit
-\emph{candidates}; the only path to standing is admission by the Lean kernel
-under an axiom audit, and every rejection is a typed \emph{refusal} rather
-than a silent downgrade. As its first manufactured artifact we present
-\textsf{procint}, a Lean~4 library formalizing core mathematical structures of
-process intelligence: Petri nets with \(\mathsf{Finsupp}\) markings, workflow
-nets with soundness stated as three independent clauses, event logs and
-alignment-based conformance, and object-centric event logs following the
-OCEL~2.0 specification. The library was produced in a single orchestrated run:
-declarations were rendered by a SPARQL-driven template engine from an RDF
-ontology of the target type canon, LLM lanes proposed definitions and proofs
-as untrusted candidates, and a repair--prove--reconcile loop iterated until
-each item was either kernel-admitted or explicitly downgraded to a stated,
-unproven form recorded in the release manifest. The evaluation section of this
-paper is generated from that manifest; no evaluation number in it is written
-by hand. We report what was proven, what remains stated, and the scope of both.
+We present \textsf{mfact}, a Lean~4 framework for \emph{mathematical
+manufacturing}: the production of formal mathematical artifacts whose
+standing is determined not by authorship, generation, or plausibility, but
+by typed admission, refusal, audit, and receipt. The governing law is
+\(R_B \vdash A = \mu(O^*_B)\): inside a declared boundary \(B\), raw
+observations and generated candidates become artifacts with standing only
+after they are admitted as \(O^*_B\), transformed by a lawful manufacturing
+function \(\mu\), and accompanied by replayable receipts \(R_B\). This
+separates contact from consequence. Humans, templates, and LLM agents may
+produce candidates; only the Lean kernel, Lake build, axiom audit, sorry
+census, negative fixtures, and release manifest can confer standing.
+
+As the first manufactured artifact we introduce \textsf{procint}, a Lean~4
+library for process intelligence: Petri nets with finitely supported
+markings, workflow nets with soundness split into independent clauses,
+event logs and alignment-based conformance, and object-centric event logs
+following OCEL~2.0. The library is manufactured from a declared obligation
+graph: an RDF/Turtle catalog of structures, theorem surfaces, module
+dependencies, fixtures, citations, and registry surfaces is projected
+through SPARQL-in-Tera templates by \textsf{ggen}, then admitted or
+refused by Lean/Lake. Every failed admission is a typed refusal rather
+than a silent downgrade; every admitted declaration is recorded with its
+hash, axiom footprint, fixture status, and proven/stated standing. The
+contribution is not merely that \textsf{procint} exists; it is that
+\textsf{procint} is the first product of \textsf{mfact}.
+
+The result is not a claim that arbitrary generated mathematics is
+automatically correct. Rice-style undecidability is respected rather than
+ignored: \textsf{mfact} replaces the impossible question ``is this
+arbitrary generated artifact semantically correct?'' with the bounded,
+replayable question ``did this candidate pass the declared admission gate
+inside boundary \(B\)?'' The evaluation section of this paper is generated
+from the release manifest rather than written by hand, and a
+kernel-checked \emph{Standing Quadrature} witness closes the cross-product
+between the declaration catalog, the admitted corpus, the release
+manifest, the process evidence, and this paper's claims. We report exactly
+what was proven, what remains stated, what was refused, and what the
+release boundary excludes.
 \end{abstract}
 
 \section{Introduction}
 
-Formal mathematics libraries are usually written the way software once was:
-by hand, with review as the quality gate. Recent work uses LLMs to draft
-formal content, which raises a question the kernel alone does not settle:
-what standing does generated material have? Kernel acceptance establishes
-that a term inhabits its stated type; it does not establish that the stated
-type is the intended one, that the statement is not vacuously weakened, or
-that the artifact as a whole is a faithful rendering of a target theory.
-Meek et al.~\cite{meek2026formalizing} document these failure modes in
-detail: compilation masks incomplete multi-part statements, added weakening
-hypotheses, and parameter restrictions.
+Formalization today often resembles hand-fitted manufacturing: every
+theorem, lemma, import, and repair is shaped locally by expert craft. The
+result can be excellent, but it is not yet industrial. Mathematical
+manufacturing asks a different question: what must be standardized so that
+formal domains can be produced as interchangeable parts? In
+\textsf{mfact}, the interchangeable part is not merely a Lean declaration.
+It is a declaration plus provenance, admission status, axiom footprint,
+refusal mode, hash, manifest position, and replay path. A theorem without
+this surrounding receipt is hand-fitted metal; an admitted declaration
+with its release evidence is an interchangeable mathematical part. The
+manufactured object is not syntax --- it is \emph{standing}.
+
+Recent work uses LLMs to draft formal content, which raises a question
+the kernel alone does not settle: what standing does generated material
+have? Kernel acceptance establishes that a term inhabits its stated type;
+it does not establish that the stated type is the intended one, that the
+statement is not vacuously weakened, or that the artifact as a whole is a
+faithful rendering of a target theory. Meek et
+al.~\cite{meek2026formalizing} document these failure modes in detail:
+compilation masks incomplete multi-part statements, added weakening
+hypotheses, and parameter restrictions. Our position is compressed by one
+rule: \emph{contact is not consequence}. LLM contact with a theorem is
+not consequence. A model may propose a proof term, a definition, or a
+module, but the proposal has no standing until admitted. \textsf{mfact}
+formalizes this separation: contact produces a candidate; admission
+produces consequence; the manifest records the receipt.
 
 Our position is that the two concerns should be mechanically separated:
 
@@ -113,7 +150,7 @@ concrete: each stage names the artifact it produces, not a metaphor.
 Manufacturing stage & Concrete artifact \\
 \midrule
 Source inventory & typed Rust implementation (wasm4pm-compat) \\
-Generation & \textsf{ggen} SPARQL-in-Tera templates \\
+Rendering & \textsf{ggen} SPARQL-in-Tera templates (render Lean modules from the TTL catalog) \\
 Admission & Lean module creation (\texttt{lake env lean}) \\
 Inspection & \texttt{lake build} \\
 Refusal & typed \texttt{Refusal}, negative fixtures \\
@@ -126,29 +163,81 @@ Publication & generated paper evaluation section \\
 \label{tab:stages}
 \end{table}
 
-Contributions, each scoped to what was actually built:
+This paper makes four bounded contributions.
 
-\begin{enumerate}
-\item \textsf{mfact}: a Lean~4 package defining \texttt{Candidate},
-  \texttt{Refusal}, \texttt{Admission} (whose evidence includes a
-  \texttt{covers} proof field), \texttt{Manifest},
-  \texttt{CertifiedRelease}, and a closed \texttt{ValidObjection} type with
-  a per-release theorem \texttt{no\_valid\_objection}, proven axiom-free
-  (Section~\ref{sec:mfact}).
-\item \textsf{procint}: a Lean~4 library of process-intelligence
-  foundations --- Petri nets, workflow nets, conformance, OCEL~2.0 ---
-  stated against the primary literature (Section~\ref{sec:procint}). To our
-  knowledge, based on a search of Lean, Coq, and Isabelle library indexes at
-  the time of the run, no prior mechanization of workflow-net soundness or
-  OCEL exists in these systems; we state this as a search finding, not a
-  completeness claim.
-\item A description of the manufacturing run itself: RDF ontology as the
-  source of truth for the type cross-product, SPARQL-in-Tera rendering, LLM
-  lanes as untrusted producers, kernel admission via \texttt{lake env
-  lean}, and a bounded repair loop (Section~\ref{sec:run}).
-\item A machine-generated evaluation (Section~\ref{sec:eval}) and an
-  explicit proven-versus-stated ledger (Section~\ref{sec:limitations}).
-\end{enumerate}
+First, it defines \emph{mathematical manufacturing} as a typed admission
+discipline for formal artifacts. Generated output, human patches,
+templates, and agent proposals are treated uniformly as candidates.
+Standing is acquired only through admission: kernel acceptance, no-sorry
+census, axiom audit, negative fixtures, manifest completeness, and
+replayable receipt (Section~\ref{sec:law}).
+
+Second, it introduces \textsf{mfact}, a Lean~4 framework that makes this
+discipline explicit through candidate, refusal, admission, manifest,
+certified-release, and valid-objection types (Section~\ref{sec:mfact}).
+The framework is intentionally small: it does not attempt to replace the
+Lean kernel, but to make the pre-kernel and post-kernel standing surface
+explicit.
+
+Third, it introduces \textsf{procint}, the first manufactured domain
+produced by \textsf{mfact}: a process-intelligence library covering Petri
+nets, workflow nets, event logs, conformance, and OCEL-style
+object-centric logs (Section~\ref{sec:procint}). The novelty is not only
+the domain coverage --- to our knowledge, based on a search of the Lean,
+Coq, and Isabelle library indexes at the time of the run, no prior
+mechanization of workflow-net soundness or OCEL exists in these systems
+--- it is the coupling of domain formalization with an explicit
+manufacturing receipt. A prior hand-written mechanization, if found, would
+be adjacent but not equivalent unless it provides the same admission,
+refusal, manifest, axiom, fixture, and replay surfaces.
+
+Fourth, it reports a manifest-generated evaluation
+(Section~\ref{sec:eval}) closed by a kernel-checked Standing Quadrature
+witness. The paper's evaluation numbers are not prose claims; they are
+rendered from the release manifest, and a generated Lean module
+(\texttt{ProcInt.Release.Quadrature}) is refused by the kernel if the
+declaration catalog, the audited corpus, and the manifest ever diverge.
+This closes the loop from declaration to admission to receipt to replay,
+and makes the paper itself an artifact of the manufacturing pipeline it
+describes.
+
+\section{The Receipted Manufacturing Law}
+\label{sec:law}
+
+The governing law of the pipeline is
+\[
+R_B \vdash A = \mu(O^*_B)
+\]
+where \(B\) is the declared boundary (the Lean packages, the declaration
+catalog, the manifest schema, the source inventory, the audited theorem
+set); \(O\) is raw observation --- candidate output from a human, an LLM,
+a template, a repository, or an ontology fragment; \(O^*_B\) is admitted
+observation inside \(B\): typed, checked, bounded, replayable; \(\mu\) is
+the lawful manufacturing transform (\textsf{ggen} rendering, Lean
+admission, Lake build, audit); \(A\) is an artifact with standing (an
+admitted theorem, module, manifest entry, or release); and \(R_B\) is the
+receipt (build log, manifest hash, axiom audit, negative fixture, replay
+evidence). Raw generated output is \(O\), not \(O^*\). \emph{The pipeline
+exists to refuse the gap.}
+
+In this architecture, \textsf{ggen} is not a code generator in the usual
+sense. It is the projection half of the manufacturing function \(\mu\):
+it maps a declared obligation graph into candidate Lean surfaces. Lean
+supplies the admission half. Projection without admission is not
+standing; admission without projection does not scale.
+
+\paragraph{Rice boundary and manufactured decidability.}
+Rice's theorem bars nontrivial semantic decision procedures over
+arbitrary programs. The manufacturing response is not to evade this
+boundary, but to change the object of judgment. \textsf{mfact} does not
+decide arbitrary semantic truth of arbitrary generated code. It decides
+whether a bounded candidate has been admitted by a specific kernel, under
+a declared axiom policy, with a complete manifest receipt. The
+undecidable question ``is this arbitrary generated artifact
+mathematically correct?'' is replaced by the decidable question ``did
+this candidate pass the declared admission gate inside boundary \(B\)?''
+Undecidability is not defeated; it is fenced, and bounded standing is
+manufactured inside the fence.
 
 \section{Related Work}
 
@@ -165,11 +254,14 @@ coding agents and audits quality beyond kernel acceptance. We differ in
 mechanism rather than diagnosis: where their audit is a post-hoc quality
 assessment over agent output, \textsf{mfact} is a \emph{typed pipeline} ---
 candidates, refusals, and admissions are Lean data types, the statement
-corpus is rendered from an RDF ontology rather than drafted by the agents,
-and the proven/stated split is enforced by the release gate rather than
-estimated afterward. The two approaches are complementary: their semantic
-audits address exactly the residual risk our pipeline does not eliminate,
-namely that an ontology-authored statement is itself wrong.
+corpus lives in an RDF catalog curated by LLM-assisted lanes (each
+candidate kernel-verified before being recorded, rather than accepted on
+the strength of agent output alone), and the proven/stated split is
+enforced by the release gate rather than estimated afterward. The two
+approaches are complementary: their semantic audits address exactly the
+residual risk our pipeline does not eliminate, namely that a curated
+statement, though kernel-admitted, is itself a faithless or vacuous
+rendering of the intended theorem.
 
 \paragraph{Process intelligence.}
 The mathematical canon \textsf{procint} formalizes is due to a small number
@@ -231,6 +323,11 @@ not that the release is beyond all criticism.
 \section{procint: the Mathematical Canon}
 \label{sec:procint}
 
+In this paper, process intelligence does not mean dashboarding over event
+logs. It means a mathematical substrate for deciding, replaying, and
+explaining process standing: what happened, what was admitted, what was
+refused, which object relations were involved, which conformance
+obligations passed, and which receipts authorize the resulting claim.
 \textsf{procint} depends on Mathlib and CSLib and is organized as follows
 (module map abridged):
 
@@ -325,32 +422,44 @@ Temporal/causal/streaming analytics & seed instances \\
 
 The run that produced \textsf{procint} has five moving parts.
 
-\paragraph{Ontology as source of truth.}
-The target type canon --- structures, fields, inductive variants, theorem
-statements, module dependencies, and citations back to the primary
-literature --- is authored as an RDF ontology (\texttt{procint:} vocabulary),
-not as Lean source. The cross-product surfaces (registries of algorithms and
-model breeds) live in the same graph.
+\paragraph{The TTL catalog as canonical source.}
+The canonical source of \textsf{procint} is not a tree of \texttt{.lean}
+files but an RDF/Turtle declaration catalog (\texttt{procint:} vocabulary):
+one record per declaration, carrying its Lean body (\texttt{leanCode}),
+its module, its proof status, its axiom-audit expectation, and citations
+back to the primary literature. Declaration bodies enter the catalog by
+curation --- LLM-assisted lanes draft them and each candidate is
+kernel-tested before being recorded --- so the catalog holds verified
+candidates, not free-form generation. The cross-product surfaces
+(registries of algorithms and model breeds) are fully data-driven rows of
+the same graph.
 
 \paragraph{SPARQL-in-Tera rendering.}
-The \textsf{ggen} generator renders Lean modules from templates whose
-frontmatter carries SPARQL \texttt{SELECT} queries against the ontology and
+The \textsf{ggen} engine renders Lean modules from templates whose
+frontmatter carries SPARQL \texttt{SELECT} queries against the catalog and
 whose bodies are Tera templates over the result bindings. One template
-yields one \texttt{.lean} file per \texttt{procint:Module}, with imports
-derived from the dependency graph (topologically sorted; a cycle is a
-render-time refusal). A separate template emits the axiom-audit file:
-for every audited theorem, a \texttt{\#guard\_msgs in \#print axioms} block
-pinned to \texttt{[propext, Classical.choice, Quot.sound]}, so any
-transitive \texttt{sorryAx} or unauthorized axiom breaks the build.
+yields one \texttt{.lean} file per \texttt{procint:Module}; separate
+templates render the root import index, the registry tables, and the
+axiom-audit file --- for every audited theorem, a \texttt{\#guard\_msgs in
+\#print axioms} block pinned to \texttt{[propext, Classical.choice,
+Quot.sound]}, so any transitive \texttt{sorryAx} or unauthorized axiom
+breaks the build. The rendered corpus is a \emph{candidate artifact}: it is
+not trusted because it was rendered, and \textsf{ggen} certifies nothing.
+It acquires standing only through kernel admission. In one line:
+\textsf{ggen} renders, Lean admits, \textsf{mfact} certifies.
 
 \paragraph{LLM lanes as untrusted producers.}
 Module families (Petri core, workflow, logs and conformance, OCEL,
 models, analytics, fixtures) run as independent lanes with no barriers
-between them. Each lane's agent drafts definitions and proofs, but writes
-nothing directly into the library: it edits its ontology fragment, and
-every piece of Lean code it proposes is first kernel-tested via
-\texttt{lake env lean} on a scratch file. Statements the lane cannot prove
-ship as \texttt{sorry}-bearing stubs marked \emph{stated} in the fragment.
+between them. Each lane's agent hand-drafts the actual structures,
+definitions, and proofs for its module family, but writes nothing directly
+into the library: every piece of Lean code it proposes is first
+kernel-tested via \texttt{lake env lean} on a scratch file, and only a
+declaration that passes this check is recorded --- as a \texttt{leanCode}
+string literal, together with its proof status --- in the lane's catalog
+fragment. The catalog records what the lane authored and what the kernel
+confirmed; it authors nothing itself. Statements the lane cannot prove ship
+as \texttt{sorry}-bearing stubs marked \emph{stated} in the fragment.
 
 \paragraph{Admission and the repair loop.}
 An integrator loop repeatedly merges fragments, re-renders, and runs
@@ -406,6 +515,48 @@ crown-jewel per-direction status, and the wall-clock time of the run.
 This draft is not a release build.}}
 \end{center}}
 
+\subsection{Standing Quadrature}
+\label{sec:quadrature}
+
+The release is not evaluated only by whether Lean builds. It is evaluated
+by whether the declaration catalog, admitted Lean corpus, process
+evidence, release manifest, and paper claims form a \emph{closed standing
+graph}. The quadrature check rejects orphan declarations, unsupported
+claims, untraced artifacts, and manifest--paper divergence. Closure is
+itself kernel-checked: a generated witness module
+(\texttt{ProcInt.Release.Quadrature}) carries the name-sorted proven
+surfaces of the catalog, the manifest, and the axiom audit as literal
+lists, and proves their pairwise equality by \texttt{rfl} --- any orphan
+on any side makes the lists differ and the kernel refuses the witness.
+The same module encodes the manufacturing run as a \textsf{procint}
+process trace and proves, with the corpus's own \texttt{DeclareConstraint}
+semantics, that the run conforms to its declared process model:
+\textsf{procint} models the process by which \textsf{mfact} manufactured
+\textsf{procint}. Table~\ref{tab:quadrature} is generated from
+\texttt{quadrature.json}; three negative controls (a corrupted evaluation
+number, a claim with no evidence, a catalog declaration with no rendered
+symbol) each cause a typed refusal.
+
+\InputIfFileExists{generated/quadrature}{}{%
+\begin{center}\itshape generated/quadrature.tex not rendered.\end{center}}
+
+\section{Falsifier and Valid Objection Surface}
+\label{sec:falsifier}
+
+A valid objection to this release must show at least one of:
+(1) a declared admitted theorem contains \texttt{sorry};
+(2) a theorem depends on unauthorized axioms;
+(3) a manifest hash does not match the artifact;
+(4) a negative fixture passes when it should fail;
+(5) a generated evaluation number does not match the manifest;
+(6) a stated declaration is described as proven;
+(7) the catalog-to-Lean rendering changes the intended theorem statement;
+(8) the release cannot be replayed under pinned dependencies.
+A local objection to one proof, citation, or template is not
+automatically a refutation of mathematical manufacturing. It becomes a
+refutation only if it crosses the admission boundary and invalidates a
+claimed receipt.
+
 \section{Limitations and Standing}
 \label{sec:limitations}
 
@@ -423,9 +574,9 @@ and nothing more; the converse remains a stated obligation in the manifest.
 
 \paragraph{What admission does not check.}
 Kernel admission plus the axiom audit establishes that admitted terms prove
-the rendered statements under the pinned axioms. It does not establish that
-the ontology-authored statements faithfully render the informal canon; that
-correspondence rests on citation-annotated statement authoring against the
+the stated theorems under the pinned axioms. It does not establish that
+the catalog-curated statements faithfully render the informal canon; that
+correspondence rests on citation-annotated statement curation against the
 primary sources and is exactly the kind of residual risk the semantic
 audits of~\cite{meek2026formalizing} target. Fidelity of statements is a
 review obligation, not a theorem.
@@ -434,6 +585,26 @@ review obligation, not a theorem.
 ``First mechanization'' claims are scoped to a search of the Lean
 (Mathlib/CSLib), Coq, and Isabelle (AFP) ecosystems at run time; we claim a
 negative search result, not a proof of absence.
+
+\paragraph{Exclusions.}
+This paper does \emph{not} claim any of the following.
+
+\begin{center}
+\small
+\begin{tabular}{ll}
+\toprule
+Exclusion & Reason \\
+\midrule
+LLMs prove mathematics autonomously & LLMs are untrusted producers \\
+\textsf{procint} formalizes all of process intelligence & v1 boundary is manifest-scoped \\
+Kernel admission proves informal intent & statement fidelity is a review obligation \\
+Rice's theorem is violated & arbitrary semantic correctness is not decided \\
+All objections are impossible & only enumerated release objections are refuted \\
+\textsf{ggen} output has standing by generation & only admitted output has standing \\
+A stated theorem is proven & stated means the obligation remains open \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \section{Availability}
 \label{sec:availability}
@@ -454,8 +625,11 @@ negative-control script that demonstrates the gate refusing a
   on the \texttt{v4.31.0} toolchain.
 \item \textbf{Build:} \texttt{lake build} in \texttt{mfact/} and
   \texttt{procint/}.
-\item \textbf{Generation:} \texttt{ggen sync run} against
-  \texttt{packs/lean-math-pack} and the merged \texttt{procint:} ontology.
+\item \textbf{Rendering:} \texttt{ggen sync run} against
+  \texttt{packs/lean-math-pack} and the merged \texttt{procint:} catalog.
+  This renders the candidate Lean corpus (modules, index, axiom audit,
+  registry tables) from the TTL catalog; the rendered corpus is admitted
+  only by the subsequent \texttt{lake build}.
 \item \textbf{Certification:} \texttt{lake exe mfact certify
   release-manifest.json gates.json}.
 \item \textbf{Artifact and manifest hashes:} recorded per-declaration
@@ -466,6 +640,38 @@ negative-control script that demonstrates the gate refusing a
   \texttt{SORRY\_COUNT=0} and \texttt{AXIOM\_AUDIT=PASS}; a negative control
   with an injected \texttt{sorry} must instead exit refused.
 \end{itemize}
+
+\section{Conclusion}
+
+We have described \textsf{mfact} as a small Lean~4 framework for receipted
+mathematical manufacturing and \textsf{procint} as its first manufactured
+domain. The central claim is not that generation is trustworthy. The
+central claim is the opposite: generation is untrusted, and therefore
+mathematical standing must be manufactured through explicit admission,
+refusal, audit, manifest, and replay.
+
+This changes the unit of formalization. A theorem is no longer treated
+merely as a local proof term. In a manufactured release, a theorem is an
+admitted artifact with provenance, hash, axiom footprint, fixture status,
+manifest position, and replay path. A failed theorem is not erased or
+softened; it is refused or downgraded to stated status. A release is not
+declared successful by prose; it is certified by a receipt-bearing
+boundary.
+
+\textsf{procint} demonstrates this discipline on process intelligence:
+Petri nets, workflow nets, conformance, event logs, and OCEL-style
+object-centric logs. The domain matters because process intelligence is
+itself about standing: what happened, what conformed, what failed, what
+object relations were involved, and what evidence supports the claim.
+\textsf{mfact} applies the same logic to mathematics. It manufactures not
+syntax, but standing.
+
+The broader result is a bounded response to the problem of generated
+formal content. Rice-style undecidability is not denied. Instead,
+arbitrary semantic judgment is replaced by declared admission inside a
+replayable boundary. Contact is not consequence; candidate generation is
+not proof; compilation is not full standing; and prose is not receipt. A
+mathematical artifact stands only when \(R_B \vdash A = \mu(O^*_B)\).
 
 \bibliographystyle{plain}
 \bibliography{refs}

@@ -1,0 +1,5 @@
+TYPE_INVENTORY_HASH=dd43c348d175bdf0136b24dfc34e3077c20f90ecd60d6c88ddb8e9a7f6831852
+SOURCE_REPO=/Users/sac/wasm4pm-compat
+SOURCE_COMMIT=6aead3c
+SOURCE_FILE_COUNT=26
+NOTE=hash computed over git-show blob content at SOURCE_COMMIT, not working tree (working tree was dirty on src/ocel.rs at time of release)
