@@ -2,7 +2,7 @@
 
 [packs.lean-math-pack]
 source = "path:/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:36349e9ccb8fe80361a4c044dca3383f3a064b7b268e44073432079ec67cdc8b"
+content_hash = "blake3:88c8291d2b6fe95a3eebca230a323563c4b4cf37114b5561eee7de3c0beb0e14"
 
 [packs.post-release-pack]
 source = "path:/Users/sac/mfact/packs/post-release-pack"

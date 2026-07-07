@@ -20,6 +20,7 @@ import ProcInt.Playground.PetriAdvancedWalkthrough
 import ProcInt.Playground.WorkflowAdvancedWalkthrough
 import ProcInt.Playground.AnalyticsRelationsWalkthrough
 import ProcInt.Playground.AnalyticsTemporalWalkthrough
+import ProcInt.Playground.PddlPlanningWalkthrough
 
 /-! # ProcInt.Playground
 

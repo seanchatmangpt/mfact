@@ -23,7 +23,7 @@ import ProcInt.Foundations.Metric
 
 /-! # ProcInt.Registry.Algorithms
 
-The 60 process-intelligence algorithm specifications, rendered one
+The {{ algorithms | length }} process-intelligence algorithm specifications, rendered one
 `AlgorithmSpec` per `pi:ProcessIntelligenceAlgorithm` individual in the
 wasm4pm facts ontology, ordered by algorithm id. The count theorem pins
 the registry's cardinality in the kernel. -/
@@ -39,8 +39,8 @@ def allAlgorithms : List AlgorithmSpec :=
   [ {% for row in algorithms %}alg_{{ row.algorithmId }}{% if not loop.last %},
     {% endif %}{% endfor %} ]
 
-/-- The registry holds exactly 60 algorithms — the DfCM cross-product
+/-- The registry holds exactly {{ algorithms | length }} algorithms — the DfCM cross-product
 cardinality pinned in the kernel. -/
-theorem allAlgorithms_count : allAlgorithms.length = 60 := by rfl
+theorem allAlgorithms_count : allAlgorithms.length = {{ algorithms | length }} := by rfl
 
 end ProcInt

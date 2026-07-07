@@ -344,6 +344,30 @@ compat:Breed_version_space a compat:CognitionBreed ;
   compat:breedDoc   "Version-space candidate elimination (Mitchell, 'Generalization as Search', Artificial Intelligence 18(2), 1982)." ;
   compat:citation   "Mitchell, T. M. (1982). Generalization as Search. Artificial Intelligence, 18(2), 203–226." .
 
+compat:Breed_tpot2 a compat:CognitionBreed ;
+  compat:breedId    "tpot2" ;
+  compat:breedLabel "Tpot2" ;
+  compat:breedDoc   "TPOT2: genetic-programming AutoML evolving scikit-learn pipelines as DAGs (not trees), with multi-objective selection over accuracy/complexity (Epistasis Lab / Cedars-Sinai A2I Lab, successor to TPOT)." ;
+  compat:citation   "Ribeiro, P., Saini, A., Moran, J., Matsumoto, N., Choi, H., Hernandez, M., & Moore, J. H. (2024). TPOT2: A New Graph-Based Implementation of the Tree-Based Pipeline Optimization Tool for Automated Machine Learning. Genetic Programming Theory and Practice XX. Springer, Singapore." .
+
+compat:Breed_lean_copilot a compat:CognitionBreed ;
+  compat:breedId    "lean_copilot" ;
+  compat:breedLabel "LeanCopilot" ;
+  compat:breedDoc   "LLM-assisted tactic suggestion and proof search running natively inside Lean 4, automating 74.2% of proof steps on Mathematics in Lean vs. 40.1% for rule-based aesop." ;
+  compat:citation   "Song, P., et al. (2024). Lean Copilot: Large Language Models as Copilots for Theorem Proving in Lean. ICLR 2025. arXiv:2404.12534." .
+
+compat:Breed_axle a compat:CognitionBreed ;
+  compat:breedId    "axle" ;
+  compat:breedLabel "Axle" ;
+  compat:breedDoc   "AXLE: 14-tool Lean 4 metaprogramming suite (verify_proof, extract_decls, repair_proofs, simplify_theorems, theorem2lemma, etc.) served as a multi-tenant cloud API." ;
+  compat:citation   "AXLE (2026). A Cloud-Based Multi-Tool Metaprogramming Suite for Lean 4. arXiv:2606.26442." .
+
+compat:Breed_l2p a compat:CognitionBreed ;
+  compat:breedId    "l2p" ;
+  compat:breedLabel "L2p" ;
+  compat:breedDoc   "L2P: Python toolkit using LLMs to extract PDDL domain/problem definitions from natural language, validated against Fast Downward and the Unified Planning framework." ;
+  compat:citation   "Tantakoun, M., Muise, C., & Zhu, X. (2025). L2P: A Python Toolkit for Automated PDDL Model Generation with Large Language Models. PLAN-FM Workshop." .
+
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix pi:   <https://wasm4pm.dev/pi#> .
@@ -1204,4 +1228,70 @@ pi:Algo_agentic_pipeline a pi:ProcessIntelligenceAlgorithm ;
   pi:qualityTier    "90"^^xsd:integer ;
   pi:wasmExport     "run_agentic_pipeline" ;
   pi:inputFormat    "xes" ;
+  pi:standing     "REPLAYABLE" .
+
+# ============================================================
+# EXTERNAL TOOLING (5) — reference implementations for research-paper
+# citations; category/outputType chosen to match the closest existing
+# discipline, no wasmExport since these are not compiled into this repo.
+# ============================================================
+
+pi:Algo_ocel2 a pi:ProcessIntelligenceAlgorithm ;
+  pi:algorithmId    "ocel2" ;
+  pi:algorithmLabel "Ocel2" ;
+  pi:algorithmDoc   "OCEL 2.0 — object-centric event log standard with independent object-to-object relations, attribute-value history, and type-constrained attributes. Reference implementation: pm4py." ;
+  pi:citation       "van der Aalst, W.M.P., Berti, A., et al. (2024). OCEL 2.0 Specification. arXiv:2403.01975." ;
+  pi:outputType     "logs" ;
+  pi:category       "logs" ;
+  pi:speedTier      "50"^^xsd:integer ;
+  pi:qualityTier    "90"^^xsd:integer ;
+  pi:inputFormat    "ocel2" ;
+  pi:standing     "REPLAYABLE" .
+
+pi:Algo_itbr a pi:ProcessIntelligenceAlgorithm ;
+  pi:algorithmId    "itbr" ;
+  pi:algorithmLabel "Itbr" ;
+  pi:algorithmDoc   "Improved Token-Based Replay — mitigates token-flooding artifacts in classical replay via heuristic token-insertion constraints; 5x faster than alignment-based replay on inductive-miner models. Reference implementation: pm4py." ;
+  pi:citation       "Berti, A., & van der Aalst, W.M.P. (2020). Improved Token-Based Replay. arXiv:2007.14237." ;
+  pi:outputType     "analytics" ;
+  pi:category       "conformance" ;
+  pi:speedTier      "70"^^xsd:integer ;
+  pi:qualityTier    "88"^^xsd:integer ;
+  pi:inputFormat    "petri_net_handle" ;
+  pi:standing     "REPLAYABLE" .
+
+pi:Algo_powl_v2 a pi:ProcessIntelligenceAlgorithm ;
+  pi:algorithmId    "powl_v2" ;
+  pi:algorithmLabel "PowlV2" ;
+  pi:algorithmDoc   "POWL v2 — partially ordered workflow language generalising block-structured process trees with non-block-structured choice graphs and partial-order blocks. Reference implementation: powl (PyPI, fit-process-mining/POWL)." ;
+  pi:citation       "Kourani, H., Park, G., & van der Aalst, W.M.P. (2025). Unlocking Non-Block-Structured Decisions: Inductive Mining with Choice Graphs. arXiv:2505.07052." ;
+  pi:outputType     "model" ;
+  pi:category       "discovery" ;
+  pi:speedTier      "40"^^xsd:integer ;
+  pi:qualityTier    "90"^^xsd:integer ;
+  pi:inputFormat    "xes" ;
+  pi:standing     "REPLAYABLE" .
+
+pi:Algo_ocpa a pi:ProcessIntelligenceAlgorithm ;
+  pi:algorithmId    "ocpa" ;
+  pi:algorithmLabel "Ocpa" ;
+  pi:algorithmDoc   "OCPA — object-centric process analysis library: OCEL 2.0 import, object-centric Petri net discovery, and object-centric conformance/enhancement/predictive-monitoring algorithms." ;
+  pi:citation       "Adams, J.N., Park, G., & van der Aalst, W.M.P. (2022). ocpa: A Python library for object-centric process analysis. Software Impacts, 100438." ;
+  pi:outputType     "analytics" ;
+  pi:category       "analytics" ;
+  pi:speedTier      "40"^^xsd:integer ;
+  pi:qualityTier    "85"^^xsd:integer ;
+  pi:inputFormat    "ocel2" ;
+  pi:standing     "REPLAYABLE" .
+
+pi:Algo_smt_conformance a pi:ProcessIntelligenceAlgorithm ;
+  pi:algorithmId    "smt_conformance" ;
+  pi:algorithmLabel "SmtConformance" ;
+  pi:algorithmDoc   "Conformance checking with uncertainty via SMT — encodes conformance-checking artifacts (data Petri nets, uncertain logs) as SAT/SMT formulae solved by Yices2/Z3. Reference implementation: CoCoMoT." ;
+  pi:citation       "Boltenhagen, M., Chatain, T., & Carmona, J. Conformance Checking with Uncertainty via SMT (Extended Version). arXiv:2206.07461." ;
+  pi:outputType     "analytics" ;
+  pi:category       "conformance" ;
+  pi:speedTier      "20"^^xsd:integer ;
+  pi:qualityTier    "92"^^xsd:integer ;
+  pi:inputFormat    "petri_net_handle" ;
   pi:standing     "REPLAYABLE" .

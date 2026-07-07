@@ -5,7 +5,7 @@ import ProcInt.Foundations.Metric
 
 /-! # ProcInt.Registry.Algorithms
 
-The 60 process-intelligence algorithm specifications, rendered one
+The 65 process-intelligence algorithm specifications, rendered one
 `AlgorithmSpec` per `pi:ProcessIntelligenceAlgorithm` individual in the
 wasm4pm facts ontology, ordered by algorithm id. The count theorem pins
 the registry's cardinality in the kernel. -/
@@ -128,6 +128,10 @@ def alg_ilp : AlgorithmSpec :=
 def alg_inductive_miner : AlgorithmSpec :=
   ⟨"inductive_miner", "InductiveMiner", "discovery", "tree", "Leemans, S.J.J., Fahland, D., & van der Aalst, W.M.P. (2013). Discovering Block-Structured Process Models from Event Logs. Petri Nets 2013, LNCS 7927. Springer."⟩
 
+/-- Algorithm `itbr` (conformance → analytics). -/
+def alg_itbr : AlgorithmSpec :=
+  ⟨"itbr", "Itbr", "conformance", "analytics", "Berti, A., & van der Aalst, W.M.P. (2020). Improved Token-Based Replay. arXiv:2007.14237."⟩
+
 /-- Algorithm `log_to_trie` (discovery → tree). -/
 def alg_log_to_trie : AlgorithmSpec :=
   ⟨"log_to_trie", "LogToTrie", "discovery", "tree", "van der Aalst, W.M.P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer."⟩
@@ -160,6 +164,10 @@ def alg_ml_regress : AlgorithmSpec :=
 def alg_monte_carlo_simulation : AlgorithmSpec :=
   ⟨"monte_carlo_simulation", "MonteCarloSimulation", "simulation", "analytics", "van der Aalst, W.M.P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer."⟩
 
+/-- Algorithm `ocel2` (logs → logs). -/
+def alg_ocel2 : AlgorithmSpec :=
+  ⟨"ocel2", "Ocel2", "logs", "logs", "van der Aalst, W.M.P., Berti, A., et al. (2024). OCEL 2.0 Specification. arXiv:2403.01975."⟩
+
 /-- Algorithm `ocel_dfg` (object_centric → dfg). -/
 def alg_ocel_dfg : AlgorithmSpec :=
   ⟨"ocel_dfg", "OcelDfg", "object_centric", "dfg", "van der Aalst, W.M.P. (2019). Object-Centric Process Mining. ICSOC 2019, LNCS 11895. Springer."⟩
@@ -184,6 +192,10 @@ def alg_ocel_ocla : AlgorithmSpec :=
 def alg_ocel_petri_net : AlgorithmSpec :=
   ⟨"ocel_petri_net", "OcelPetriNet", "object_centric", "petrinet", "van der Aalst, W.M.P. (2019). Object-Centric Process Mining. ICSOC 2019, LNCS 11895. Springer."⟩
 
+/-- Algorithm `ocpa` (analytics → analytics). -/
+def alg_ocpa : AlgorithmSpec :=
+  ⟨"ocpa", "Ocpa", "analytics", "analytics", "Adams, J.N., Park, G., & van der Aalst, W.M.P. (2022). ocpa: A Python library for object-centric process analysis. Software Impacts, 100438."⟩
+
 /-- Algorithm `optimized_dfg` (discovery → dfg). -/
 def alg_optimized_dfg : AlgorithmSpec :=
   ⟨"optimized_dfg", "OptimizedDfg", "discovery", "dfg", "van der Aalst, W.M.P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer."⟩
@@ -203,6 +215,10 @@ def alg_pnml_import : AlgorithmSpec :=
 /-- Algorithm `powl_to_process_tree` (import_export → tree). -/
 def alg_powl_to_process_tree : AlgorithmSpec :=
   ⟨"powl_to_process_tree", "PowlToProcessTree", "import_export", "tree", "van der Aalst, W.M.P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer."⟩
+
+/-- Algorithm `powl_v2` (discovery → model). -/
+def alg_powl_v2 : AlgorithmSpec :=
+  ⟨"powl_v2", "PowlV2", "discovery", "model", "Kourani, H., Park, G., & van der Aalst, W.M.P. (2025). Unlocking Non-Block-Structured Decisions: Inductive Mining with Choice Graphs. arXiv:2505.07052."⟩
 
 /-- Algorithm `predict_next_activity` (prediction → ml_result). -/
 def alg_predict_next_activity : AlgorithmSpec :=
@@ -235,6 +251,10 @@ def alg_simulated_annealing : AlgorithmSpec :=
 /-- Algorithm `smart_engine` (discovery → model). -/
 def alg_smart_engine : AlgorithmSpec :=
   ⟨"smart_engine", "SmartEngine", "discovery", "model", "van der Aalst, W.M.P. (2016). Process Mining: Data Science in Action (2nd ed.). Springer."⟩
+
+/-- Algorithm `smt_conformance` (conformance → analytics). -/
+def alg_smt_conformance : AlgorithmSpec :=
+  ⟨"smt_conformance", "SmtConformance", "conformance", "analytics", "Boltenhagen, M., Chatain, T., & Carmona, J. Conformance Checking with Uncertainty via SMT (Extended Version). arXiv:2206.07461."⟩
 
 /-- Algorithm `streaming_log` (discovery → dfg). -/
 def alg_streaming_log : AlgorithmSpec :=
@@ -283,6 +303,7 @@ def allAlgorithms : List AlgorithmSpec :=
     alg_hill_climbing,
     alg_ilp,
     alg_inductive_miner,
+    alg_itbr,
     alg_log_to_trie,
     alg_ml_anomaly,
     alg_ml_classify,
@@ -291,17 +312,20 @@ def allAlgorithms : List AlgorithmSpec :=
     alg_ml_pca,
     alg_ml_regress,
     alg_monte_carlo_simulation,
+    alg_ocel2,
     alg_ocel_dfg,
     alg_ocel_dfg_per_type,
     alg_ocel_encode,
     alg_ocel_oc_declare,
     alg_ocel_ocla,
     alg_ocel_petri_net,
+    alg_ocpa,
     alg_optimized_dfg,
     alg_performance_spectrum,
     alg_playout,
     alg_pnml_import,
     alg_powl_to_process_tree,
+    alg_powl_v2,
     alg_predict_next_activity,
     alg_predict_outcome,
     alg_predict_remaining_time,
@@ -310,13 +334,14 @@ def allAlgorithms : List AlgorithmSpec :=
     alg_simd_streaming_dfg,
     alg_simulated_annealing,
     alg_smart_engine,
+    alg_smt_conformance,
     alg_streaming_log,
     alg_transition_system,
     alg_working_together_network,
     alg_yawl_export ]
 
-/-- The registry holds exactly 60 algorithms — the DfCM cross-product
+/-- The registry holds exactly 65 algorithms — the DfCM cross-product
 cardinality pinned in the kernel. -/
-theorem allAlgorithms_count : allAlgorithms.length = 60 := by rfl
+theorem allAlgorithms_count : allAlgorithms.length = 65 := by rfl
 
 end ProcInt

@@ -5,7 +5,7 @@ import ProcInt.Foundations.Metric
 
 /-! # ProcInt.Registry.Breeds
 
-The 55 cognition-breed specifications, rendered one `BreedSpec` per
+The 59 cognition-breed specifications, rendered one `BreedSpec` per
 `compat:CognitionBreed` individual in the wasm4pm facts ontology, ordered
 by breed id. The count theorem pins the registry's cardinality in the
 kernel. -/
@@ -51,6 +51,10 @@ def breed_autoinstinct_semantics : BreedSpec :=
 /-- Breed `autoinstinct_vision`. -/
 def breed_autoinstinct_vision : BreedSpec :=
   ⟨"autoinstinct_vision", "AutoinstinctVision", "AutoinstinctVision — Symbolic Blocks World perception breed.", "Marr, D., & Poggio, T. (1976). Cooperative computation of stereo disparity. Science, 194(4262), 283–287. https://doi.org/10.1126/science.968816"⟩
+
+/-- Breed `axle`. -/
+def breed_axle : BreedSpec :=
+  ⟨"axle", "Axle", "AXLE: 14-tool Lean 4 metaprogramming suite (verify_proof, extract_decls, repair_proofs, simplify_theorems, theorem2lemma, etc.) served as a multi-tenant cloud API.", "AXLE (2026). A Cloud-Based Multi-Tool Metaprogramming Suite for Lean 4. arXiv:2606.26442."⟩
 
 /-- Breed `bayesian_network`. -/
 def breed_bayesian_network : BreedSpec :=
@@ -144,6 +148,14 @@ def breed_htn_planning : BreedSpec :=
 def breed_ilp : BreedSpec :=
   ⟨"ilp", "Ilp", "FOIL: top-down induction of first-order Horn clauses by information gain (Quinlan 1990, 'Learning logical definitions from relations', Machine Learning 5).", "Quinlan, J. R. (1990). Machine Learning, 5(3), 239-266."⟩
 
+/-- Breed `l2p`. -/
+def breed_l2p : BreedSpec :=
+  ⟨"l2p", "L2p", "L2P: Python toolkit using LLMs to extract PDDL domain/problem definitions from natural language, validated against Fast Downward and the Unified Planning framework.", "Tantakoun, M., Muise, C., & Zhu, X. (2025). L2P: A Python Toolkit for Automated PDDL Model Generation with Large Language Models. PLAN-FM Workshop."⟩
+
+/-- Breed `lean_copilot`. -/
+def breed_lean_copilot : BreedSpec :=
+  ⟨"lean_copilot", "LeanCopilot", "LLM-assisted tactic suggestion and proof search running natively inside Lean 4, automating 74.2% of proof steps on Mathematics in Lean vs. 40.1% for rule-based aesop.", "Song, P., et al. (2024). Lean Copilot: Large Language Models as Copilots for Theorem Proving in Lean. ICLR 2025. arXiv:2404.12534."⟩
+
 /-- Breed `ltl_monitor`. -/
 def breed_ltl_monitor : BreedSpec :=
   ⟨"ltl_monitor", "LtlMonitor", "LTL runtime monitor — Havelund & Roşu 2001 progression (formula rewriting).", "Havelund, K., & Rosu, G. (2001). Monitoring Programs Using Rewriting. Proceedings of ASE 2001 (16th IEEE International Conference on Automated Software Engineering), 135-143."⟩
@@ -224,6 +236,10 @@ def breed_strips : BreedSpec :=
 def breed_tableaux : BreedSpec :=
   ⟨"tableaux", "Tableaux", "Smullyan signed analytic tableaux for propositional validity (Smullyan 1968, 'First-Order Logic', Part I).", "Raymond M. Smullyan (1968). First-Order Logic. Springer-Verlag, Ergebnisse der Mathematik und ihrer Grenzgebiete 43."⟩
 
+/-- Breed `tpot2`. -/
+def breed_tpot2 : BreedSpec :=
+  ⟨"tpot2", "Tpot2", "TPOT2: genetic-programming AutoML evolving scikit-learn pipelines as DAGs (not trees), with multi-objective selection over accuracy/complexity (Epistasis Lab / Cedars-Sinai A2I Lab, successor to TPOT).", "Ribeiro, P., Saini, A., Moran, J., Matsumoto, N., Choi, H., Hernandez, M., & Moore, J. H. (2024). TPOT2: A New Graph-Based Implementation of the Tree-Based Pipeline Optimization Tool for Automated Machine Learning. Genetic Programming Theory and Practice XX. Springer, Singapore."⟩
+
 /-- Breed `triz`. -/
 def breed_triz : BreedSpec :=
   ⟨"triz", "Triz", "Altshuller's TRIZ (Theory of Inventive Problem Solving) Contradiction Matrix and Inventive Principles.", "Altshuller, G. (1984). Creativity as an Exact Science. Gordon and Breach Science Publishers."⟩
@@ -244,6 +260,7 @@ def allBreeds : List BreedSpec :=
     breed_autoinstinct_neurosis,
     breed_autoinstinct_semantics,
     breed_autoinstinct_vision,
+    breed_axle,
     breed_bayesian_network,
     breed_belief_merging,
     breed_cbr,
@@ -267,6 +284,8 @@ def allBreeds : List BreedSpec :=
     breed_hearsay,
     breed_htn_planning,
     breed_ilp,
+    breed_l2p,
+    breed_lean_copilot,
     breed_ltl_monitor,
     breed_markov_logic,
     breed_mdp,
@@ -287,11 +306,12 @@ def allBreeds : List BreedSpec :=
     breed_soar,
     breed_strips,
     breed_tableaux,
+    breed_tpot2,
     breed_triz,
     breed_version_space ]
 
-/-- The registry holds exactly 55 breeds — the DfCM cross-product
+/-- The registry holds exactly 59 breeds — the DfCM cross-product
 cardinality pinned in the kernel. -/
-theorem allBreeds_count : allBreeds.length = 55 := by rfl
+theorem allBreeds_count : allBreeds.length = 59 := by rfl
 
 end ProcInt

@@ -51,6 +51,7 @@ import ProcInt.Tests.Conformance
 import ProcInt.Tests.Ocel
 import ProcInt.Tests.Models
 import ProcInt.Tests
+import ProcInt.Planning.Pddl
 import ProcInt.Registry.Algorithms
 import ProcInt.Registry.Breeds
 
