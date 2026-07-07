@@ -9,7 +9,7 @@
     "stated": 2,
     "renderedCommit": "b130f4a",
     "tag": "v26.7.7-procint-certified",
-    "tagCommit": "ff44b04",
+    "tagCommit": "cbf0043",
     "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
@@ -24,7 +24,7 @@
   },
   "auxiliaryLanes": {
     "replay": "REPLAY_PASS",
-    "docsLane": "IN_PROGRESS",
+    "docsLane": "PASS",
     "wfnetCrownTheorem": "STATED",
     "nextDomainFoundry": "PLANNED"
   }

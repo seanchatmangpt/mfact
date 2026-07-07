@@ -419,13 +419,13 @@ content_hash = "blake3:1a6de110391160e9bf9baf70566fdb4a7aa8001255720a29493367d45
 path = "release/FINAL_STATUS.md"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/lean-math-pack"
-content_hash = "blake3:d387f9fe08335e78bc9500cf5347e164270c7d3894f5e940fb2cccec6e537f89"
+content_hash = "blake3:38641e79f2e3edd3feb3614458ef24e894c6748231afb174a9c69f1d92e3969c"
 
 [[artifact]]
 path = "release/final_status.json"
 producer = "ggen"
 pack = "/Users/sac/praxis/packs/lean-math-pack"
-content_hash = "blake3:28af41537d6504e039c42f719648e9920813d4cd82ca3c0c7520b4c275e35c3a"
+content_hash = "blake3:5047da7248b835fb0e8373d4bff87a26844257bac7f2dbcc27750c188dc7b15a"
 
 [[artifact]]
 path = "release/publication_plan.json"
