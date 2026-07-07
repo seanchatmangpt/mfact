@@ -1,0 +1,19 @@
+[project]
+name = "mfact"
+
+[ontology]
+source = "ontology/procint-schema.ttl"
+
+[ontology.prefixes]
+procint = "https://mfact.dev/procint#"
+compat = "https://wasm4pm.dev/ns#"
+pi = "https://wasm4pm.dev/pi#"
+rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+rdfs = "http://www.w3.org/2000/01/rdf-schema#"
+xsd = "http://www.w3.org/2001/XMLSchema#"
+
+[packs]
+lean-math-pack = { path = "/Users/sac/praxis/packs/lean-math-pack" }
+
+[templates]
+dir = "templates"

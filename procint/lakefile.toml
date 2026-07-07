@@ -1,0 +1,23 @@
+name = "procint"
+version = "26.7.6"
+defaultTargets = ["ProcInt"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "fabf563a7c95a166b8d7b6efca11c8b4dc9d911f"
+
+[[require]]
+name = "cslib"
+git = "https://github.com/leanprover/cslib.git"
+rev = "1dbda5335e3fc06c414b84ca885a35d4c6d4ab7c"
+
+[[require]]
+name = "mfact"
+path = "../mfact"
+
+[[lean_lib]]
+name = "ProcInt"
+
+[[lean_lib]]
+name = "AxiomAudit"

@@ -97,6 +97,35 @@ the product as much as the library is. The statement--proof split, the typed
 refusals, and the manifest are what make an overnight, largely unattended
 run reportable at all.
 
+\paragraph{Scope.} This paper does not claim to formalize all of process
+intelligence completely, nor does it claim the manufacturing pipeline is
+applicable beyond the case study reported here. It introduces a
+mathematical manufacturing pipeline and demonstrates it by generating a
+first Lean~4 process-intelligence foundation from an existing typed
+implementation inventory. Table~\ref{tab:stages} makes the pipeline
+concrete: each stage names the artifact it produces, not a metaphor.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Manufacturing stage & Concrete artifact \\
+\midrule
+Source inventory & typed Rust implementation (wasm4pm-compat) \\
+Generation & \textsf{ggen} SPARQL-in-Tera templates \\
+Admission & Lean module creation (\texttt{lake env lean}) \\
+Inspection & \texttt{lake build} \\
+Refusal & typed \texttt{Refusal}, negative fixtures \\
+Evidence & process trace, release manifest \\
+Certification & \texttt{CertifiedRelease} object, axiom audit \\
+Publication & generated paper evaluation section \\
+\bottomrule
+\end{tabular}
+\caption{Mathematical manufacturing stages and their artifacts.}
+\label{tab:stages}
+\end{table}
+
 Contributions, each scoped to what was actually built:
 
 \begin{enumerate}
@@ -262,6 +291,35 @@ event-to-object and object-to-object relations with qualifiers, and
 attribute maps; flattening onto a classical log and object lifecycles are
 derived operations. Object-centric Petri nets follow~\cite{ocpn2020}.
 
+\paragraph{Canon status.} Table~\ref{tab:canon} states, per area, whether
+\textsf{procint} v1 formalizes it, formalizes a seed instance of it, or
+leaves it to future work. The claim of this paper is a first combinatorial
+process-intelligence foundation, not a complete formalization of process
+intelligence; per-declaration status (proven/stated) within each formalized
+area is in the generated evaluation (Section~\ref{sec:eval}).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+Area & v1 status \\
+\midrule
+Transition systems, traces, reachability & formalized (Foundations, Petri) \\
+Petri nets (marking, firing, invariants) & formalized \\
+Workflow nets and soundness & formalized; short-circuit theorem partial (Sec.~\ref{sec:eval}) \\
+Alignment-based conformance & formalized (moves, cost, fitness) \\
+OCEL~2.0 event/object relations & formalized \\
+Object-centric Petri nets & seed instance \\
+Process trees, POWL, DFGs, BPMN, Declare & seed instances \\
+Object-centric process queries (OCPQ) & seed instance \\
+Temporal/causal/streaming analytics & seed instances \\
+\bottomrule
+\end{tabular}
+\caption{Process-intelligence canon coverage in \textsf{procint} v1.}
+\label{tab:canon}
+\end{table}
+
 \section{The Manufacturing Run}
 \label{sec:run}
 
@@ -310,6 +368,24 @@ analog of compile-fail tests), and emits the release manifest with content
 hashes. A negative control --- injecting a \texttt{sorry} into a scratch
 copy of an audited theorem --- must cause the gate to refuse; a gate that
 cannot fail certifies nothing.
+
+\section{Use of Generative AI Tools}
+\label{sec:ai-disclosure}
+
+Claude Code and related language-model tooling were used to generate
+candidate patches, proof sketches, ontology fragments, documentation
+drafts, and release metadata during the run described in
+Section~\ref{sec:run}. These outputs were treated throughout as untrusted
+candidate artifacts, per the separation in Section~\ref{sec:mfact}: they
+were admitted into \textsf{procint} only when accepted by the Lean kernel,
+the sorry census, the axiom audit, schema validation against the
+\texttt{procint:} ontology, and the negative-fixture and release-gate
+checks of Section~\ref{sec:run}. No language-model output is part of the
+trusted base (Table~\ref{tab:stages}); the trusted base is the Lean kernel,
+Mathlib and CSLib at their pinned revisions, and the \texttt{lake}/\texttt{ggen}
+toolchain. The author reviewed and accepts responsibility for all submitted
+content, code, citations, and claims in this paper and in the accompanying
+repository.
 
 \section{Evaluation}
 \label{sec:eval}
@@ -368,6 +444,28 @@ the generated evaluation) are available in the \texttt{mfact} repository,
 pinned to Lean~4 v4.31.0 with Mathlib and CSLib at fixed revisions. The
 negative-control script that demonstrates the gate refusing a
 \texttt{sorry}-injected artifact ships with the release.
+
+\paragraph{Reproducibility appendix.}
+\begin{itemize}
+\item \textbf{Lean:} \texttt{leanprover/lean4:v4.31.0}.
+\item \textbf{Mathlib:} \texttt{leanprover-community/mathlib4} at the commit
+  tagged \texttt{v4.31.0}.
+\item \textbf{CSLib:} \texttt{leanprover/cslib}, pinned to its last commit
+  on the \texttt{v4.31.0} toolchain.
+\item \textbf{Build:} \texttt{lake build} in \texttt{mfact/} and
+  \texttt{procint/}.
+\item \textbf{Generation:} \texttt{ggen sync run} against
+  \texttt{packs/lean-math-pack} and the merged \texttt{procint:} ontology.
+\item \textbf{Certification:} \texttt{lake exe mfact certify
+  release-manifest.json gates.json}.
+\item \textbf{Artifact and manifest hashes:} recorded per-declaration
+  (BLAKE3) and as a genesis-folded release hash in
+  \texttt{release-manifest.json}; reproduced in the generated evaluation
+  (Section~\ref{sec:eval}).
+\item \textbf{Expected output:} \texttt{CERTIFIED\_RELEASE=PASS} with
+  \texttt{SORRY\_COUNT=0} and \texttt{AXIOM\_AUDIT=PASS}; a negative control
+  with an injected \texttt{sorry} must instead exit refused.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{refs}
