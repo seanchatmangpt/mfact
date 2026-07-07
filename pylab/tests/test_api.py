@@ -3,7 +3,7 @@
 import httpx
 from fastapi.testclient import TestClient
 
-from math_factory_pylab.api import app
+from mpops.api import app
 
 client = TestClient(app)
 

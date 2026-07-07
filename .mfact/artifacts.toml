@@ -35,7 +35,7 @@ content_hash = "blake3:70ea2a9b3b98232dc3df2271df6e1b9afa21752f4779359347de531b9
 path = "dist/verif/lean/Wasm4pmVerify/Corr/token_replay_counts_corr.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:372750d6babfd6d5f4bca087beb3bcd0ed80fee583e08619f2d39556a91221ae"
+content_hash = "blake3:2f26c3e000b78d5893c15e731fb672c063a21e4a93c36d082dedb0799adf41c1"
 
 [[artifact]]
 path = "paper/availability.tex"
@@ -479,7 +479,7 @@ content_hash = "blake3:8e8bea75930f70120f8305dff84271f2ee7f5dffe70470816b47685dc
 path = "research/verif/obligations.toml"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:9132a43975ec332f5d72c57220fe57d5a77e031e212c23e9cbd9e5605333b41e"
+content_hash = "blake3:4b53682a7f677e42a8871cb1cae9bb8856de8f7a3e73d5ec87b85cd60ba2ca75"
 
 [[artifact]]
 path = "research/wfnet/obligations.toml"
@@ -503,7 +503,7 @@ content_hash = "blake3:5a5d35de9e5925960df82321b757cc7b266e99b4834c4fd54c493644e
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:59d50003f9f05092400d07a34b175531ae9e47e21aadc47daa52175cb05576ca"
+content_hash = "blake3:932b4b53de4964da15983569af9013a3ad69fb9ced251f7b6e10f90ad51c1b3b"
 
 [[artifact]]
 path = "release/gates.json"
@@ -516,3 +516,9 @@ path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
 content_hash = "blake3:6915f7e674011fb0272e6a59c87bef31cecb2327ec66fbc6ff49eb50ec3e4552"
+
+[[artifact]]
+path = "paper/correspondence_status.tex"
+producer = "scripts/build_verif.py"
+sources = ["packs/lean-math-pack/fragments/verif.ttl", "release/verif-receipt.json"]
+content_hash = "blake3:1b24c0cfb2b493e1ddbfba09c01631fb047f076e4e4f1c2685f2840e03a246ee"

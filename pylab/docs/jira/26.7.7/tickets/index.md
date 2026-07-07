@@ -21,6 +21,11 @@ here — that's a core-repo decision, not a pylab one.
 | [006](ticket_006_premise_retrieval.md) | Local premise retrieval (LeanExplore recipe over procint) | Search quality | LeanExplore's hybrid ranking has never been run against a project this small |
 | [007](ticket_007_search_as_event_log.md) | Proof search as an OCEL 2.0 event log, process-mined by this repo's own tools | **Crown / groundbreaking** | Unifies the repo's two halves (Lean proof manufacturing, process intelligence) which currently only share an RDF ontology, not data |
 | [008](ticket_008_tpot2_pipeline_automl.md) | Actual TPOT2 pipeline evolution over process-mining pipelines | Closes the loop | Answers the original "what about TPOT2" question with a real execution surface (pylab has one; procint doesn't) |
+| [009](ticket_009_mpops_cli.md) | mpops Outside-In CLI | UX / Tooling | Establishes the product-shaped developer cockpit while strictly preserving the trusted manufacturing boundary |
+| [010](ticket_010_mpops_rename.md) | Rename All mpops References (from math-factory-pylab) | DX / Naming | Finalizes the CLI namespace eradication of the old name |
+| [012](ticket_012_workflow_state.md) | Workflow state baseline (crown rail ALIVE snapshot) | Foundation | Baseline-state snapshot preceding the countermodel formalization work |
+| [013](ticket_013_v26_7_7_gap_audit.md) | v26.7.7 release gap audit | Governance | Five-rail gap audit before release cut; found a false PROVEN promotion on the countermodel theorem and an unbound D1 correspondence claim |
+| [014](ticket_014_standing_guard_mcp.md) | Standing Guard MCP server | Governance / Tooling | Read-only MCP server that continuously re-runs ticket 013's 8 check classes so the same gaps can't silently reappear between audits |
 
 ## Suggested build order
 

@@ -1,19 +1,19 @@
 {
   "schema": "mfact.quadrature.v1",
   "release_id": "v26.7.7",
-  "run_identifier": "3994029",
+  "run_identifier": "e329ef7",
   "slogan": "ggen renders. Lean admits. mfact certifies.",
   "surfaces": {
-    "ttl": { "proven_decls": 197 },
-    "lean": { "rendered_decls": 197 },
+    "ttl": { "proven_decls": 202 },
+    "lean": { "rendered_decls": 198 },
     "manifest": { "proven_artifacts": 197 },
     "process": { "events": 10 },
     "paper": { "claims": 5, "evaluation_numbers": 6 }
   },
   "edges": [
-    { "pair": "ttl_to_lean", "label": "TTL to Lean", "count": 197, "result": "PASS" },
-    { "pair": "lean_to_audit", "label": "Lean to Audit", "count": 197, "result": "PASS" },
-    { "pair": "audit_to_manifest", "label": "Audit to Manifest", "count": 197, "result": "PASS" },
+    { "pair": "ttl_to_lean", "label": "TTL to Lean", "count": 202, "result": "FAIL" },
+    { "pair": "lean_to_audit", "label": "Lean to Audit", "count": 202, "result": "PASS" },
+    { "pair": "audit_to_manifest", "label": "Audit to Manifest", "count": 197, "result": "FAIL" },
     { "pair": "manifest_to_paper", "label": "Manifest to Paper", "count": 6, "result": "PASS" },
     { "pair": "artifact_to_process", "label": "Artifact to Process Event", "count": 253, "result": "PASS" },
     { "pair": "claim_to_evidence", "label": "Claim to Evidence", "count": 5, "result": "PASS" }
@@ -26,11 +26,11 @@
     { "id": "C5", "text": "negative controls: the gate refuses (exit 1/2)", "evidence": "release/certify.log" }
   ],
   "results": {
-    "standing_quadrature": "PASS",
-    "orphan_ttl_decls": 0,
+    "standing_quadrature": "FAIL",
+    "orphan_ttl_decls": 4,
     "orphan_lean_decls": 0,
     "orphan_paper_claims": 0,
-    "orphan_manifest_fields": 0,
+    "orphan_manifest_fields": 5,
     "orphan_process_events": 0,
     "unsupported_evaluation_numbers": 0,
     "untraced_artifacts": 0,

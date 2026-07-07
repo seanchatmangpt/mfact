@@ -16,6 +16,7 @@ import ProcInt.Workflow.Flow
 import ProcInt.Workflow.WfNet
 import ProcInt.Workflow.ShortCircuit
 import ProcInt.Workflow.Soundness
+import ProcInt.Workflow.Countermodel
 import ProcInt.Logs.Event
 import ProcInt.Logs.Trace
 import ProcInt.Logs.EventLog

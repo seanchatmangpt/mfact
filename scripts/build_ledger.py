@@ -40,6 +40,8 @@ for path, producer, sources in [
      ['release/release-manifest.json']),
     ('release/standing.env', 'gates (computed fields; quadrature fields merged from release/quadrature.env)',
      ['release/release-manifest.json', 'release/quadrature.env']),
+    ('paper/correspondence_status.tex', 'scripts/build_verif.py',
+     ['packs/lean-math-pack/fragments/verif.ttl', 'release/verif-receipt.json']),
 ]:
     lines += ['[[artifact]]', f'path = "{path}"', f'producer = "{producer}"',
               f'sources = {json.dumps(sources)}',

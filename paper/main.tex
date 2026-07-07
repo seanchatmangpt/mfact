@@ -303,6 +303,17 @@ Petri nets~\cite{ocpn2020}; partially ordered workflow models follow
 POWL~\cite{powl2023}. None of these, to the best of our search, had a prior
 mechanization in a proof assistant.
 
+\paragraph{Code-to-proof extraction.} The correspondence pilot of
+Section~\ref{sec:correspondence} extracts an external Rust crate into Lean
+via Aeneas~\cite{ho2022aeneas}, whose Charon front end~\cite{protzenko2024charon}
+separates syntax recovery from semantic translation. Aeneas targets whole
+Rust programs with a full memory model; our pilot uses it far more
+narrowly, on a single dependency-free arithmetic module, and treats its
+output the same way as any other candidate in this paper's pipeline ---
+extraction produces a Lean statement, never a proof, and standing still
+requires kernel admission of a hand-authored correspondence theorem
+against that extraction.
+
 \section{The mfact Framework}
 \label{sec:mfact}
 
@@ -594,6 +605,43 @@ symbol) each cause a typed refusal.
 \else
   \InputIfFileExists{quadrature}{}{%
   \begin{center}\itshape Draft build: quadrature.tex missing.\end{center}}
+\fi
+
+\subsection{D1 Correspondence Pilot}
+\label{sec:correspondence}
+
+Beyond \textsf{procint}'s own catalog, \textsf{mfact} pilots a second
+correspondence lane: obligations that relate a Lean declaration to code
+extracted from an \emph{external}, unverified Rust crate
+(\texttt{wasm4pm-core}) via Aeneas~\cite{ho2022aeneas} and its Charon
+front end~\cite{protzenko2024charon}. This is deliberately scoped to one
+obligation --- token-replay counts correspondence, ``D1'' --- and follows
+the same status ladder as the rest of this paper's standing (declared,
+extracted, stated, proven), computed by a dedicated builder
+(\texttt{scripts/build\_verif.py}) from observed evidence: a charon/aeneas
+pipeline receipt, a \texttt{lake build} of the extracted module against
+\textsf{procint}, and an axiom-print check on the resulting theorem. The
+crate's \texttt{ReplayCounts}\allowbreak\texttt{\{produced, consumed,
+missing, remaining\}} counts and its integer
+\texttt{fitness\_num}/\texttt{fitness\_den} functions are extracted
+verbatim; an abstraction function lifts the extracted (proof-free) struct
+into \textsf{procint}'s \texttt{ReplayCounts} (which carries
+\texttt{missing} $\le$ \texttt{consumed} and \texttt{remaining} $\le$
+\texttt{produced} as proof fields) given those two inequalities as
+hypotheses. The correspondence theorem does not assert that the crate's
+integer ratio and \textsf{procint}'s exact-rational fitness are equal ---
+they are structurally different formulas (a single integer fraction versus
+an average of two ratios) --- only that each computes correctly from the
+same underlying counts; forcing a false numeric equality between them was
+rejected in favor of this honest, weaker, but PROVEN statement.
+Table~\ref{tab:correspondence} is rendered by that same builder from its
+own receipt; it is not written by hand.
+
+\ifreleasebuild
+  \input{correspondence_status}
+\else
+  \InputIfFileExists{correspondence_status}{}{%
+  \begin{center}\itshape Draft build: correspondence\_status.tex missing.\end{center}}
 \fi
 
 \section{Falsifier and Valid Objection Surface}

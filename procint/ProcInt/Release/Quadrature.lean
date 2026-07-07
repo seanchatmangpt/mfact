@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Standing Quadrature witness — v26.7.7 (run 3994029)
+/-! # Standing Quadrature witness — v26.7.7 (run e329ef7)
 
 A finite, kernel-checked witness that the release's surfaces cohere:
 the TTL declaration catalog, the release manifest, and the axiom audit
@@ -138,6 +138,7 @@ def ttlProvenDecls : List String := [
   "ProcInt.WfNet.bounded_of_sound",
   "ProcInt.WfNet.finalMarking_sink",
   "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
@@ -159,6 +160,10 @@ def ttlProvenDecls : List String := [
   "ProcInt.WfNet.shortCircuit_step_star",
   "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded",
   "ProcInt.WfNet.sound_of_live_bounded",
+  "ProcInt.Workflow.Countermodel.crownCounter_not_bounded",
+  "ProcInt.Workflow.Countermodel.crownCounter_reaches_final",
+  "ProcInt.Workflow.Countermodel.crownCounter_reaches_mid",
+  "ProcInt.Workflow.Countermodel.crownCounter_sound",
   "ProcInt.XesLifecycleTransition.asString_injective",
   "ProcInt.XesLifecycleTransition.asString_parse",
   "ProcInt.XesLifecycleTransition.parse_asString",
@@ -540,6 +545,7 @@ def auditedDecls : List String := [
   "ProcInt.WfNet.bounded_of_sound",
   "ProcInt.WfNet.finalMarking_sink",
   "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
@@ -561,6 +567,10 @@ def auditedDecls : List String := [
   "ProcInt.WfNet.shortCircuit_step_star",
   "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded",
   "ProcInt.WfNet.sound_of_live_bounded",
+  "ProcInt.Workflow.Countermodel.crownCounter_not_bounded",
+  "ProcInt.Workflow.Countermodel.crownCounter_reaches_final",
+  "ProcInt.Workflow.Countermodel.crownCounter_reaches_mid",
+  "ProcInt.Workflow.Countermodel.crownCounter_sound",
   "ProcInt.XesLifecycleTransition.asString_injective",
   "ProcInt.XesLifecycleTransition.asString_parse",
   "ProcInt.XesLifecycleTransition.parse_asString",
@@ -629,7 +639,7 @@ every audited declaration has a TTL origin. -/
 theorem ttl_audit_closed : ttlProvenDecls = auditedDecls := by rfl
 
 /-- Cardinality of the closed proven surface. -/
-theorem provenSurface_count : ttlProvenDecls.length = 197 := by rfl
+theorem provenSurface_count : ttlProvenDecls.length = 202 := by rfl
 
 /-- Paper-claim surface: (claim id, evidence reference) pairs. -/
 def paperClaims : List (String × String) := [

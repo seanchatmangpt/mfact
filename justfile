@@ -4,6 +4,30 @@
 default:
     @just status
 
+# Serialize all `lake build`/`lake test` invocations across recipes so two
+# overlapping `just` runs (e.g. `release` + `tactic-search` in another shell)
+# never race the same .lake/build directory and spawn duplicate lean procs.
+# Lock is an atomic mkdir (portable, no flock dependency); stale locks from a
+# killed process are reclaimed automatically once the holder pid is gone.
+[group('internal')]
+_lake +cmd:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    lockdir=/tmp/mfact-lake.lock
+    while ! mkdir "$lockdir" 2>/dev/null; do
+        holder=$(cat "$lockdir/pid" 2>/dev/null || echo "?")
+        if [ -n "$holder" ] && [ "$holder" != "?" ] && ! kill -0 "$holder" 2>/dev/null; then
+            echo "reclaiming stale lake lock (pid $holder gone)"
+            rm -rf "$lockdir"
+            continue
+        fi
+        echo "waiting for lake lock (held by pid $holder)..."
+        sleep 2
+    done
+    trap 'rm -rf "$lockdir"' EXIT
+    echo $$ > "$lockdir/pid"
+    {{cmd}}
+
 # Bootstrap a fresh checkout: report toolchain presence, never force-install.
 [group('setup')]
 install:
@@ -43,13 +67,13 @@ render:
 # Full build: procint package, then the mfact package (AxiomAudit + mfact lib).
 [group('manufacture')]
 build:
-    cd procint && /Users/sac/.elan/bin/lake build
-    cd mfact && /Users/sac/.elan/bin/lake build AxiomAudit mfact
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build"
+    just _lake "cd mfact && /Users/sac/.elan/bin/lake build AxiomAudit mfact"
 
 # Axiom audit of the procint package only.
 [group('manufacture')]
 audit:
-    cd procint && /Users/sac/.elan/bin/lake build AxiomAudit
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build AxiomAudit"
 
 # Regenerate the release manifest + gates from the TTL catalog.
 [group('manufacture')]
@@ -66,6 +90,7 @@ eval-tex:
 certify: build audit
     cd mfact && ./.lake/build/bin/mfact certify ../release/release-manifest.json ../release/gates.json > ../release/certify.log 2> ../release/certify.stderr && cat ../release/certify.stderr >> ../release/certify.log && rm ../release/certify.stderr
     bash scripts/certify_negative_controls.sh >> release/certify.log 2>&1
+    bash scripts/countermodel_negative_controls.sh >> release/certify.log 2>&1
     @grep "^certified:" release/certify.log
 
 # Standing Quadrature: close the TTL x Lean x Manifest x Process x Paper cross-product and kernel-admit the witness.
@@ -74,13 +99,13 @@ standing-quadrature:
     python3 scripts/build_quadrature.py
     rm -f ggen.lock
     ggen sync run > /dev/null
-    cd procint && /Users/sac/.elan/bin/lake build Quadrature
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build Quadrature"
     @cat release/quadrature.env
 
 # Hand-authored demo surface — never feeds standing, gates, or the manifest.
 [group('demo')]
 playground:
-    cd procint && /Users/sac/.elan/bin/lake build Playground
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build Playground"
 
 # Hand-authored Python research surface — never feeds standing, gates, or the manifest.
 [group('demo')]
@@ -91,7 +116,7 @@ pylab:
 # See docs/genetic-tactic-search.md. Never writes to packs/*/fragments/*.ttl.
 [group('demo')]
 tactic-search target *args:
-    cd procint && /Users/sac/.elan/bin/lake build Playground
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build Playground"
     python3 scripts/genetic_tactic_search.py {{target}} {{args}}
 
 # Negative controls for the quadrature gate (must REFUSE on poisoned copies).
@@ -124,11 +149,12 @@ regen-check:
 # Correctness ladder: lake test drives the whole fixture surface; PROCINT_* keys merge only from real exit codes.
 [group('manufacture')]
 test:
-    cd procint && /Users/sac/.elan/bin/lake test
-    cd procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature
-    grep -v "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=" release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env
+    just _lake "cd procint && /Users/sac/.elan/bin/lake test"
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature"
+    grep -v "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=\|^WFNET_INFINITE_TRANSITION_COUNTERMODEL=" release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env
     CROWN_STATUS=$(python3 -c "import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')" 2>/dev/null || echo 'STATED')
-    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='$CROWN_STATUS'\n' >> release/standing.env
+    CM_STATUS=$(python3 -c "import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded']; print('STATED')" 2>/dev/null || echo 'STATED')
+    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='$CROWN_STATUS'\nWFNET_INFINITE_TRANSITION_COUNTERMODEL='$CM_STATUS'\n' >> release/standing.env
     @echo "correctness ladder: PASS (keys merged into standing.env)"
 
 # ── Agent cockpit (read-only diagnostics; nothing below dirties the tree) ──
@@ -182,6 +208,60 @@ negative: quadrature-negative-controls
 [group('manufacture')]
 quadrature: standing-quadrature
 
+# ── Correspondence factory (D1, Steps 3-8) ──────────────────────────────────
+# wasm4pm-compat is a sibling repo (../wasm4pm-compat); actuation for its
+# extraction pipeline is still fronted here so agents never call raw
+# charon/aeneas/lake commands directly. See docs/HONEST_D1_STATEMENT.md and
+# packs/lean-math-pack/fragments/verif.ttl for obligation D1.
+
+WASM4PM_COMPAT := "../wasm4pm-compat"
+
+# Build/ensure the pinned charon+aeneas extraction toolchain at
+# .verif-toolchain/bin/ (durable, gitignored, mfact-local, idempotent — skips
+# rebuild if already present and pinned correctly). Lives here, not in
+# wasm4pm-compat, which stays a clean source-only publishable crate. Never
+# depend on a /tmp scratchpad for this.
+[group('verif')]
+verif-toolchain:
+    bash scripts/verif_build_toolchain.sh
+
+# Step 3-A: charon extraction of the D1 perimeter (conformance_counts.rs).
+[group('verif')]
+verif-extract: verif-toolchain
+    bash {{WASM4PM_COMPAT}}/verify/scripts/run_charon_d1.sh
+
+# Step 3-B: aeneas Lean codegen from the Step 3-A LLBC output.
+[group('verif')]
+verif-codegen: verif-toolchain
+    bash {{WASM4PM_COMPAT}}/verify/scripts/run_aeneas_d1.sh
+
+# Step 3 full pipeline: toolchain → extract → codegen → receipts/pipeline.json.
+[group('verif')]
+verif-pipeline: verif-extract verif-codegen
+    bash scripts/verif_assemble_pipeline.sh
+
+# Step 4: build the wasm4pm-compat verify/lean Lake package (Generated + Abs + Corr).
+[group('verif')]
+verif-lake-build:
+    just _lake "cd {{WASM4PM_COMPAT}}/verify/lean && /Users/sac/.elan/bin/lake build"
+
+# Step 5: negative controls (mfact-side refusal checks) + materialize
+# (copy mfact dist/verif/ into wasm4pm-compat/verify/lean/, hash-checked).
+[group('verif')]
+verif-negative-controls:
+    bash scripts/verif_negative_controls.sh
+
+[group('verif')]
+verif-materialize:
+    bash scripts/verif_materialize.sh
+
+# Step 6: rerun the builder now that pipeline.json exists, then rerender.
+[group('verif')]
+verif-status:
+    python3 scripts/build_verif.py
+    just render
+    just regen-check
+
 # Rebuild the paper PDF (paper/main.pdf).
 [group('paper')]
 paper:
@@ -225,7 +305,7 @@ manufacture-post-release:
     python3 scripts/build_post_release.py
     rm -f ggen.lock
     ggen sync run > /dev/null
-    cd procint && /Users/sac/.elan/bin/lake build PostRelease
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build PostRelease"
     python3 scripts/build_ledger.py > /dev/null
     grep -v "^POST_RELEASE_PACKET\|^PUBLICATION_ACTUATION=\|^ARXIV_PACKET=\|^GITHUB_PUSH_PACKET=\|^GITHUB_RELEASE_PACKET=\|^INDEPENDENT_REPLAY=\|^NEXT_DOMAIN_FOUNDRY=" release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env
     python3 -c "import json; d=json.load(open('release/final_status.json')); p={x['id']:x['status'] for x in d['publicationPacket']['packets']}; print('POST_RELEASE_PACKET_HASH='+d['publicationPacket']['packetHash']); print('PUBLICATION_ACTUATION='+d['publicationPacket']['publicationActuation']); print('ARXIV_PACKET='+p['arxiv_upload']); print('GITHUB_PUSH_PACKET='+p['github_push']); print('GITHUB_RELEASE_PACKET='+p['github_release']); print('INDEPENDENT_REPLAY='+d['auxiliaryLanes']['replay']); print('NEXT_DOMAIN_FOUNDRY='+d['auxiliaryLanes']['nextDomainFoundry'])" >> release/standing.env
@@ -257,4 +337,5 @@ docs-check:
 [group('paper')]
 prose-lint:
     @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|e25724e8|CERTIFIED_RELEASE=PASS' paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
+    @! grep -nE 'Aeneas[[:space:]]+(proves|verified|checked|certified)' paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — 'Aeneas proves/verified/checked/certified' claims extraction where only extraction happened; say 'Aeneas extracts' and 'Lean proves'" && exit 1)
     @echo "prose-lint: clean"

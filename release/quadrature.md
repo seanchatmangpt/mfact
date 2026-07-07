@@ -1,6 +1,6 @@
 # Standing Quadrature — v26.7.7
 
-`PASS` (run `3994029`). ggen renders. Lean admits. mfact certifies.
+`FAIL` (run `e329ef7`). ggen renders. Lean admits. mfact certifies.
 
 The release is not evaluated only by whether Lean builds. It is evaluated
 by whether the declaration catalog, admitted Lean corpus, process
@@ -15,9 +15,9 @@ diverges.
 
 | Surface pair | Count | Result |
 |---|---:|---|
-| TTL to Lean | 197 | PASS |
-| Lean to Audit | 197 | PASS |
-| Audit to Manifest | 197 | PASS |
+| TTL to Lean | 202 | FAIL |
+| Lean to Audit | 202 | PASS |
+| Audit to Manifest | 197 | FAIL |
 | Manifest to Paper | 6 | PASS |
 | Artifact to Process Event | 253 | PASS |
 | Claim to Evidence | 5 | PASS |
@@ -34,6 +34,6 @@ diverges.
 
 ## Surfaces
 
-- TTL catalog: 197 proven declarations
+- TTL catalog: 202 proven declarations
 - Paper: 5 traced claims, 6 evaluation numbers checked against the manifest
 - Process: 10 run events (receipt-chain append order; no wall clock)

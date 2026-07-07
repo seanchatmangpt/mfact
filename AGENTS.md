@@ -139,6 +139,55 @@ No standing value may be inferred from terminal prose. Standing comes
 from the manifest, ledger, audit, fixture keys, quadrature report, and
 certified status artifacts.
 
+## Guardrails (post-v26.7.7-audit)
+
+A 2026-07-07 five-rail audit (recorded in
+`pylab/docs/jira/26.7.7/tickets/ticket_013_v26_7_7_gap_audit.md`) found a
+sorry-backed theorem ledgered as `status "proven"` with no guard catching
+it, plus several related silent-drift failure modes. These rules exist to
+make each of those specific failures structurally impossible, not just
+discouraged:
+
+- **No status promotion without a checked guard.** Any TTL fragment that
+  sets `procint:status "proven"` on a theorem must have a corresponding
+  entry in `release/gates.json` (or an equivalent builder check) that
+  mechanically verifies `#print axioms` shows no `sorryAx` for that
+  declaration. A status literal written into TTL is never sufficient by
+  itself — a human or agent setting `"proven"` in a fragment without a
+  passing mechanical check is `STATED_PROMOTED_TO_PROVEN`. New refusal
+  vocabulary for this class: `WFNET_INFINITE_TRANSITION_COUNTERMODEL`
+  (status key for theorems in this family), `countermodel_not_promoted`
+  (the guard name), `COUNTERMODEL_PROMOTION_REFUSED` (the refusal fired
+  when the guard fails).
+- **`regen-check` must not have untracked-file blind spots.** `git diff
+  --exit-code` only sees tracked files. Any ledgered artifact's producer
+  script must be invoked by `regen-check`/`check` itself — a producer that
+  only runs under a separate recipe (e.g. a `*-status` recipe not in the
+  `check`/`release` chain) is a coverage gap, not a convenience. Newly
+  created ledgered artifacts must be `git add`ed in the same commit that
+  introduces them; an untracked-but-ledgered file whose disk hash
+  disagrees with `.mfact/artifacts.toml` is `ORPHAN_ARTIFACT_REFUSED`, and
+  this must actually fire, not just exist as a documented category.
+- **Correspondence theorems must reference their extraction.** A
+  correspondence obligation reported as `PROVEN` must have its Lean
+  statement actually `import` and quantify over the extracted/generated
+  declaration (e.g. an Aeneas `Generated.*` type) via its declared
+  abstraction function — not merely a same-shaped statement over
+  hand-written types. A receipt field like `aeneasDecl: "TBD"` is itself a
+  refusal signal (the binding was never completed) and must block PROVEN
+  status, not ship alongside it.
+- **Tag ancestry is part of certification.** `just certify`/`release` must
+  verify the release commit is an ancestor of (or equal to) the certified
+  git tag before reporting `CERTIFIED_RELEASE=PASS`. A tag that predates
+  the currently-rendered artifacts is `RECEIPT_RECURSION_REFUSED`, not a
+  historical curiosity to note and move past.
+- **New fragments feeding `ontology.ttl` must be tracked before
+  `regen-check` runs.** An untracked `.ttl` file silently concatenated into
+  generated output by `cat fragments/*.ttl` is a source-provenance gap
+  distinct from generated-artifact drift — it means the generated output is
+  not reproducible from the committed source tree at all. Commit new
+  fragment files before running any recipe that renders from them.
+
 ## Completion report
 
 Every completed task reports: source files changed, generated files

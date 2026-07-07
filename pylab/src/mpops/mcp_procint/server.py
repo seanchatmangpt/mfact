@@ -1,6 +1,6 @@
 """FastMCP server: read-only Lean/Lake/just introspection + pylab research tools.
 
-Run with `uv run python -m math_factory_pylab.mcp_procint.server`.
+Run with `uv run python -m mpops.mcp_procint.server`.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("procint-pylab")
 
-# pylab/src/math_factory_pylab/mcp_procint/server.py -> mfact/
+# pylab/src/mpops/mcp_procint/server.py -> mfact/
 REPO_ROOT = Path(__file__).resolve().parents[4]
 PROCINT_DIR = REPO_ROOT / "procint"
 LAKE = "/Users/sac/.elan/bin/lake"

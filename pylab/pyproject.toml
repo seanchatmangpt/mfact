@@ -3,7 +3,7 @@ requires = ["uv_build>=0.9.18,<0.10.0"]
 build-backend = "uv_build"
 
 [project]  # https://packaging.python.org/en/latest/specifications/pyproject-toml/
-name = "math-factory-pylab"
+name = "mpops"
 version = "0.0.0"
 description = "All of the Process Intelligence and ML tooling"
 readme = "README.md"
@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [project.scripts]  # https://docs.astral.sh/uv/concepts/projects/config/#command-line-interfaces
-math-factory-pylab = "math_factory_pylab.cli:app"
+mpops = "mpops.cli:app"
 
 [project.urls]  # https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-labels
 homepage = "https://github.com/seanchatmangpt/mfact"

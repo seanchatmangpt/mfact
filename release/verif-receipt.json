@@ -1,9 +1,9 @@
 {
   "builder": "scripts/build_verif.py",
-  "catalogHash": "8999674bf8d6db40cf2bc12b92da6aa3643a441c2ce0ff6749e1f9ed844f4255",
+  "catalogHash": "11cdf6e3ca196868e675e5d04be08399f5a14851ed560bf3768183e869b74c9a",
   "catalogSource": "packs/lean-math-pack/fragments/verif.ttl",
   "leanToolchainProcint": "leanprover/lean4:v4.31.0",
-  "leanToolchainVerify": null,
+  "leanToolchainVerify": "leanprover/lean4:v4.31.0",
   "obligations": [
     {
       "aeneasDecl": "TBD",
@@ -11,20 +11,23 @@
       "corrName": "token_replay_counts_corr",
       "corrOrder": 1,
       "evidence": {
+        "axiomPrintOutput": "'Wasm4pmVerify.Corr.token_replay_counts_corr' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
         "declared": true,
-        "extracted": false,
-        "proven": false,
-        "reason": "no verify/receipts/pipeline.json \u2014 charon/aeneas has not run",
-        "stated": false
+        "extracted": true,
+        "lakeBuildDetail": "\u26a0 [1512/1554] Replayed Aeneas.Std.Slice\nwarning: Aeneas/Std/Slice.lean:363:4: declaration uses `sorry`\nwarning: Aeneas/Std/Slice.lean:586:8: declaration uses `sorry`\n\u26a0 [1591/1696] Replayed Aeneas.Std.StringIter\nwarning: Aeneas/Std/StringIter.lean:13:4: declaration uses `sorry`\nBuild completed successfully (8836 jobs).\n",
+        "lakeBuildOk": true,
+        "pipelineJsonHash": "07e3e9fc58821e08c9c3538e9f17f49a5d3c1e89e78c071e3a89ec236aee3f91",
+        "proven": true,
+        "stated": true
       },
       "leanDecl": "ProcInt.ReplayCounts",
       "rustFile": "wasm4pm-core/src/conformance_counts.rs",
       "rustSymbol": "wasm4pm_core::conformance_counts",
-      "status": "DECLARED",
+      "status": "PROVEN",
       "subject": "verif:Obl_token_replay_counts_corr"
     }
   ],
-  "pipelineJsonExists": false,
+  "pipelineJsonExists": true,
   "rustFileHashes": {
     "wasm4pm-core/src/conformance_counts.rs": "0caaf0652ec0f42a2a192d9e426b8b210ed6cca830f645da3091cdbd78164279"
   }

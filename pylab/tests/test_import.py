@@ -1,8 +1,8 @@
 """Test Math Factory PyLab."""
 
-import math_factory_pylab
+import mpops
 
 
 def test_import() -> None:
     """Test that the app can be imported."""
-    assert isinstance(math_factory_pylab.__name__, str)
+    assert isinstance(mpops.__name__, str)

@@ -30,15 +30,16 @@ writes into mfact (the generated fragment + the receipt).
 import json, os, re, subprocess, sys
 from typing import Any, Dict
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VERIF_TTL = os.path.join(ROOT, 'packs/lean-math-pack/fragments/verif.ttl')
-OUT_FRAGMENT = os.path.join(ROOT, 'packs/lean-math-pack/fragments/verif-status.generated.ttl')
-OUT_RECEIPT = os.path.join(ROOT, 'release/verif-receipt.json')
+ROOT = os.getenv('MFACT_ROOT', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+VERIF_TTL = os.getenv('VERIF_TTL', os.path.join(ROOT, 'packs/lean-math-pack/fragments/verif.ttl'))
+OUT_FRAGMENT = os.getenv('OUT_FRAGMENT', os.path.join(ROOT, 'packs/lean-math-pack/fragments/verif-status.generated.ttl'))
+OUT_RECEIPT = os.getenv('OUT_RECEIPT', os.path.join(ROOT, 'release/verif-receipt.json'))
 
-WASM4PM_COMPAT = '/Users/sac/wasm4pm-compat'
-PIPELINE_JSON = os.path.join(WASM4PM_COMPAT, 'verify/receipts/pipeline.json')
-LEAN_PKG_DIR = os.path.join(WASM4PM_COMPAT, 'verify/lean')
-LAKE = '/Users/sac/.elan/bin/lake'
+WASM4PM_COMPAT = os.getenv('WASM4PM_COMPAT', '/Users/sac/wasm4pm-compat')
+PIPELINE_JSON = os.getenv('PIPELINE_JSON', os.path.join(WASM4PM_COMPAT, 'verify/receipts/pipeline.json'))
+LEAN_PKG_DIR = os.getenv('LEAN_PKG_DIR', os.path.join(WASM4PM_COMPAT, 'verify/lean'))
+LAKE = os.getenv('LAKE', '/Users/sac/.elan/bin/lake')
+CORRESPONDENCE_STATUS_TEX = os.getenv('CORRESPONDENCE_STATUS_TEX', os.path.join(ROOT, 'paper/correspondence_status.tex'))
 
 
 def b3(data: bytes) -> str:
@@ -92,10 +93,20 @@ def lake_build_ok(pkg_dir):
 
 
 def sorry_free(pkg_dir, decl_name):
+    # decl_name's module path (Wasm4pmVerify.Corr.<corrName>) matches the
+    # fully-qualified declaration name for this pack's Corr modules, so the
+    # same string imports the module the declaration lives in. Without this
+    # import, `#print axioms` runs in a bare Lean environment that has never
+    # seen the declaration and fails with "unknown constant" — a distinct
+    # failure mode from an actual sorryAx that must not be conflated with one.
+    # `--stdin` (not `--run /dev/stdin`) is required: `--run` expects the
+    # script to define `main` and exits nonzero without one, even when the
+    # `#print axioms` command itself printed correctly — that nonzero exit
+    # was being misread as "not sorry-free".
     r = subprocess.run(
-        [LAKE, 'env', 'lean', '--run', '/dev/stdin'],
+        [LAKE, 'env', 'lean', '--stdin'],
         cwd=pkg_dir, capture_output=True,
-        input=f'#print axioms {decl_name}\n'.encode())
+        input=f'import {decl_name}\n#print axioms {decl_name}\n'.encode())
     if r.returncode != 0:
         return False, (r.stdout.decode() + r.stderr.decode())[-2000:]
     out = r.stdout.decode()
@@ -137,6 +148,187 @@ def derive_status(rec):
     return status, evidence
 
 
+def check_proof_status_mismatch(verif_status_path: str, obligations: Any) -> None:
+    """Refusal: stored proof status exceeds current evidence level.
+
+    Status ladder (cannot skip rungs): DECLARED < EXTRACTED < STATED < PROVEN.
+    Detects regression where previously-higher status claims are no longer
+    evidenced.
+    """
+    if not os.path.exists(verif_status_path):
+        return
+
+    # Parse stored statuses from verif-status.generated.ttl
+    stored_statuses: Dict[str, str] = {}
+    try:
+        status_text = open(verif_status_path, encoding='utf-8').read()
+        for line in status_text.split('\n'):
+            m = re.search(r'(verif:Obl_\S+)\s+verif:status\s+"(\w+)"', line)
+            if m:
+                stored_statuses[m.group(1)] = m.group(2)
+    except IOError:
+        return
+
+    if not stored_statuses:
+        return
+
+    # Check each obligation: stored status must not exceed current evidence
+    for rec in obligations:
+        subject = rec['subject']
+        if subject not in stored_statuses:
+            continue
+        stored_status = stored_statuses[subject]
+
+        # Recompute current evidence level
+        _, evidence = derive_status(rec)
+
+        # Map evidence dict to evidence level
+        if evidence.get('proven'):
+            evidence_level = 'PROVEN'
+        elif evidence.get('stated'):
+            evidence_level = 'STATED'
+        elif evidence.get('extracted'):
+            evidence_level = 'EXTRACTED'
+        else:
+            evidence_level = 'DECLARED'
+
+        # Check ladder: stored status must not exceed evidence level
+        status_order = {'DECLARED': 0, 'EXTRACTED': 1, 'STATED': 2, 'PROVEN': 3}
+        if status_order.get(stored_status, -1) > status_order.get(evidence_level, -1):
+            print(f'refusal: PROOF_STATUS_MISMATCH_REFUSED: claimed status {stored_status} unsupported by evidence {evidence_level}')
+            sys.exit(2)
+
+
+def check_aeneas_image_drift(pipeline_json_path: str) -> None:
+    """Refusal: aeneas/charon evidence hash mismatch.
+
+    Detects if the intermediate files (charon .llbc) that back the
+    correspondence extraction have been modified without re-running
+    charon/aeneas.
+    """
+    if not os.path.exists(pipeline_json_path):
+        return
+
+    # Read stored hash from pipeline.json
+    try:
+        pipeline_data: Dict[str, Any] = json.load(open(pipeline_json_path))
+        stored_hash = pipeline_data.get('pipelineJsonHash')
+    except (json.JSONDecodeError, IOError):
+        return
+
+    if not stored_hash:
+        return
+
+    # Find all .llbc files (charon output) in verify directory tree
+    verify_base = os.path.dirname(os.path.dirname(pipeline_json_path))
+    evidence_files: list = []
+
+    for root, _dirs, files in os.walk(verify_base):
+        for fname in sorted(files):
+            if fname.endswith('.llbc'):
+                evidence_files.append(os.path.join(root, fname))
+
+    # Compute combined hash of all evidence files
+    evidence_hashes: list = []
+    for fpath in sorted(evidence_files):
+        h = b3_file(fpath)
+        if h:
+            evidence_hashes.append(h)
+
+    # Hash all evidence hashes together
+    if evidence_hashes:
+        combined = '\n'.join(evidence_hashes).encode()
+    else:
+        combined = b'none'
+    recomputed_hash = b3(combined)
+
+    if recomputed_hash != stored_hash:
+        print(f'refusal: AENEAS_IMAGE_DRIFT_REFUSED: pipeline hash mismatch {stored_hash} vs {recomputed_hash}')
+        sys.exit(2)
+
+
+def check_correspondence_dangling(obligations: Any, procint_root: str) -> None:
+    """Refusal: leanDecl reference does not exist in Lean source.
+
+    Verifies that each obligation's leanDecl (e.g., Wasm4pmVerify.Corr.Foo)
+    has a corresponding declaration in the procint Lean source.
+    """
+    for rec in obligations:
+        lean_decl = rec.get('leanDecl')
+        if not lean_decl:
+            continue
+
+        # Search in procint directories for the leanDecl
+        search_dirs = [
+            os.path.join(procint_root, 'procint/ProcInt'),
+            os.path.join(procint_root, 'procint/Generated'),
+        ]
+
+        found = False
+        for search_dir in search_dirs:
+            if not os.path.exists(search_dir):
+                continue
+
+            try:
+                result = subprocess.run(
+                    ['grep', '-r', lean_decl, search_dir, '--include=*.lean'],
+                    capture_output=True, timeout=10
+                )
+                if result.returncode == 0:
+                    found = True
+                    break
+            except subprocess.TimeoutExpired:
+                continue
+
+        if not found:
+            print(f'refusal: CORRESPONDENCE_DANGLING_REFUSED: leanDecl={lean_decl} not found in Lean')
+            sys.exit(2)
+
+
+def _tex_escape(s: str) -> str:
+    return (s.replace('\\', r'\textbackslash{}').replace('_', r'\_')
+             .replace('&', r'\&').replace('%', r'\%').replace('#', r'\#'))
+
+
+def render_correspondence_status_tex(results, out_path: str) -> None:
+    """Auto-rendered from release/verif-receipt.json — do not edit manually,
+    regenerate via `python3 scripts/build_verif.py`. Reports only the status
+    ladder position and evidence this script actually computed; never adds
+    claims (receipt-chain tamper detection, OCEL metrics, etc.) beyond what
+    derive_status() checked."""
+    color = {'DECLARED': 'gray', 'EXTRACTED': 'orange', 'STATED': 'orange', 'PROVEN': 'green'}
+    rows = []
+    for r in results:
+        ev = r['evidence']
+        reason = ev.get('reason', 'full ladder evidence present (extracted, stated, proven)')
+        rows.append(
+            f"{_tex_escape(r['corrName'])} & "
+            f"\\textcolor{{{color.get(r['status'], 'gray')}}}{{{r['status']}}} & "
+            f"{_tex_escape(reason)} \\\\"
+        )
+    lines = [
+        '% AUTO-RENDERED by scripts/build_verif.py — do not edit by hand.',
+        '% Regenerate: python3 scripts/build_verif.py',
+        '\\begin{table}[h!]',
+        '\\centering',
+        '\\begin{tabular}{lll}',
+        '\\toprule',
+        '\\textbf{Obligation} & \\textbf{Status} & \\textbf{Evidence} \\\\',
+        '\\midrule',
+        *rows,
+        '\\bottomrule',
+        '\\end{tabular}',
+        '\\caption{Correspondence-factory obligation status, computed from '
+        'observed charon/aeneas/lake evidence by \\texttt{scripts/build\\_verif.py} '
+        '(status ladder: DECLARED $<$ EXTRACTED $<$ STATED $<$ PROVEN; never hand-set '
+        'past DECLARED). See release/verif-receipt.json for the full evidence trail.}',
+        '\\label{tab:correspondence}',
+        '\\end{table}',
+        '',
+    ]
+    open(out_path, 'w').write('\n'.join(lines))
+
+
 def main():
     if not os.path.exists(VERIF_TTL):
         print(f'refusal: VERIF_CATALOG_MISSING — {VERIF_TTL} does not exist')
@@ -146,6 +338,11 @@ def main():
     if not obligations:
         print('refusal: VERIF_CATALOG_EMPTY — no verif:CorrespondenceObligation entities found')
         sys.exit(2)
+
+    # Run refusal checks BEFORE deriving any status
+    check_proof_status_mismatch(OUT_FRAGMENT, obligations)
+    check_aeneas_image_drift(PIPELINE_JSON)
+    check_correspondence_dangling(obligations, ROOT)
 
     results = []
     frag_lines = [
@@ -191,8 +388,11 @@ def main():
     os.makedirs(os.path.dirname(OUT_RECEIPT), exist_ok=True)
     open(OUT_RECEIPT, 'w').write(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
 
+    render_correspondence_status_tex(results, CORRESPONDENCE_STATUS_TEX)
+
     print(f'verif-status fragment: {OUT_FRAGMENT}')
     print(f'verif receipt: {OUT_RECEIPT}')
+    print(f'correspondence status tex: {CORRESPONDENCE_STATUS_TEX}')
     for r in results:
         print(f'  {r["corrName"]}: {r["status"]} ({r["evidence"].get("reason", "full ladder evidence present")})')
 

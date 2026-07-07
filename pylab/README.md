@@ -9,7 +9,7 @@ All of the Process Intelligence and ML tooling
 To install this package, run:
 
 ```sh
-pip install math-factory-pylab
+pip install mpops
 ```
 
 ## Using
@@ -17,7 +17,7 @@ pip install math-factory-pylab
 To view the CLI help information, run:
 
 ```sh
-math-factory-pylab --help
+mpops --help
 ```
 
 ## Contributing
