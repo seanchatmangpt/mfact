@@ -107,6 +107,7 @@ release:
 # the ledger records. Publication itself stays PENDING_EXTERNAL_ACTUATION.
 manufacture-post-release:
     python3 /Users/sac/mfact/scripts/build_post_release.py
+    rm -f /Users/sac/mfact/ggen.lock
     cd /Users/sac/mfact && /Users/sac/praxis/target/debug/ggen sync run > /dev/null
     cd /Users/sac/mfact/procint && /Users/sac/.elan/bin/lake build PostRelease
     python3 /Users/sac/mfact/scripts/build_ledger.py > /dev/null
