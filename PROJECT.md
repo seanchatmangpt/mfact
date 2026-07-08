@@ -16,11 +16,11 @@ This project focuses on two tracks:
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|---|---|-------------|--------|
-| 1 | Establish Baseline Failure | Run initial diagnostic checks, extract current tag/commit, and verify baseline failures. | None | PLANNED |
-| 2 | Build Standing Guard MCP Server | Implement read-only MCP server at `pylab/src/mpops/standing_guard/` checking 8 gap classes. | M1 | PLANNED |
-| 3 | Fix Ticket 013 Certification Gaps | Remediate the 013 gaps in Lean, manifests, and scripts. | M1 | PLANNED |
-| 4 | Final Scan and Validation | Run Standing Guard final scan (zero blockers) and verify `just check` & `just release`. | M2, M3 | PLANNED |
-| 5 | Release Tag & Certification | Verify tag ancestry and re-cut `v26.7.7-procint-certified` tag. | M4 | PLANNED |
+| 1 | Establish Baseline Failure | Run initial diagnostic checks, extract current tag/commit, and verify baseline failures. | None | DONE |
+| 2 | Build Standing Guard MCP Server | Implement read-only MCP server at `pylab/src/mpops/standing_guard/` checking 8 gap classes. | M1 | DONE |
+| 3 | Fix Ticket 013 Certification Gaps | Remediate the 013 gaps in Lean, manifests, and scripts. | M1 | DONE |
+| 4 | Final Scan and Validation | Run Standing Guard final scan (zero blockers) and verify `just check` & `just release`. | M2, M3 | DONE |
+| 5 | Release Tag & Certification | Verify tag ancestry and re-cut `v26.7.7-procint-certified` tag. | M4 | DONE |
 
 ## Interface Contracts
 ### Standing Guard MCP ↔ Release Toolchain
