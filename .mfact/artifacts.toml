@@ -77,7 +77,7 @@ content_hash = "blake3:fd0f33f8c39ac1aed01e08af1d227b5a5bb807cb792beaecca44f892e
 path = "paper/release_macros.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:e2c8ae713b34ad1edaa91b69538b9a733882ed6d9fb1ef3f3dbe66c561afd3fb"
+content_hash = "blake3:b4565eb43d6f825298f17e9767b20c07e5424414a1fc205bb344cb112f0ad3fc"
 
 [[artifact]]
 path = "paper/replay_status.tex"
@@ -371,7 +371,7 @@ content_hash = "blake3:b46106b6b8efde3d367291fbca64a19d8b1a4cb46b032bc651e368bcd
 path = "procint/ProcInt/Release/Quadrature.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:0517ec2a5c48aa826c32169357a0f45163d2d36f2de9efddeac0819d08a5e9c6"
+content_hash = "blake3:854a385c996df52ffc370e146e39e782d389ff1a884b4281079f0b6a24f15a07"
 
 [[artifact]]
 path = "procint/ProcInt/Tests.lean"
@@ -467,13 +467,13 @@ content_hash = "blake3:8e591aa31e7c391fa2e5e54be0f88f35681d74a4e1bae12863a80e350
 path = "release/quadrature.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:cffd5f515cee50b7fea4b256a561a520e15741cb2d59d8b0c82d57c47222e399"
+content_hash = "blake3:6a9c2785f07125dbd777f35210e96cf5558a9d66a0de08ce2ba6c81ba1f9c958"
 
 [[artifact]]
 path = "release/quadrature.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:245589063bc7661fb27e3e0d1d05eeba450ce473d1c937f3b63eff15348ff86c"
+content_hash = "blake3:981fe85dd3898b1dc455065006ad23e1399e2bd43c5e57dcf8f6bb8834ce23e7"
 
 [[artifact]]
 path = "release/replay_plan.json"
@@ -509,7 +509,7 @@ content_hash = "blake3:30097e5f032c17edf9caf945be4b1985c4a0b034e714a31a2a14ad347
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:9b6ca5f83edaf8581f60f8daf926b3e2b42a3559abfd5076794b79a06c22f24e"
+content_hash = "blake3:84758648d87a1c58e48c867d640273fc89620011f59de8c9f1339d0c31014aca"
 
 [[artifact]]
 path = "release/gates.json"
@@ -521,7 +521,7 @@ content_hash = "blake3:d3f6c8e8a0179e73ef5455ed24c51eaf04669ae155c030ed24c794599
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:d825ac142f9bed6d8451633e7a63041e7228df4ddf74adebc7d07654359803b3"
+content_hash = "blake3:6445e8bb6c43c96707b482df511808156f790ce493856e388b3529cb04b9baa2"
 
 [[artifact]]
 path = "paper/correspondence_status.tex"

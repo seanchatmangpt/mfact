@@ -153,7 +153,7 @@ regen-check:
 test:
     just _lake "cd procint && /Users/sac/.elan/bin/lake test"
     just _lake "cd procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature"
-    bash -c "set -e; grep -v '^PROCINT_|^WFNET_CROWN_EQUIVALENCE=|^WFNET_INFINITE_TRANSITION_COUNTERMODEL=' release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env; CROWN_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); CM_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='\$CROWN_STATUS'\nWFNET_INFINITE_TRANSITION_COUNTERMODEL='\$CM_STATUS'\n' >> release/standing.env"
+    bash -c "set -e; grep -vE '^PROCINT_|^WFNET_CROWN_EQUIVALENCE=|^WFNET_INFINITE_TRANSITION_COUNTERMODEL=' release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env; CROWN_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); CM_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='\$CROWN_STATUS'\nWFNET_INFINITE_TRANSITION_COUNTERMODEL='\$CM_STATUS'\n' >> release/standing.env"
     @echo "correctness ladder: PASS (keys merged into standing.env)"
 
 # ── Agent cockpit (read-only diagnostics; nothing below dirties the tree) ──
@@ -338,3 +338,13 @@ prose-lint:
     @! grep -nE '(^|[^0-9])(145|318)([^0-9]|$)|e25724e8|CERTIFIED_RELEASE=PASS' paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — volatile standing value in hand-authored prose" && exit 1)
     @! grep -nE 'Aeneas[[:space:]]+(proves|verified|checked|certified)' paper/main.tex || (echo "REFUSED: UNSUPPORTED_STANDING_CLAIM — 'Aeneas proves/verified/checked/certified' claims extraction where only extraction happened; say 'Aeneas extracts' and 'Lean proves'" && exit 1)
     @echo "prose-lint: clean"
+
+[group('git')]
+commit message:
+    git add -A
+    git commit -m "{{message}}"
+
+[group('git')]
+recut-tag name:
+    git tag -d {{name}} || true
+    git tag {{name}}
