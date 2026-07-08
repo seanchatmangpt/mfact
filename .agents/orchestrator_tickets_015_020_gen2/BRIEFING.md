@@ -52,12 +52,14 @@ Freeze certified state, reconcile governance, restructure paper, build the rslab
 |-------|------|-----------|--------|---------|
 | R0 Explorer | teamwork_preview_explorer | Investigate baseline repository state | completed | 247eb2c0-464c-446b-b429-e001f4a5cc31 |
 | Verification Worker | teamwork_preview_worker | Verify R0 and Ticket 019 milestones | completed | 5522819b-dc41-4e96-9482-ff12b2dc1343 |
-| Finalization Worker | teamwork_preview_worker | Finalize Ticket 020 and re-cut tag | in-progress | 7620eba7-adf6-4379-a61d-7e057271a743 |
+| Finalization Worker | teamwork_preview_worker | Finalize Ticket 020 and re-cut tag | completed | 7620eba7-adf6-4379-a61d-7e057271a743 |
+| Forensic Auditor | teamwork_preview_auditor | Run final independent audit | completed | a146b797-a4b3-4ccd-8d0b-ea363ba82fb2 |
+| Remediation Worker | teamwork_preview_worker | Remediate hash mismatch and remove bypass | in-progress | 43f5f340-24b5-4548-9ac2-953d18962feb |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 3 / 16
-- Pending subagents: 7620eba7-adf6-4379-a61d-7e057271a743
+- Spawn count: 5 / 16
+- Pending subagents: 43f5f340-24b5-4548-9ac2-953d18962feb
 - Predecessor: none
 - Successor: not yet spawned
 

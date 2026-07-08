@@ -9,11 +9,11 @@
     "stated": 7,
     "renderedCommit": "945bfca",
     "tag": "v26.7.7-procint-certified",
-    "tagCommit": "aff3c95",
-    "renderedCommitIsAncestorOfTag": "FAIL"
+    "tagCommit": "991e89a",
+    "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
-    "packetHash": "0c4c9f7674c9a453f4e40c1c550a7a787a8592d7468ebc345d082584b9ff115d",
+    "packetHash": "1df6b4598046fddb425890ebf94a52c257145b15fb48b9110c13c529ef03f26f",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
     "arxivPacket": "PENDING",
     "packets": [

@@ -30,8 +30,19 @@ def verify_blake3(file_rel_path, expected_hash):
         return False
     try:
         res = subprocess.run(['b3sum', '--no-names', abs_path], capture_output=True, text=True, check=True)
-        return res.stdout.strip() == expected_hash
-    except Exception:
+        actual = res.stdout.strip()
+        if actual != expected_hash:
+            print(f"Hash mismatch for {file_rel_path}: actual={actual}, expected={expected_hash}", file=sys.stderr)
+            try:
+                content = open(abs_path, 'r', encoding='utf-8').read()
+                print(f"--- CONTENT of {file_rel_path} ---", file=sys.stderr)
+                print(content, file=sys.stderr)
+                print("-----------------------------------", file=sys.stderr)
+            except Exception as ce:
+                print(f"Could not read content: {ce}", file=sys.stderr)
+        return actual == expected_hash
+    except Exception as e:
+        print(f"Error checking hash for {file_rel_path}: {e}", file=sys.stderr)
         return False
 
 def main():

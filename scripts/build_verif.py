@@ -113,7 +113,9 @@ def sorry_free(pkg_dir, decl_name):
         cwd=pkg_dir, capture_output=True,
         input=f'import {decl_name}\n#print axioms {decl_name}\n'.encode())
     if r.returncode != 0:
-        return False, (r.stdout.decode() + r.stderr.decode())[-2000:]
+        err = (r.stdout.decode() + r.stderr.decode())[-2000:]
+        print(f"Error running lake env lean for {decl_name}: {err}", file=sys.stderr)
+        return False, err
     out = r.stdout.decode()
     return 'sorryAx' not in out, out
 

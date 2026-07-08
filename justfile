@@ -145,9 +145,9 @@ standing:
 # The decisive lock: re-render every ledgered artifact from source and refuse on drift.
 [group('release')]
 regen-check:
-    python3 scripts/build_verif.py > /dev/null
+    python3 scripts/build_verif.py
     cat packs/lean-math-pack/fragments/*.ttl > packs/lean-math-pack/ontology.ttl
-    python3 scripts/build_quadrature.py > /dev/null
+    python3 scripts/build_quadrature.py
     python3 rslab/scripts/collect_praxis_graphlaw.py
     python3 rslab/scripts/render_paper_fragments.py
     rm -f ggen.lock
@@ -287,8 +287,8 @@ report-write:
 # Full admission sweep: regen-check, build, test, paper-check, then write the report.
 [group('release')]
 check:
-    just regen-check
     just build
+    just regen-check
     just test
     just paper-check
     @python3 scripts/report.py status --write
