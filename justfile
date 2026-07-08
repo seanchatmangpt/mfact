@@ -348,3 +348,7 @@ commit message:
 recut-tag name:
     git tag -d {{name}} || true
     git tag {{name}}
+
+[group('git')]
+push:
+    git push && git push --tags
