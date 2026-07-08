@@ -15,7 +15,7 @@ quad:Result a quad:Results ;
   quad:untracedArtifacts 0 ;
   quad:unclassifiedRefusals 0 ;
   quad:releaseId "v26.7.7" ;
-  quad:runId "cc0315b" ;
+  quad:runId "945bfca" ;
   quad:ttlCount 197 ;
   quad:leanCount 197 ;
   quad:manifestCount 197 ;

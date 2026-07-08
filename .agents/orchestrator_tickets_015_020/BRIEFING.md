@@ -55,12 +55,13 @@ Implement tickets 015 through 020 sequentially as a sequential MathProofOps rele
 | Step 2 Explorer | teamwork_preview_explorer | Explore Step 2 requirements | completed | f6fcefac-4fa2-44d0-b08f-df86efd9f81a |
 | Step 2 Worker | teamwork_preview_worker | Restructure paper & create rslab skeleton | completed | d92a50f7-0a31-4ff8-a62d-f3eea2e9bff6 |
 | Step 3 Explorer | teamwork_preview_explorer | Check praxis repo availability | completed | 007f8bce-bc80-4051-922b-eef0b613d9a8 |
-| Step 3 Worker | teamwork_preview_worker | Run benchmarks and import outputs | in-progress | 16f92d45-5ed5-483d-84e4-f440f1444cdd |
+| Step 3 Worker | teamwork_preview_worker | Run benchmarks and import outputs | completed | 16f92d45-5ed5-483d-84e4-f440f1444cdd |
+| Step 4 Worker | teamwork_preview_worker | Process results and render paper fragments | in-progress | 455d8c50-e832-46f9-955d-bb44a365e98b |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 6 / 16
-- Pending subagents: 16f92d45-5ed5-483d-84e4-f440f1444cdd
+- Spawn count: 7 / 16
+- Pending subagents: 455d8c50-e832-46f9-955d-bb44a365e98b
 - Predecessor: none
 - Successor: not yet spawned
 

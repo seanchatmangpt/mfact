@@ -10,4 +10,4 @@ content_hash = "blake3:b1ac9af3ca066f68d15ada75e4790c54ffa56160e26ef4a143773ed4d
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:f06d5c208037a0395f1ad48043260710a4bac321816e61dff772fb2b57560854"
+content_hash = "blake3:a047bb49fcea3409752597905963cb1d92942ce66a5d2a16fd76fe58ba5b6e93"

@@ -1,0 +1,17 @@
+% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
+This section summarizes the empirical benchmark evidence collected for the \texttt{praxis-graphlaw} engine. The suite evaluates query performance, rule materialization latency, incremental delta processing, and cryptographic receipt validation. The headline metrics are presented in Table~\ref{tab:praxis_graphlaw_headline}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{llr}
+\toprule
+\textbf{Benchmark Target} & \textbf{Harness} & \textbf{Measured Value} \\
+\midrule
+\texttt{test\_transitive\_rule} & bencher & 875,808,862 ns \\
+\texttt{graphlaw\_materialize\_delta} (mean) & divan & 916.7 $\mu$s \\
+\texttt{receipt\_validate/1000} (point) & criterion & 2.9059 ms \\
+\bottomrule
+\end{tabular}
+\caption{Headline empirical metrics for the praxis-graphlaw release.}
+\label{tab:praxis_graphlaw_headline}
+\end{table}

@@ -750,7 +750,33 @@ symbol) each cause a typed refusal.
 \subsection{praxis/rslab Benchmark Evidence}
 \label{sec:rslab_benchmark}
 
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+\ifreleasebuild
+  \input{../rslab/paper_fragments/rslab_praxis_graphlaw_summary}
+\else
+  \InputIfFileExists{../rslab/paper_fragments/rslab_praxis_graphlaw_summary}{}{%
+  \begin{center}\itshape Draft build: rslab\_praxis\_graphlaw\_summary.tex missing.\end{center}}
+\fi
+
+\ifreleasebuild
+  \input{../rslab/paper_fragments/rslab_praxis_graphlaw_benchmarks}
+\else
+  \InputIfFileExists{../rslab/paper_fragments/rslab_praxis_graphlaw_benchmarks}{}{%
+  \begin{center}\itshape Draft build: rslab\_praxis\_graphlaw\_benchmarks.tex missing.\end{center}}
+\fi
+
+\ifreleasebuild
+  \input{../rslab/paper_fragments/rslab_praxis_graphlaw_profiles}
+\else
+  \InputIfFileExists{../rslab/paper_fragments/rslab_praxis_graphlaw_profiles}{}{%
+  \begin{center}\itshape Draft build: rslab\_praxis\_graphlaw\_profiles.tex missing.\end{center}}
+\fi
+
+\ifreleasebuild
+  \input{../rslab/paper_fragments/rslab_readiness}
+\else
+  \InputIfFileExists{../rslab/paper_fragments/rslab_readiness}{}{%
+  \begin{center}\itshape Draft build: rslab\_readiness.tex missing.\end{center}}
+\fi
 
 \section{Falsifier and Valid Objection Surface}
 \label{sec:falsifier}

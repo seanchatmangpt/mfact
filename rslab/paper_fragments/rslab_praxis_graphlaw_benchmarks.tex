@@ -1,0 +1,92 @@
+% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
+\subsubsection{Micro-Benchmarks (Bencher)}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+\textbf{Benchmark Name} & \textbf{Value} \\
+\midrule
+\texttt{datalog\_aggregate\_facts\_1000} & 1,557,120 ns \\
+\texttt{datalog\_stratify\_layers\_20} & 13,308 ns \\
+\texttt{datalog\_stratify\_layers\_200} & 132,318 ns \\
+\texttt{datalog\_stratify\_layers\_50} & 33,184 ns \\
+\texttt{n3\_chain\_depth\_150} & 29,828,662 ns \\
+\texttt{n3\_chain\_depth\_400} & 471,124,433 ns \\
+\texttt{n3\_chain\_depth\_50} & 1,873,179 ns \\
+\texttt{shacl\_validate\_100} & 327,036 ns \\
+\texttt{shacl\_validate\_1000} & 3,280,829 ns \\
+\texttt{shacl\_validate\_5000} & 16,661,195 ns \\
+\texttt{shacl\_validate\_complex\_100} & 592,424 ns \\
+\texttt{shacl\_validate\_complex\_1000} & 5,956,141 ns \\
+\texttt{shex\_validate\_100} & 104,714 ns \\
+\texttt{shex\_validate\_1000} & 1,111,820 ns \\
+\texttt{shex\_validate\_5000} & 5,654,160 ns \\
+\texttt{shex\_validate\_complex\_100} & 104,392 ns \\
+\texttt{shex\_validate\_complex\_1000} & 1,078,095 ns \\
+\texttt{shexc\_parse\_benchmark} & 3,416 ns \\
+\texttt{test\_hierarchy\_10} & 102,972 ns \\
+\texttt{test\_hierarchy\_100} & 1,006,702 ns \\
+\texttt{test\_hierarchy\_1000} & 10,316,249 ns \\
+\texttt{test\_rdf\_hierarchy\_10} & 1,500,008 ns \\
+\texttt{test\_transitive\_rule} & 875,808,862 ns \\
+\bottomrule
+\end{tabular}
+\caption{Bencher micro-benchmarks for praxis-graphlaw.}
+\label{tab:praxis_bencher}
+\end{table}
+
+\subsubsection{Crate-Level \& Control-Layer Benchmarks (Divan)}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Benchmark Name} & \textbf{Fastest} & \textbf{Slowest} & \textbf{Median} & \textbf{Mean} & \textbf{Samples} \\
+\midrule
+\texttt{action\_precondition\_mask} & 59.21 ns & 107.30 ns & 59.86 ns & 60.47 ns & 100 \\
+\texttt{action\_precondition\_mask\_condition\_tree} & 97.30 ns & 171.50 ns & 99.89 ns & 100.40 ns & 100 \\
+\texttt{bcinr\_transition\_table} & 0.62 ns & 0.67 ns & 0.63 ns & 0.63 ns & 100 \\
+\texttt{graphlaw\_materialize\_delta} & 891.90 $\mu$s & 953.70 $\mu$s & 915.20 $\mu$s & 916.70 $\mu$s & 100 \\
+\texttt{little\_law\_snapshot} & 46.84 ns & 48.15 ns & 47.49 ns & 47.43 ns & 100 \\
+\texttt{pddl\_action\_filter} & 6.37 $\mu$s & 15.58 $\mu$s & 6.50 $\mu$s & 6.79 $\mu$s & 100 \\
+\texttt{powl\_step\_tick} & 3.47 ns & 3.80 ns & 3.51 ns & 3.51 ns & 100 \\
+\texttt{receipt\_frame\_link} & 243.10 ns & 252.20 ns & 247.00 ns & 247.40 ns & 100 \\
+\texttt{standing\_transition} & 20.15 ns & 28.29 ns & 20.47 ns & 20.55 ns & 100 \\
+\texttt{verify\_gate\_dispatch} & 11.37 $\mu$s & 13.87 $\mu$s & 11.49 $\mu$s & 11.54 $\mu$s & 100 \\
+\bottomrule
+\end{tabular}
+\caption{Divan micro-benchmarks for praxis-graphlaw.}
+\label{tab:praxis_divan}
+\end{table}
+
+\subsubsection{System-Level \& Protocol Benchmarks (Criterion)}
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Benchmark Name} & \textbf{Lower} & \textbf{Point Estimate} & \textbf{Upper} \\
+\midrule
+\texttt{admission\_throughput/admit\_payload/green:} & 1.1792 $\mu$s & 1.1809 $\mu$s & 1.1829 $\mu$s \\
+\texttt{admission\_throughput/judge\_payload/green:} & 1.3706 $\mu$s & 1.3720 $\mu$s & 1.3733 $\mu$s \\
+\texttt{latency/emit\_round\_trip} & 186.4900 ns & 187.1900 ns & 187.9100 ns \\
+\texttt{latency/hash\_bytes/small:} & 127.6000 ns & 127.7700 ns & 127.9600 ns \\
+\texttt{latency/serialize\_payload:} & 50.9840 ns & 51.0570 ns & 51.1450 ns \\
+\texttt{receipt\_validate/100} & 218.5300 $\mu$s & 218.7800 $\mu$s & 219.0200 $\mu$s \\
+\texttt{receipt\_validate/1000} & 2.9027 ms & 2.9059 ms & 2.9095 ms \\
+\texttt{receipt\_validate/500} & 1.2665 ms & 1.2684 ms & 1.2705 ms \\
+\texttt{scaling/emit\_chain/chain\_length/100:} & 29.0060 $\mu$s & 29.0360 $\mu$s & 29.0690 $\mu$s \\
+\texttt{scaling/emit\_chain/chain\_length/10:} & 2.8261 $\mu$s & 2.8276 $\mu$s & 2.8292 $\mu$s \\
+\texttt{scaling/emit\_chain/chain\_length/1:} & 215.3400 ns & 215.7200 ns & 216.1600 ns \\
+\texttt{scaling/emit\_chain/chain\_length/500:} & 146.5600 $\mu$s & 146.8000 $\mu$s & 147.0400 $\mu$s \\
+\texttt{throughput/hash\_bytes/1024:} & 1.2284 $\mu$s & 1.2289 $\mu$s & 1.2295 $\mu$s \\
+\texttt{throughput/hash\_bytes/16384:} & 10.2000 $\mu$s & 10.2020 $\mu$s & 10.2060 $\mu$s \\
+\texttt{throughput/hash\_bytes/256:} & 348.9100 ns & 349.9800 ns & 351.4100 ns \\
+\texttt{throughput/hash\_bytes/4096:} & 2.6420 $\mu$s & 2.6429 $\mu$s & 2.6440 $\mu$s \\
+\texttt{throughput/hash\_bytes/64:} & 127.5100 ns & 127.5900 ns & 127.6900 ns \\
+\bottomrule
+\end{tabular}
+\caption{Criterion benchmark results for the release.}
+\label{tab:praxis_criterion}
+\end{table}
