@@ -14,7 +14,7 @@
         "axiomPrintOutput": "'Wasm4pmVerify.Corr.token_replay_counts_corr' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
         "declared": true,
         "extracted": true,
-        "lakeBuildDetail": "\u26a0 [1512/1614] Replayed Aeneas.Std.Slice\nwarning: Aeneas/Std/Slice.lean:363:4: declaration uses `sorry`\nwarning: Aeneas/Std/Slice.lean:586:8: declaration uses `sorry`\n\u26a0 [1591/1614] Replayed Aeneas.Std.StringIter\nwarning: Aeneas/Std/StringIter.lean:13:4: declaration uses `sorry`\nBuild completed successfully (8836 jobs).\n",
+        "lakeBuildDetail": "\u26a0 [XX/XX] Replayed Aeneas.Std.Slice\nwarning: Aeneas/Std/Slice.lean:363:4: declaration uses `sorry`\nwarning: Aeneas/Std/Slice.lean:586:8: declaration uses `sorry`\n\u26a0 [XX/XX] Replayed Aeneas.Std.StringIter\nwarning: Aeneas/Std/StringIter.lean:13:4: declaration uses `sorry`\nBuild completed successfully (8836 jobs).\n",
         "lakeBuildOk": true,
         "pipelineJsonHash": "9f9b59113b4aa23cf574c2ff86c451accf2251e8378359a48653ef120bfd1e88",
         "proven": true,

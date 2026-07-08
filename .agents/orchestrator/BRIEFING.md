@@ -53,12 +53,13 @@ Restore the v26.7.7 release to clean certified standing (Ticket 013) and build t
 |-------|------|-----------|--------|---------|
 | worker_init | teamwork_preview_worker | Write PROJECT.md, check status | completed | 46aeb4bd-0cce-4a8b-83ef-db49ca717847 |
 | worker_m2 | teamwork_preview_worker | Build Standing Guard MCP server | completed | 0b01c611-2c22-41ee-bfa9-59783c374395 |
-| worker_m3 | teamwork_preview_worker | Fix Ticket 013 Gaps, run pipeline | in-progress | dd9df1cb-f680-4e42-b789-54ede255f09d |
+| worker_m3 | teamwork_preview_worker | Fix Ticket 013 Gaps, run pipeline | stuck/replaced | dd9df1cb-f680-4e42-b789-54ede255f09d |
+| worker_m4 | teamwork_preview_worker | Final Validation & Re-cut Tag | in-progress | 8cadebc7-8bab-46fc-a94e-315f3ca404c1 |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 3 / 16
-- Pending subagents: ["dd9df1cb-f680-4e42-b789-54ede255f09d"]
+- Spawn count: 4 / 16
+- Pending subagents: ["8cadebc7-8bab-46fc-a94e-315f3ca404c1"]
 - Predecessor: none
 - Successor: not yet spawned
 

@@ -89,7 +89,9 @@ def lake_build_ok(pkg_dir):
     if not os.path.exists(LAKE):
         return False, f'lake binary not found at {LAKE}'
     r = subprocess.run([LAKE, 'build'], cwd=pkg_dir, capture_output=True)
-    return r.returncode == 0, (r.stdout.decode() + r.stderr.decode())[-2000:]
+    detail = (r.stdout.decode() + r.stderr.decode())[-2000:]
+    detail = re.sub(r'\[\d+/\d+\]', '[XX/XX]', detail)
+    return r.returncode == 0, detail
 
 
 def sorry_free(pkg_dir, decl_name):

@@ -1,6 +1,6 @@
 # Progress Report
 
-Last visited: 2026-07-07T16:54:25-07:00
+Last visited: 2026-07-07T17:32:30-07:00
 
 ## Active Steps
 1. [x] Step 1: Update `pylab/src/mpops/standing_guard/server.py`
@@ -10,6 +10,6 @@ Last visited: 2026-07-07T16:54:25-07:00
 5. [x] Step 5: Update `scripts/build_ledger.py`
 6. [x] Step 6: Update `justfile`
 7. [x] Step 7: Git track files
-8. [ ] Step 8: Run build & verification commands in order
-9. [ ] Step 9: Run Standing Guard scan and save results
-10. [ ] Step 10: Report back and write handoff report
+8. [x] Step 8: Run build & verification commands in order
+9. [x] Step 9: Run Standing Guard scan and save results
+10. [x] Step 10: Report back and write handoff report

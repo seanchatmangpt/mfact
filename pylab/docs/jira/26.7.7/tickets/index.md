@@ -26,12 +26,22 @@ here — that's a core-repo decision, not a pylab one.
 | [012](ticket_012_workflow_state.md) | Workflow state baseline (crown rail ALIVE snapshot) | Foundation | Baseline-state snapshot preceding the countermodel formalization work |
 | [013](ticket_013_v26_7_7_gap_audit.md) | v26.7.7 release gap audit | Governance | Five-rail gap audit before release cut; found a false PROVEN promotion on the countermodel theorem and an unbound D1 correspondence claim |
 | [014](ticket_014_standing_guard_mcp.md) | Standing Guard MCP server | Governance / Tooling | Read-only MCP server that continuously re-runs ticket 013's 8 check classes so the same gaps can't silently reappear between audits |
+| [015](ticket_015_v26_7_7_reconciliation.md) | v26.7.7 reconciliation and re-certification | Governance | Re-verifies ticket 013's findings against current disk truth (some closed by ticket 012's session work, some still open), fixes the standing.env dedup bug, re-certifies the release tag |
+| [016](ticket_016_paper_standing_graph_restructure.md) | Paper restructure: the standing-manufacturing graph | Paper | Reorders `main.tex` around the five-rail architecture (formal / process-law / benchmark / correspondence / paper), promotes Aeneas to a top-level section, opens praxis-graphlaw and rslab placeholders |
+| [017](ticket_017_rslab_skeleton.md) | rslab skeleton: the empirical evidence rail | rslab rail | Greenfield `rslab/` directory — schemas, manifest, benchmark plan; DECLARED only, no results yet |
+| [018](ticket_018_praxis_graphlaw_benchmark_import.md) | praxis-graphlaw benchmark import | rslab rail | Runs the real, verified-runnable praxis-graphlaw benches/tests and receipts the raw evidence into rslab |
+| [019](ticket_019_rslab_paper_fragment_wiring.md) | rslab normalization and paper fragment wiring | rslab rail | Builder scripts turn the rslab receipt into ledgered, gate-wired `.tex` fragments the paper can cite |
+| [020](ticket_020_praxis_rslab_paper_sections.md) | praxis-graphlaw and rslab paper sections | Paper | Fills the two placeholder sections with prose once the rslab fragments exist to cite |
 
 ## Suggested build order
 
 001 → 002 → 003 (the search stack), then 004 and 006 in parallel (both consume 001),
 then 007 (needs 001-003 producing search traces to mine), then 005 and 008 are
 independent of the rest and can be picked up any time.
+
+For the v26.7.7 paper/rslab track: 015 (governance reconciliation) first, then 016
+(paper restructure) and 017 (rslab skeleton) in parallel — both only depend on 015 —
+then 018 (needs 017's schemas), then 019 (needs 017 + 018), then 020 (needs 016 + 019).
 
 ## What's deliberately not here
 

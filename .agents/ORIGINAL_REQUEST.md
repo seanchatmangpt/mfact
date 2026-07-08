@@ -871,3 +871,76 @@ Do not infer proof from generated output.
 Do not infer release standing from prose.
 Do not invent missing evidence.
 
+
+## 2026-07-08T00:41:49Z
+
+Mission: Implement tickets 015 through 020 as a sequential MathProofOps release slice. Preserve the rail boundaries: formal proof, executable law-state, empirical rslab evidence, Aeneas implementation correspondence, and paper publication must not be collapsed. Do not invent benchmark results. Do not hand-edit generated or ledgered artifacts. Every new empirical claim must come from imported raw praxis output, schema validation, receipt generation, and generated paper fragments.
+
+Working directory: /Users/sac/mfact
+Integrity mode: development
+
+## MathProofOps Doctrine
+
+```text
+rslab is not a proof engine.
+rslab is the empirical evidence rail.
+praxis executes law-state checks.
+rslab measures, normalizes, schemas, receipts, and renders.
+mfact admits formal standing.
+Aeneas bridges Rust implementation into Lean-facing correspondence.
+Lake is the admission actuator.
+The paper reports admitted or receipted claims; it is not source of truth.
+```
+
+## Requirements
+
+### R1. Ticket 015: Governance Reconciliation and Re-Certification
+- Re-verify ticket 013 findings against current disk state.
+- Resolve any live gaps (e.g. Aeneas `aeneasDecl` binding from `"TBD"` to real binding, or countermodel statuses if any).
+- Fix the `standing.env` deduplication bug in the `justfile` test recipe (ensure duplicate lines do not accumulate, using `grep -vE` or multiple grep passes).
+- Re-run the full certification pipeline (`just render && just build && just audit && just manifest && just certify && just test && just regen-check`).
+- Re-cut the certified release tag `v26.7.7-procint-certified` at the clean commit.
+
+### R2. Ticket 016: Paper Restructure
+- Reorder `paper/main.tex` sections to match the five-rail architecture (Formal / Process-law / Benchmark / Correspondence / Paper) while preserving labels and content.
+- Promote Aeneas to a top-level section.
+- Create stub placeholders for §praxis-graphlaw (Executable Law-State Evaluation) and §rslab (Empirical Evidence Rail) with no benchmark numbers.
+- Ensure the paper builds successfully (`just paper-check`).
+
+### R3. Ticket 017: rslab Skeleton
+- Create the greenfield `mfact/rslab/` directory structure with:
+  - `README.md` containing the verbatim four-line doctrine and metadata tier details.
+  - `manifest.toml` declaring the `praxis_graphlaw` experiment with `status = "declared"`.
+  - JSON schemas for `benchmark_result.schema.json` and `profiler_result.schema.json`.
+  - `experiments/praxis_graphlaw/benchmark_plan.md` outlining the planned commands/results.
+  - Necessary `.gitkeep` files in `paper_fragments/`, `receipts/`, and `scripts/`.
+- No benchmark results or numbers may be written/invented in this skeleton.
+
+### R4. Ticket 018: praxis-graphlaw Benchmark Import
+- Run cargo bench/test commands on `/Users/sac/praxis` to collect actual benchmark/test metrics.
+- Import raw outputs into `rslab/experiments/praxis_graphlaw/raw/`.
+- Generate `rslab/receipts/praxis_graphlaw_benchmark_receipt.toml` conforming to the schema (containing toolchain, git commit, file hashes, etc.) using `EXTRACTED` status (no formal proven/stated fields).
+- **Hard Gate**: If `/Users/sac/praxis` is unavailable, or if cargo bench/test cannot produce real raw evidence, ticket 018 must end BLOCKED, not STATED, not ALIVE, and no benchmark numbers may be added anywhere.
+
+### R5. Ticket 019: rslab Normalization and Paper Fragment Wiring
+- Write `rslab/scripts/collect_praxis_graphlaw.py` and `rslab/scripts/render_paper_fragments.py` to validate, parse raw outputs, and render LaTeX fragments.
+- Wire the generated fragments and receipt into `.mfact/artifacts.toml` (ledgered artifacts), the `justfile` (new `rslab-fragments` recipe, updating `arxiv-package` tar list), and `paper/main.tex`.
+- Verify fail-closed behavior (refusal on missing receipt).
+- Ensure `just regen-check` passes successfully.
+
+### R6. Ticket 020: praxis-graphlaw and rslab Paper Prose
+- Fill the structural placeholders in `paper/main.tex` with detailed prose about `praxis-graphlaw` and `rslab`.
+- Ensure no numbers are hand-typed in `main.tex` (instead use inputs of generated fragments).
+- Distinguish the empirical rail from formal correspondence proofs.
+- Verify paper builds and prose checks pass (`just prose-lint && just paper-check`).
+
+## Acceptance Criteria
+
+### Execution Order & Pipeline Verification
+- [ ] Steps must be built sequentially: 015 → (016 & 017) → 018 → 019 → 020.
+- [ ] No generated/ledgered artifacts are modified directly by hand (all must be derived via builders/templates).
+- [ ] `just regen-check` passes successfully with no unstaged/dirty artifact drift.
+- [ ] `just certify` succeeds with the certified gate check passing.
+- [ ] `just test` runs clean and `release/standing.env` has no duplicate keys.
+- [ ] `paper/main.tex` builds to PDF without compilation errors (`just paper-check`).
+- [ ] The git tag `v26.7.7-procint-certified` is positioned at the final release commit.

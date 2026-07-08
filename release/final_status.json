@@ -3,21 +3,21 @@
   "core": {
     "status": "ALIVE",
     "release": "v26.7.7",
-    "coreReleaseHash": "c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0",
+    "coreReleaseHash": "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434",
     "coreProven": 197,
-    "coreTotalDecls": 388,
-    "stated": 2,
-    "renderedCommit": "3994029",
+    "coreTotalDecls": 397,
+    "stated": 7,
+    "renderedCommit": "404b4c9",
     "tag": "v26.7.7-procint-certified",
-    "tagCommit": "6f4c370",
-    "renderedCommitIsAncestorOfTag": "FAIL"
+    "tagCommit": "404b4c9",
+    "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
-    "packetHash": "041926326e80761c4b868bcd21151f617572a6dc27689c9d85adf1eb46d7f334",
+    "packetHash": "a4b7475180f0d73f55462c33b82561d76384e19e0b3cb83506315b61361770d1",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
-    "arxivPacket": "ALIVE",
+    "arxivPacket": "PENDING",
     "packets": [
-      {"id": "arxiv_upload", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"},
+      {"id": "arxiv_upload", "status": "BLOCKED", "publication": "PENDING_EXTERNAL_ACTUATION"},
       {"id": "github_push", "status": "BLOCKED", "publication": "PENDING_EXTERNAL_ACTUATION"},
       {"id": "github_release", "status": "ALIVE", "publication": "PENDING_EXTERNAL_ACTUATION"}
     ]

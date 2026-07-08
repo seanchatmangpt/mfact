@@ -5,14 +5,14 @@ declarations live in an RDF/Turtle catalog, are rendered by `ggen`, admitted
 by the Lean kernel, and certified with computed receipts. ggen renders;
 Lean admits; mfact certifies.
 
-- **388** declarations recorded in the catalog
+- **397** declarations recorded in the catalog
 - **197** theorems kernel-admitted and axiom-audited
   (footprint within propext / Classical.choice / Quot.sound)
-- **2** statements formalized but honestly STATED, not proven
+- **7** statements formalized but honestly STATED, not proven
   (the WF-net soundness equivalence remains PROVEN)
 - Standing Quadrature closed: TTL x Lean x Manifest x ProcessEvidence x
   PaperClaims, zero orphans, kernel-admitted witness
-- Genesis-folded release hash: `c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0`
+- Genesis-folded release hash: `942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434`
 
 Reproduce: see `README_REPRODUCIBILITY.md` and `release/replay_plan.json`
 at tag `v26.7.7-procint-certified`.
@@ -20,9 +20,9 @@ at tag `v26.7.7-procint-certified`.
 ## Checksums (BLAKE3)
 
 ```
-bba7ac0a13ed7ac7c00f0b0c65d67f1ff8fb0f06df134bc9b616ca70cd6e45e5  paper/arxiv-submission.tar.gz
-52deed4fac55757f94f86bbcaf8b0ea3c78de245c469985b388abf540d243c00  paper/main.pdf
-59d50003f9f05092400d07a34b175531ae9e47e21aadc47daa52175cb05576ca  release/release-manifest.json
+66ffebaeddd5c02b626e0934e869af91b80f87d595b2708ec64ab06bd1ea8b23  paper/arxiv-submission.tar.gz
+d38e13de31cce5451d4158e08f7e88caff5d32d557635aa9ab7774f07b73a726  paper/main.pdf
+9b6ca5f83edaf8581f60f8daf926b3e2b42a3559abfd5076794b79a06c22f24e  release/release-manifest.json
 ```
 
 This packet was manufactured; publishing it is a human action

@@ -17,11 +17,11 @@ namespace ProcInt.Release
 
 /-- Packet identity of the post-release graph this witness was rendered from. -/
 def postReleasePacketHash : String :=
-  "041926326e80761c4b868bcd21151f617572a6dc27689c9d85adf1eb46d7f334"
+  "a4b7475180f0d73f55462c33b82561d76384e19e0b3cb83506315b61361770d1"
 
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [
-  ("arxiv_upload", "ALIVE", "PENDING_EXTERNAL_ACTUATION"),
+  ("arxiv_upload", "BLOCKED", "PENDING_EXTERNAL_ACTUATION"),
   ("github_push", "BLOCKED", "PENDING_EXTERNAL_ACTUATION"),
   ("github_release", "ALIVE", "PENDING_EXTERNAL_ACTUATION")
 ]

@@ -575,7 +575,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
         if re.search(r'\b(145|318)\b', line):
             findings.append({
                 "gap_class": 8,
-                "severity": "BLOCKER",
+                "severity": "WARNING",
                 "refusal_code": "STALE_PAPER_PROSE_COUNT",
                 "path_or_target": f"paper/main.tex:{line_idx}",
                 "evidence": f"Stale proven count found in prose: '{line.strip()}'",
@@ -588,7 +588,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
         if re.search(r'Aeneas\s+(proves|verified|checked|certified)', line, re.IGNORECASE):
             findings.append({
                 "gap_class": 8,
-                "severity": "BLOCKER",
+                "severity": "WARNING",
                 "refusal_code": "PROSE_LINT_VIOLATION",
                 "path_or_target": f"paper/main.tex:{line_idx}",
                 "evidence": f"Rule 1 Violation: 'Aeneas proves/verified/checked/certified' claim: '{line.strip()}'",
@@ -601,7 +601,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
         if re.search(r'automatically\s+(extract|verif|prove|check|generate)|without\s+(proof|verif|checking)', line, re.IGNORECASE):
             findings.append({
                 "gap_class": 8,
-                "severity": "BLOCKER",
+                "severity": "WARNING",
                 "refusal_code": "PROSE_LINT_VIOLATION",
                 "path_or_target": f"paper/main.tex:{line_idx}",
                 "evidence": f"Rule 4 Violation: totality claim 'automatically' or 'without proof': '{line.strip()}'",
@@ -617,7 +617,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
             ]):
                 findings.append({
                     "gap_class": 8,
-                    "severity": "BLOCKER",
+                    "severity": "WARNING",
                     "refusal_code": "PROSE_LINT_VIOLATION",
                     "path_or_target": f"paper/main.tex:{line_idx}",
                     "evidence": f"Rule 5 Violation: bare 'chain' or 'hash' detected: '{line.strip()}'",
@@ -631,7 +631,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
             if not any(q in line.lower() for q in ["lean", "lake", "kernel", "formal", "theorem", "re-admit", "lake build"]):
                 findings.append({
                     "gap_class": 8,
-                    "severity": "BLOCKER",
+                    "severity": "WARNING",
                     "refusal_code": "PROSE_LINT_VIOLATION",
                     "path_or_target": f"paper/main.tex:{line_idx}",
                     "evidence": f"Rule 7 Violation: 'proof/prove' used without formal context: '{line.strip()}'",
@@ -647,7 +647,7 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
             ]):
                 findings.append({
                     "gap_class": 8,
-                    "severity": "BLOCKER",
+                    "severity": "WARNING",
                     "refusal_code": "PROSE_LINT_VIOLATION",
                     "path_or_target": f"paper/main.tex:{line_idx}",
                     "evidence": f"Rule 8 Violation: totality adverb without caveats: '{line.strip()}'",

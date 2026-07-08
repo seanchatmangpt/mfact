@@ -4,11 +4,11 @@
   "packets": [
     {
       "id": "arxiv_upload",
-      "status": "ALIVE",
+      "status": "BLOCKED",
       "publication": "PENDING_EXTERNAL_ACTUATION",
       "requires": [
         {"name": "tarball_exists", "met": true},
-        {"name": "cold_build_passed", "met": true},
+        {"name": "cold_build_passed", "met": false},
         {"name": "pdf_exists", "met": true},
         {"name": "certified", "met": true},
         {"name": "user_actuation", "met": false}
@@ -21,7 +21,7 @@
       "requires": [
         {"name": "repo_clean", "met": false},
         {"name": "tag_exists", "met": true},
-        {"name": "tag_descends_from_rendered_commit", "met": false},
+        {"name": "tag_descends_from_rendered_commit", "met": true},
         {"name": "standin_has_release_tag", "met": false},
         {"name": "user_actuation", "met": false}
       ]

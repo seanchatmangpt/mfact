@@ -301,7 +301,7 @@ release:
 # Post-release publication packet: builder reads downstream receipts, ggen renders, Lean admits, ledger records.
 [group('manufacture')]
 manufacture-post-release:
-    python3 scripts/build_post_release.py
+    uv run python scripts/build_post_release.py --plan
     rm -f ggen.lock
     ggen sync run > /dev/null
     just _lake "cd procint && /Users/sac/.elan/bin/lake build PostRelease"
