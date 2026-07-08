@@ -65,7 +65,7 @@ Restore the v26.7.7 release to clean certified standing (Ticket 013) and build t
 - Successor: not yet spawned
 
 ## Active Timers
-- Heartbeat cron: none
+- Heartbeat cron: b04e2594-f8d0-4dbb-9932-eaa24feffe5c/task-342
 - Safety timer: none
 - On succession: kill all timers before spawning successor
 - On context truncation: run `manage_task(Action="list")` — re-create if missing
