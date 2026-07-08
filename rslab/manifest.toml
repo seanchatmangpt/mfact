@@ -1,0 +1,10 @@
+# rslab Experiment Manifest
+# Reuses the status ladder pattern: DECLARED < EXTRACTED < STATED < PROVEN
+
+[manifest]
+manifest_version = "1.0.0"
+
+[[experiments]]
+id = "praxis_graphlaw"
+status = "declared"
+plan = "experiments/praxis_graphlaw/benchmark_plan.md"

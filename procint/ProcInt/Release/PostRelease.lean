@@ -17,7 +17,7 @@ namespace ProcInt.Release
 
 /-- Packet identity of the post-release graph this witness was rendered from. -/
 def postReleasePacketHash : String :=
-  "a4b7475180f0d73f55462c33b82561d76384e19e0b3cb83506315b61361770d1"
+  "0a7b7da2bb4cfdeb15955fbcde5f2b61c159178f5cb592473ef3009465d6664a"
 
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [

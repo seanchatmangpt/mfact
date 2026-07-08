@@ -1,4 +1,4 @@
-# BRIEFING — 2026-07-08T00:45:00Z
+# BRIEFING — 2026-07-08T00:53:50Z
 
 ## Mission
 Implement Ticket 015 Governance Reconciliation and Re-Certification requirements in justfile, run the certification pipeline, and recut the release tag.
@@ -29,7 +29,18 @@ Implement Ticket 015 Governance Reconciliation and Re-Certification requirements
 - **Code layout**: /Users/sac/mfact/AGENTS.md
 
 ## Key Decisions Made
-- None yet
+- Used `grep -vE` to fix regex alternation deduplication bug.
+- Staged updated quadrature and manifest files before running `just regen-check` to align the runIdentifier (which uses the HEAD commit hash) and avoid `ARTIFACT_DRIFT_REFUSED`.
+
+## Change Tracker
+- **Files modified**: justfile, release/standing.env
+- **Build status**: PASS
+- **Pending issues**: None
+
+## Quality Status
+- **Build/test result**: PASS
+- **Lint status**: 0 violations
+- **Tests added/modified**: None
 
 ## Artifact Index
 - /Users/sac/mfact/.agents/worker_step1/ORIGINAL_REQUEST.md — Original request

@@ -7,13 +7,13 @@
     "coreProven": 197,
     "coreTotalDecls": 397,
     "stated": 7,
-    "renderedCommit": "404b4c9",
+    "renderedCommit": "cc0315b",
     "tag": "v26.7.7-procint-certified",
-    "tagCommit": "404b4c9",
+    "tagCommit": "3818879",
     "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
-    "packetHash": "a4b7475180f0d73f55462c33b82561d76384e19e0b3cb83506315b61361770d1",
+    "packetHash": "0a7b7da2bb4cfdeb15955fbcde5f2b61c159178f5cb592473ef3009465d6664a",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
     "arxivPacket": "PENDING",
     "packets": [

@@ -6,7 +6,7 @@ content_hash = "blake3:7683af4462fa1c02dc68947de1dad7c8ff5d7cff01e9b397b8766ccc1
 
 [packs.post-release-pack]
 source = "path:/Users/sac/mfact/packs/post-release-pack"
-content_hash = "blake3:4fe5ac14b9606903ff7d85c50b4d878b111e2bbb4d9dd7914129a9950e1557df"
+content_hash = "blake3:720bdf8dc889475ddd4a18cf27b11d62f9baf0b97b4a03eed6dc1851124da15e"
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/mfact/packs/quadrature-pack"

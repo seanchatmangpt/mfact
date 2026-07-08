@@ -487,7 +487,7 @@ def check_tag_ancestry(repo_root: Path) -> list[dict[str, Any]]:
     is_anc_run_id = False
     if run_id:
         res_anc_run = subprocess.run(
-            ["git", "merge-base", "--is-ancestor", "v26.7.7-procint-certified", run_id],
+            ["git", "merge-base", "--is-ancestor", run_id, "v26.7.7-procint-certified"],
             cwd=repo_root,
             check=False
         )

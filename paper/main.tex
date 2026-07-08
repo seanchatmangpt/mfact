@@ -247,6 +247,8 @@ Raw generated output is \(O\), not \(O^*\). Manufacture produces the
 artifact; the receipt proves consequence; replay proves the receipt is
 non-ornamental. \emph{The pipeline exists to refuse the gap.}
 
+\paragraph{The Four Evidence Kinds.} We distinguish four classes of evidence within the manufacturing graph: (1) Formal evidence (Lean theorems and axiom audits); (2) Operational evidence (praxis-graphlaw benchmark and execution validation via rslab); (3) Correspondence evidence (Aeneas-extracted image to procint semantic equivalence proofs); and (4) Publication evidence (generated paper fragments and manifests).
+
 In this architecture, \textsf{ggen} is not a code generator in the usual
 sense. It is the projection half of the manufacturing function \(\mu\):
 it maps a declared obligation graph into candidate Lean surfaces. Lean
@@ -305,6 +307,29 @@ the platform claim is not that the ontology is new, but that
 ontology-grounded artifacts become admitted, receipted, replayable objects
 with standing. \textsf{procint} is this paper's demonstration vertical,
 not the boundary of the method.
+
+\section{Architecture: The Standing-Manufacturing Graph}
+\label{sec:architecture}
+
+The standing-manufacturing graph is organized around a five-rail architecture. Table~\ref{tab:rails} details each rail's source, admission boundary, and receipt form.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+Rail & Source & Admission Boundary & Receipt Form \\
+\midrule
+Formal & Lean catalog, corpus & Lean kernel, axiom policy & Audit log, print axioms \\
+Process-law & mfact core definitions & Conformance obligs. & covers proof, ValidObjection \\
+Benchmark & praxis execution & rslab schemas & JSON/TOML result receipt \\
+Correspondence & Rust crate source & Aeneas extraction & build\_verif.py check \\
+Paper & Manifest status & ggen sync & Manifest foldHash, regen-check \\
+\bottomrule
+\end{tabular}
+\caption{The Five-Rail standing-manufacturing architecture.}
+\label{tab:rails}
+\end{table}
 
 \section{Related Work}
 
@@ -380,8 +405,7 @@ theorem rather than by documentation.
 \section{The mfact Framework}
 \label{sec:mfact}
 
-\textsf{mfact} is deliberately small: seven modules and a CLI. Its job is to
-make the pipeline's epistemics first-class Lean objects.
+\textsf{mfact} is deliberately small: seven modules and a CLI. Its job is to make the pipeline's epistemics first-class Lean objects. mfact is not the whole system: it is the Lean/Lake standing apparatus inside a larger standing-manufacturing graph.
 
 \paragraph{Candidates and refusals.}
 A \texttt{Candidate} is content plus provenance (producer identity, content
@@ -420,7 +444,7 @@ even the three standard Lean/Mathlib axioms. The theorem's scope is exactly
 its constructors: it says the \emph{enumerated} objection forms are refuted,
 not that the release is beyond all criticism.
 
-\section{procint: the Mathematical Canon}
+\section{procint: Process Intelligence as Process Law}
 \label{sec:procint}
 
 In this paper, process intelligence does not mean dashboarding over event
@@ -582,6 +606,18 @@ hashes. A negative control --- injecting a \texttt{sorry} into a scratch
 copy of an audited theorem --- must cause the gate to refuse; a gate that
 cannot fail certifies nothing.
 
+\section{praxis-graphlaw: Executable Law-State Evaluation}
+\label{sec:praxis-graphlaw}
+
+This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+
+\section{rslab: Empirical Evidence Rail}
+\label{sec:rslab}
+
+rslab is not a proof engine. rslab is an empirical evidence rail.
+
+This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+
 \section{Use of Generative AI Tools}
 \label{sec:ai-disclosure}
 
@@ -613,8 +649,53 @@ some of this untrusted-candidate distance for higher raw acceptance rates;
 candidate --- however produced --- passes through the same kernel-and-audit
 gate regardless of its source's measured reliability.
 
+\section{Implementation Correspondence with Aeneas}
+\label{sec:correspondence}
+
+Beyond \textsf{procint}'s own catalog, \textsf{mfact} opens a second
+manufacturing rail: implementation correspondence. Where
+Section~\ref{sec:procint} manufactures domain semantics from a declared
+obligation graph, this rail manufactures obligations that relate a Lean
+declaration to code extracted from an \emph{external}, unverified Rust
+crate (\texttt{wasm4pm-core}) via Aeneas~\cite{ho2022aeneas} and its
+Charon front end~\cite{protzenko2024charon}. The first instance of this
+rail is deliberately scoped to one obligation --- token-replay counts
+correspondence, ``D1'' --- not because the rail is narrow in principle,
+but because a single bounded instance is what standing requires before the
+rail generalizes. It follows the same status ladder as the rest of this
+paper's standing (declared, extracted, stated, proven), computed by a
+dedicated builder (\texttt{scripts/build\_verif.py}) from observed
+evidence: a charon/aeneas pipeline receipt, a \texttt{lake build} of the
+extracted module against \textsf{procint}, and an axiom-print check on the
+resulting theorem. The
+crate's \texttt{ReplayCounts}\allowbreak\texttt{\{produced, consumed,
+missing, remaining\}} counts and its integer
+\texttt{fitness\_num}/\texttt{fitness\_den} functions are extracted
+verbatim; an abstraction function lifts the extracted (proof-free) struct
+into \textsf{procint}'s \texttt{ReplayCounts} (which carries
+\texttt{missing} $\le$ \texttt{consumed} and \texttt{remaining} $\le$
+\texttt{produced} as proof fields) given those two inequalities as
+hypotheses. The correspondence theorem does not assert that the crate's
+integer ratio and \textsf{procint}'s exact-rational fitness are equal ---
+they are structurally different formulas (a single integer fraction versus
+an average of two ratios) --- only that each computes correctly from the
+same underlying counts; forcing a false numeric equality between them was
+rejected in favor of this honest, weaker, but PROVEN statement.
+Table~\ref{tab:correspondence} is rendered by that same builder from its
+own receipt; it is not written by hand.
+
+\ifreleasebuild
+  \input{correspondence_status}
+\else
+  \InputIfFileExists{correspondence_status}{}{%
+  \begin{center}\itshape Draft build: correspondence\_status.tex missing.\end{center}}
+\fi
+
 \section{Evaluation}
 \label{sec:eval}
+
+\subsection{Formal Standing Evaluation}
+\label{sec:formal_eval}
 
 Every number in this section is rendered from the release manifest
 (\texttt{release-manifest.json}) of the run; none is written by hand. The
@@ -666,47 +747,10 @@ symbol) each cause a typed refusal.
   \begin{center}\itshape Draft build: quadrature.tex missing.\end{center}}
 \fi
 
-\subsection{D1 Correspondence Pilot}
-\label{sec:correspondence}
+\subsection{praxis/rslab Benchmark Evidence}
+\label{sec:rslab_benchmark}
 
-Beyond \textsf{procint}'s own catalog, \textsf{mfact} opens a second
-manufacturing rail: implementation correspondence. Where
-Section~\ref{sec:procint} manufactures domain semantics from a declared
-obligation graph, this rail manufactures obligations that relate a Lean
-declaration to code extracted from an \emph{external}, unverified Rust
-crate (\texttt{wasm4pm-core}) via Aeneas~\cite{ho2022aeneas} and its
-Charon front end~\cite{protzenko2024charon}. The first instance of this
-rail is deliberately scoped to one obligation --- token-replay counts
-correspondence, ``D1'' --- not because the rail is narrow in principle,
-but because a single bounded instance is what standing requires before the
-rail generalizes. It follows the same status ladder as the rest of this
-paper's standing (declared, extracted, stated, proven), computed by a
-dedicated builder (\texttt{scripts/build\_verif.py}) from observed
-evidence: a charon/aeneas pipeline receipt, a \texttt{lake build} of the
-extracted module against \textsf{procint}, and an axiom-print check on the
-resulting theorem. The
-crate's \texttt{ReplayCounts}\allowbreak\texttt{\{produced, consumed,
-missing, remaining\}} counts and its integer
-\texttt{fitness\_num}/\texttt{fitness\_den} functions are extracted
-verbatim; an abstraction function lifts the extracted (proof-free) struct
-into \textsf{procint}'s \texttt{ReplayCounts} (which carries
-\texttt{missing} $\le$ \texttt{consumed} and \texttt{remaining} $\le$
-\texttt{produced} as proof fields) given those two inequalities as
-hypotheses. The correspondence theorem does not assert that the crate's
-integer ratio and \textsf{procint}'s exact-rational fitness are equal ---
-they are structurally different formulas (a single integer fraction versus
-an average of two ratios) --- only that each computes correctly from the
-same underlying counts; forcing a false numeric equality between them was
-rejected in favor of this honest, weaker, but PROVEN statement.
-Table~\ref{tab:correspondence} is rendered by that same builder from its
-own receipt; it is not written by hand.
-
-\ifreleasebuild
-  \input{correspondence_status}
-\else
-  \InputIfFileExists{correspondence_status}{}{%
-  \begin{center}\itshape Draft build: correspondence\_status.tex missing.\end{center}}
-\fi
+This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
 
 \section{Falsifier and Valid Objection Surface}
 \label{sec:falsifier}

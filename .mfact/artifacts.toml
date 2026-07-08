@@ -5,25 +5,25 @@
 path = "dist/arxiv/arxiv_check_report.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:222d885cedf05d1f8ebc0ab887dcdcd0264e8f46d8c5412e49ecbb9dc8e2f7a2"
+content_hash = "blake3:aaa8010c3798484a8aed7bed6d2dc0329e0c7cc6c56f3f2b121329e0b4b29fa4"
 
 [[artifact]]
 path = "dist/arxiv/arxiv_manifest.toml"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:8c0ff2a1ae2eb9c91bf8fdb26f60c425ad051c65a0757ad287ca01c5a7fe7987"
+content_hash = "blake3:eeba11759044ce50a3b75de2dbfaf7e57a11fd05505aae6d150298ae90293246"
 
 [[artifact]]
 path = "dist/github-release/body.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:ea2cc7c3150e146d000c24365589c2a62b14ecfd9c0ce434676a49d54290d5b3"
+content_hash = "blake3:65717ccfb4682696cfa281b7aced76fc479049ac965d3aac997b1f075951cf0e"
 
 [[artifact]]
 path = "dist/github-release/checksums.txt"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:73da10b29dfd7f4e6772112369d64acb94a03542f6e30d4997b88f28243de88d"
+content_hash = "blake3:b9a6646173b675310dd641b5b26f3ef492cd3a7e5ce86362831f3b77b80d1a58"
 
 [[artifact]]
 path = "dist/github-release/title.txt"
@@ -365,7 +365,7 @@ content_hash = "blake3:793d6cdb8dc269dd00bcea6ebe38456bd8784b4924733033eeaec8827
 path = "procint/ProcInt/Release/PostRelease.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:b46106b6b8efde3d367291fbca64a19d8b1a4cb46b032bc651e368bcd5c3da87"
+content_hash = "blake3:5b8f1a9d8225c188a5450e404e934060f70f27e52412bd8f27d1a6e13a483c65"
 
 [[artifact]]
 path = "procint/ProcInt/Release/Quadrature.lean"
@@ -443,13 +443,13 @@ content_hash = "blake3:1a6de110391160e9bf9baf70566fdb4a7aa8001255720a29493367d45
 path = "release/FINAL_STATUS.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:b36c5f8279e37bc2160050d20f0d6f8ca4470dfd24d11ae365ec6065b44a5cbd"
+content_hash = "blake3:ff019ae8fb3611bd95aae3dcdf70a06e25f462775f554341985584a8343d0134"
 
 [[artifact]]
 path = "release/final_status.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:f393be80db5ea456952c7eb2609eb2429211f8cddc779c1bb3cb5b81a1f408a4"
+content_hash = "blake3:bdae9d0995b970aa824629fbea93b6b7dfed6db76d843e8e0f6ad7b0b273092a"
 
 [[artifact]]
 path = "release/publication_plan.json"
@@ -521,7 +521,7 @@ content_hash = "blake3:d3f6c8e8a0179e73ef5455ed24c51eaf04669ae155c030ed24c794599
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:6445e8bb6c43c96707b482df511808156f790ce493856e388b3529cb04b9baa2"
+content_hash = "blake3:62afbf1ddcfe52885a3df58ebee1889bd7c19da4bc3ab8111e347a5802419c0c"
 
 [[artifact]]
 path = "paper/correspondence_status.tex"

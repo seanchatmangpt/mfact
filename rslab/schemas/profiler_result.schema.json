@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Profiler Result Schema",
+  "description": "Schema for validating rslab profiling results and receipts. NOTE: As of this release, no profiling/flamegraph tooling exists in /Users/sac/praxis (verified by exploration). This schema is prepared for future use and is not populated.",
+  "type": "object",
+  "properties": {
+    "builder": {
+      "type": "string",
+      "description": "Identifier of the builder script or ticket that generated this receipt."
+    },
+    "experiment_id": {
+      "type": "string",
+      "description": "The unique identifier of the experiment."
+    },
+    "command": {
+      "type": "string",
+      "description": "The profiler command that was executed."
+    },
+    "raw_output_path": {
+      "type": "string",
+      "description": "Relative path to the raw command output file."
+    },
+    "raw_output_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "BLAKE3 hash (b3sum) of the raw output file."
+    },
+    "profiler_tool": {
+      "type": "string",
+      "description": "The profiling/flamegraph tool utilized."
+    },
+    "praxis_commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$",
+      "description": "Git commit hash of the praxis repository at runtime."
+    },
+    "command_log_path": {
+      "type": "string",
+      "description": "Relative path to the command execution log."
+    },
+    "command_log_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "BLAKE3 hash of the command execution log."
+    },
+    "files": {
+      "type": "array",
+      "description": "Array of files receipted during this profiling run.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": ["path", "hash"]
+      }
+    },
+    "toolchain": {
+      "type": "object",
+      "description": "Metadata regarding the toolchain and environment.",
+      "properties": {
+        "rustc_version": {
+          "type": "string"
+        },
+        "toolchain_pin": {
+          "type": "string"
+        },
+        "os": {
+          "type": "string"
+        },
+        "hardware_note": {
+          "type": "string"
+        }
+      },
+      "required": ["rustc_version", "toolchain_pin", "os"]
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Booleans mirroring the verif-receipt.json evidence shape, tracking empirical readiness.",
+      "properties": {
+        "declared": {
+          "type": "boolean"
+        },
+        "extracted": {
+          "type": "boolean"
+        }
+      },
+      "required": ["declared", "extracted"],
+      "additionalProperties": false
+    },
+    "caveats": {
+      "type": "array",
+      "description": "Explicit caveats recorded during execution.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "builder",
+    "experiment_id",
+    "profiler_tool",
+    "toolchain",
+    "evidence"
+  ],
+  "additionalProperties": true
+}
