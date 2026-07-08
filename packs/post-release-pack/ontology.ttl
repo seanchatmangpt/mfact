@@ -9,14 +9,14 @@ post:Meta a post:MetaNode ;
   post:statedCount 7 ;
   post:renderedCommit "cc0315b" ;
   post:coreTag "v26.7.7-procint-certified" ;
-  post:tagCommit "3818879" ;
+  post:tagCommit "aff3c95" ;
   post:tagGate "PASS" ;
-  post:packetHash "0a7b7da2bb4cfdeb15955fbcde5f2b61c159178f5cb592473ef3009465d6664a" ;
+  post:packetHash "d957e33ef128613a2a639a2415424598ac1746d4125db57c3595232d3cb9cf38" ;
   post:arxivStatus "PENDING" ;
   post:arxivDetail "first pass (--plan): fragments not yet rendered" ;
   post:arxivFileCount 13 ;
-  post:tarballHash "89e37a9eba6064a2afb6d7f5a8edfab090a76e07c9dea5ac913baaa1168d5786" ;
-  post:pdfHash "e25b942a93c3a62645bfd63f0b2209f017edfc20f7e33419b9b6a307ec64ee51" ;
+  post:tarballHash "79a3198f3ab1c7232cee831998a336ad14d788caa198b587629f54df4a9b2b38" ;
+  post:pdfHash "343b4fa129a0d45c9c50476ce3bdf4d12bf6ba5e853b2ff1a96376dae92db2de" ;
   post:replayStatus "REPLAY_PASS" ;
   post:replayStatusTex "REPLAY\\_PASS" ;
   post:docsLane "PASS" ;
@@ -161,8 +161,8 @@ post:Ax_10 a post:ArxivFile ; post:fileOrder 10 ; post:fileName "crown_jewel_sta
 post:Ax_11 a post:ArxivFile ; post:fileOrder 11 ; post:fileName "publication_status.tex" .
 post:Ax_12 a post:ArxivFile ; post:fileOrder 12 ; post:fileName "replay_status.tex" .
 
-post:Sum_0 a post:Checksum ; post:sumOrder 0 ; post:sumFile "paper/arxiv-submission.tar.gz" ; post:sumHash "89e37a9eba6064a2afb6d7f5a8edfab090a76e07c9dea5ac913baaa1168d5786" .
-post:Sum_1 a post:Checksum ; post:sumOrder 1 ; post:sumFile "paper/main.pdf" ; post:sumHash "e25b942a93c3a62645bfd63f0b2209f017edfc20f7e33419b9b6a307ec64ee51" .
+post:Sum_0 a post:Checksum ; post:sumOrder 0 ; post:sumFile "paper/arxiv-submission.tar.gz" ; post:sumHash "79a3198f3ab1c7232cee831998a336ad14d788caa198b587629f54df4a9b2b38" .
+post:Sum_1 a post:Checksum ; post:sumOrder 1 ; post:sumFile "paper/main.pdf" ; post:sumHash "343b4fa129a0d45c9c50476ce3bdf4d12bf6ba5e853b2ff1a96376dae92db2de" .
 post:Sum_2 a post:Checksum ; post:sumOrder 2 ; post:sumFile "release/release-manifest.json" ; post:sumHash "84758648d87a1c58e48c867d640273fc89620011f59de8c9f1339d0c31014aca" .
 post:Step_0 a post:ReplayStep ; post:stepOrder 0 ; post:stepCmd "git clone <stand-in>/mfact-dryrun.git at tag v26.7.7-procint-certified" ; post:stepCmdTex "git clone \\textless stand-in\\textgreater /mfact-dryrun.git at tag v26.7.7-procint-certified" .
 post:Step_1 a post:ReplayStep ; post:stepOrder 1 ; post:stepCmd "just render && just build (pinned toolchain, lake exe cache get)" ; post:stepCmdTex "just render \\&\\& just build (pinned toolchain, lake exe cache get)" .

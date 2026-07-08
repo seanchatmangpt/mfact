@@ -53,12 +53,14 @@ Implement tickets 015 through 020 sequentially as a sequential MathProofOps rele
 | Step 1 Explorer | teamwork_preview_explorer | Inspect Ticket 013/015 state | completed | f7ecb134-1698-4f33-b7d4-ff2353cbb719 |
 | Step 1 Worker | teamwork_preview_worker | Implement Ticket 015 | completed | ce697ae6-c79b-4b3f-a136-e3ab41f4c7ed |
 | Step 2 Explorer | teamwork_preview_explorer | Explore Step 2 requirements | completed | f6fcefac-4fa2-44d0-b08f-df86efd9f81a |
-| Step 2 Worker | teamwork_preview_worker | Restructure paper & create rslab skeleton | in-progress | d92a50f7-0a31-4ff8-a62d-f3eea2e9bff6 |
+| Step 2 Worker | teamwork_preview_worker | Restructure paper & create rslab skeleton | completed | d92a50f7-0a31-4ff8-a62d-f3eea2e9bff6 |
+| Step 3 Explorer | teamwork_preview_explorer | Check praxis repo availability | completed | 007f8bce-bc80-4051-922b-eef0b613d9a8 |
+| Step 3 Worker | teamwork_preview_worker | Run benchmarks and import outputs | in-progress | 16f92d45-5ed5-483d-84e4-f440f1444cdd |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 4 / 16
-- Pending subagents: d92a50f7-0a31-4ff8-a62d-f3eea2e9bff6
+- Spawn count: 6 / 16
+- Pending subagents: 16f92d45-5ed5-483d-84e4-f440f1444cdd
 - Predecessor: none
 - Successor: not yet spawned
 

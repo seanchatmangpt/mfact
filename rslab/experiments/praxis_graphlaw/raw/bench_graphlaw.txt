@@ -1,0 +1,226 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /Users/sac/praxis/crates/ggen/Cargo.toml
+workspace: /Users/sac/praxis/Cargo.toml
+warning: /Users/sac/praxis/Cargo.toml: `panic` setting is ignored for `bench` profile
+warning: function `test_rdf_hierarchy_1000` is never used
+  --> crates/praxis-graphlaw/benches/hierarchies.rs:64:4
+   |
+64 | fn test_rdf_hierarchy_1000(bench: &mut Bencher) {
+   |    ^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `test_rdf_hierarchy_100` is never used
+  --> crates/praxis-graphlaw/benches/hierarchies.rs:70:4
+   |
+70 | fn test_rdf_hierarchy_100(bench: &mut Bencher) {
+   |    ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `praxis-graphlaw` (bench "hierarchies") generated 2 warnings
+    Finished `bench` profile [optimized] target(s) in 0.13s
+     Running unittests src/lib.rs (target/release/deps/praxis_graphlaw-c886dfd0e26c2ddc)
+
+running 154 tests
+test backwardchaining::backwardchaining_test::test ... ignored
+test backwardchaining::backwardchaining_test::test_cyclic_rules_terminate ... ignored
+test backwardchaining::backwardchaining_test::test_eval_backward_rule ... ignored
+test backwardchaining::backwardchaining_test::test_prove_rejects_ground_goal_whose_body_constraint_is_actually_false ... ignored
+test backwardchaining::backwardchaining_test::test_solve_peano_variable_goal ... ignored
+test builtins::builtins_test::classify_recognizes_all_procedural_builtins ... ignored
+test builtins::builtins_test::classify_registers_reasoner_level_builtins_as_known ... ignored
+test builtins::builtins_test::classify_returns_none_for_unknown_predicate ... ignored
+test builtins::builtins_test::classify_returns_none_for_variable_predicate ... ignored
+test builtins::builtins_test::evaluate_dispatches_sum_same_as_direct_call ... ignored
+test builtins::builtins_test::evaluate_returns_none_for_reasoner_level_kind ... ignored
+test builtins::builtins_test::func_lang_from_plain_literal_defaults_to_empty_string ... ignored
+test builtins::builtins_test::func_lang_from_plain_literal_extracts_tag ... ignored
+test builtins::builtins_test::func_lang_from_plain_literal_rejects_wrong_arity ... ignored
+test builtins::builtins_test::list_append_concatenates_lists ... ignored
+test builtins::builtins_test::list_append_rejects_wrong_arity ... ignored
+test builtins::builtins_test::list_first_rejects_empty_list ... ignored
+test builtins::builtins_test::list_first_returns_first_member ... ignored
+test builtins::builtins_test::list_in_generates_each_member ... ignored
+test builtins::builtins_test::list_in_rejects_non_var_subject ... ignored
+test builtins::builtins_test::list_iterate_generates_index_item_pairs ... ignored
+test builtins::builtins_test::list_last_returns_last_member ... ignored
+test builtins::builtins_test::list_length_counts_members ... ignored
+test builtins::builtins_test::list_length_rejects_non_list_subject ... ignored
+test builtins::builtins_test::list_member_at_rejects_out_of_range_index ... ignored
+test builtins::builtins_test::list_member_at_returns_indexed_value ... ignored
+test builtins::builtins_test::list_member_generates_each_value ... ignored
+test builtins::builtins_test::list_member_rejects_non_var_object ... ignored
+test builtins::builtins_test::list_remove_drops_matching_items ... ignored
+test builtins::builtins_test::list_rest_drops_first_member ... ignored
+test builtins::builtins_test::list_reverse_reverses_members ... ignored
+test builtins::builtins_test::list_sort_orders_numerically ... ignored
+test builtins::builtins_test::list_unique_dedupes_preserving_order ... ignored
+test builtins::builtins_test::log_equal_to_holds_for_equal_numbers ... ignored
+test builtins::builtins_test::log_equal_to_rejects_unequal_numbers ... ignored
+test builtins::builtins_test::log_not_equal_to_holds_for_unequal_numbers ... ignored
+test builtins::builtins_test::log_not_equal_to_rejects_equal_numbers ... ignored
+test builtins::builtins_test::math_difference_computes_result ... ignored
+test builtins::builtins_test::math_difference_rejects_wrong_arity ... ignored
+test builtins::builtins_test::math_equal_to_holds ... ignored
+test builtins::builtins_test::math_equal_to_rejects_unequal ... ignored
+test builtins::builtins_test::math_greater_than_holds ... ignored
+test builtins::builtins_test::math_greater_than_rejects_non_numeric_operand ... ignored
+test builtins::builtins_test::math_greater_than_rejects_wrong_direction ... ignored
+test builtins::builtins_test::math_less_than_holds ... ignored
+test builtins::builtins_test::math_not_greater_than_holds_for_equal ... ignored
+test builtins::builtins_test::math_not_less_than_holds_for_equal ... ignored
+test builtins::builtins_test::math_product_computes_total ... ignored
+test builtins::builtins_test::math_quotient_computes_result ... ignored
+test builtins::builtins_test::math_quotient_rejects_division_by_zero ... ignored
+test builtins::builtins_test::math_remainder_computes_result ... ignored
+test builtins::builtins_test::math_remainder_rejects_division_by_zero ... ignored
+test builtins::builtins_test::math_sum_computes_total ... ignored
+test builtins::builtins_test::math_sum_rejects_non_list_subject ... ignored
+test builtins::builtins_test::string_concat_joins_members ... ignored
+test builtins::builtins_test::string_concat_rejects_non_list_subject ... ignored
+test builtins::builtins_test::string_length_counts_chars ... ignored
+test builtins::builtins_test::string_length_rejects_non_var_object ... ignored
+test builtins::builtins_test::string_less_than_holds ... ignored
+test builtins::builtins_test::string_less_than_rejects_wrong_order ... ignored
+test csprite::csprite_test::test_csprite_cycles_terminate ... ignored
+test csprite::csprite_test::test_rewrite_hierarchy_csprite ... ignored
+test csprite::csprite_test::test_sprite_compute ... ignored
+test csprite::csprite_test::test_sprite_compute_hierarchy ... ignored
+test dred::test::test ... ignored
+test encoding::test_encoder_literal_vs_iri_distinct ... ignored
+test encoding::test_encoding ... ignored
+test encoding::test_literal_datatype_and_langtag_preserved ... ignored
+test imars_reasoner::test_integration ... ignored
+test imars_reasoner::test_transitive ... ignored
+test imars_window::imars_window_test::test_add_to_window ... ignored
+test imars_window::imars_window_test::test_consumer ... ignored
+test imars_window::imars_window_test::test_delete ... ignored
+test imars_window::imars_window_test::test_get_timestamp ... ignored
+test imars_window::imars_window_test::test_new_window ... ignored
+test imars_window::imars_window_test::test_update ... ignored
+test imars_window::imars_window_test::test_window_bound_calculation ... ignored
+test imars_window::imars_window_test::test_window_shift ... ignored
+test lib_test::test_datalog_safe_rule_stratification ... ignored
+test lib_test::test_datalog_safety_check_rejects_unsafe_rule ... ignored
+test lib_test::test_hierarchy ... ignored
+test lib_test::test_incomplete_rule_match ... ignored
+test lib_test::test_join_rule ... ignored
+test lib_test::test_long_join_rule ... ignored
+test lib_test::test_multiple_rule ... ignored
+test lib_test::test_n3_rules_forward_chaining ... ignored
+test lib_test::test_no_var_query ... ignored
+test lib_test::test_parse ... ignored
+test lib_test::test_rdf_hierarchy ... ignored
+test lib_test::test_shacl_conforms ... ignored
+test lib_test::test_shacl_min_count_violation ... ignored
+test lib_test::test_shacl_node_constraint_conforms ... ignored
+test lib_test::test_shacl_node_constraint_violation ... ignored
+test lib_test::test_shacl_report_to_triples ... ignored
+test lib_test::test_single_rule ... ignored
+test lib_test::test_store ... ignored
+test lib_test::test_transitive_rule ... ignored
+test lib_test::test_triplestore_validate_shex ... ignored
+test observer::test_observer ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_blank_node_in_body ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_empty_rule ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_multi_head_rule ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_prefixes ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_rules ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_rules_ending_with_dot ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_negated_body_literal ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_a_syntactic_sugar ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_comment ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_multiple_spaces ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_string_literal_in_object ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_tp ... ignored
+test parser::test::test_empty_abox_parsing ... ignored
+test parser::test::test_error_abox_parsing ... ignored
+test parser::test::test_parsing ... ignored
+test parser::test::test_syntactic_sugar_rdf_type ... ignored
+test parser::test::test_white_space_in_rules ... ignored
+test pipeline::test_compute_diff ... ignored
+test pipeline::test_transitive ... ignored
+test reasoner::reasoner_test::test_reconstruct_from_bindings ... ignored
+test reasoner::reasoner_test::test_rule_substitution ... ignored
+test rsp::r2s::r2s_test::test_dstream ... ignored
+test rsp::r2s::r2s_test::test_istream ... ignored
+test rsp::r2s::r2s_test::test_rstream ... ignored
+test rsp::rsp_test::rsp_integration ... ignored
+test rsp::rsp_test::rsp_transitive_testp ... ignored
+test rsp::rsp_test::test_load_from_file ... ignored
+test rsp::rsp_test::test_static_abox ... ignored
+test rsp::s2r::s2r_test::test_window ... ignored
+test rsp::s2r::s2r_test::test_window_with_call_back ... ignored
+test service_composition::service_composition_test::test_eval_backward_rule ... ignored
+test service_composition::service_composition_test::test_eval_forward_rule ... ignored
+test sparql::sparql_test::test_filter_greater_than ... ignored
+test sparql::sparql_test::test_filter_greater_than_or_equal ... ignored
+test sparql::sparql_test::test_filter_less_than ... ignored
+test sparql::sparql_test::test_group_by_count_aggregation ... ignored
+test sparql::sparql_test::test_group_by_count_aggregation_multiple_group ... ignored
+test sparql::sparql_test::test_group_by_sum_aggregation ... ignored
+test sparql::sparql_test::test_syntactic_sugar_rdf_type ... ignored
+test term::term_test::test_blank_node_term_encoding ... ignored
+test term::term_test::test_literal_term_roundtrip ... ignored
+test time_window::test_add_to_window ... ignored
+test time_window::test_consumer ... ignored
+test time_window::test_delete ... ignored
+test time_window::test_new_window ... ignored
+test time_window::test_update ... ignored
+test time_window::test_window_bound_calculation ... ignored
+test time_window::test_window_shift ... ignored
+test tripleindex::tripleindex_test::test_iterator ... ignored
+test tripleindex::tripleindex_test::test_quad_filter ... ignored
+test tripleindex::tripleindex_test::test_quad_query ... ignored
+test tripleindex::tripleindex_test::test_query_fact ... ignored
+test tripleindex::tripleindex_test::test_remove ... ignored
+test tripleindex::tripleindex_test::test_same_triple_in_multiple_graphs_query ... ignored
+test utils::test::test_remove_literal_tages ... ignored
+
+test result: ok. 0 passed; 0 failed; 154 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/bench.rs (target/release/deps/bench-7934d58b6ada9c4a)
+
+running 1 test
+test test_transitive_rule ... bench: 875,808,862 ns/iter (+/- 15,765,368)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 1 measured
+
+     Running benches/blue_river_dam.rs (target/release/deps/blue_river_dam-009fbbf70b3704ac)
+Timer precision: 41 ns
+blue_river_dam                 fastest       │ slowest       │ median        │ mean          │ samples │ iters
+╰─ graphlaw_materialize_delta  891.9 µs      │ 953.7 µs      │ 915.2 µs      │ 916.7 µs      │ 100     │ 100
+
+     Running benches/dialects.rs (target/release/deps/dialects-8d82e91c2aeb9363)
+
+running 18 tests
+test datalog_aggregate_facts_1000 ... bench:   1,557,120 ns/iter (+/- 59,833)
+test datalog_stratify_layers_20   ... bench:      13,308 ns/iter (+/- 261)
+test datalog_stratify_layers_200  ... bench:     132,318 ns/iter (+/- 1,732)
+test datalog_stratify_layers_50   ... bench:      33,184 ns/iter (+/- 700)
+test n3_chain_depth_150           ... bench:  29,828,662 ns/iter (+/- 465,436)
+test n3_chain_depth_400           ... bench: 471,124,433 ns/iter (+/- 2,561,099)
+test n3_chain_depth_50            ... bench:   1,873,179 ns/iter (+/- 46,307)
+test shacl_validate_100           ... bench:     327,036 ns/iter (+/- 7,578)
+test shacl_validate_1000          ... bench:   3,280,829 ns/iter (+/- 247,825)
+test shacl_validate_5000          ... bench:  16,661,195 ns/iter (+/- 1,437,580)
+test shacl_validate_complex_100   ... bench:     592,424 ns/iter (+/- 30,654)
+test shacl_validate_complex_1000  ... bench:   5,956,141 ns/iter (+/- 428,623)
+test shex_validate_100            ... bench:     104,714 ns/iter (+/- 2,512)
+test shex_validate_1000           ... bench:   1,111,820 ns/iter (+/- 17,760)
+test shex_validate_5000           ... bench:   5,654,160 ns/iter (+/- 890,192)
+test shex_validate_complex_100    ... bench:     104,392 ns/iter (+/- 1,427)
+test shex_validate_complex_1000   ... bench:   1,078,095 ns/iter (+/- 47,313)
+test shexc_parse_benchmark        ... bench:       3,416 ns/iter (+/- 43)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 18 measured
+
+     Running benches/hierarchies.rs (target/release/deps/hierarchies-eea2f54a41df254c)
+
+running 4 tests
+test test_hierarchy_10     ... bench:     102,972 ns/iter (+/- 3,280)
+test test_hierarchy_100    ... bench:   1,006,702 ns/iter (+/- 20,915)
+test test_hierarchy_1000   ... bench:  10,316,249 ns/iter (+/- 822,057)
+test test_rdf_hierarchy_10 ... bench:   1,500,008 ns/iter (+/- 64,518)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 4 measured
+

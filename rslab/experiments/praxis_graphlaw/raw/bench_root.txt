@@ -1,0 +1,758 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /Users/sac/praxis/crates/ggen/Cargo.toml
+workspace: /Users/sac/praxis/Cargo.toml
+warning: /Users/sac/praxis/Cargo.toml: `panic` setting is ignored for `bench` profile
+   Compiling wasm4pm-core v26.6.29 (/Users/sac/wasm4pm-compat/wasm4pm-core)
+   Compiling rand_chacha v0.9.0
+   Compiling digest v0.10.7
+   Compiling rand v0.9.4
+   Compiling sha2 v0.10.9
+   Compiling wasm4pm-compat v26.6.29 (/Users/sac/wasm4pm-compat)
+   Compiling oxrdf v0.3.3
+   Compiling cpufeatures v0.3.0
+   Compiling bcinr-logic v26.6.24 (/Users/sac/bcinr/crates/bcinr-logic)
+   Compiling curve25519-dalek v4.1.3
+   Compiling bcinr-powl v26.6.25 (/Users/sac/bcinr/crates/bcinr-powl)
+   Compiling env_filter v2.0.0
+   Compiling prolog8 v26.7.6 (/Users/sac/wasm4pm/crates/prolog8)
+   Compiling praxis-retrofit v26.7.2 (/Users/sac/praxis/crates/praxis-retrofit)
+   Compiling sparesults v0.3.3
+   Compiling env_logger v0.11.11
+   Compiling star-toml v26.7.3
+   Compiling chicago-tdd-tools v26.6.30
+   Compiling ed25519-dalek v2.2.0
+   Compiling spargebra v0.4.6
+   Compiling bcinr-powl-receipt v26.6.24 (/Users/sac/bcinr/crates/bcinr-powl-receipt)
+   Compiling pddl-index v26.7.2 (/Users/sac/praxis/crates/pddl-index)
+   Compiling sha2 v0.11.0
+   Compiling sha1 v0.11.0
+   Compiling chatman-common v26.7.2 (/Users/sac/praxis/crates/chatman-common)
+   Compiling praxis-graphlaw v26.7.5 (/Users/sac/praxis/crates/praxis-graphlaw)
+   Compiling praxis-synthesis v26.7.2 (/Users/sac/praxis/crates/praxis-synthesis)
+   Compiling bcinr-pddl v26.6.26 (/Users/sac/bcinr/crates/bcinr-pddl)
+   Compiling wasm4pm-cognition v26.7.6 (/Users/sac/wasm4pm/crates/wasm4pm-cognition)
+warning: unknown lint: `removed`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/autosystems/candidates.rs:45:9
+   |
+45 | #[allow(removed)]
+   |         ^^^^^^^
+   |
+   = note: `#[warn(unknown_lints)]` on by default
+
+warning: unused import: `Candidate`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/abductive_ibe.rs:2:51
+  |
+2 |     BreedError, BreedId, BreedInput, BreedOutput, Candidate, CognitionBreed, Fact, TraceStep,
+  |                                                   ^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Candidate`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/abductive_lp.rs:2:51
+  |
+2 |     BreedError, BreedId, BreedInput, BreedOutput, Candidate, CognitionBreed, Fact, TraceStep,
+  |                                                   ^^^^^^^^^
+
+warning: unused import: `Candidate`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/asp.rs:2:51
+  |
+2 |     BreedError, BreedId, BreedInput, BreedOutput, Candidate, CognitionBreed, Fact, TraceStep,
+  |                                                   ^^^^^^^^^
+
+warning: unused import: `Rule`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/autoinstinct_semantics.rs:14:73
+   |
+14 |     BreedError, BreedId, BreedInput, BreedOutput, CognitionBreed, Fact, Rule, TraceStep,
+   |                                                                         ^^^^
+
+warning: unused import: `Candidate`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/bayesian_network.rs:3:51
+  |
+3 |     BreedError, BreedId, BreedInput, BreedOutput, Candidate, CognitionBreed, CognitionError, Fact,
+  |                                                   ^^^^^^^^^
+
+warning: unused import: `std::fmt::Write as _`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/csp_ac3.rs:13:5
+   |
+13 | use std::fmt::Write as _;
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::breeds::support::trace_query::TraceQuery`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/dempster_shafer.rs:5:5
+  |
+5 | use crate::breeds::support::trace_query::TraceQuery;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `Candidate`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/description_logic.rs:2:51
+  |
+2 |     BreedError, BreedId, BreedInput, BreedOutput, Candidate, CognitionBreed, Fact, TraceStep,
+  |                                                   ^^^^^^^^^
+
+warning: unused import: `HashMap`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/description_logic.rs:4:34
+  |
+4 | use std::collections::{BTreeSet, HashMap};
+  |                                  ^^^^^^^
+
+warning: unused import: `crate::breeds::support::trace_query::TraceQuery`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ebl.rs:12:5
+   |
+12 | use crate::breeds::support::trace_query::TraceQuery;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::breeds::support::trace_query::TraceQuery`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/fuzzy_logic.rs:8:5
+  |
+8 | use crate::breeds::support::trace_query::TraceQuery;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `HashSet`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/gps.rs:18:34
+   |
+18 | use std::collections::{BTreeSet, HashSet};
+   |                                  ^^^^^^^
+
+warning: unused import: `HashSet`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/htn_planning.rs:5:34
+  |
+5 | use std::collections::{BTreeSet, HashSet};
+  |                                  ^^^^^^^
+
+warning: unused import: `HashSet`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ltl_monitor.rs:5:34
+  |
+5 | use std::collections::{BTreeSet, HashSet};
+  |                                  ^^^^^^^
+
+warning: unused import: `Fact`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/mdp.rs:8:67
+  |
+8 |     BreedError, BreedId, BreedInput, BreedOutput, CognitionBreed, Fact, TraceStep,
+  |                                                                   ^^^^
+
+warning: unused import: `TraceStep`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/morphological.rs:38:73
+   |
+38 |     BreedError, BreedId, BreedInput, BreedOutput, CognitionBreed, Fact, TraceStep,
+   |                                                                         ^^^^^^^^^
+
+warning: unused import: `BTreeSet`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ocpm_route_discoverer.rs:13:34
+   |
+13 | use std::collections::{BTreeMap, BTreeSet};
+   |                                  ^^^^^^^^
+
+warning: unused import: `tracing`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ocpm_route_discoverer.rs:14:5
+   |
+14 | use tracing;
+   |     ^^^^^^^
+
+warning: unused import: `HashMap`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/partial_order_plan.rs:9:34
+  |
+9 | use std::collections::{BTreeSet, HashMap, HashSet};
+  |                                  ^^^^^^^
+
+warning: unused import: `HashSet`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/soar.rs:31:34
+   |
+31 | use std::collections::{BTreeSet, HashSet};
+   |                                  ^^^^^^^
+
+warning: unused import: `HashSet`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/strips.rs:22:44
+   |
+22 | use std::collections::{BTreeMap, BTreeSet, HashSet};
+   |                                            ^^^^^^^
+
+warning: unused imports: `BoundedBreed` and `DomainBound`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/version_space.rs:6:44
+  |
+6 | use crate::breeds::support::domain_bound::{BoundedBreed, DomainBound};
+  |                                            ^^^^^^^^^^^^  ^^^^^^^^^^^
+
+warning: unused import: `crate::breeds::support::trace_query::TraceQuery`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/version_space.rs:7:5
+  |
+7 | use crate::breeds::support::trace_query::TraceQuery;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `CognitionError`
+ --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/version_space.rs:9:67
+  |
+9 |     BreedError, BreedId, BreedInput, BreedOutput, CognitionBreed, CognitionError, Fact, TraceStep,
+  |                                                                   ^^^^^^^^^^^^^^
+
+warning: variable does not need to be mutable
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/act_r.rs:74:13
+   |
+74 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+   |             ----^^^^
+   |             |
+   |             help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `id`
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/allen_temporal.rs:251:29
+    |
+251 |                         let id = get_id!(parts[0]);
+    |                             ^^ help: if this is intentional, prefix it with an underscore: `_id`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/analogy_sme.rs:156:13
+    |
+156 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/asp.rs:106:21
+    |
+106 |                 let mut rule_ok = true;
+    |                     ----^^^^^^^
+    |                     |
+    |                     help: remove this `mut`
+
+warning: unused variable: `rule_ok`
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/asp.rs:106:21
+    |
+106 |                 let mut rule_ok = true;
+    |                     ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_rule_ok`
+
+warning: variable `node_count` is assigned to, but never used
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/bayesian_network.rs:57:13
+   |
+57 |         let mut node_count = 0;
+   |             ^^^^^^^^^^^^^^
+   |
+   = note: consider using `_node_count` instead
+
+warning: value assigned to `node_count` is never read
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/bayesian_network.rs:61:17
+   |
+61 |                 node_count += 1;
+   |                 ^^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/bayesian_network.rs:459:17
+    |
+459 |             let mut start_nodes = vec![node_id(ends[0])];
+    |                 ----^^^^^^^^^^^
+    |                 |
+    |                 help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/bayesian_network.rs:460:17
+    |
+460 |             let mut end_nodes = vec![node_id(ends[1])];
+    |                 ----^^^^^^^^^
+    |                 |
+    |                 help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/circumscription.rs:162:13
+    |
+162 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/construction_grammar.rs:161:13
+    |
+161 |         let mut push = |kind: &str, detail: String, trace: &mut Vec<TraceStep>| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: unused variable: `inverse_mapping`
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/dempster_shafer.rs:47:5
+   |
+47 |     inverse_mapping: &BTreeMap<u8, String>,
+   |     ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_inverse_mapping`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/episodic_memory.rs:118:13
+    |
+118 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ilp.rs:202:13
+    |
+202 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/markov_logic.rs:166:13
+    |
+166 |         let mut push = |kind: &str, detail: String, trace: &mut Vec<TraceStep>| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/mdp.rs:59:13
+   |
+59 |         let mut register_state = |s: &str, states: &mut Vec<String>| {
+   |             ----^^^^^^^^^^^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/meta_reasoning.rs:128:13
+    |
+128 |         let mut push = |kind: &str, detail: String, trace: &mut Vec<TraceStep>| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/naive_physics.rs:129:13
+    |
+129 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/partial_order_plan.rs:192:25
+    |
+192 |                     let mut orderings_backup = orderings.clone();
+    |                         ----^^^^^^^^^^^^^^^^
+    |                         |
+    |                         help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/partial_order_plan.rs:211:25
+    |
+211 |                     let mut orderings_backup = orderings.clone();
+    |                         ----^^^^^^^^^^^^^^^^
+    |                         |
+    |                         help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/pomdp.rs:381:13
+    |
+381 |         let mut push = |kind: &str, detail: String, trace: &mut Vec<TraceStep>| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/pomdp.rs:420:13
+    |
+420 |         let mut add_point = |b: &[f64], points: &mut Vec<Vec<f64>>| {
+    |             ----^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/problog.rs:127:13
+    |
+127 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/rl_symbolic.rs:160:13
+    |
+160 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/sat_cdcl.rs:148:13
+    |
+148 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/sat_cdcl.rs:174:13
+    |
+174 |         let mut assign = |lit: Lit,
+    |             ----^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/situation_calculus.rs:159:13
+    |
+159 |         let mut push = |trace: &mut Vec<TraceStep>, kind: &str, detail: String| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/tableaux.rs:183:13
+    |
+183 |         let mut push = |kind: &str, detail: String, depth: u32, trace: &mut Vec<TraceStep>| {
+    |             ----^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: field `0` is never read
+   --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/ebl.rs:118:10
+    |
+118 |     Fact(Term),
+    |     ---- ^^^^
+    |     |
+    |     field in this variant
+    |
+    = note: `ProofNode` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+help: consider changing the field to be of unit type to suppress this warning while preserving the field numbering, or remove the field
+    |
+118 -     Fact(Term),
+118 +     Fact(()),
+    |
+
+warning: field `id` is never read
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/qualitative_reason.rs:61:5
+   |
+60 | struct Confluence {
+   |        ---------- field in this struct
+61 |     id: String,
+   |     ^^
+   |
+   = note: `Confluence` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `breed` is never read
+  --> /Users/sac/wasm4pm/crates/wasm4pm-cognition/src/breeds/support/pipeline.rs:29:5
+   |
+28 | pub struct BreedPipeline<S> {
+   |            ------------- field in this struct
+29 |     breed: BreedId,
+   |     ^^^^^
+
+   Compiling praxis-core v26.7.2 (/Users/sac/praxis/crates/praxis-core)
+   Compiling powl2-decompose v26.6.30 (/Users/sac/praxis/crates/powl2-decompose)
+   Compiling criterion v0.5.1
+   Compiling proptest v1.11.0
+   Compiling wasm4pm-planner v26.7.6 (/Users/sac/wasm4pm/crates/wasm4pm-planner)
+warning: `wasm4pm-cognition` (lib) generated 56 warnings (run `cargo fix --lib -p wasm4pm-cognition` to apply 50 suggestions)
+   Compiling my-conforming-project v26.7.2 (/Users/sac/praxis)
+    Finished `bench` profile [optimized] target(s) in 3m 16s
+     Running unittests src/lib.rs (target/release/deps/my_conforming_project-1c625fd4c184101a)
+
+running 79 tests
+test chain::tests::append_matches_recompute ... ignored
+test chain::tests::empty_chain_equals_genesis ... ignored
+test chain::tests::tamper_breaks_chain ... ignored
+test chain::tests::type_state_enforces_non_empty_before_finalize ... ignored
+test cli::tests::color_mode_auto_respects_no_color ... ignored
+test cli::tests::color_mode_off_never_enabled ... ignored
+test cli::tests::color_mode_on_always_enabled ... ignored
+test cli::tests::output_format_display ... ignored
+test cli::tests::print_output_json_roundtrip ... ignored
+test config::tests::defaults_admit_with_no_gate ... ignored
+test config::tests::gate_adapter_maps_fail_critical_to_fail ... ignored
+test config::tests::gate_adapter_maps_fail_non_critical_to_warn ... ignored
+test config::tests::gate_adapter_maps_pass_to_admit ... ignored
+test config::tests::gate_adapter_maps_warn_info_to_suggest ... ignored
+test config::tests::gate_adapter_maps_warn_other_to_warn ... ignored
+test error::validation_chain_tests::empty_chain_is_ok ... ignored
+test error::validation_chain_tests::fm_code_constructors_embed_code ... ignored
+test error::validation_chain_tests::multiple_errors_joined ... ignored
+test error::validation_chain_tests::require_passes_on_true ... ignored
+test error::validation_chain_tests::require_records_error_on_false ... ignored
+test error::validation_chain_tests::single_error_reported ... ignored
+test frontier::tests::every_evaluated_cell_passes ... ignored
+test frontier::tests::impossible_cells_match_the_refusal_register_count ... ignored
+test frontier::tests::matrix_expands_to_full_cartesian_product ... ignored
+test frontier::tests::matrix_validates_clean ... ignored
+test frontier::tests::write_report_round_trips ... ignored
+test ops::tests::admit_is_denied_with_halted_andon_when_something_blocks ... ignored
+test ops::tests::admit_succeeds_when_nothing_blocks ... ignored
+test ops::tests::inspect_obligations_describes_each_kind ... ignored
+test ops::tests::inspect_obligations_with_bad_hex_is_error ... ignored
+test ops::tests::inspect_obligations_with_invalid_json_is_error ... ignored
+test ops::tests::judge_with_atom_and_matching_catalog_reports_admitted ... ignored
+test ops::tests::judge_with_atom_but_no_catalog_is_error ... ignored
+test ops::tests::judge_with_atom_missing_predicate_reports_rejection ... ignored
+test ops::tests::judge_with_blocking_constraint_becomes_halted_with_unmet ... ignored
+test ops::tests::judge_with_invalid_json_is_error ... ignored
+test ops::tests::judge_with_valid_value_only_becomes_validated ... ignored
+test ops::tests::kernel_invalid_query_maps_to_identity_category ... ignored
+test ops::tests::kernel_query_without_catalog_is_hard_error ... ignored
+test ops::tests::naf_query_answers_for_non_excluded_and_denies_for_excluded ... ignored
+test ops::tests::naf_rule_without_stratified_negation_feature_is_rejected_by_kernel ... ignored
+test ops::tests::promote_from_lowest_rung_to_next_with_eligibility_false ... ignored
+test ops::tests::promote_from_top_rung_is_denied ... ignored
+test ops::tests::promote_to_a_rung_that_makes_it_eligible ... ignored
+test ops::tests::promote_to_rung_requiring_auditor_without_one_is_denied ... ignored
+test ops::tests::promote_to_that_rung_with_auditor_succeeds ... ignored
+test ops::tests::promote_with_unparseable_standing_is_error ... ignored
+test ops::tests::receipt_called_twice_with_same_prev_and_ts_ns_is_deterministic ... ignored
+test ops::tests::receipt_export_ocel_writes_file_and_reports_counts ... ignored
+test ops::tests::receipt_issue_appends_to_ledger_and_chains ... ignored
+test ops::tests::receipt_issue_with_halting_obligation_is_denied_and_not_persisted ... ignored
+test ops::tests::receipt_replay_reports_fitness_one_for_a_lawful_ledger ... ignored
+test ops::tests::receipt_show_respects_last_n ... ignored
+test ops::tests::receipt_validate_on_clean_ledger_is_ok ... ignored
+test ops::tests::receipt_with_halting_obligation_returns_denied_shape ... ignored
+test ops::tests::receipt_with_malformed_hex_is_error ... ignored
+test ops::tests::receipt_with_no_prev_hash_defaults_to_genesis ... ignored
+test ops::tests::show_invalid_format ... ignored
+test ops::tests::show_invalid_json_is_error ... ignored
+test ops::tests::show_with_json_format ... ignored
+test ops::tests::show_with_text_format ... ignored
+test repl::tests::backslash_escape ... ignored
+test repl::tests::basic_split ... ignored
+test repl::tests::double_quoted_space ... ignored
+test repl::tests::empty_string ... ignored
+test repl::tests::single_quoted_space ... ignored
+test repl::tests::stub_returns_error ... ignored
+test repl::tests::unmatched_double_quote_returns_none ... ignored
+test repl::tests::unmatched_single_quote_returns_none ... ignored
+test repl::tests::whitespace_only ... ignored
+test verify_ops::tests::accepts_a_lawful_jsonl_ledger ... ignored
+test verify_ops::tests::empty_file_decodes_to_zero_records_and_still_accepts ... ignored
+test verify_ops::tests::little_law_snapshot_computes_l_equals_lambda_w ... ignored
+test verify_ops::tests::little_law_snapshot_falls_back_to_inter_completion_cycle_time ... ignored
+test verify_ops::tests::little_law_snapshot_refuses_empty_and_zero_window_by_name ... ignored
+test verify_ops::tests::missing_file_is_a_failing_decode_outcome_not_a_hard_error ... ignored
+test verify_ops::tests::rejects_a_tampered_chain_hash ... ignored
+test verify_ops::tests::single_json_object_fallback_is_accepted ... ignored
+test verify_ops::tests::unknown_profile_is_rejected ... ignored
+
+test result: ok. 0 passed; 0 failed; 79 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/case_study_judge.rs (target/release/deps/case_study_judge-55ab54dfcfa70aee)
+
+running 6 tests
+test tests::denial_fires_on_claim_without_evidence ... ignored
+test tests::real_evidence_graph_materializes_and_has_no_denials ... ignored
+test tests::shacl_violation_prevents_evidence_complete ... ignored
+test tests::shex_violation_is_detected_for_missing_evidence ... ignored
+test tests::verdict_flips_when_evidence_removed ... ignored
+test tests::verdict_present_finds_a_genuinely_asserted_class ... ignored
+
+test result: ok. 0 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/dod.rs (target/release/deps/dod-022bb980c835db98)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/release/deps/my_conforming_project-d92f03f9c95524f5)
+
+running 12 tests
+test verbs::plan::tests::analyze_reports_makespan_and_critical_path ... ignored
+test verbs::plan::tests::classical_solve_finds_single_step_plan ... ignored
+test verbs::plan::tests::empty_payload_is_hard_error ... ignored
+test verbs::plan::tests::execute_plan_chain_matches_solve_plan_chain ... ignored
+test verbs::plan::tests::missing_source_is_hard_error ... ignored
+test verbs::plan::tests::nonexistent_file_is_hard_error ... ignored
+test verbs::plan::tests::route_refusal_is_deterministic ... ignored
+test verbs::plan::tests::solve_refusal_is_deterministic ... ignored
+test verbs::plan::tests::split_combined_errors_without_marker ... ignored
+test verbs::plan::tests::split_combined_finds_last_marker ... ignored
+test verbs::plan::tests::temporal_plan_chain_is_deterministic ... ignored
+test verbs::plan::tests::unparseable_pddl_text_is_hard_error ... ignored
+
+test result: ok. 0 passed; 0 failed; 12 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/ocel_process_validate.rs (target/release/deps/ocel_process_validate-0aa061690fca6817)
+
+running 8 tests
+test tests::broken_benchmark_pattern_is_rejected ... ignored
+test tests::canonical_trace_is_a_member ... ignored
+test tests::membership_agrees_with_language_upto ... ignored
+test tests::missing_required_event_is_rejected ... ignored
+test tests::order_violation_is_rejected ... ignored
+test tests::project_dedupe_drops_foreign_and_collapses_repeats ... ignored
+test tests::repeated_once_event_is_rejected ... ignored
+test tests::utc_parser_accepts_z_and_rejects_offsets_and_regressions ... ignored
+
+test result: ok. 0 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running benches/bench_main.rs (target/release/deps/bench_main-a66ffdbc1b1f6a19)
+Gnuplot not found, using plotters backend
+Benchmarking throughput/hash_bytes/64
+Benchmarking throughput/hash_bytes/64: Warming up for 3.0000 s
+Benchmarking throughput/hash_bytes/64: Collecting 100 samples in estimated 5.0002 s (39M iterations)
+Benchmarking throughput/hash_bytes/64: Analyzing
+throughput/hash_bytes/64
+                        time:   [127.51 ns 127.59 ns 127.69 ns]
+                        thrpt:  [478.01 MiB/s 478.38 MiB/s 478.68 MiB/s]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high severe
+Benchmarking throughput/hash_bytes/256
+Benchmarking throughput/hash_bytes/256: Warming up for 3.0000 s
+Benchmarking throughput/hash_bytes/256: Collecting 100 samples in estimated 5.0011 s (14M iterations)
+Benchmarking throughput/hash_bytes/256: Analyzing
+throughput/hash_bytes/256
+                        time:   [348.91 ns 349.98 ns 351.41 ns]
+                        thrpt:  [694.74 MiB/s 697.58 MiB/s 699.72 MiB/s]
+Found 13 outliers among 100 measurements (13.00%)
+  3 (3.00%) high mild
+  10 (10.00%) high severe
+Benchmarking throughput/hash_bytes/1024
+Benchmarking throughput/hash_bytes/1024: Warming up for 3.0000 s
+Benchmarking throughput/hash_bytes/1024: Collecting 100 samples in estimated 5.0016 s (4.1M iterations)
+Benchmarking throughput/hash_bytes/1024: Analyzing
+throughput/hash_bytes/1024
+                        time:   [1.2284 µs 1.2289 µs 1.2295 µs]
+                        thrpt:  [794.25 MiB/s 794.69 MiB/s 795.00 MiB/s]
+Found 4 outliers among 100 measurements (4.00%)
+  3 (3.00%) high mild
+  1 (1.00%) high severe
+Benchmarking throughput/hash_bytes/4096
+Benchmarking throughput/hash_bytes/4096: Warming up for 3.0000 s
+Benchmarking throughput/hash_bytes/4096: Collecting 100 samples in estimated 5.0105 s (1.9M iterations)
+Benchmarking throughput/hash_bytes/4096: Analyzing
+throughput/hash_bytes/4096
+                        time:   [2.6420 µs 2.6429 µs 2.6440 µs]
+                        thrpt:  [1.4428 GiB/s 1.4434 GiB/s 1.4438 GiB/s]
+Found 10 outliers among 100 measurements (10.00%)
+  7 (7.00%) high mild
+  3 (3.00%) high severe
+Benchmarking throughput/hash_bytes/16384
+Benchmarking throughput/hash_bytes/16384: Warming up for 3.0000 s
+Benchmarking throughput/hash_bytes/16384: Collecting 100 samples in estimated 5.0022 s (490k iterations)
+Benchmarking throughput/hash_bytes/16384: Analyzing
+throughput/hash_bytes/16384
+                        time:   [10.200 µs 10.202 µs 10.206 µs]
+                        thrpt:  [1.4951 GiB/s 1.4956 GiB/s 1.4960 GiB/s]
+Found 5 outliers among 100 measurements (5.00%)
+  3 (3.00%) high mild
+  2 (2.00%) high severe
+
+Benchmarking latency/serialize_payload
+Benchmarking latency/serialize_payload: Warming up for 3.0000 s
+Benchmarking latency/serialize_payload: Collecting 100 samples in estimated 5.0003 s (97M iterations)
+Benchmarking latency/serialize_payload: Analyzing
+latency/serialize_payload
+                        time:   [50.984 ns 51.057 ns 51.145 ns]
+Found 15 outliers among 100 measurements (15.00%)
+  8 (8.00%) high mild
+  7 (7.00%) high severe
+Benchmarking latency/hash_bytes/small
+Benchmarking latency/hash_bytes/small: Warming up for 3.0000 s
+Benchmarking latency/hash_bytes/small: Collecting 100 samples in estimated 5.0003 s (39M iterations)
+Benchmarking latency/hash_bytes/small: Analyzing
+latency/hash_bytes/small
+                        time:   [127.60 ns 127.77 ns 127.96 ns]
+Found 3 outliers among 100 measurements (3.00%)
+  2 (2.00%) high mild
+  1 (1.00%) high severe
+Benchmarking latency/emit_round_trip
+Benchmarking latency/emit_round_trip: Warming up for 3.0000 s
+Benchmarking latency/emit_round_trip: Collecting 100 samples in estimated 5.0002 s (26M iterations)
+Benchmarking latency/emit_round_trip: Analyzing
+latency/emit_round_trip time:   [186.49 ns 187.19 ns 187.91 ns]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high severe
+
+Benchmarking scaling/emit_chain/chain_length/1
+Benchmarking scaling/emit_chain/chain_length/1: Warming up for 3.0000 s
+Benchmarking scaling/emit_chain/chain_length/1: Collecting 100 samples in estimated 5.0004 s (23M iterations)
+Benchmarking scaling/emit_chain/chain_length/1: Analyzing
+scaling/emit_chain/chain_length/1
+                        time:   [215.34 ns 215.72 ns 216.16 ns]
+Found 4 outliers among 100 measurements (4.00%)
+  1 (1.00%) high mild
+  3 (3.00%) high severe
+Benchmarking scaling/emit_chain/chain_length/10
+Benchmarking scaling/emit_chain/chain_length/10: Warming up for 3.0000 s
+Benchmarking scaling/emit_chain/chain_length/10: Collecting 100 samples in estimated 5.0107 s (1.8M iterations)
+Benchmarking scaling/emit_chain/chain_length/10: Analyzing
+scaling/emit_chain/chain_length/10
+                        time:   [2.8261 µs 2.8276 µs 2.8292 µs]
+Benchmarking scaling/emit_chain/chain_length/100
+Benchmarking scaling/emit_chain/chain_length/100: Warming up for 3.0000 s
+Benchmarking scaling/emit_chain/chain_length/100: Collecting 100 samples in estimated 5.1282 s (177k iterations)
+Benchmarking scaling/emit_chain/chain_length/100: Analyzing
+scaling/emit_chain/chain_length/100
+                        time:   [29.006 µs 29.036 µs 29.069 µs]
+Found 1 outliers among 100 measurements (1.00%)
+  1 (1.00%) high mild
+Benchmarking scaling/emit_chain/chain_length/500
+Benchmarking scaling/emit_chain/chain_length/500: Warming up for 3.0000 s
+Benchmarking scaling/emit_chain/chain_length/500: Collecting 100 samples in estimated 5.1708 s (35k iterations)
+Benchmarking scaling/emit_chain/chain_length/500: Analyzing
+scaling/emit_chain/chain_length/500
+                        time:   [146.56 µs 146.80 µs 147.04 µs]
+Found 6 outliers among 100 measurements (6.00%)
+  5 (5.00%) high mild
+  1 (1.00%) high severe
+
+Benchmarking admission_throughput/judge_payload/green
+Benchmarking admission_throughput/judge_payload/green: Warming up for 3.0000 s
+Benchmarking admission_throughput/judge_payload/green: Collecting 100 samples in estimated 5.0053 s (3.6M iterations)
+Benchmarking admission_throughput/judge_payload/green: Analyzing
+admission_throughput/judge_payload/green
+                        time:   [1.3706 µs 1.3720 µs 1.3733 µs]
+                        thrpt:  [728.15 Kelem/s 728.89 Kelem/s 729.59 Kelem/s]
+Benchmarking admission_throughput/admit_payload/green
+Benchmarking admission_throughput/admit_payload/green: Warming up for 3.0000 s
+Benchmarking admission_throughput/admit_payload/green: Collecting 100 samples in estimated 5.0046 s (4.2M iterations)
+Benchmarking admission_throughput/admit_payload/green: Analyzing
+admission_throughput/admit_payload/green
+                        time:   [1.1792 µs 1.1809 µs 1.1829 µs]
+                        thrpt:  [845.39 Kelem/s 846.78 Kelem/s 848.06 Kelem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  4 (4.00%) high mild
+
+     Running benches/blue_river_dam.rs (target/release/deps/blue_river_dam-297a18a7fe895c56)
+Timer precision: 41 ns
+blue_river_dam                              fastest       │ slowest       │ median        │ mean          │ samples │ iters
+├─ action_precondition_mask                 59.21 ns      │ 107.3 ns      │ 59.86 ns      │ 60.47 ns      │ 100     │ 12800
+├─ action_precondition_mask_condition_tree  97.3 ns       │ 171.5 ns      │ 99.89 ns      │ 100.4 ns      │ 100     │ 3200
+├─ bcinr_transition_table                   0.617 ns      │ 0.668 ns      │ 0.627 ns      │ 0.631 ns      │ 100     │ 819200
+├─ little_law_snapshot                      46.84 ns      │ 48.15 ns      │ 47.49 ns      │ 47.43 ns      │ 100     │ 12800
+├─ pddl_action_filter                       6.374 µs      │ 15.58 µs      │ 6.499 µs      │ 6.79 µs       │ 100     │ 100
+├─ powl_step_tick                           3.47 ns       │ 3.796 ns      │ 3.511 ns      │ 3.512 ns      │ 100     │ 102400
+├─ receipt_frame_link                       243.1 ns      │ 252.2 ns      │ 247 ns        │ 247.4 ns      │ 100     │ 3200
+├─ standing_transition                      20.15 ns      │ 28.29 ns      │ 20.47 ns      │ 20.55 ns      │ 100     │ 25600
+╰─ verify_gate_dispatch                     11.37 µs      │ 13.87 µs      │ 11.49 µs      │ 11.54 µs      │ 100     │ 100
+
+     Running benches/receipt_validate.rs (target/release/deps/receipt_validate-0adc0dfbf66adb88)
+Gnuplot not found, using plotters backend
+Benchmarking receipt_validate/100
+Benchmarking receipt_validate/100: Warming up for 3.0000 s
+Benchmarking receipt_validate/100: Collecting 100 samples in estimated 5.5239 s (25k iterations)
+Benchmarking receipt_validate/100: Analyzing
+receipt_validate/100    time:   [218.53 µs 218.78 µs 219.02 µs]
+Found 5 outliers among 100 measurements (5.00%)
+  1 (1.00%) low mild
+  4 (4.00%) high mild
+Benchmarking receipt_validate/500
+Benchmarking receipt_validate/500: Warming up for 3.0000 s
+
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 6.5s, enable flat sampling, or reduce sample count to 60.
+Benchmarking receipt_validate/500: Collecting 100 samples in estimated 6.5249 s (5050 iterations)
+Benchmarking receipt_validate/500: Analyzing
+receipt_validate/500    time:   [1.2665 ms 1.2684 ms 1.2705 ms]
+Found 5 outliers among 100 measurements (5.00%)
+  1 (1.00%) low mild
+  1 (1.00%) high mild
+  3 (3.00%) high severe
+Benchmarking receipt_validate/1000
+Benchmarking receipt_validate/1000: Warming up for 3.0000 s
+Benchmarking receipt_validate/1000: Collecting 100 samples in estimated 5.2549 s (1800 iterations)
+Benchmarking receipt_validate/1000: Analyzing
+receipt_validate/1000   time:   [2.9027 ms 2.9059 ms 2.9095 ms]
+Found 12 outliers among 100 measurements (12.00%)
+  8 (8.00%) high mild
+  4 (4.00%) high severe
+

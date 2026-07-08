@@ -1,0 +1,608 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /Users/sac/praxis/crates/ggen/Cargo.toml
+workspace: /Users/sac/praxis/Cargo.toml
+warning: /Users/sac/praxis/Cargo.toml: `panic` setting is ignored for `bench` profile
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/praxis_graphlaw-e8046b944f204bc1)
+
+running 154 tests
+test builtins::builtins_test::classify_returns_none_for_variable_predicate ... ok
+test builtins::builtins_test::evaluate_returns_none_for_reasoner_level_kind ... ok
+test builtins::builtins_test::classify_returns_none_for_unknown_predicate ... ok
+test builtins::builtins_test::classify_registers_reasoner_level_builtins_as_known ... ok
+test builtins::builtins_test::func_lang_from_plain_literal_rejects_wrong_arity ... ok
+test builtins::builtins_test::list_first_rejects_empty_list ... ok
+test builtins::builtins_test::func_lang_from_plain_literal_extracts_tag ... ok
+test builtins::builtins_test::list_first_returns_first_member ... ok
+test backwardchaining::backwardchaining_test::test_cyclic_rules_terminate ... ok
+test builtins::builtins_test::list_in_rejects_non_var_subject ... ok
+test builtins::builtins_test::list_append_rejects_wrong_arity ... ok
+test builtins::builtins_test::list_length_rejects_non_list_subject ... ok
+test builtins::builtins_test::list_in_generates_each_member ... ok
+test builtins::builtins_test::list_length_counts_members ... ok
+test builtins::builtins_test::func_lang_from_plain_literal_defaults_to_empty_string ... ok
+test builtins::builtins_test::list_member_rejects_non_var_object ... ok
+test builtins::builtins_test::list_last_returns_last_member ... ok
+test builtins::builtins_test::list_member_at_returns_indexed_value ... ok
+test builtins::builtins_test::log_equal_to_holds_for_equal_numbers ... ok
+test builtins::builtins_test::evaluate_dispatches_sum_same_as_direct_call ... ok
+test builtins::builtins_test::list_member_at_rejects_out_of_range_index ... ok
+test builtins::builtins_test::list_member_generates_each_value ... ok
+test builtins::builtins_test::list_rest_drops_first_member ... ok
+test builtins::builtins_test::log_equal_to_rejects_unequal_numbers ... ok
+test builtins::builtins_test::log_not_equal_to_holds_for_unequal_numbers ... ok
+test builtins::builtins_test::log_not_equal_to_rejects_equal_numbers ... ok
+test builtins::builtins_test::list_reverse_reverses_members ... ok
+test builtins::builtins_test::list_unique_dedupes_preserving_order ... ok
+test builtins::builtins_test::math_equal_to_holds ... ok
+test builtins::builtins_test::math_difference_computes_result ... ok
+test builtins::builtins_test::math_greater_than_rejects_wrong_direction ... ok
+test builtins::builtins_test::math_equal_to_rejects_unequal ... ok
+test builtins::builtins_test::math_difference_rejects_wrong_arity ... ok
+test builtins::builtins_test::list_sort_orders_numerically ... ok
+test builtins::builtins_test::math_greater_than_holds ... ok
+test builtins::builtins_test::list_iterate_generates_index_item_pairs ... ok
+test builtins::builtins_test::list_append_concatenates_lists ... ok
+test builtins::builtins_test::math_greater_than_rejects_non_numeric_operand ... ok
+test builtins::builtins_test::math_not_less_than_holds_for_equal ... ok
+test builtins::builtins_test::math_less_than_holds ... ok
+test builtins::builtins_test::list_remove_drops_matching_items ... ok
+test builtins::builtins_test::math_sum_rejects_non_list_subject ... ok
+test backwardchaining::backwardchaining_test::test_prove_rejects_ground_goal_whose_body_constraint_is_actually_false ... ok
+test builtins::builtins_test::math_remainder_computes_result ... ok
+test builtins::builtins_test::math_quotient_rejects_division_by_zero ... ok
+test builtins::builtins_test::math_not_greater_than_holds_for_equal ... ok
+test builtins::builtins_test::string_less_than_holds ... ok
+test builtins::builtins_test::string_length_counts_chars ... ok
+test builtins::builtins_test::string_length_rejects_non_var_object ... ok
+test builtins::builtins_test::math_sum_computes_total ... ok
+test builtins::builtins_test::math_remainder_rejects_division_by_zero ... ok
+test builtins::builtins_test::string_concat_rejects_non_list_subject ... ok
+test encoding::test_encoding ... ok
+test builtins::builtins_test::string_concat_joins_members ... ok
+test builtins::builtins_test::math_product_computes_total ... ok
+test encoding::test_encoder_literal_vs_iri_distinct ... ok
+test imars_reasoner::test_integration ... ignored
+test imars_reasoner::test_transitive ... ignored
+test builtins::builtins_test::string_less_than_rejects_wrong_order ... ok
+test builtins::builtins_test::classify_recognizes_all_procedural_builtins ... ok
+test imars_window::imars_window_test::test_consumer ... ok
+test builtins::builtins_test::math_quotient_computes_result ... ok
+test imars_window::imars_window_test::test_add_to_window ... ok
+test imars_window::imars_window_test::test_delete ... ok
+test imars_window::imars_window_test::test_new_window ... ok
+test imars_window::imars_window_test::test_get_timestamp ... ok
+test backwardchaining::backwardchaining_test::test_eval_backward_rule ... ok
+test encoding::test_literal_datatype_and_langtag_preserved ... ok
+test imars_window::imars_window_test::test_update ... ok
+test imars_window::imars_window_test::test_window_bound_calculation ... ok
+test imars_window::imars_window_test::test_window_shift ... ok
+test lib_test::test_datalog_safety_check_rejects_unsafe_rule ... ok
+test csprite::csprite_test::test_rewrite_hierarchy_csprite ... ok
+test lib_test::test_datalog_safe_rule_stratification ... ok
+test lib_test::test_n3_rules_forward_chaining ... ok
+test lib_test::test_join_rule ... ok
+test lib_test::test_no_var_query ... ok
+test lib_test::test_incomplete_rule_match ... ok
+test backwardchaining::backwardchaining_test::test ... ok
+test csprite::csprite_test::test_csprite_cycles_terminate ... ok
+test lib_test::test_multiple_rule ... ok
+test lib_test::test_long_join_rule ... ok
+test lib_test::test_store ... ok
+test lib_test::test_parse ... ok
+test observer::test_observer ... ok
+test lib_test::test_single_rule ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_empty_rule ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_blank_node_in_body ... ok
+test lib_test::test_triplestore_validate_shex ... ok
+test lib_test::test_shacl_report_to_triples ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_multi_head_rule ... ok
+test lib_test::test_shacl_conforms ... ok
+test lib_test::test_shacl_min_count_violation ... ok
+test lib_test::test_shacl_node_constraint_violation ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_prefixes ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_comment ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_string_literal_in_object ... ok
+test parser::test::test_empty_abox_parsing ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_multiple_spaces ... ok
+test parser::test::test_error_abox_parsing ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_rule_with_a_syntactic_sugar ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_tp ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_rules_ending_with_dot ... ok
+test reasoner::reasoner_test::test_reconstruct_from_bindings ... ignored
+test parser::test::test_syntactic_sugar_rdf_type ... ok
+test rsp::r2s::r2s_test::test_dstream ... ok
+test parser::n3rule_parser::n3rule_parser_test::parse_multiple_rules ... ok
+test rsp::r2s::r2s_test::test_istream ... ok
+test parser::test::test_white_space_in_rules ... ok
+test rsp::rsp_test::rsp_integration ... ignored
+test parser::n3rule_parser::n3rule_parser_test::parse_negated_body_literal ... ok
+test rsp::r2s::r2s_test::test_rstream ... ok
+test rsp::rsp_test::rsp_transitive_testp ... ignored
+test rsp::rsp_test::test_load_from_file ... ignored
+test rsp::rsp_test::test_static_abox ... ignored
+test backwardchaining::backwardchaining_test::test_solve_peano_variable_goal ... ok
+test rsp::s2r::s2r_test::test_window_with_call_back ... ok
+test lib_test::test_shacl_node_constraint_conforms ... ok
+test reasoner::reasoner_test::test_rule_substitution ... ok
+test sparql::sparql_test::test_filter_greater_than ... ok
+test sparql::sparql_test::test_filter_greater_than_or_equal ... ok
+test sparql::sparql_test::test_filter_less_than ... ok
+test sparql::sparql_test::test_group_by_count_aggregation ... ok
+test parser::test::test_parsing ... ok
+test term::term_test::test_literal_term_roundtrip ... ok
+test time_window::test_add_to_window ... ok
+test term::term_test::test_blank_node_term_encoding ... ok
+test time_window::test_consumer ... ok
+test time_window::test_delete ... ok
+test time_window::test_new_window ... ok
+test time_window::test_update ... ok
+test time_window::test_window_bound_calculation ... ok
+test time_window::test_window_shift ... ok
+test dred::test::test ... ok
+test tripleindex::tripleindex_test::test_iterator ... ok
+test sparql::sparql_test::test_group_by_count_aggregation_multiple_group ... ok
+test sparql::sparql_test::test_syntactic_sugar_rdf_type ... ok
+test tripleindex::tripleindex_test::test_query_fact ... ok
+test sparql::sparql_test::test_group_by_sum_aggregation ... ok
+test service_composition::service_composition_test::test_eval_backward_rule ... ok
+test utils::test::test_remove_literal_tages ... ok
+test tripleindex::tripleindex_test::test_quad_filter ... ok
+test tripleindex::tripleindex_test::test_remove ... ok
+test tripleindex::tripleindex_test::test_quad_query ... ok
+test tripleindex::tripleindex_test::test_same_triple_in_multiple_graphs_query ... ok
+test csprite::csprite_test::test_sprite_compute ... ok
+test csprite::csprite_test::test_sprite_compute_hierarchy ... ok
+test service_composition::service_composition_test::test_eval_forward_rule ... ok
+test pipeline::test_transitive ... ok
+test lib_test::test_hierarchy ... ok
+test pipeline::test_compute_diff ... ok
+test lib_test::test_transitive_rule ... ok
+test lib_test::test_rdf_hierarchy ... ok
+test rsp::s2r::s2r_test::test_window ... ok
+
+test result: ok. 147 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 1.02s
+
+     Running tests/datalog_challenger.rs (target/debug/deps/datalog_challenger-063046dc80e17526)
+
+running 5 tests
+test test_empty_relations_aggregation ... ok
+test test_unbound_aggregate_source_var ... ok
+test test_empty_relations_negation ... ok
+test test_aggregate_skips_non_numeric_source_values ... ok
+test test_boundary_numeric_inputs_aggregation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/datalog_conformance.rs (target/debug/deps/datalog_conformance-a46d9b349511c15d)
+
+running 13 tests
+test safe_unsafe_rejection::test_unsafe_unbound_head_var_rejected ... ok
+test safe_unsafe_rejection::test_safe_rule_accepted ... ok
+test safe_unsafe_rejection::test_unsafe_unbound_negated_var_rejected ... ok
+test negation_cycle::test_negation_cycle_rejected ... ok
+test aggregations::test_aggregate_count ... ok
+test mutual_recursion::test_mutual_recursion_fixpoint ... ok
+test aggregations::test_aggregate_avg ... ok
+test negation_stratum::test_negation_across_stratum_boundary ... ok
+test aggregations::test_aggregate_sum ... ok
+test aggregations::test_aggregate_count_multi_variable_group_by ... ok
+test aggregations::test_aggregate_min_max ... ok
+test aggregations::test_aggregate_recursive ... ok
+test test_datalog_conformance ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/datalog_impossible.rs (target/debug/deps/datalog_impossible-5c148e7cd54fd785)
+
+running 2 tests
+test test_unsafe_negation_wholly_unbound_variable_rejected ... ok
+test test_shortest_self_negation_cycle_rejected ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/datalog_negation.rs (target/debug/deps/datalog_negation-272bd309a15331b8)
+
+running 10 tests
+test test_rule_safety_check_rejects_unbound_negated_var ... ok
+test test_negation_unbound_vars_rejected ... ok
+test test_unstratifiable_rules_rejected ... ok
+test test_empty_body_rule ... ok
+test test_negation_empty_relations ... ok
+test test_long_unstratifiable_cycle_rejected ... ok
+test test_stratified_negation_basic ... ok
+test test_union_semantics_multiple_rules_same_head ... ok
+test test_three_layer_stratification_chain ... ok
+test test_fixpoint_terminates_on_recursive_ruleset ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/datalog_stratification_fuzz.rs (target/debug/deps/datalog_stratification_fuzz-b62c4fd12bc69135)
+
+running 1 test
+test nk_stratification_fuzz ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/datalog_stress.rs (target/debug/deps/datalog_stress-ba33f8d951a31d27)
+
+running 6 tests
+test test_multiple_disjoint_cycles_rejected ... ok
+test test_diamond_reconvergence_rejected ... ok
+test test_stratified_negation_over_aggregate_derived_predicate ... ok
+test test_deep_stratification_chain_with_far_cycle_rejected ... ok
+test test_deep_stratification_chain_20_layers ... ok
+test test_large_scale_grouped_aggregation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/n3_builtin_adversarial.rs (target/debug/deps/n3_builtin_adversarial-5db5ff7a9e3fad82)
+
+running 31 tests
+test math_greater_than_rejects_non_numeric_literal ... ok
+test log_bound_on_genuinely_unbound_variable_never_fires ... ok
+test log_bound_on_a_bound_variable_fires ... ok
+test math_sum_rejects_non_numeric_list_member ... ok
+test list_length_of_empty_list_is_zero ... ok
+test list_rest_of_single_element_list_is_empty ... ok
+test math_logarithm_of_zero_yields_neg_infinity_literal_not_a_crash ... ok
+test math_logarithm_of_negative_yields_nan_literal_not_a_crash ... ok
+test log_equal_to_numeric_literals_different_lexical_same_value_are_equal ... ok
+test list_first_and_last_of_single_element_list_are_the_same_element ... ok
+test log_equal_to_same_iri_is_equal ... ok
+test list_first_and_last_of_empty_list_do_not_derive ... ok
+test log_equal_to_literal_vs_blank_node_are_not_equal ... ok
+test log_equal_to_literal_vs_iri_are_not_equal ... ok
+test log_equal_to_iri_vs_blank_node_are_not_equal ... ok
+test string_length_of_empty_string_is_zero ... ok
+test string_matches_invalid_regex_fails_closed_no_panic ... ok
+test string_concat_preserves_unicode ... ok
+test string_not_matches_invalid_regex_fails_closed_no_panic ... ok
+test string_contains_ignoring_case_boundary ... ok
+test prop_string_length_counts_unicode_chars_not_bytes ... ok
+test prop_string_matches_empty_pattern_always_matches ... ok
+test prop_math_remainder_by_zero_never_derives ... ok
+test prop_math_quotient_by_zero_never_derives ... ok
+test prop_list_member_at_out_of_range_never_derives ... ok
+test prop_list_member_at_negative_index_never_derives ... ok
+test prop_math_quotient_exact_value ... ok
+test prop_math_sum_near_i64_boundary_exact_value ... ok
+test prop_list_member_at_in_range_exact_value ... ok
+test prop_string_equal_ignoring_case_boundary ... ok
+test prop_list_nested_three_levels_length_and_first ... ok
+
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.68s
+
+     Running tests/n3_builtin_combinatorics.rs (target/debug/deps/n3_builtin_combinatorics-d844623efee153c6)
+
+running 2 tests
+test prop_list_in_and_math_greater_than_combined ... ok
+test prop_three_builtins_combined_in_one_rule ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/n3_builtin_coverage.rs (target/debug/deps/n3_builtin_coverage-4b8390568a6dacf7)
+
+running 2 tests
+test reasoner_level_builtins_are_classified ... ok
+test all_target_builtins_are_classified ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_builtins.rs (target/debug/deps/n3_builtins-4ff13870436d83b2)
+
+running 12 tests
+test test_list_builtin_length ... ok
+test test_math_builtin_greater_than ... ok
+test test_string_builtin_length ... ok
+test test_list_builtin_in ... ok
+test test_string_builtin_concat ... ok
+test test_log_builtin_implies ... ok
+test test_math_builtin_sum ... ok
+test test_log_builtin_equal_to ... ok
+test test_log_builtin_not_equal_to ... ok
+test test_math_builtins_comparison_constraints ... ok
+test test_list_builtin_append ... ok
+test test_math_builtins_difference_product_quotient_remainder ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_conformance/main.rs (target/debug/deps/n3_conformance-ae2b4b6a36bc31dd)
+
+running 1 test
+test test_n3_conformance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/n3_implies_fuzz.rs (target/debug/deps/n3_implies_fuzz-618ed3d4b75cce1c)
+
+running 3 tests
+test test_log_implies_zero_antecedent_matches_derives_nothing ... ok
+test test_log_implies_antecedent_only_variable_does_not_leak ... ok
+test prop_log_implies_derives_exactly_matching_antecedent_count ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/n3_impossible.rs (target/debug/deps/n3_impossible-4ccd1713e3f2877e)
+
+running 4 tests
+test test_tautological_rule_terminates_and_adds_nothing_new ... ok
+test test_liar_style_contradictory_log_implies_terminates_with_both_facts ... ok
+test prop_self_greater_than_never_fires ... ok
+test prop_equal_and_not_equal_same_pair_never_fires ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/n3_literal_as_subject.rs (target/debug/deps/n3_literal_as_subject-795defab642094ca)
+
+running 2 tests
+test bare_literal_as_subject_parses_and_is_stored ... ok
+test literal_subject_inside_a_rule_body_parses ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_new_builtins.rs (target/debug/deps/n3_new_builtins-0f5b44c7df4992b4)
+
+running 3 tests
+test list_first_rest_cons ... ok
+test math_not_equal_to ... ok
+test list_not_member ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_parser.rs (target/debug/deps/n3_parser-a881603ef33f7efa)
+
+running 9 tests
+test test_parse_error_returns_result_not_panic ... ok
+test test_parse_blank_nodes ... ok
+test test_parse_comments_ignored ... ok
+test test_parse_backward_implication ... ok
+test test_parse_quantifiers ... ok
+test test_parse_quoted_graphs ... ok
+test test_parse_lists ... ok
+test test_parse_literal_terms ... ok
+test test_parse_multi_triple_head ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_parser_roundtrip_fuzz.rs (target/debug/deps/n3_parser_roundtrip_fuzz-b2ea7f6239555a2f)
+
+running 2 tests
+test escape_sequences_decode_to_expected_strings ... ok
+test prop_parser_roundtrip_preserves_exact_fact_set ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/n3_scoping.rs (target/debug/deps/n3_scoping-043898bbd9773195)
+
+running 9 tests
+test test_forsome_skolemizes_to_same_blank_node_within_one_scope ... ok
+test test_nested_quoted_formula_does_not_leak_into_facts ... ok
+test test_forall_declared_inside_rule_antecedent_braces_parses_and_scopes ... ok
+test test_forsome_skolems_are_fresh_across_independent_documents ... ok
+test test_forall_in_sibling_formulas_does_not_collide ... ok
+test test_chained_implication_across_two_distinct_rules ... ok
+test test_chained_implication_through_log_implies_then_ordinary_rule ... ok
+test test_chained_log_implies_through_two_independent_implies_rules ... ok
+test test_two_independent_log_implies_literals_in_one_rule_body ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/n3_stress.rs (target/debug/deps/n3_stress-e73bf6c4564c56d5)
+
+running 2 tests
+test test_deep_taxonomy_chain_broken_link_stops_propagation ... ok
+test test_deep_taxonomy_chain_200_levels ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.11s
+
+     Running tests/n3_unsupported_builtin_guard.rs (target/debug/deps/n3_unsupported_builtin_guard-e56bb3ff83f38420)
+
+running 2 tests
+test ordinary_unmatched_predicate_does_not_panic ... ok
+test exotic_builtin_predicate_panics_instead_of_silently_failing ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/oxrdf_adapter.rs (target/debug/deps/oxrdf_adapter-57f2e68eb5f6053d)
+
+running 7 tests
+test test_triple_index_to_oxrdf_graph_roundtrip ... ok
+test test_blank_node_identity_preserved ... ok
+test test_literal_lang_roundtrip_equality ... ok
+test test_simple_literal_roundtrip_equality ... ok
+test test_literal_datatype_langtag_preserved_across_adapter ... ok
+test test_xsd_decimal_boolean_date_roundtrip_equality ... ok
+test test_oxrdf_adapter_robustness ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/shacl_conformance/main.rs (target/debug/deps/shacl_conformance-6546d412ab7e1edb)
+
+running 1 test
+test w3c_runner::test_w3c_core_constraint_component_suite ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/shacl_impossible.rs (target/debug/deps/shacl_impossible-e748086f4e2a1536)
+
+running 13 tests
+test test_class_and_not_class_direct_self_negation_never_conforms ... ok
+test test_languagein_and_integer_datatype_never_conforms ... ok
+test test_hasvalue_outside_in_list_never_conforms ... ok
+test test_qualified_mincount_exceeds_maxcount_never_conforms ... ok
+test test_xone_over_coextensive_shapes_never_conforms ... ok
+test prop_conflicting_sibling_nodekinds_never_conforms ... ok
+test prop_conflicting_sibling_datatypes_never_conforms ... ok
+test prop_empty_numeric_range_never_conforms ... ok
+test prop_mincount_one_maxcount_zero_never_conforms ... ok
+test prop_empty_in_list_with_mincount_never_conforms ... ok
+test prop_equals_and_disjoint_same_path_never_conforms ... ok
+test prop_mincount_exceeds_maxcount_never_conforms ... ok
+test prop_lessthan_and_equals_same_path_never_conforms ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.57s
+
+     Running tests/shacl_nk_study.rs (target/debug/deps/shacl_nk_study-29be8d3c8131026b)
+
+running 2 tests
+test nk_study_k3_k4_sampled ... ok
+test nk_study_k2_exhaustive ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/shacl_sparql_stress.rs (target/debug/deps/shacl_sparql_stress-a26e8a6c601644e7)
+
+running 2 tests
+test test_sparql_target_unions_with_target_class ... ok
+test test_sparql_constraint_combined_with_ordinary_constraints ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/shacl_stress.rs (target/debug/deps/shacl_stress-d799677518fccba2)
+
+running 7 tests
+test test_counterfactual_not_of_unsatisfiable_always_conforms ... ok
+test test_datetime_timezone_mismatch_is_indeterminate_and_violates ... ok
+test test_three_level_nested_property_shape ... ok
+test test_counterfactual_xone_rejects_multiple_matches ... ok
+test test_counterfactual_contradictory_and_never_conforms ... ok
+test test_counterfactual_numeric_range_exact_boundary ... ok
+test test_large_scale_validation_1000_focus_nodes ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/shacl_validation.rs (target/debug/deps/shacl_validation-79954ad45e330f00)
+
+running 15 tests
+test test_invalid_turtle_shapes ... ok
+test test_conforms_true_for_valid_graph ... ok
+test test_severity_and_datatype ... ok
+test test_message_prefers_english_when_no_plain_literal ... ok
+test test_datatype_constraint_pass_fail ... ok
+test test_sparql_ask_constraint ... ok
+test test_empty_dataset ... ok
+test test_sparql_select_constraint ... ok
+test test_message_prefers_plain_literal_over_language_tagged ... ok
+test test_min_max_count_violation ... ok
+test test_sparql_target ... ok
+test test_class_constraint ... ok
+test test_recursive_shapes ... ok
+test test_and_or_not_logical_constraints ... ok
+test test_property_paths_comprehensive ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/shex_conformance/main.rs (target/debug/deps/shex_conformance-2f2b056890bbd0ce)
+
+running 2 tests
+test test_shex_conformance ... ok
+test test_w3c_shex_conformance_suite ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/shex_impossible.rs (target/debug/deps/shex_impossible-20a3adb7dd666bd3)
+
+running 3 tests
+test test_closed_extra_naming_required_predicate_is_redundant_not_contradictory ... ok
+test prop_empty_length_range_never_conforms ... ok
+test prop_shapeand_conflicting_datatypes_never_conforms ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/shex_stress.rs (target/debug/deps/shex_stress-4f8b1f8c6860d479)
+
+running 6 tests
+test test_counterfactual_length_facet_exact_boundary ... ok
+test test_counterfactual_closed_extra_allowlist_is_specific ... ok
+test test_counterfactual_numeric_range_exact_boundary ... ok
+test test_shex_validates_decimal_boolean_date_datatypes ... ok
+test test_shape_or_and_not_combinators_counterfactual ... ok
+test test_large_scale_shex_validation_1000_nodes ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/shex_validation.rs (target/debug/deps/shex_validation-70de58ea8457d680)
+
+running 34 tests
+test test_empty_and_invalid_schema ... ok
+test test_empty_shape_map ... ok
+test test_empty_graph ... ok
+test test_blank_node_as_focus_node ... ok
+test test_node_kind_bnode ... ok
+test test_boolean_typed_literal ... ok
+test test_iri_stem_value_set ... ok
+test test_blank_node_as_triple_constraint_value ... ok
+test test_node_kind_iri ... ok
+test test_node_kind_nonliteral ... ok
+test test_language_tagged_literal_values ... ok
+test test_shape_map_failures_and_nonexistent_shape ... ok
+test test_cardinality_on_triple_constraint ... ok
+test test_node_constraint_datatype ... ok
+test test_decimal_typed_literal ... ok
+test test_stress_empty_and_invalid_inputs ... ok
+test test_closed_shape_with_extra ... ok
+test test_shape_ref_recursive ... ok
+test test_shape_map_pass_fail ... ok
+test test_numeric_inclusive_facets ... ok
+test test_stress_shape_map_failures ... ok
+test test_stress_missing_properties ... ok
+test test_each_of_shape ... ok
+test test_stress_nested_recursive_shapes ... ok
+test test_shape_or ... ok
+test test_shape_and ... ok
+test test_shape_not ... ok
+test test_one_of_disjunction ... ok
+test test_value_set_iris ... ok
+test test_nested_recursive_references_stress ... ok
+test test_string_length_and_pattern_facets ... ok
+test test_stress_deeply_nested_recursion ... ok
+test test_extremely_long_string_datatype ... ok
+test test_stress_extremely_long_strings ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/shex_vocabulary_fuzz.rs (target/debug/deps/shex_vocabulary_fuzz-6166e8d695831ccb)
+
+running 6 tests
+test test_blank_node_and_lang_tagged_values_in_shex ... ok
+test prop_oneof_requires_exactly_one_alternative_conforms ... ok
+test prop_eachof_requires_all_alternatives ... ok
+test prop_iri_stem_constraint ... ok
+test prop_triple_constraint_cardinality_boundaries ... ok
+test prop_additional_xsd_datatypes_validate_correctly ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/shexc_parser.rs (target/debug/deps/shexc_parser-c0abcf5e991eabfe)
+
+running 10 tests
+test out_of_scope_semantic_action_returns_clear_error_not_panic ... ok
+test out_of_scope_triple_expr_label_returns_clear_error_not_panic ... ok
+test base_relative_iri_resolution ... ok
+test nested_and_or_not ... ok
+test extra_and_closed ... ok
+test prefix_and_base_resolution ... ok
+test value_set_with_stem_and_language_tag ... ok
+test end_to_end_validation_against_real_data ... ok
+test cardinality_shorthands ... ok
+test shexc_parser_matches_vendored_shexj_for_every_case_with_source ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sparql11_conformance/main.rs (target/debug/deps/sparql11_conformance-e308c9781e6df62e)
+
+running 1 test
+test test_w3c_sparql11_conformance ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests praxis_graphlaw
+
+running 3 tests
+test crates/praxis-graphlaw/src/imars_window.rs - imars_window::ImarsWindow (line 80) ... ok
+test crates/praxis-graphlaw/src/imars_window.rs - imars_window::ImarsWindow (line 56) ... ok
+test crates/praxis-graphlaw/src/imars_window.rs - imars_window::ImarsWindow (line 67) ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.75s
+

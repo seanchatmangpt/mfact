@@ -1,0 +1,21 @@
+Command Log:
+
+- Command: cargo bench -p praxis-graphlaw
+  Exit Code: 0
+  Duration: 456.67 seconds
+  Output File: bench_graphlaw.txt
+
+- Command: cargo bench
+  Exit Code: 0
+  Duration: 379.23 seconds
+  Output File: bench_root.txt
+
+- Command: cargo test -p praxis-graphlaw
+  Exit Code: 0
+  Duration: 11.06 seconds
+  Output File: test_graphlaw.txt
+
+- Command: cargo test -p ggen --test graphlaw_e2e
+  Exit Code: 0
+  Duration: 9.83 seconds
+  Output File: test_e2e.txt

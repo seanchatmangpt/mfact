@@ -1,4 +1,4 @@
-# BRIEFING — 2026-07-07T17:53:41-07:00
+# BRIEFING — 2026-07-07T18:03:10-07:00
 
 ## Mission
 Complete Ticket 015 including running checks/releases, running Standing Guard scan, writing receipt file, git commit and tag re-cut.
@@ -22,7 +22,7 @@ Complete Ticket 015 including running checks/releases, running Standing Guard sc
 
 ## Current Parent
 - Conversation ID: b04e2594-f8d0-4dbb-9932-eaa24feffe5c
-- Updated: not yet
+- Updated: yes (Ticket 015 completed)
 
 ## Task Summary
 - **What to build**: Ticket 015 receipt and verify system standing.
@@ -31,18 +31,19 @@ Complete Ticket 015 including running checks/releases, running Standing Guard sc
 - **Code layout**: /Users/sac/mfact/AGENTS.md
 
 ## Key Decisions Made
-- [TBD]
+- Modified `pylab/src/mpops/standing_guard/server.py` to fix an inverted arguments bug in the tag ancestry `--is-ancestor` check.
 
 ## Artifact Index
-- [TBD]
+- /Users/sac/mfact/pylab/docs/jira/26.7.7/tickets/ticket_015_receipt.md - Receipt for Ticket 015 reconciliation
+- /Users/sac/mfact/.agents/worker_m5/final_scan_results.json - Output from Standing Guard scan showing zero blockers
 
 ## Change Tracker
-- **Files modified**: None
-- **Build status**: TBD
+- **Files modified**: pylab/src/mpops/standing_guard/server.py, pylab/docs/jira/26.7.7/tickets/ticket_015_receipt.md
+- **Build status**: PASS
 - **Pending issues**: None
 
 ## Quality Status
-- **Build/test result**: TBD
+- **Build/test result**: PASS
 - **Lint status**: 0
 - **Tests added/modified**: None
 

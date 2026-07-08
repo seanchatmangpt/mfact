@@ -1,0 +1,41 @@
+builder = "ticket_018"
+experiment_id = "praxis_graphlaw"
+praxis_commit = "c745c14f646870eb148f3df090f7a8026801cef4"
+command_log_path = "rslab/experiments/praxis_graphlaw/raw/command_log.txt"
+command_log_hash = "8834e81ccaadbf787a34c642d7095719aeda9d549d65b0f6061a7495ad39f379"
+
+caveats = [
+    "Harness Diversity: The workspace uses multiple distinct benchmark frameworks (bencher, divan, criterion) simultaneously; comparison of raw performance metrics across these harnesses is not directly supported.",
+    "No Profiling/Flamegraph Tooling: As of this exploration, no profiling or flamegraph tooling exists in the /Users/sac/praxis workspace. The profiler_result.schema.json is provided for future extensions and is currently unpopulated.",
+    "Terminology on Admission Control: 'Transaction-path admission control' is not an existing named class or interface inside the praxis codebase. The nearest structural representations are SHACL/ShEx admission gates and the POWL admission context (bcinr_powl::admit::{admit, AdmissionContext}). Any paper language referring to 'transaction-path admission control' must frame it as a future design objective rather than an implemented feature.",
+    "Warnings: Compile profile warning (non-root package profiles ignored, panic setting ignored for bench profile) and unused code or missing docs warnings in ggen lib.",
+]
+
+[toolchain]
+rustc_version = "rustc 1.97.0-nightly (a5c825cd8 2026-04-14)"
+toolchain_pin = "nightly-2026-04-15"
+os = "Darwin Mac.lan 25.2.0 Darwin Kernel Version 25.2.0: Tue Nov 18 21:09:41 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T6031 arm64"
+
+[evidence]
+declared = true
+extracted = true
+
+[[files]]
+path = "rslab/experiments/praxis_graphlaw/raw/bench_graphlaw.txt"
+hash = "49ff3f0c76e9038a57c3b1ddf9afa7886583b055eee752205c54ec5654e285e8"
+
+[[files]]
+path = "rslab/experiments/praxis_graphlaw/raw/bench_root.txt"
+hash = "86904ca80838652c64e0fa37fd7eeade108c12a580bf9574489af36fe18296cd"
+
+[[files]]
+path = "rslab/experiments/praxis_graphlaw/raw/test_graphlaw.txt"
+hash = "1e3dd1b0cdf859d6b96fa9ca70fc507a91b7e64c2f6d6872cfd578ba9faa20ea"
+
+[[files]]
+path = "rslab/experiments/praxis_graphlaw/raw/test_e2e.txt"
+hash = "fb1b7e734473a10fe6bdb41037ad5b8c13ad9be00f4d79510aca3cfd1cd374e9"
+
+[[files]]
+path = "rslab/experiments/praxis_graphlaw/raw/toolchain_context.txt"
+hash = "77cd70729e4aee0f36ee3f5015f9f5043f3543bc5a23435ac7fe1034fb508c61"
