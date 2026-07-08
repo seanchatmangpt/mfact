@@ -128,7 +128,7 @@ quadrature-negative-controls:
 # Package the paper for arXiv (no submission).
 [group('paper')]
 arxiv-package:
-    cd paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && COPYFILE_DISABLE=1 tar czf arxiv-submission.tar.gz -C .. README_REPRODUCIBILITY.md -C .. rslab/paper_fragments/rslab_praxis_graphlaw_summary.tex -C .. rslab/paper_fragments/rslab_praxis_graphlaw_benchmarks.tex -C .. rslab/paper_fragments/rslab_praxis_graphlaw_profiles.tex -C .. rslab/paper_fragments/rslab_readiness.tex -C paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex publication_status.tex replay_status.tex
+    cd paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && COPYFILE_DISABLE=1 tar czf arxiv-submission.tar.gz -C .. README_REPRODUCIBILITY.md rslab/paper_fragments/rslab_praxis_graphlaw_summary.tex rslab/paper_fragments/rslab_praxis_graphlaw_benchmarks.tex rslab/paper_fragments/rslab_praxis_graphlaw_profiles.tex rslab/paper_fragments/rslab_readiness.tex -C paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex publication_status.tex replay_status.tex
     @tar tzf paper/arxiv-submission.tar.gz
 
 # Collect and render rslab benchmark paper fragments.

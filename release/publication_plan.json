@@ -21,7 +21,7 @@
       "requires": [
         {"name": "repo_clean", "met": false},
         {"name": "tag_exists", "met": true},
-        {"name": "tag_descends_from_rendered_commit", "met": true},
+        {"name": "tag_descends_from_rendered_commit", "met": false},
         {"name": "standin_has_release_tag", "met": false},
         {"name": "user_actuation", "met": false}
       ]

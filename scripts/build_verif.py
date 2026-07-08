@@ -91,6 +91,9 @@ def lake_build_ok(pkg_dir):
     r = subprocess.run([LAKE, 'build'], cwd=pkg_dir, capture_output=True)
     detail = (r.stdout.decode() + r.stderr.decode())[-2000:]
     detail = re.sub(r'\[\d+/\d+\]', '[XX/XX]', detail)
+    lines = detail.splitlines()
+    filtered = [line for line in lines if not ('Built ' in line or '✔' in line)]
+    detail = '\n'.join(filtered) + '\n' if filtered else ''
     return r.returncode == 0, detail
 
 

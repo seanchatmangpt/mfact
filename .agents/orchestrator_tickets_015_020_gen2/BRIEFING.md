@@ -50,12 +50,14 @@ Freeze certified state, reconcile governance, restructure paper, build the rslab
 ## Team Roster
 | Agent | Type | Work Item | Status | Conv ID |
 |-------|------|-----------|--------|---------|
-| R0 Explorer | teamwork_preview_explorer | Investigate baseline repository state | in-progress | 247eb2c0-464c-446b-b429-e001f4a5cc31 |
+| R0 Explorer | teamwork_preview_explorer | Investigate baseline repository state | completed | 247eb2c0-464c-446b-b429-e001f4a5cc31 |
+| Verification Worker | teamwork_preview_worker | Verify R0 and Ticket 019 milestones | completed | 5522819b-dc41-4e96-9482-ff12b2dc1343 |
+| Finalization Worker | teamwork_preview_worker | Finalize Ticket 020 and re-cut tag | in-progress | 7620eba7-adf6-4379-a61d-7e057271a743 |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 0 / 16
-- Pending subagents: none
+- Spawn count: 3 / 16
+- Pending subagents: 7620eba7-adf6-4379-a61d-7e057271a743
 - Predecessor: none
 - Successor: not yet spawned
 

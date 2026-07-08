@@ -609,14 +609,42 @@ cannot fail certifies nothing.
 \section{praxis-graphlaw: Executable Law-State Evaluation}
 \label{sec:praxis-graphlaw}
 
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+The \textsf{praxis-graphlaw} engine (version v26.7.5) is an executable law-state engine that evaluates the operational conformance of transition systems and process models. Rather than operating as a custom verification engine built from scratch, \textsf{praxis-graphlaw} is a derivative work extending the RDF/N3 reasoner \textsf{roxi} (originally developed by Bonte et al.). It is integrated into the generation and validation lifecycle of \textsf{ggen} through the \texttt{GraphEngine} abstraction boundary, specifically concrete implementations of the \texttt{GraphLawStore}.
+
+The engine models law-states directly as Resource Description Framework (RDF) triple graphs, using Turtle (.ttl) format serialization. Operational logic and state transitions are defined using Notation3 (N3) rules and stratified Datalog, allowing for deterministic materialization, solution generation, and query evaluation via the reasoner's \texttt{materialize}, \texttt{prove}, and \texttt{solve} interfaces.
+
+State conformance and safety properties are enforced via W3C SHACL (Shapes Constraint Language) and ShEx (Shape Expressions) constraint schemas, which operate as executable transaction-path admission gates. The engine exposes these gates via the \texttt{validate\_shacl} and \texttt{validate\_shex} functions. Safety violations and negative conditions are captured as N3 logical denials of the form \texttt{\{ body \} => false.}, where any deduction of falsity immediately triggers a transaction refusal.
+
+At the integration layer with \textsf{ggen}, graphlaw's validation results are translated into a structured, typed refusal vocabulary ranging from \texttt{FM-LAW-001} through \texttt{FM-LAW-013}. For example, an N3 logical denial violation produces an \texttt{FM-LAW-011} refusal, while a SHACL shapes non-conformance results in an \texttt{FM-LAW-013} refusal. This structured failure reporting constitutes an independent, executable instance of the MathProofOps law-state pattern.
+
+Fast evaluation is a critical design requirement for these gates, as they sit directly on the transaction-path execution loop of the process engine. High latency during validation would directly degrade transaction throughput. While the primary objective is low latency, we measure and record these performance characteristics empirically in Section~\ref{sec:rslab_benchmark} to verify that the overhead of validation remains within acceptable limits.
 
 \section{rslab: Empirical Evidence Rail}
 \label{sec:rslab}
 
-rslab is not a proof engine. rslab is an empirical evidence rail.
+The \textsf{rslab} framework acts as the empirical evidence rail for MathProofOps. It sits in parallel with the formal proof and correspondence rails, ensuring that measured performance and test execution data are receipted and ledgered deterministically. The governance of this rail is defined by the following doctrine:
 
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+\begin{quote}
+\itshape
+praxis executes. \\
+rslab measures and receipts. \\
+mfact admits formal standing. \\
+paper renders admitted/receipted claims.
+
+rslab is not a proof engine. \\
+rslab is an empirical evidence rail.
+\end{quote}
+
+Within this rail, raw telemetry and outputs from execution are treated as unadmitted observations ($O$). Once these observations are processed by validation scripts, checked against JSON schemas, and bound to a cryptographic content receipt, they become schema-validated admitted observations ($O^*$). Downstream LaTeX paper fragments are then generated directly from these receipts to produce the final paper artifacts with standing ($A$).
+
+Every experiment is declared in the central experiment manifest (\texttt{rslab/manifest.toml}) using the status ladder pattern. Telemetry outputs are validated against JSON schemas, such as \texttt{benchmark\_result.schema.json}. The resulting TOML receipts mirror the metadata structure of \texttt{verif-receipt.json}, containing the execution builder, toolchain specifications (e.g. pinned compiler versions), git commits, and BLAKE3 hashes of raw captures. Crucially, in accordance with the determinism requirements, these receipts contain no wall-clock timestamps in their body.
+
+The fragment generation pipeline is strictly fail-closed: if the processed results file or the validating TOML receipt is missing or has a hash mismatch, the builder script exits non-zero with an \texttt{RSLAB\_EVIDENCE\_MISSING} refusal, halting the build rather than allowing blank or stale placeholders to be compiled.
+
+Currently, \textsf{rslab} defines a readiness contract capturing throughput and latency metrics for core graphlaw operations. However, profiling data is not available. This limitation is a direct reflection of the development environment: no profiling or flamegraph tooling exists in the \textsf{praxis} workspace. This absence is explicitly declared in the receipt caveats rather than silently ignored.
+
+We explicitly distinguish \textsf{rslab}'s role from formal verification. Where the correspondence rail (Section~\ref{sec:correspondence}) proves a bounded relationship between an implementation and admitted semantics, the \textsf{rslab} rail records what a system measurably does, without claiming that measurement constitutes proof of anything beyond itself.
+
 
 \section{Use of Generative AI Tools}
 \label{sec:ai-disclosure}
