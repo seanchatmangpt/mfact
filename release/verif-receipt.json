@@ -1,12 +1,12 @@
 {
   "builder": "scripts/build_verif.py",
-  "catalogHash": "11cdf6e3ca196868e675e5d04be08399f5a14851ed560bf3768183e869b74c9a",
+  "catalogHash": "af03ed8c91f4ded02c38b02c47d0b7489aa925a5fff09c686c607ed36c81591c",
   "catalogSource": "packs/lean-math-pack/fragments/verif.ttl",
   "leanToolchainProcint": "leanprover/lean4:v4.31.0",
   "leanToolchainVerify": "leanprover/lean4:v4.31.0",
   "obligations": [
     {
-      "aeneasDecl": "TBD",
+      "aeneasDecl": "ReplayCounts",
       "aeneasModule": "Wasm4pmVerify.Generated",
       "corrName": "token_replay_counts_corr",
       "corrOrder": 1,
@@ -14,9 +14,9 @@
         "axiomPrintOutput": "'Wasm4pmVerify.Corr.token_replay_counts_corr' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
         "declared": true,
         "extracted": true,
-        "lakeBuildDetail": "\u26a0 [1512/1554] Replayed Aeneas.Std.Slice\nwarning: Aeneas/Std/Slice.lean:363:4: declaration uses `sorry`\nwarning: Aeneas/Std/Slice.lean:586:8: declaration uses `sorry`\n\u26a0 [1591/1696] Replayed Aeneas.Std.StringIter\nwarning: Aeneas/Std/StringIter.lean:13:4: declaration uses `sorry`\nBuild completed successfully (8836 jobs).\n",
+        "lakeBuildDetail": "\u26a0 [1512/1614] Replayed Aeneas.Std.Slice\nwarning: Aeneas/Std/Slice.lean:363:4: declaration uses `sorry`\nwarning: Aeneas/Std/Slice.lean:586:8: declaration uses `sorry`\n\u26a0 [1591/1614] Replayed Aeneas.Std.StringIter\nwarning: Aeneas/Std/StringIter.lean:13:4: declaration uses `sorry`\nBuild completed successfully (8836 jobs).\n",
         "lakeBuildOk": true,
-        "pipelineJsonHash": "07e3e9fc58821e08c9c3538e9f17f49a5d3c1e89e78c071e3a89ec236aee3f91",
+        "pipelineJsonHash": "9f9b59113b4aa23cf574c2ff86c451accf2251e8378359a48653ef120bfd1e88",
         "proven": true,
         "stated": true
       },

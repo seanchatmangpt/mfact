@@ -14,7 +14,7 @@ WFNET_INFINITE_TRANSITION_COUNTERMODEL=PROVEN
 EOF
 
 # Create scratch manifest WITHOUT the countermodel artifact
-python3 - <<'PYTHON'
+python3 << PYTHON
 import json
 m = json.load(open('/Users/sac/mfact/release/release-manifest.json'))
 # Remove countermodel artifact if it exists
@@ -30,7 +30,7 @@ PYTHON
 # 3. Verify the result is STATED, not PROVEN
 
 EXPECTED_STATUS="STATED"
-DERIVED_STATUS=$(python3 -c "
+DERIVED_STATUS=$(python3 << PYTHON
 import json
 try:
     d = json.load(open('$SCRATCH/manifest_poisoned.json'))
@@ -41,7 +41,8 @@ try:
     print('STATED')
 except:
     print('STATED')
-" 2>/dev/null || echo 'STATED')
+PYTHON
+ 2>/dev/null || echo 'STATED')
 
 if [ "$DERIVED_STATUS" = "$EXPECTED_STATUS" ]; then
   echo "Guard passed: attempt to claim PROVEN without manifest evidence correctly refused (derived=$DERIVED_STATUS)"

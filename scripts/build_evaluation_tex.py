@@ -147,7 +147,7 @@ def main() -> None:
         text,
     )
     text = re.sub(
-        r"(BLAKE3, folded over all \d+ artifact hashes\s*\n?in name order, seed \\texttt\{\"mfact-v26\.7\.6-genesis\"\}\) is\s*\n?\\texttt\{)[0-9a-f.]+(\})",
+        r"(BLAKE3, folded over all \d+ artifact hashes\s*\n?in name order, seed \\texttt\{\"mfact-v26\.7\.\d+-genesis\"\}\) is\s*\n?\\texttt\{)[0-9a-f.]+(\})",
         rf"\g<1>{fold_prefix_short}...{fold_hash[-6:]}\g<2>",
         text,
     )

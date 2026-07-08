@@ -42,6 +42,12 @@ for path, producer, sources in [
      ['release/release-manifest.json', 'release/quadrature.env']),
     ('paper/correspondence_status.tex', 'scripts/build_verif.py',
      ['packs/lean-math-pack/fragments/verif.ttl', 'release/verif-receipt.json']),
+    ('release/verif-receipt.json', 'scripts/build_verif.py',
+     ['packs/lean-math-pack/fragments/verif.ttl']),
+    ('release/replay_report.json', 'scripts/independent_replay.sh',
+     ['release/release-manifest.json']),
+    ('release/docs_report.json', 'scripts/build_docs.sh',
+     ['release/release-manifest.json']),
 ]:
     lines += ['[[artifact]]', f'path = "{path}"', f'producer = "{producer}"',
               f'sources = {json.dumps(sources)}',
@@ -50,4 +56,4 @@ for path, producer, sources in [
 os.makedirs(os.path.join(ROOT, '.mfact'), exist_ok=True)
 out = os.path.join(ROOT, '.mfact/artifacts.toml')
 open(out, 'w').write('\n'.join(lines))
-print(f'{out}: {len(outputs) + 4} artifacts ledgered')
+print(f'{out}: {len(outputs) + 8} artifacts ledgered')

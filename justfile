@@ -62,6 +62,7 @@ install:
 [group('manufacture')]
 render:
     cat packs/lean-math-pack/fragments/*.ttl > packs/lean-math-pack/ontology.ttl
+    rm -f ggen.lock
     ggen sync run
 
 # Full build: procint package, then the mfact package (AxiomAudit + mfact lib).
@@ -138,6 +139,7 @@ standing:
 # The decisive lock: re-render every ledgered artifact from source and refuse on drift.
 [group('release')]
 regen-check:
+    python3 scripts/build_verif.py > /dev/null
     cat packs/lean-math-pack/fragments/*.ttl > packs/lean-math-pack/ontology.ttl
     python3 scripts/build_quadrature.py > /dev/null
     rm -f ggen.lock
@@ -151,10 +153,7 @@ regen-check:
 test:
     just _lake "cd procint && /Users/sac/.elan/bin/lake test"
     just _lake "cd procint && /Users/sac/.elan/bin/lake build AxiomAudit Quadrature"
-    grep -v "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=\|^WFNET_INFINITE_TRANSITION_COUNTERMODEL=" release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env
-    CROWN_STATUS=$(python3 -c "import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')" 2>/dev/null || echo 'STATED')
-    CM_STATUS=$(python3 -c "import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded']; print('STATED')" 2>/dev/null || echo 'STATED')
-    printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='$CROWN_STATUS'\nWFNET_INFINITE_TRANSITION_COUNTERMODEL='$CM_STATUS'\n' >> release/standing.env
+    bash -c "set -e; grep -v '^PROCINT_|^WFNET_CROWN_EQUIVALENCE=|^WFNET_INFINITE_TRANSITION_COUNTERMODEL=' release/standing.env > /tmp/se.$$ && mv /tmp/se.$$ release/standing.env; CROWN_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.sound_iff_shortCircuit_live_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); CM_STATUS=\$(python3 -c \"import json; d=json.load(open('release/release-manifest.json')); [print('PROVEN' if a.get('proven') else 'STATED') or exit(0) for a in d['artifacts'] if a.get('name') == 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded']; print('STATED')\" 2>/dev/null || echo 'STATED'); printf 'PROCINT_SEMANTIC_FIXTURES=PASS\nPROCINT_NEGATIVE_FIXTURES=PASS\nPROCINT_ORACLE_CASES=PASS\nPROCINT_AXIOM_AUDIT=PASS\nPROCINT_CROSS_SURFACE_CONFORMANCE=PASS\nWFNET_CROWN_EQUIVALENCE='\$CROWN_STATUS'\nWFNET_INFINITE_TRANSITION_COUNTERMODEL='\$CM_STATUS'\n' >> release/standing.env"
     @echo "correctness ladder: PASS (keys merged into standing.env)"
 
 # ── Agent cockpit (read-only diagnostics; nothing below dirties the tree) ──

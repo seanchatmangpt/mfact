@@ -111,8 +111,7 @@ procint:Decl_crownCounter_reaches_mid a procint:Decl ;
   procint:declOrder 5 ;
   procint:declName "ProcInt.crownCounter_reaches_mid" ;
   procint:declKind "theorem" ;
-  procint:status "proven" ;
-  procint:auditMsg "Reachability of intermediate marking after firing absorb transition" ;
+  procint:status "stated" ;
   procint:leanCode """/-- From initial marking, we reach an intermediate marking by firing absorb. -/
 lemma crownCounter_reaches_mid (n : ℕ) :
     ∃ M, crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M := by
@@ -124,8 +123,7 @@ procint:Decl_crownCounter_reaches_final a procint:Decl ;
   procint:declOrder 6 ;
   procint:declName "ProcInt.crownCounter_reaches_final" ;
   procint:declKind "theorem" ;
-  procint:status "proven" ;
-  procint:auditMsg "Option-to-complete property: from any reachable marking, final marking is reachable" ;
+  procint:status "stated" ;
   procint:leanCode """/-- Key reachability fact: from any reachable marking, we can reach the final marking. -/
 lemma crownCounter_reaches_final (M : Marking CrownCounterPlace) :
     crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M →
@@ -142,8 +140,7 @@ procint:Decl_crownCounter_sound a procint:Decl ;
   procint:declOrder 7 ;
   procint:declName "ProcInt.crownCounter_sound" ;
   procint:declKind "theorem" ;
-  procint:status "proven" ;
-  procint:auditMsg "Soundness of crown countermodel WF-net" ;
+  procint:status "stated" ;
   procint:leanCode """/-- The crown countermodel is sound: it satisfies all three soundness clauses. -/
 theorem crownCounter_sound : crownCounterWfNet.Sound := by
   sorry""" .
@@ -157,8 +154,7 @@ procint:Decl_crownCounter_not_bounded a procint:Decl ;
   procint:declOrder 8 ;
   procint:declName "ProcInt.crownCounter_not_bounded" ;
   procint:declKind "theorem" ;
-  procint:status "proven" ;
-  procint:auditMsg "The short-circuit of the crown countermodel is unbounded" ;
+  procint:status "stated" ;
   procint:leanCode """/-- For any bound k, we can reach a marking where the short-circuit violates boundedness. -/
 theorem crownCounter_not_bounded :
     ¬ ∃ k, crownCounterWfNet.shortCircuit.Bounded crownCounterWfNet.initialMarking k := by
@@ -194,12 +190,10 @@ procint:Decl_infinite_transition_countermodel a procint:Decl ;
   procint:declOrder 11 ;
   procint:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" ;
   procint:declKind "theorem" ;
-  procint:status "proven" ;
-  procint:auditMsg "Crown-jewel theorem counterexample: sound but unbounded net with infinite transitions. Proves [Finite T] is necessary for soundness-iff-(liveness-and-boundedness)." ;
+  procint:status "stated" ;
   procint:leanCode """/-- Main counterexample theorem:
     There exists a WfNet with infinite transitions that is sound
     but whose short-circuit is unbounded.
-
 This proves the crown-jewel theorem (soundness iff liveness + boundedness)
 requires [Finite T].
 -/

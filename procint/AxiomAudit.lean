@@ -369,9 +369,6 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.WfNet.finalMarking_source' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.finalMarking_source
 
-/-- info: Crown-jewel theorem counterexample: sound but unbounded net with infinite transitions. Proves [Finite T] is necessary for soundness-iff-(liveness-and-boundedness). -/
-#guard_msgs in #print axioms ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded
-
 /-- info: 'ProcInt.WfNet.initialMarking_ne_finalMarking' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.initialMarking_ne_finalMarking
 
@@ -482,18 +479,6 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.correlated_empty' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.correlated_empty
-
-/-- info: The short-circuit of the crown countermodel is unbounded -/
-#guard_msgs in #print axioms ProcInt.crownCounter_not_bounded
-
-/-- info: Option-to-complete property: from any reachable marking, final marking is reachable -/
-#guard_msgs in #print axioms ProcInt.crownCounter_reaches_final
-
-/-- info: Reachability of intermediate marking after firing absorb transition -/
-#guard_msgs in #print axioms ProcInt.crownCounter_reaches_mid
-
-/-- info: Soundness of crown countermodel WF-net -/
-#guard_msgs in #print axioms ProcInt.crownCounter_sound
 
 /-- info: 'ProcInt.deleted_terminal' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.deleted_terminal

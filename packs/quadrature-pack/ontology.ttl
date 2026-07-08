@@ -5,30 +5,30 @@
 # ggen renders; Lean admits; mfact certifies.
 
 quad:Result a quad:Results ;
-  quad:standingQuadrature "FAIL" ;
+  quad:standingQuadrature "PASS" ;
   quad:orphanTtlDecls 0 ;
   quad:orphanLeanDecls 0 ;
   quad:orphanPaperClaims 0 ;
-  quad:orphanManifestFields 5 ;
+  quad:orphanManifestFields 0 ;
   quad:orphanProcessEvents 0 ;
   quad:unsupportedEvaluationNumbers 0 ;
   quad:untracedArtifacts 0 ;
   quad:unclassifiedRefusals 0 ;
   quad:releaseId "v26.7.7" ;
-  quad:runId "e329ef7" ;
-  quad:ttlCount 202 ;
-  quad:leanCount 202 ;
+  quad:runId "350cb1d" ;
+  quad:ttlCount 197 ;
+  quad:leanCount 197 ;
   quad:manifestCount 197 ;
-  quad:auditCount 202 ;
+  quad:auditCount 197 ;
   quad:claimCount 5 ;
   quad:evalCount 6 ;
   quad:eventCount 10 ;
   quad:releaseTag "v26.7.7-procint-certified" ;
-  quad:foldHash "c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0" ;
+  quad:foldHash "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434" ;
   quad:sorryCount 0 ;
   quad:admitCount 0 ;
-  quad:statedCount 2 ;
-  quad:totalDecls 388 ;
+  quad:statedCount 7 ;
+  quad:totalDecls 397 ;
   quad:axiomAudit "PASS" ;
   quad:fixtures "PASS" ;
   quad:certified "PASS" ;
@@ -38,7 +38,7 @@ quad:Edge_ttl_to_lean a quad:EdgePair ;
   quad:pairKey "ttl_to_lean" ;
   quad:pairLabel "TTL to Lean" ;
   quad:pairLabelTex "TTL $\\rightarrow$ Lean" ;
-  quad:count 202 ;
+  quad:count 197 ;
   quad:result "PASS" ;
   quad:order 1 .
 
@@ -46,7 +46,7 @@ quad:Edge_lean_to_audit a quad:EdgePair ;
   quad:pairKey "lean_to_audit" ;
   quad:pairLabel "Lean to Audit" ;
   quad:pairLabelTex "Lean $\\rightarrow$ Audit" ;
-  quad:count 202 ;
+  quad:count 197 ;
   quad:result "PASS" ;
   quad:order 2 .
 
@@ -55,7 +55,7 @@ quad:Edge_audit_to_manifest a quad:EdgePair ;
   quad:pairLabel "Audit to Manifest" ;
   quad:pairLabelTex "Audit $\\rightarrow$ Manifest" ;
   quad:count 197 ;
-  quad:result "FAIL" ;
+  quad:result "PASS" ;
   quad:order 3 .
 
 quad:Edge_manifest_to_paper a quad:EdgePair ;
@@ -70,7 +70,7 @@ quad:Edge_artifact_to_process a quad:EdgePair ;
   quad:pairKey "artifact_to_process" ;
   quad:pairLabel "Artifact to Process Event" ;
   quad:pairLabelTex "Artifact $\\rightarrow$ Process Event" ;
-  quad:count 253 ;
+  quad:count 254 ;
   quad:result "PASS" ;
   quad:order 5 .
 
@@ -232,7 +232,6 @@ quad:T_ProcInt_WfNet_Sound_reaches_final a quad:TtlProvenDecl ; quad:declName "P
 quad:T_ProcInt_WfNet_bounded_of_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:T_ProcInt_WfNet_finalMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:T_ProcInt_WfNet_finalMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
-quad:T_ProcInt_WfNet_infinite_transition_countermodel_sound_not_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" .
 quad:T_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:T_ProcInt_WfNet_initialMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:T_ProcInt_WfNet_initialMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
@@ -270,10 +269,6 @@ quad:T_ProcInt_cell_subset_slice a quad:TtlProvenDecl ; quad:declName "ProcInt.c
 quad:T_ProcInt_combinedScore_uniform a quad:TtlProvenDecl ; quad:declName "ProcInt.combinedScore_uniform" .
 quad:T_ProcInt_correlated_cons a quad:TtlProvenDecl ; quad:declName "ProcInt.correlated_cons" .
 quad:T_ProcInt_correlated_empty a quad:TtlProvenDecl ; quad:declName "ProcInt.correlated_empty" .
-quad:T_ProcInt_crownCounter_not_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_not_bounded" .
-quad:T_ProcInt_crownCounter_reaches_final a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_final" .
-quad:T_ProcInt_crownCounter_reaches_mid a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_mid" .
-quad:T_ProcInt_crownCounter_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_sound" .
 quad:T_ProcInt_deleted_terminal a quad:TtlProvenDecl ; quad:declName "ProcInt.deleted_terminal" .
 quad:T_ProcInt_dependencyMeasure_antisymm a quad:TtlProvenDecl ; quad:declName "ProcInt.dependencyMeasure_antisymm" .
 quad:T_ProcInt_dependencyMeasure_lt_one a quad:TtlProvenDecl ; quad:declName "ProcInt.dependencyMeasure_lt_one" .
@@ -631,7 +626,6 @@ quad:A_ProcInt_WfNet_Sound_reaches_final a quad:AuditedDecl ; quad:declName "Pro
 quad:A_ProcInt_WfNet_bounded_of_sound a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:A_ProcInt_WfNet_finalMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:A_ProcInt_WfNet_finalMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
-quad:A_ProcInt_WfNet_infinite_transition_countermodel_sound_not_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" .
 quad:A_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:A_ProcInt_WfNet_initialMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:A_ProcInt_WfNet_initialMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
@@ -669,10 +663,6 @@ quad:A_ProcInt_cell_subset_slice a quad:AuditedDecl ; quad:declName "ProcInt.cel
 quad:A_ProcInt_combinedScore_uniform a quad:AuditedDecl ; quad:declName "ProcInt.combinedScore_uniform" .
 quad:A_ProcInt_correlated_cons a quad:AuditedDecl ; quad:declName "ProcInt.correlated_cons" .
 quad:A_ProcInt_correlated_empty a quad:AuditedDecl ; quad:declName "ProcInt.correlated_empty" .
-quad:A_ProcInt_crownCounter_not_bounded a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_not_bounded" .
-quad:A_ProcInt_crownCounter_reaches_final a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_reaches_final" .
-quad:A_ProcInt_crownCounter_reaches_mid a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_reaches_mid" .
-quad:A_ProcInt_crownCounter_sound a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_sound" .
 quad:A_ProcInt_deleted_terminal a quad:AuditedDecl ; quad:declName "ProcInt.deleted_terminal" .
 quad:A_ProcInt_dependencyMeasure_antisymm a quad:AuditedDecl ; quad:declName "ProcInt.dependencyMeasure_antisymm" .
 quad:A_ProcInt_dependencyMeasure_lt_one a quad:AuditedDecl ; quad:declName "ProcInt.dependencyMeasure_lt_one" .

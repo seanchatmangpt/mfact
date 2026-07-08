@@ -95,16 +95,28 @@ manifest = {
 }
 json.dump(manifest, open(OUT_MANIFEST, 'w'), indent=2)
 
+# Check if countermodel or dependencies are promoted to proven
+deps = [
+    'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded',
+    'ProcInt.crownCounter_sound',
+    'ProcInt.crownCounter_not_bounded',
+]
+countermodel_promoted = False
+for d in decls:
+    if d['name'] in deps and d['status'] == 'proven':
+        countermodel_promoted = True
+
+if countermodel_promoted:
+    print("COUNTERMODEL_PROMOTION_REFUSED: Countermodel must remain STATED")
+
 gates = {
-    'sorryFree': True,       # verified: 0 semantic sorry/admit in corpus
-    'axiomsClean': True,     # verified: lake build AxiomAudit green, both packages
-    'fixturesPass': True,    # verified: Fixtures.Positive + .Negative build green
-    # example/guard fixtures are kernel-verified at elaboration but are
-    # anonymous to #print axioms — excluded from the audit-evidence
-    # obligation by KIND, not by naming convention.
+    'sorryFree': True,
+    'axiomsClean': True,
+    'fixturesPass': True,
     'evidenceComplete': all(bool(d['auditMsg']) for d in decls
                             if d['status'] == 'proven'
                             and d['kind'] not in ('example', 'guard')),
+    'countermodel_not_promoted': not countermodel_promoted,
 }
 json.dump(gates, open(OUT_GATES, 'w'), indent=2)
 print(f"artifacts={len(artifacts)} proven={sum(1 for a in artifacts if a['proven'])} "

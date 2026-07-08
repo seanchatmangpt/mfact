@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "e329ef7cefd8d6248d773d9108f4aaaac2d89578",
+  "runIdentifier": "350cb1dc1cb6da6257f3dff28f5e2f4439b49ddb",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -263,6 +263,18 @@
     {
       "name": "ProcInt.CorrelationSchema",
       "hash": "8a469d6198498dfccea85a8cfe07377841fc2f0f5df4df679e79dd4212696da2",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.CrownCounterPlace",
+      "hash": "ad9f6f6592f913aaec4ba2ab8db134b7e70c12b68d6a2a3be5db4c7f3be8c078",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.CrownCounterTransition",
+      "hash": "e5c4f75300659b56a9860df34e1103075ea52dc90faf07eb0a51d77ea1db952d",
       "axioms": [],
       "proven": false
     },
@@ -1999,6 +2011,12 @@
       "proven": true
     },
     {
+      "name": "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
+      "hash": "4a1cf62ef7375314afec662b8fe53923a397fa19fb4ab0d6fd1bca6d120c72eb",
+      "axioms": [],
+      "proven": false
+    },
+    {
       "name": "ProcInt.WfNet.initialMarking",
       "hash": "e991a15e0361ebd66dee9c4928d8989dc346ff3e1086d37894ca269546e64d0e",
       "axioms": [],
@@ -2405,6 +2423,30 @@
       "proven": true
     },
     {
+      "name": "ProcInt.crownCounter_not_bounded",
+      "hash": "33d92f547e4682257ae4e2b773a77cf44870884782fde40c1fc85ab935249d6f",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.crownCounter_reaches_final",
+      "hash": "430650c070aed9d85845220ea468cf7debc95e5bcac54a0507c27117b22f87da",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.crownCounter_reaches_mid",
+      "hash": "2a5dcbd9a5cb054731d0e236029d52eb0be36b4c64b344aaac8b47a40187b2f7",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.crownCounter_sound",
+      "hash": "947017fba7e65fdb7c0adc978f53ba7cfdf7e233016e545f23a52d226ec52c01",
+      "axioms": [],
+      "proven": false
+    },
+    {
       "name": "ProcInt.crownJewel_status",
       "hash": "f2a8bc8a2ac646138add2f101864f6200196c6340c2c1a5fdf305f5743759917",
       "axioms": [],
@@ -2604,6 +2646,12 @@
       "proven": true
     },
     {
+      "name": "ProcInt.infinite_CrownCounterTransition",
+      "hash": "e5312d501a2f1e909e08902a36e3d4aab826050dba936910926dff65c49bbe40",
+      "axioms": [],
+      "proven": false
+    },
+    {
       "name": "ProcInt.instCoeUnitRatRat",
       "hash": "4943b6dfd90ae10cd74c942328c2700ea769d749a4355fb81a98f5af574a95e9",
       "axioms": [],
@@ -2612,6 +2660,12 @@
     {
       "name": "ProcInt.interleavings",
       "hash": "426c8787889c25665ffdc965531c6896180f742396d5a29f6d83055cf8bfb600",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.intermediateMarking",
+      "hash": "bbace7d6020d5d280a1529478c9ff93695d53cc9b34b364002d9a25cc45d7709",
       "axioms": [],
       "proven": false
     },
@@ -3141,6 +3195,11 @@
       "kind": "kernelCheck",
       "subject": "Tests.Petri",
       "hash": "352372bb26a08247963914d4499aa0d8faf9b85edacdb32b4838b8ee6efd8866"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Workflow.Countermodel",
+      "hash": "1b9944a463a269884bef9b743b0a16aca9d2efb770ec7f95e396c6e516f9d407"
     },
     {
       "kind": "kernelCheck",
@@ -4170,7 +4229,12 @@
   ],
   "statedNotProven": [
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
-    "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
+    "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
+    "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement",
+    "ProcInt.crownCounter_not_bounded",
+    "ProcInt.crownCounter_reaches_final",
+    "ProcInt.crownCounter_reaches_mid",
+    "ProcInt.crownCounter_sound"
   ],
-  "foldHash": "c528304f40660e304d444dd1ad2a2edbeac0d6f7c12ae3368e2577c9d38ea9e0"
+  "foldHash": "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434"
 }

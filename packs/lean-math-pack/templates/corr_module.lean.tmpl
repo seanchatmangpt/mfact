@@ -48,6 +48,10 @@ skip_empty: true
 -- Rendered status        : {{ status }}
 import Mathlib
 import ProcInt.Conformance.TokenReplay
+import Wasm4pmVerify.Abs
+import Wasm4pmVerify.Generated.Wasm4pmCore
+
+open Aeneas Aeneas.Std Result ControlFlow Error Wasm4pmVerify.Generated
 
 namespace Wasm4pmVerify.Corr
 

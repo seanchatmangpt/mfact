@@ -35,7 +35,7 @@ content_hash = "blake3:70ea2a9b3b98232dc3df2271df6e1b9afa21752f4779359347de531b9
 path = "dist/verif/lean/Wasm4pmVerify/Corr/token_replay_counts_corr.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:2f26c3e000b78d5893c15e731fb672c063a21e4a93c36d082dedb0799adf41c1"
+content_hash = "blake3:145158d177e815ef107650e151bf880f199242f47a6440e681dcaa3d2f8fa352"
 
 [[artifact]]
 path = "paper/availability.tex"
@@ -71,13 +71,13 @@ content_hash = "blake3:9c4f775b397ed04fb2a0c285b3cf26c274f7185be770c834d2e6f56af
 path = "paper/quadrature.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:d9a8cdcd220c54dc92aa7472fed58e9deace122b01dbb4d50e389fed4d954e99"
+content_hash = "blake3:fd0f33f8c39ac1aed01e08af1d227b5a5bb807cb792beaecca44f892e65db23a"
 
 [[artifact]]
 path = "paper/release_macros.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:cd54302794f962c570b141e82ddc335308ff11adc6f27467c62330e3752ba71f"
+content_hash = "blake3:6655907522b43574136a9538d80e5d2e9858e2e978bee372e6068f971da104de"
 
 [[artifact]]
 path = "paper/replay_status.tex"
@@ -95,7 +95,7 @@ content_hash = "blake3:a3fb6437225e9393d77a620d40252efc63344dcc5123fc1941a246fa0
 path = "procint/ProcInt.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:84ff4aa90aa8f4ac8f506d210bc027a6d97067394285dff8ba86742f59e9ccae"
+content_hash = "blake3:575fca6632a9bb914c0d4a13e43f63f6bcc6bb199a311622918195bb03b4841c"
 
 [[artifact]]
 path = "procint/ProcInt/Analytics/Causality.lean"
@@ -371,7 +371,7 @@ content_hash = "blake3:cd87ce07b2ae7df5d36ae0f91bd216f42e3bc1d9811485edeef26d1fd
 path = "procint/ProcInt/Release/Quadrature.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:56eb7ed0ae191b3ff2c3df08edf25ec52722362c709847746ee46341cff58ce3"
+content_hash = "blake3:1fe2f7e1e0b168438ea98b12e6ae36118e7b50fa49aec3aae17ab24b6f93ff50"
 
 [[artifact]]
 path = "procint/ProcInt/Tests.lean"
@@ -408,6 +408,12 @@ path = "procint/ProcInt/Tests/Petri.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
 content_hash = "blake3:d37513237988e36b5ed1ae9002f588707c2f99a120ca48d830e01132b303f463"
+
+[[artifact]]
+path = "procint/ProcInt/Workflow/Countermodel.lean"
+producer = "ggen"
+pack = "/Users/sac/mfact/packs/lean-math-pack"
+content_hash = "blake3:a5896d9790fac338d9d333c578ad04f7ee7bb949527f40a1afbaebff7f52fcb6"
 
 [[artifact]]
 path = "procint/ProcInt/Workflow/Flow.lean"
@@ -461,13 +467,13 @@ content_hash = "blake3:8e591aa31e7c391fa2e5e54be0f88f35681d74a4e1bae12863a80e350
 path = "release/quadrature.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:34989ac97a7bc56523e4b6a15c6c3e2a7d59a645b069ac6a12b7f6e0aa4a58b7"
+content_hash = "blake3:a6cf060bf483ecc138aab202ef2def56b804d7a064e81ce1de628f6995608a97"
 
 [[artifact]]
 path = "release/quadrature.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:9791e049ee7e9095ae4401a61fa8a0589abbed5f2ca57464de4314647c419143"
+content_hash = "blake3:599f520e714cf6ee07d4d68517ebad6f98dd2b32be9f6227afae8c8ba9ddf8f5"
 
 [[artifact]]
 path = "release/replay_plan.json"
@@ -479,7 +485,7 @@ content_hash = "blake3:8e8bea75930f70120f8305dff84271f2ee7f5dffe70470816b47685dc
 path = "research/verif/obligations.toml"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:4b53682a7f677e42a8871cb1cae9bb8856de8f7a3e73d5ec87b85cd60ba2ca75"
+content_hash = "blake3:433f534554d6434f1df8f06e936fc6f5d5f28cc3720e3af8e6a1231dff13750f"
 
 [[artifact]]
 path = "research/wfnet/obligations.toml"
@@ -497,28 +503,46 @@ content_hash = "blake3:ff87fce312819f048c0bf852eeb0b8d7f43cfa7bfff3c24c1123b18f9
 path = "paper/evaluation.tex"
 producer = "scripts (manifest-derived; numbers verified by quadrature eval check)"
 sources = ["release/release-manifest.json"]
-content_hash = "blake3:5a5d35de9e5925960df82321b757cc7b266e99b4834c4fd54c493644eb5ca944"
+content_hash = "blake3:fbe65e693d087bb00a5622d34e45298e52e6182ec362a3940b01740b2b132040"
 
 [[artifact]]
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:932b4b53de4964da15983569af9013a3ad69fb9ced251f7b6e10f90ad51c1b3b"
+content_hash = "blake3:04c2139d16b29e5d7954c1fbd802e8e66474f0d6b3aca5cd6b2d189e28d5264c"
 
 [[artifact]]
 path = "release/gates.json"
 producer = "scripts/build_manifest.py"
 sources = ["release/release-manifest.json"]
-content_hash = "blake3:e6b57cddbfc5cf16b9fe698294a01ea61bce217cab3c4b20b7f6c5bdbacc01d0"
+content_hash = "blake3:d3f6c8e8a0179e73ef5455ed24c51eaf04669ae155c030ed24c79459928b86e2"
 
 [[artifact]]
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:6915f7e674011fb0272e6a59c87bef31cecb2327ec66fbc6ff49eb50ec3e4552"
+content_hash = "blake3:65311a0d3847938a51150f31ac8dd2369e024cb98d348a43954147d857919040"
 
 [[artifact]]
 path = "paper/correspondence_status.tex"
 producer = "scripts/build_verif.py"
 sources = ["packs/lean-math-pack/fragments/verif.ttl", "release/verif-receipt.json"]
-content_hash = "blake3:1b24c0cfb2b493e1ddbfba09c01631fb047f076e4e4f1c2685f2840e03a246ee"
+content_hash = "blake3:5864b9d45e1fa9506486cc6d64b247277729bdbdd027d5f1f1bfb1976a3d87b3"
+
+[[artifact]]
+path = "release/verif-receipt.json"
+producer = "scripts/build_verif.py"
+sources = ["packs/lean-math-pack/fragments/verif.ttl"]
+content_hash = "blake3:5bcc873c7a45a47b31afd158a72d5941c9eaacceaab72a6988cae815fb8d156e"
+
+[[artifact]]
+path = "release/replay_report.json"
+producer = "scripts/independent_replay.sh"
+sources = ["release/release-manifest.json"]
+content_hash = "blake3:c0ea5397bebe95b746063e97144ffd16579dc574f508b8c3658269f26a25a8b9"
+
+[[artifact]]
+path = "release/docs_report.json"
+producer = "scripts/build_docs.sh"
+sources = ["release/release-manifest.json"]
+content_hash = "blake3:32d79a726b2fda9455d96a06370fb1235e2bb5ecf7d5f9a41ce08b9db16cc3ce"

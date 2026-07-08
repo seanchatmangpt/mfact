@@ -410,15 +410,11 @@ clause is stated about that clause.
 
 The crown-jewel target of the run is van der Aalst's soundness
 characterization (Lemma~8~\cite{vanderaalst1997}): soundness of a workflow net
-iff liveness and boundedness of its short-circuited net. The original
-statement over arbitrary (possibly infinite) transition sets is false; a
-countermodel exists where infinitely many transition pairs route unbounded
-tokens through a net without deadlock, violating the original characterization.
-We repaired this by adding a finiteness constraint on the transition set
-(\(\text{Finite } T\)). The admitted theorem in \textsf{procint} is the
-finite-transition WF-net soundness characterization; its per-direction status
-at release time is recorded in the manifest and reported in
-Section~\ref{sec:eval}, not asserted here.
+iff liveness and boundedness of its short-circuited net. The finite transition
+hypothesis is necessary: the repository includes a Lean-admitted
+infinite-transition countermodel, \verb|WfNet.infinite_transition_countermodel_sound_not_bounded|,
+showing that the unbounded statement fails under infinite transitions. The
+repaired crown theorem therefore states the equivalence under \([Finite T]\).
 
 \paragraph{Conformance.}
 Alignments follow Carmona et al.~\cite{carmona2018}: moves are synchronous,

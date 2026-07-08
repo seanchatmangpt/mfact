@@ -100,7 +100,6 @@ instance : Infinite CrownCounterTransition := by
 /-- Main counterexample theorem:
     There exists a WfNet with infinite transitions that is sound
     but whose short-circuit is unbounded.
-
 This proves the crown-jewel theorem (soundness iff liveness + boundedness)
 requires [Finite T].
 -/
