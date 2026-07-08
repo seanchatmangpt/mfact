@@ -57,17 +57,16 @@ Implement tickets 015 through 020 sequentially as a sequential MathProofOps rele
 | Step 3 Explorer | teamwork_preview_explorer | Check praxis repo availability | completed | 007f8bce-bc80-4051-922b-eef0b613d9a8 |
 | Step 3 Worker | teamwork_preview_worker | Run benchmarks and import outputs | completed | 16f92d45-5ed5-483d-84e4-f440f1444cdd |
 | Step 4 Worker | teamwork_preview_worker | Process results and render paper fragments | completed | 455d8c50-e832-46f9-955d-bb44a365e98b |
-| Step 5 Worker | teamwork_preview_worker | Edit paper prose and verify release | in-progress | 34c1a77b-6b39-4737-badf-bc3ed5e83b60 |
+| Step 5 Worker | teamwork_preview_worker | Edit paper prose and verify release | completed | 34c1a77b-6b39-4737-badf-bc3ed5e83b60 |
+| Step 5 Remediation Worker | teamwork_preview_worker | Mine commit and fix tag mismatch | in-progress | 2ab19bb5-959b-42e8-ae0f-02047f9e4434 |
 
 ## Succession Status
 - Succession required: no
-- Spawn count: 8 / 16
-- Pending subagents: 34c1a77b-6b39-4737-badf-bc3ed5e83b60
-- Predecessor: none
-- Successor: not yet spawned
+- Spawn count: 9 / 16
+- Pending subagents: 2ab19bb5-959b-42e8-ae0f-02047f9e4434
 
 ## Active Timers
-- Heartbeat cron: task-25
+- Heartbeat cron: task-303
 - Safety timer: none
 - On succession: kill all timers before spawning successor
 - On context truncation: run `manage_task(Action="list")` — re-create if missing

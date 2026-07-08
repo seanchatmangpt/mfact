@@ -20,8 +20,8 @@ at tag `v26.7.7-procint-certified`.
 ## Checksums (BLAKE3)
 
 ```
-f8a0b827f8f5c86c89657daa868871eb4d98853f5bb7b1ead9b26958d34eeae3  paper/arxiv-submission.tar.gz
-c9dbb39f2c6b54962232604f8f8f17c715da9235e8854cd927822f99ee759ed4  paper/main.pdf
+a48d5a5b124f45610235063c91eed5415db19c585725919e1a89ad703e9311da  paper/arxiv-submission.tar.gz
+2b4c059ab7fc854684bb765fa778883bd01bbdb250c051b91b994a52b6c18da5  paper/main.pdf
 17dc5992ca3a999b42d3bbc1ee0fbd0e64e8a697feb64889ab8fcb01c05d0faf  release/release-manifest.json
 ```
 

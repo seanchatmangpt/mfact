@@ -69,6 +69,7 @@ render:
 [group('manufacture')]
 build:
     just _lake "cd procint && /Users/sac/.elan/bin/lake build"
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build Tests"
     just _lake "cd mfact && /Users/sac/.elan/bin/lake build AxiomAudit mfact"
 
 # Axiom audit of the procint package only.
