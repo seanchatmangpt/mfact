@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:OrtacDSLIntent a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "OrtacPlus.DSLIntent" .
+
+wf:PDDLTranslation a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "OrtacPlus.dsl_to_pddl_projection_preserves_semantics" ;
+    ggen:computationalConsequence "DSL_TO_PDDL_PROJECTION_VERIFICATION" ;
+    ggen:projectionTarget "INTENT_COMPLIANCE_GUARD" .

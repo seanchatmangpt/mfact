@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:HyperdimensionalContext a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "HyperCognitive.HyperdimensionalContext" .
+
+wf:SpaceFillingCurveCompression a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "HyperCognitive.space_filling_curve_preserves_correlations" ;
+    ggen:computationalConsequence "HYPERDIMENSIONAL_CONTEXT_PROJECTION" ;
+    ggen:projectionTarget "COGNITIVE_LOAD_COMPRESSOR" .

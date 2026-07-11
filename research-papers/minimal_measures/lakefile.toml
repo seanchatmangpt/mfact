@@ -1,0 +1,6 @@
+name = "minimal_measures"
+version = "0.1.0"
+defaultTargets = ["MinimalMeasures"]
+
+[[lean_lib]]
+name = "MinimalMeasures"

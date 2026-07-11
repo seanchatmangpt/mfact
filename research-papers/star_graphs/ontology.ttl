@@ -1,0 +1,16 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:StarGraph a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "StarGraphs.StarGraph" .
+
+wf:SemiclassicalMeasure a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "StarGraphs.SemiclassicalMeasure" .
+
+wf:StarGraphFullSpectrum a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "StarGraphs.star_graph_full_spectrum" ;
+    ggen:computationalConsequence "CAPABILITY_SPECTRUM_PROVISION" .

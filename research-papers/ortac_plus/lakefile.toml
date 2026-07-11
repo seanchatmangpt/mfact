@@ -1,0 +1,6 @@
+name = "ortac_plus"
+version = "0.1.0"
+defaultTargets = ["OrtacPlus"]
+
+[[lean_lib]]
+name = "OrtacPlus"

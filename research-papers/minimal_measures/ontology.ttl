@@ -1,0 +1,17 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:DynamicalSystem a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "MinimalMeasures.DynamicalSystem" .
+
+wf:MeasureConstraints a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "MinimalMeasures.MeasureConstraints" .
+
+wf:DenseMinimalMeasures a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "MinimalMeasures.expanding_maps_have_dense_minimal_measures" ;
+    ggen:computationalConsequence "COMPRESSION_AND_ELISION" ;
+    ggen:projectionTarget "PATH_APPROXIMATION_HEURISTIC" .

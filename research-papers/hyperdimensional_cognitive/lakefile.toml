@@ -1,0 +1,6 @@
+name = "hyperdimensional_cognitive"
+version = "0.1.0"
+defaultTargets = ["HyperdimensionalCognitive"]
+
+[[lean_lib]]
+name = "HyperdimensionalCognitive"

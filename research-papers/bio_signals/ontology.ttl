@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:CoupledBiologicalSystem a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "BioSignals.CoupledSystem" .
+
+wf:BurnoutDecoupling a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "BioSignals.burnout_decoupling" ;
+    ggen:computationalConsequence "BIOMETRIC_DECOUPLING_ROUTER" ;
+    ggen:projectionTarget "WORKLOAD_RECOVERY_ISOLATOR" .

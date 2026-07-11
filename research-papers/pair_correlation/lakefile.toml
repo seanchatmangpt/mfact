@@ -1,0 +1,6 @@
+name = "pair_correlation"
+version = "0.1.0"
+defaultTargets = ["PairCorrelation"]
+
+[[lean_lib]]
+name = "PairCorrelation"

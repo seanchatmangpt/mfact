@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:LocalizedProbe a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "RandomWalk.LocalizedProbe" .
+
+wf:LocalModulationFreezing a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "RandomWalk.local_modulation_freezing" ;
+    ggen:computationalConsequence "LOCALIZED_STATE_FACTORIZATION" ;
+    ggen:projectionTarget "FINITE_SUPPORT_CACHE_ISOLATION" .

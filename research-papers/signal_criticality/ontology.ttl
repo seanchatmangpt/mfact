@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:BaselineDynamics a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "SignalCriticality.BaselineDynamics" .
+
+wf:CriticalShiftPredictsDecay a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "SignalCriticality.critical_shift_predicts_decay" ;
+    ggen:computationalConsequence "PRODROMAL_SYSTEM_DECAY_PREDICTOR" ;
+    ggen:projectionTarget "EARLY_WARNING_MAINTENANCE_ROUTER" .

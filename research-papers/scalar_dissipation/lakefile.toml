@@ -1,0 +1,6 @@
+name = "scalar_dissipation"
+version = "0.1.0"
+defaultTargets = ["ScalarDissipation"]
+
+[[lean_lib]]
+name = "ScalarDissipation"

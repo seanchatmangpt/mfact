@@ -1,0 +1,6 @@
+name = "quantum_hall"
+version = "0.1.0"
+defaultTargets = ["QuantumHall"]
+
+[[lean_lib]]
+name = "QuantumHall"

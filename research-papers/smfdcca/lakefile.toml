@@ -1,0 +1,6 @@
+name = "smfdcca"
+version = "0.1.0"
+defaultTargets = ["Smfdcca"]
+
+[[lean_lib]]
+name = "Smfdcca"

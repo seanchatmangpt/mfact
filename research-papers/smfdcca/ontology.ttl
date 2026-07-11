@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix smf: <https://praxis.chatman.com/ontology/smfdcca#> .
+
+smf:SMFDCCACoefficient a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "SMFDCCA.SMFDCCACoefficient" .
+
+smf:SmfdccaBounded a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "SMFDCCA.smfdcca_bounded" ;
+    ggen:computationalConsequence "NUMERICAL_STABILITY_BOUNDS" ;
+    ggen:projectionTarget "CORRELATION_SAFE_MATRIX" .

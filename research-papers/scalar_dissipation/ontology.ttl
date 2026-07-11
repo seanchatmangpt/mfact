@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ggen: <https://praxis.chatman.com/ontology/ggen#> .
+@prefix wf: <https://praxis.chatman.com/ontology/workflow#> .
+
+wf:TurbulenceState a ggen:OntologyObject ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "ScalarDissipation.TurbulenceState" .
+
+wf:SparseDissipationBottlenecks a ggen:Theorem ;
+    ggen:isMathematicallyAdmitted "true" ;
+    ggen:leanProofTarget "ScalarDissipation.sparse_dissipation_bottlenecks" ;
+    ggen:computationalConsequence "CLIFF_FRONT_LOAD_SHEDDING" ;
+    ggen:projectionTarget "SPARSE_BOTTLENECK_ROUTER" .

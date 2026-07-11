@@ -1,0 +1,6 @@
+name = "bio_signals"
+version = "0.1.0"
+defaultTargets = ["BioSignals"]
+
+[[lean_lib]]
+name = "BioSignals"
