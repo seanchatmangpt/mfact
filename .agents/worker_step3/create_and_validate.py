@@ -46,6 +46,20 @@ praxis_commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=PRAXIS_DIR, cap
 rustc_ver = subprocess.run(["rustc", "--version"], cwd=PRAXIS_DIR, capture_output=True, text=True, check=True).stdout.strip()
 uname_a = subprocess.run(["uname", "-a"], capture_output=True, text=True, check=True).stdout.strip()
 
+# Check if declared
+manifest_path = os.path.join(MFACT_DIR, "rslab/manifest.toml")
+is_declared = False
+if os.path.exists(manifest_path):
+    with open(manifest_path, "rb") as mf:
+        manifest_data = tomllib.load(mf)
+        for exp in manifest_data.get("experiments", []):
+            if exp.get("id") == "praxis_graphlaw":
+                is_declared = True
+                break
+
+# Check if extracted
+is_extracted = len(files_list) > 0 and all(os.path.exists(os.path.join(MFACT_DIR, f["path"])) for f in files_list)
+
 # Build receipt TOML content (NO wall-clock timestamp)
 receipt_data = {
     "builder": "ticket_018",
@@ -60,8 +74,8 @@ receipt_data = {
         "os": uname_a
     },
     "evidence": {
-        "declared": True,
-        "extracted": True
+        "declared": is_declared,
+        "extracted": is_extracted
     },
     "caveats": [
         "Harness Diversity: The workspace uses multiple distinct benchmark frameworks (bencher, divan, criterion) simultaneously; comparison of raw performance metrics across these harnesses is not directly supported.",

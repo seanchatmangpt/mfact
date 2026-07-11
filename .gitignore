@@ -30,3 +30,8 @@ procint/ProcInt/Playground/_scratch_*.lean
 # from source. Lives here, not in wasm4pm-compat, which stays a clean
 # source-only publishable crate.
 .verif-toolchain/
+
+
+# Added by cargo
+
+/target

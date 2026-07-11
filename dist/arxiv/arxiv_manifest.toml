@@ -4,7 +4,7 @@
 [packet]
 release = "v26.7.7"
 tarball = "paper/arxiv-submission.tar.gz"
-tarball_blake3 = "e1b21f2cbc013a0126b6cd5a35eb83e71a05c3bfa2fc508c019b9cd19b329deb"
+tarball_blake3 = "d3631ee81cf916bf0e5f6e36712ea4e985930b38f9be16092e37f7e630c832b9"
 status = "PENDING"
 declared_file_count = 13
 actuation = "PENDING_EXTERNAL_ACTUATION"
