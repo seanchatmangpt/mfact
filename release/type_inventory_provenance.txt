@@ -1,5 +1,5 @@
-TYPE_INVENTORY_HASH=dd43c348d175bdf0136b24dfc34e3077c20f90ecd60d6c88ddb8e9a7f6831852
+TYPE_INVENTORY_HASH=c50a40212454cbf8f698f18ad3458628e712affe8f7749a22fae5a899f2f1fa1
 SOURCE_REPO=/Users/sac/wasm4pm-compat
 SOURCE_COMMIT=6aead3c
-SOURCE_FILE_COUNT=26
-NOTE=hash computed over git-show blob content at SOURCE_COMMIT, not working tree (working tree was dirty on src/ocel.rs at time of release)
+SOURCE_FILE_COUNT=74
+NOTE=hash is blake3(manifest); manifest is the path-sorted "<path> <git-blob-sha1>\n" lines for every *.rs file under src/ at SOURCE_COMMIT, read via `git ls-tree` (immutable blobs, not working tree). Regenerate via scripts/gen_type_inventory_hash.py — this file and release/standing.env TYPE_INVENTORY_HASH must always agree; disagreement is GAP G9.
