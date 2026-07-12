@@ -30,6 +30,48 @@ jobs:
         working-directory: procint
         run: lake build ProcInt.Fixtures.Positive ProcInt.Fixtures.Negative
 
+  test-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mfact
+        uses: actions/checkout@v4
+        with:
+          path: mfact
+
+      - name: Checkout praxis
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/praxis
+          path: praxis
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Rust Backend
+        working-directory: mfact
+        run: cargo build --release
+
+      - name: Run Rust Tests
+        working-directory: mfact
+        run: cargo test --verbose
+
+      - name: Install Node dependencies
+        working-directory: mfact/web/mfact-ui
+        run: npm install
+
+      - name: Install Playwright browsers
+        working-directory: mfact/web/mfact-ui
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright Tests
+        working-directory: mfact/web/mfact-ui
+        run: npx playwright test
+
 # NOTE: leanprover/lean-action@v1's documented input is
 # `lake-package-directory`, not `project` (the task-provided baseline used
 # `project:`, which is not a real input of this action as of the July 2026

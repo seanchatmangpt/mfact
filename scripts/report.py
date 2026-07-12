@@ -240,6 +240,15 @@ def cmd_doctor(rep):
         head = open(claude).read().strip()
         print(f"{'OK    ' if head == '@AGENTS.md' else 'WARN  '} CLAUDE.md is @AGENTS.md import: {head!r}")
 
+    print("--- mechanical reality check ---")
+    linter_cmd = [sys.executable, os.path.join(ROOT, 'scripts/rigor_linter.py')]
+    try:
+        subprocess.check_call(linter_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("OK     rigor_linter.py  (no surface-level shortcuts)")
+    except subprocess.CalledProcessError:
+        ok = False
+        print("FAIL   rigor_linter.py  (surface-level shortcuts detected! run manually to see violations)")
+
     if not ok:
         sys.exit(1)
 

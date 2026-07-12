@@ -361,3 +361,16 @@ recut-tag name:
 [group('git')]
 push:
     git push && git push --tags
+
+# ── Mechanical Reality Enforcement ──────────────────────────────────────────
+
+# Run the strict rigor linter to ensure no LLM hallucination mocks/cheats exist.
+[group('manufacture')]
+lint:
+    python3 scripts/rigor_linter.py
+
+# Force TTL ontologies to match the reality of their underlying Lean proofs.
+[group('manufacture')]
+align:
+    python3 scripts/align_ttl.py
+
