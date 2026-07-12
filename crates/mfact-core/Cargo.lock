@@ -197,6 +197,7 @@ name = "mfact-core"
 version = "0.1.0"
 dependencies = [
  "blake3",
+ "cc",
  "proptest",
  "rayon",
  "serde",
