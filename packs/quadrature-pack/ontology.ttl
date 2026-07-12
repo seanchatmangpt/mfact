@@ -15,20 +15,20 @@ quad:Result a quad:Results ;
   quad:untracedArtifacts 0 ;
   quad:unclassifiedRefusals 0 ;
   quad:releaseId "v26.7.7" ;
-  quad:runId "945bfca" ;
-  quad:ttlCount 197 ;
-  quad:leanCount 197 ;
-  quad:manifestCount 197 ;
-  quad:auditCount 197 ;
+  quad:runId "6cbc680" ;
+  quad:ttlCount 203 ;
+  quad:leanCount 203 ;
+  quad:manifestCount 203 ;
+  quad:auditCount 203 ;
   quad:claimCount 5 ;
   quad:evalCount 6 ;
   quad:eventCount 10 ;
   quad:releaseTag "v26.7.7-procint-certified" ;
-  quad:foldHash "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434" ;
+  quad:foldHash "b1edfbebdf64ff895cf20c6581a2dec7cf34140e4631b760dafc57ae20e4e951" ;
   quad:sorryCount 0 ;
   quad:admitCount 0 ;
-  quad:statedCount 7 ;
-  quad:totalDecls 397 ;
+  quad:statedCount 2 ;
+  quad:totalDecls 401 ;
   quad:axiomAudit "PASS" ;
   quad:fixtures "PASS" ;
   quad:certified "PASS" ;
@@ -38,7 +38,7 @@ quad:Edge_ttl_to_lean a quad:EdgePair ;
   quad:pairKey "ttl_to_lean" ;
   quad:pairLabel "TTL to Lean" ;
   quad:pairLabelTex "TTL $\\rightarrow$ Lean" ;
-  quad:count 197 ;
+  quad:count 203 ;
   quad:result "PASS" ;
   quad:order 1 .
 
@@ -46,7 +46,7 @@ quad:Edge_lean_to_audit a quad:EdgePair ;
   quad:pairKey "lean_to_audit" ;
   quad:pairLabel "Lean to Audit" ;
   quad:pairLabelTex "Lean $\\rightarrow$ Audit" ;
-  quad:count 197 ;
+  quad:count 203 ;
   quad:result "PASS" ;
   quad:order 2 .
 
@@ -54,7 +54,7 @@ quad:Edge_audit_to_manifest a quad:EdgePair ;
   quad:pairKey "audit_to_manifest" ;
   quad:pairLabel "Audit to Manifest" ;
   quad:pairLabelTex "Audit $\\rightarrow$ Manifest" ;
-  quad:count 197 ;
+  quad:count 203 ;
   quad:result "PASS" ;
   quad:order 3 .
 
@@ -70,7 +70,7 @@ quad:Edge_artifact_to_process a quad:EdgePair ;
   quad:pairKey "artifact_to_process" ;
   quad:pairLabel "Artifact to Process Event" ;
   quad:pairLabelTex "Artifact $\\rightarrow$ Process Event" ;
-  quad:count 254 ;
+  quad:count 260 ;
   quad:result "PASS" ;
   quad:order 5 .
 
@@ -90,7 +90,7 @@ quad:Claim_C1 a quad:Claim ;
 
 quad:Claim_C2 a quad:Claim ;
   quad:claimId "C2" ;
-  quad:claimText "procint corpus: 197 kernel-admitted, axiom-audited theorems" ;
+  quad:claimText "procint corpus: 203 kernel-admitted, axiom-audited theorems" ;
   quad:evidenceRef "release/release-manifest.json#artifacts" ;
   quad:order 2 .
 
@@ -232,6 +232,7 @@ quad:T_ProcInt_WfNet_Sound_reaches_final a quad:TtlProvenDecl ; quad:declName "P
 quad:T_ProcInt_WfNet_bounded_of_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:T_ProcInt_WfNet_finalMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:T_ProcInt_WfNet_finalMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
+quad:T_ProcInt_WfNet_infinite_transition_countermodel_sound_not_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" .
 quad:T_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:T_ProcInt_WfNet_initialMarking_sink a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:T_ProcInt_WfNet_initialMarking_source a quad:TtlProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
@@ -269,6 +270,10 @@ quad:T_ProcInt_cell_subset_slice a quad:TtlProvenDecl ; quad:declName "ProcInt.c
 quad:T_ProcInt_combinedScore_uniform a quad:TtlProvenDecl ; quad:declName "ProcInt.combinedScore_uniform" .
 quad:T_ProcInt_correlated_cons a quad:TtlProvenDecl ; quad:declName "ProcInt.correlated_cons" .
 quad:T_ProcInt_correlated_empty a quad:TtlProvenDecl ; quad:declName "ProcInt.correlated_empty" .
+quad:T_ProcInt_crownCounter_not_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_not_bounded" .
+quad:T_ProcInt_crownCounter_reaches_final a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_final" .
+quad:T_ProcInt_crownCounter_reaches_mid a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_mid" .
+quad:T_ProcInt_crownCounter_sound a quad:TtlProvenDecl ; quad:declName "ProcInt.crownCounter_sound" .
 quad:T_ProcInt_deleted_terminal a quad:TtlProvenDecl ; quad:declName "ProcInt.deleted_terminal" .
 quad:T_ProcInt_dependencyMeasure_antisymm a quad:TtlProvenDecl ; quad:declName "ProcInt.dependencyMeasure_antisymm" .
 quad:T_ProcInt_dependencyMeasure_lt_one a quad:TtlProvenDecl ; quad:declName "ProcInt.dependencyMeasure_lt_one" .
@@ -300,6 +305,7 @@ quad:T_ProcInt_oneSubRatio_nonneg a quad:TtlProvenDecl ; quad:declName "ProcInt.
 quad:T_ProcInt_precedence_concrete a quad:TtlProvenDecl ; quad:declName "ProcInt.precedence_concrete" .
 quad:T_ProcInt_push_bounded a quad:TtlProvenDecl ; quad:declName "ProcInt.push_bounded" .
 quad:T_ProcInt_push_not_full a quad:TtlProvenDecl ; quad:declName "ProcInt.push_not_full" .
+quad:T_ProcInt_reachable_is_one_of a quad:TtlProvenDecl ; quad:declName "ProcInt.reachable_is_one_of" .
 quad:T_ProcInt_response_concrete a quad:TtlProvenDecl ; quad:declName "ProcInt.response_concrete" .
 quad:T_ProcInt_seqLang_assoc a quad:TtlProvenDecl ; quad:declName "ProcInt.seqLang_assoc" .
 quad:T_ProcInt_sojourn_self a quad:TtlProvenDecl ; quad:declName "ProcInt.sojourn_self" .
@@ -429,6 +435,7 @@ quad:M_ProcInt_WfNet_Sound_reaches_final a quad:ManifestProvenDecl ; quad:declNa
 quad:M_ProcInt_WfNet_bounded_of_sound a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:M_ProcInt_WfNet_finalMarking_sink a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:M_ProcInt_WfNet_finalMarking_source a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
+quad:M_ProcInt_WfNet_infinite_transition_countermodel_sound_not_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" .
 quad:M_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:M_ProcInt_WfNet_initialMarking_sink a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:M_ProcInt_WfNet_initialMarking_source a quad:ManifestProvenDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
@@ -466,6 +473,10 @@ quad:M_ProcInt_cell_subset_slice a quad:ManifestProvenDecl ; quad:declName "Proc
 quad:M_ProcInt_combinedScore_uniform a quad:ManifestProvenDecl ; quad:declName "ProcInt.combinedScore_uniform" .
 quad:M_ProcInt_correlated_cons a quad:ManifestProvenDecl ; quad:declName "ProcInt.correlated_cons" .
 quad:M_ProcInt_correlated_empty a quad:ManifestProvenDecl ; quad:declName "ProcInt.correlated_empty" .
+quad:M_ProcInt_crownCounter_not_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.crownCounter_not_bounded" .
+quad:M_ProcInt_crownCounter_reaches_final a quad:ManifestProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_final" .
+quad:M_ProcInt_crownCounter_reaches_mid a quad:ManifestProvenDecl ; quad:declName "ProcInt.crownCounter_reaches_mid" .
+quad:M_ProcInt_crownCounter_sound a quad:ManifestProvenDecl ; quad:declName "ProcInt.crownCounter_sound" .
 quad:M_ProcInt_deleted_terminal a quad:ManifestProvenDecl ; quad:declName "ProcInt.deleted_terminal" .
 quad:M_ProcInt_dependencyMeasure_antisymm a quad:ManifestProvenDecl ; quad:declName "ProcInt.dependencyMeasure_antisymm" .
 quad:M_ProcInt_dependencyMeasure_lt_one a quad:ManifestProvenDecl ; quad:declName "ProcInt.dependencyMeasure_lt_one" .
@@ -497,6 +508,7 @@ quad:M_ProcInt_oneSubRatio_nonneg a quad:ManifestProvenDecl ; quad:declName "Pro
 quad:M_ProcInt_precedence_concrete a quad:ManifestProvenDecl ; quad:declName "ProcInt.precedence_concrete" .
 quad:M_ProcInt_push_bounded a quad:ManifestProvenDecl ; quad:declName "ProcInt.push_bounded" .
 quad:M_ProcInt_push_not_full a quad:ManifestProvenDecl ; quad:declName "ProcInt.push_not_full" .
+quad:M_ProcInt_reachable_is_one_of a quad:ManifestProvenDecl ; quad:declName "ProcInt.reachable_is_one_of" .
 quad:M_ProcInt_response_concrete a quad:ManifestProvenDecl ; quad:declName "ProcInt.response_concrete" .
 quad:M_ProcInt_seqLang_assoc a quad:ManifestProvenDecl ; quad:declName "ProcInt.seqLang_assoc" .
 quad:M_ProcInt_sojourn_self a quad:ManifestProvenDecl ; quad:declName "ProcInt.sojourn_self" .
@@ -626,6 +638,7 @@ quad:A_ProcInt_WfNet_Sound_reaches_final a quad:AuditedDecl ; quad:declName "Pro
 quad:A_ProcInt_WfNet_bounded_of_sound a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.bounded_of_sound" .
 quad:A_ProcInt_WfNet_finalMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_sink" .
 quad:A_ProcInt_WfNet_finalMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.finalMarking_source" .
+quad:A_ProcInt_WfNet_infinite_transition_countermodel_sound_not_bounded a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" .
 quad:A_ProcInt_WfNet_initialMarking_ne_finalMarking a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_ne_finalMarking" .
 quad:A_ProcInt_WfNet_initialMarking_sink a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_sink" .
 quad:A_ProcInt_WfNet_initialMarking_source a quad:AuditedDecl ; quad:declName "ProcInt.WfNet.initialMarking_source" .
@@ -663,6 +676,10 @@ quad:A_ProcInt_cell_subset_slice a quad:AuditedDecl ; quad:declName "ProcInt.cel
 quad:A_ProcInt_combinedScore_uniform a quad:AuditedDecl ; quad:declName "ProcInt.combinedScore_uniform" .
 quad:A_ProcInt_correlated_cons a quad:AuditedDecl ; quad:declName "ProcInt.correlated_cons" .
 quad:A_ProcInt_correlated_empty a quad:AuditedDecl ; quad:declName "ProcInt.correlated_empty" .
+quad:A_ProcInt_crownCounter_not_bounded a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_not_bounded" .
+quad:A_ProcInt_crownCounter_reaches_final a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_reaches_final" .
+quad:A_ProcInt_crownCounter_reaches_mid a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_reaches_mid" .
+quad:A_ProcInt_crownCounter_sound a quad:AuditedDecl ; quad:declName "ProcInt.crownCounter_sound" .
 quad:A_ProcInt_deleted_terminal a quad:AuditedDecl ; quad:declName "ProcInt.deleted_terminal" .
 quad:A_ProcInt_dependencyMeasure_antisymm a quad:AuditedDecl ; quad:declName "ProcInt.dependencyMeasure_antisymm" .
 quad:A_ProcInt_dependencyMeasure_lt_one a quad:AuditedDecl ; quad:declName "ProcInt.dependencyMeasure_lt_one" .
@@ -694,6 +711,7 @@ quad:A_ProcInt_oneSubRatio_nonneg a quad:AuditedDecl ; quad:declName "ProcInt.on
 quad:A_ProcInt_precedence_concrete a quad:AuditedDecl ; quad:declName "ProcInt.precedence_concrete" .
 quad:A_ProcInt_push_bounded a quad:AuditedDecl ; quad:declName "ProcInt.push_bounded" .
 quad:A_ProcInt_push_not_full a quad:AuditedDecl ; quad:declName "ProcInt.push_not_full" .
+quad:A_ProcInt_reachable_is_one_of a quad:AuditedDecl ; quad:declName "ProcInt.reachable_is_one_of" .
 quad:A_ProcInt_response_concrete a quad:AuditedDecl ; quad:declName "ProcInt.response_concrete" .
 quad:A_ProcInt_seqLang_assoc a quad:AuditedDecl ; quad:declName "ProcInt.seqLang_assoc" .
 quad:A_ProcInt_sojourn_self a quad:AuditedDecl ; quad:declName "ProcInt.sojourn_self" .

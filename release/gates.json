@@ -2,6 +2,6 @@
   "sorryFree": true,
   "axiomsClean": true,
   "fixturesPass": true,
-  "evidenceComplete": true,
-  "countermodel_not_promoted": true
+  "evidenceComplete": false,
+  "countermodel_not_promoted": false
 }

@@ -6,4 +6,4 @@
 # predicate). Status is derived from observed charon/aeneas/lake
 # evidence; see release/verif-receipt.json for the evidence trail.
 
-verif:Obl_token_replay_counts_corr verif:status "PROVEN" .
+verif:Obl_token_replay_counts_corr verif:status "DECLARED" .

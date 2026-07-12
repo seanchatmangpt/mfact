@@ -369,6 +369,11 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.WfNet.finalMarking_source' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.finalMarking_source
 
+/-- info: 'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded
+
 /-- info: 'ProcInt.WfNet.initialMarking_ne_finalMarking' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.WfNet.initialMarking_ne_finalMarking
 
@@ -480,6 +485,18 @@ procint ontology rests only on the trusted axiom set
 /-- info: 'ProcInt.correlated_empty' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.correlated_empty
 
+/-- info: 'ProcInt.crownCounter_not_bounded' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.crownCounter_not_bounded
+
+/-- info: 'ProcInt.crownCounter_reaches_final' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.crownCounter_reaches_final
+
+/-- info: 'ProcInt.crownCounter_reaches_mid' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.crownCounter_reaches_mid
+
+/-- info: 'ProcInt.crownCounter_sound' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.crownCounter_sound
+
 /-- info: 'ProcInt.deleted_terminal' does not depend on any axioms -/
 #guard_msgs in #print axioms ProcInt.deleted_terminal
 
@@ -572,6 +589,9 @@ procint ontology rests only on the trusted axiom set
 
 /-- info: 'ProcInt.push_not_full' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.push_not_full
+
+/-- info: 'ProcInt.reachable_is_one_of' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in #print axioms ProcInt.reachable_is_one_of
 
 /-- info: 'ProcInt.response_concrete' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in #print axioms ProcInt.response_concrete

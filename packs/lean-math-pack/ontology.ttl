@@ -5719,7 +5719,7 @@ theorem ChoiceGraph.minimal_hasEmptyPath (α : Type*) :
 # predicate). Status is derived from observed charon/aeneas/lake
 # evidence; see release/verif-receipt.json for the evidence trail.
 
-verif:Obl_token_replay_counts_corr verif:status "PROVEN" .
+verif:Obl_token_replay_counts_corr verif:status "DECLARED" .
 @prefix procint: <https://mfact.dev/procint#> .
 @prefix verif: <https://mfact.dev/verif#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -5789,11 +5789,9 @@ procint:Mod_Workflow_Countermodel a procint:Module ;
   procint:order 34 ;
   procint:moduleDoc "Infinite-transition countermodel demonstrating necessity of [Finite T] for crown theorem. Proves there exists a WfNet with infinite transitions that is sound but whose short-circuit is not bounded, providing the canonical counterexample to the soundness-iff-liveness-and-boundedness equivalence when T is infinite." ;
   procint:importsBlock """import Mathlib
-import ProcInt.Workflow.Soundness""" .
+import ProcInt.Workflow.Soundness
 
-# ──────────────────────────────────────────────────────────────────────────────
-# AGENT 1: Types and Net Definition
-# ──────────────────────────────────────────────────────────────────────────────
+set_option linter.unusedSimpArgs false""" .
 
 procint:Decl_CrownCounterPlace a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
@@ -5801,17 +5799,7 @@ procint:Decl_CrownCounterPlace a procint:Decl ;
   procint:declName "ProcInt.CrownCounterPlace" ;
   procint:declKind "inductive" ;
   procint:status "definition" ;
-  procint:leanCode """/-- Place type for the crown countermodel WF-net.
-- `i`: input place
-- `q`: queue place (holds tokens)
-- `o`: output place
-- `c n`: counter place at index n -/
-inductive CrownCounterPlace : Type
-  | i : CrownCounterPlace
-  | q : CrownCounterPlace
-  | o : CrownCounterPlace
-  | c : ℕ → CrownCounterPlace
-  deriving DecidableEq, Repr""" .
+  procint:leanCode """inductive CrownCounterPlace : Type | i | q | o | c : ℕ → CrownCounterPlace deriving DecidableEq, Repr""" .
 
 procint:Decl_CrownCounterTransition a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
@@ -5819,10 +5807,7 @@ procint:Decl_CrownCounterTransition a procint:Decl ;
   procint:declName "ProcInt.CrownCounterTransition" ;
   procint:declKind "def" ;
   procint:status "definition" ;
-  procint:leanCode """/-- Transition type for the crown countermodel WF-net.
-Sum.inl n: absorb transition at index n (fires from i)
-Sum.inr n: emit transition at index n (fires to o) -/
-def CrownCounterTransition := ℕ ⊕ ℕ""" .
+  procint:leanCode """def CrownCounterTransition := ℕ ⊕ ℕ""" .
 
 procint:Decl_crownCounterNet a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
@@ -5830,147 +5815,337 @@ procint:Decl_crownCounterNet a procint:Decl ;
   procint:declName "ProcInt.crownCounterNet" ;
   procint:declKind "def" ;
   procint:status "definition" ;
-  procint:leanCode """/-- The Petri net underlying the crown countermodel.
-
-Transition semantics:
-- Sum.inl n (absorb): pre = {i:1}, post = {q:n, c n:1}
-- Sum.inr n (emit): pre = {q:n, c n:1}, post = {o:1}
--/
-noncomputable def crownCounterNet : PetriNet CrownCounterPlace CrownCounterTransition where
+  procint:leanCode """noncomputable def crownCounterNet : PetriNet CrownCounterPlace CrownCounterTransition where
   pre := fun t => match t with
-    | Sum.inl n =>
-        -- Absorb transition: consumes 1 from i
-        Finsupp.single CrownCounterPlace.i 1
-    | Sum.inr n =>
-        -- Emit transition: consumes n from q and 1 from c n
-        Finsupp.update (Finsupp.single CrownCounterPlace.q n)
-          (CrownCounterPlace.c n) 1
+    | Sum.inl _ => Finsupp.single CrownCounterPlace.i 1
+    | Sum.inr n => Finsupp.update (Finsupp.single CrownCounterPlace.q n) (CrownCounterPlace.c n) 1
   post := fun t => match t with
-    | Sum.inl n =>
-        -- Absorb transition: produces n tokens to q and 1 to c n
-        Finsupp.update (Finsupp.single CrownCounterPlace.q n)
-          (CrownCounterPlace.c n) 1
-    | Sum.inr n =>
-        -- Emit transition: produces 1 token to o
-        Finsupp.single CrownCounterPlace.o 1""" .
+    | Sum.inl n => Finsupp.update (Finsupp.single CrownCounterPlace.q n) (CrownCounterPlace.c n) 1
+    | Sum.inr _ => Finsupp.single CrownCounterPlace.o 1""" .
+
+procint:Decl_macros a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 4 ;
+  procint:declName "ProcInt.macros" ;
+  procint:declKind "macro" ;
+  procint:status "definition" ;
+  procint:leanCode """macro "solve_flow_edge" : tactic =>
+  `(tactic| (
+    unfold PetriNet.FlowEdge crownCounterNet
+    simp [Finsupp.single_eq_same, Finsupp.mem_support_iff, Finsupp.coe_update, Finsupp.single_apply, Finsupp.update_apply]
+  ))""" .
 
 procint:Decl_crownCounterWfNet a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 4 ;
+  procint:declOrder 5 ;
   procint:declName "ProcInt.crownCounterWfNet" ;
   procint:declKind "def" ;
   procint:status "definition" ;
-  procint:leanCode """/-- The crown countermodel is a workflow net.
-
-Source: i (no input transitions)
-Sink: o (no output transitions)
-Every node lies on a path from i to o.
--/
-noncomputable def crownCounterWfNet : WfNet CrownCounterPlace CrownCounterTransition where
+  procint:leanCode """noncomputable def crownCounterWfNet : WfNet CrownCounterPlace CrownCounterTransition where
   net := crownCounterNet
   source := CrownCounterPlace.i
   sink := CrownCounterPlace.o
   source_ne_sink := by decide
-  source_no_input := fun _t => by sorry
-  sink_no_output := fun _t => by sorry
-  onPath := fun _x => by sorry""" .
-
-# ──────────────────────────────────────────────────────────────────────────────
-# AGENT 2: Reachability Lemmas
-# ──────────────────────────────────────────────────────────────────────────────
-
-procint:Decl_crownCounter_reaches_mid a procint:Decl ;
-  procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 5 ;
-  procint:declName "ProcInt.crownCounter_reaches_mid" ;
-  procint:declKind "theorem" ;
-  procint:status "stated" ;
-  procint:leanCode """/-- From initial marking, we reach an intermediate marking by firing absorb. -/
-lemma crownCounter_reaches_mid (n : ℕ) :
-    ∃ M, crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M := by
-  use crownCounterWfNet.initialMarking
-  sorry""" .
-
-procint:Decl_crownCounter_reaches_final a procint:Decl ;
-  procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 6 ;
-  procint:declName "ProcInt.crownCounter_reaches_final" ;
-  procint:declKind "theorem" ;
-  procint:status "stated" ;
-  procint:leanCode """/-- Key reachability fact: from any reachable marking, we can reach the final marking. -/
-lemma crownCounter_reaches_final (M : Marking CrownCounterPlace) :
-    crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M →
-    crownCounterWfNet.net.Reaches M crownCounterWfNet.finalMarking := by
-  intro _
-  sorry""" .
-
-# ──────────────────────────────────────────────────────────────────────────────
-# AGENT 3: Soundness Proof
-# ──────────────────────────────────────────────────────────────────────────────
-
-procint:Decl_crownCounter_sound a procint:Decl ;
-  procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 7 ;
-  procint:declName "ProcInt.crownCounter_sound" ;
-  procint:declKind "theorem" ;
-  procint:status "stated" ;
-  procint:leanCode """/-- The crown countermodel is sound: it satisfies all three soundness clauses. -/
-theorem crownCounter_sound : crownCounterWfNet.Sound := by
-  sorry""" .
-
-# ──────────────────────────────────────────────────────────────────────────────
-# AGENT 4: Unboundedness Proof
-# ──────────────────────────────────────────────────────────────────────────────
-
-procint:Decl_crownCounter_not_bounded a procint:Decl ;
-  procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 8 ;
-  procint:declName "ProcInt.crownCounter_not_bounded" ;
-  procint:declKind "theorem" ;
-  procint:status "stated" ;
-  procint:leanCode """/-- For any bound k, we can reach a marking where the short-circuit violates boundedness. -/
-theorem crownCounter_not_bounded :
-    ¬ ∃ k, crownCounterWfNet.shortCircuit.Bounded crownCounterWfNet.initialMarking k := by
-  sorry""" .
-
-# ──────────────────────────────────────────────────────────────────────────────
-# AGENT 5: Main Theorem - Infinite Transition Countermodel
-# ──────────────────────────────────────────────────────────────────────────────
+  source_no_input := by intro t; cases t <;> simp [crownCounterNet, Finsupp.single_apply, Finsupp.update_apply]
+  sink_no_output := by intro t; cases t <;> simp [crownCounterNet, Finsupp.single_apply, Finsupp.update_apply]
+  onPath := by
+    intro x
+    constructor
+    · cases x with
+      | inl p =>
+        cases p with
+        | i => exact Relation.ReflTransGen.refl
+        | q =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inl 1))
+          · apply Relation.ReflTransGen.single
+            solve_flow_edge
+          · solve_flow_edge
+        | o =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inr 1))
+          · apply Relation.ReflTransGen.tail (b := Sum.inl CrownCounterPlace.q)
+            · apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inl 1))
+              · apply Relation.ReflTransGen.single
+                solve_flow_edge
+              · solve_flow_edge
+            · solve_flow_edge
+          · solve_flow_edge
+        | c n =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inl n))
+          · apply Relation.ReflTransGen.single
+            solve_flow_edge
+          · solve_flow_edge
+      | inr t =>
+        cases t with
+        | inl n =>
+          apply Relation.ReflTransGen.single
+          solve_flow_edge
+        | inr n =>
+          apply Relation.ReflTransGen.tail (b := Sum.inl (CrownCounterPlace.c n))
+          · apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inl n))
+            · apply Relation.ReflTransGen.single
+              solve_flow_edge
+            · solve_flow_edge
+          · solve_flow_edge
+    · cases x with
+      | inl p =>
+        cases p with
+        | i =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inr 1))
+          · apply Relation.ReflTransGen.tail (b := Sum.inl (CrownCounterPlace.c 1))
+            · apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inl 1))
+              · apply Relation.ReflTransGen.single
+                solve_flow_edge
+              · solve_flow_edge
+            · solve_flow_edge
+          · solve_flow_edge
+        | q =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inr 1))
+          · apply Relation.ReflTransGen.single
+            solve_flow_edge
+          · solve_flow_edge
+        | o => exact Relation.ReflTransGen.refl
+        | c n =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inr n))
+          · apply Relation.ReflTransGen.single
+            solve_flow_edge
+          · solve_flow_edge
+      | inr t =>
+        cases t with
+        | inl n =>
+          apply Relation.ReflTransGen.tail (b := Sum.inr (Sum.inr n))
+          · apply Relation.ReflTransGen.tail (b := Sum.inl (CrownCounterPlace.c n))
+            · apply Relation.ReflTransGen.single
+              solve_flow_edge
+            · solve_flow_edge
+          · solve_flow_edge
+        | inr n =>
+          apply Relation.ReflTransGen.single
+          solve_flow_edge""" .
 
 procint:Decl_intermediateMarking a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 9 ;
+  procint:declOrder 6 ;
   procint:declName "ProcInt.intermediateMarking" ;
   procint:declKind "def" ;
   procint:status "definition" ;
-  procint:leanCode """/-- The intermediate marking after firing absorb transition n. -/
-noncomputable def intermediateMarking (n : ℕ) : Marking CrownCounterPlace :=
+  procint:leanCode """noncomputable def intermediateMarking (n : ℕ) : Marking CrownCounterPlace :=
   Finsupp.single CrownCounterPlace.q n + Finsupp.single (CrownCounterPlace.c n) 1""" .
 
-procint:Decl_CrownTransition_Infinite a procint:Decl ;
+procint:Decl_macros2 a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 7 ;
+  procint:declName "ProcInt.macros2" ;
+  procint:declKind "macro" ;
+  procint:status "definition" ;
+  procint:leanCode """macro "solve_enabled" : tactic =>
+  `(tactic| (
+    intro p
+    dsimp [intermediateMarking, crownCounterNet, PetriNet.Enabled, WfNet.initialMarking, WfNet.finalMarking, crownCounterWfNet]
+    try simp [Finsupp.single_apply, Finsupp.update_apply, Finsupp.add_apply, Finsupp.tsub_apply]
+    try (cases p <;> simp <;> try split_ifs <;> omega)
+  ))
+
+macro "solve_fire" : tactic =>
+  `(tactic| (
+    ext p
+    dsimp [intermediateMarking, crownCounterNet, PetriNet.fire, WfNet.initialMarking, WfNet.finalMarking, crownCounterWfNet]
+    try simp [Finsupp.single_apply, Finsupp.update_apply, Finsupp.add_apply, Finsupp.tsub_apply]
+    try (cases p <;> simp <;> try split_ifs <;> omega)
+  ))""" .
+
+procint:Decl_reachable_is_one_of a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 8 ;
+  procint:declName "ProcInt.reachable_is_one_of" ;
+  procint:declKind "lemma" ;
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.reachable_is_one_of' depends on axioms: [propext, Classical.choice, Quot.sound]""" ;
+  procint:leanCode """lemma reachable_is_one_of (M : Marking CrownCounterPlace) :
+    crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M →
+    M = crownCounterWfNet.initialMarking ∨
+    (∃ n, M = intermediateMarking n) ∨
+    M = crownCounterWfNet.finalMarking := by
+  intro h
+  induction h with
+  | refl => exact Or.inl rfl
+  | tail M1 hStep ih =>
+    rcases ih with rfl | ⟨n, rfl⟩ | rfl
+    · rcases hStep with ⟨t, hEn, rfl⟩
+      cases t with
+      | inl n =>
+        right; left; use n
+        solve_fire
+      | inr n =>
+        exfalso
+        have hEn_c := hEn (CrownCounterPlace.c n)
+        revert hEn_c
+        dsimp [crownCounterWfNet, WfNet.initialMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
+        simp [Finsupp.single_apply]
+        try omega
+    · rcases hStep with ⟨t, hEn, rfl⟩
+      cases t with
+      | inl m =>
+        exfalso
+        have hEn_i := hEn CrownCounterPlace.i
+        revert hEn_i
+        dsimp [crownCounterWfNet, intermediateMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
+        simp [Finsupp.single_apply, Finsupp.add_apply, Finsupp.update_apply]
+        try omega
+      | inr m =>
+        have hEn_c := hEn (CrownCounterPlace.c m)
+        revert hEn_c
+        dsimp [crownCounterWfNet, intermediateMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
+        simp [Finsupp.single_apply, Finsupp.add_apply, Finsupp.update_apply]
+        intro hEn_c
+        split_ifs at hEn_c
+        · rename_i h_eq
+          subst h_eq
+          right; right
+          solve_fire
+        · omega
+    · rcases hStep with ⟨t, hEn, rfl⟩
+      cases t with
+      | inl m =>
+        exfalso
+        have hEn_i := hEn CrownCounterPlace.i
+        revert hEn_i
+        dsimp [crownCounterWfNet, WfNet.finalMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
+        simp [Finsupp.single_apply]
+        try omega
+      | inr m =>
+        exfalso
+        have hEn_c := hEn (CrownCounterPlace.c m)
+        revert hEn_c
+        dsimp [crownCounterWfNet, WfNet.finalMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
+        simp [Finsupp.single_apply, Finsupp.update_apply]
+        try omega""" .
+
+procint:Decl_crownCounter_reaches_mid a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 9 ;
+  procint:declName "ProcInt.crownCounter_reaches_mid" ;
+  procint:declKind "lemma" ;
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.crownCounter_reaches_mid' depends on axioms: [propext, Classical.choice, Quot.sound]""" ;
+  procint:leanCode """lemma crownCounter_reaches_mid (n : ℕ) :
+    crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking (intermediateMarking n) := by
+  apply Relation.ReflTransGen.single
+  use (Sum.inl n)
+  constructor
+  · solve_enabled
+  · solve_fire""" .
+
+procint:Decl_crownCounter_reaches_final a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
   procint:declOrder 10 ;
+  procint:declName "ProcInt.crownCounter_reaches_final" ;
+  procint:declKind "lemma" ;
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.crownCounter_reaches_final' depends on axioms: [propext, Classical.choice, Quot.sound]""" ;
+  procint:leanCode """lemma crownCounter_reaches_final (M : Marking CrownCounterPlace) :
+    crownCounterWfNet.net.Reaches crownCounterWfNet.initialMarking M →
+    crownCounterWfNet.net.Reaches M crownCounterWfNet.finalMarking := by
+  intro h
+  rcases reachable_is_one_of M h with rfl | ⟨n, rfl⟩ | rfl
+  · apply Relation.ReflTransGen.tail (b := intermediateMarking 0)
+    · apply Relation.ReflTransGen.single
+      use (Sum.inl 0)
+      constructor
+      · solve_enabled
+      · solve_fire
+    · use (Sum.inr 0)
+      constructor
+      · solve_enabled
+      · solve_fire
+  · apply Relation.ReflTransGen.single
+    use (Sum.inr n)
+    constructor
+    · solve_enabled
+    · solve_fire
+  · exact Relation.ReflTransGen.refl""" .
+
+procint:Decl_crownCounter_sound a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 11 ;
+  procint:declName "ProcInt.crownCounter_sound" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.crownCounter_sound' depends on axioms: [propext, Classical.choice, Quot.sound]""" ;
+  procint:leanCode """theorem crownCounter_sound : WfNet.Sound crownCounterWfNet := by
+  constructor
+  · exact crownCounter_reaches_final
+  · intro M hReach hLe
+    rcases reachable_is_one_of M hReach with rfl | ⟨n, rfl⟩ | rfl
+    · exfalso
+      have hLe_o := hLe CrownCounterPlace.o
+      revert hLe_o
+      dsimp [crownCounterWfNet, WfNet.finalMarking, WfNet.initialMarking, PetriNet.pre]
+      simp [Finsupp.single_apply]
+      try omega
+    · exfalso
+      have hLe_o := hLe CrownCounterPlace.o
+      revert hLe_o
+      dsimp [crownCounterWfNet, WfNet.finalMarking, intermediateMarking, PetriNet.pre]
+      simp [Finsupp.single_apply, Finsupp.add_apply]
+      try omega
+    · rfl
+  · intro t
+    cases t with
+    | inl n =>
+      use crownCounterWfNet.initialMarking, intermediateMarking n
+      constructor
+      · exact Relation.ReflTransGen.refl
+      · constructor
+        · solve_enabled
+        · solve_fire
+    | inr n =>
+      use intermediateMarking n, crownCounterWfNet.finalMarking
+      constructor
+      · exact crownCounter_reaches_mid n
+      · constructor
+        · solve_enabled
+        · solve_fire""" .
+
+procint:Decl_crownCounter_not_bounded a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 12 ;
+  procint:declName "ProcInt.crownCounter_not_bounded" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.crownCounter_not_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]""" ;
+  procint:leanCode """theorem crownCounter_not_bounded :
+    ¬ ∃ k, crownCounterWfNet.shortCircuit.Bounded crownCounterWfNet.initialMarking k := by
+  intro ⟨k, hk⟩
+  have hReach : crownCounterWfNet.shortCircuit.Reaches crownCounterWfNet.initialMarking (intermediateMarking (k + 1)) := by
+    apply WfNet.reaches_shortCircuit
+    apply Relation.ReflTransGen.single
+    use (Sum.inl (k + 1))
+    constructor
+    · solve_enabled
+    · solve_fire
+  have hBound := hk (intermediateMarking (k + 1)) hReach CrownCounterPlace.q
+  dsimp [intermediateMarking] at hBound
+  try simp [Finsupp.add_apply, Finsupp.single_apply] at hBound
+  try omega""" .
+
+procint:Decl_CrownCounterTransition_Infinite a procint:Decl ;
+  procint:inModule "Workflow.Countermodel" ;
+  procint:declOrder 13 ;
   procint:declName "ProcInt.infinite_CrownCounterTransition" ;
   procint:declKind "instance" ;
   procint:status "definition" ;
-  procint:leanCode """/-- CrownCounterTransition = ℕ ⊕ ℕ is infinite. -/
-instance : Infinite CrownCounterTransition := by
+  procint:leanCode """instance : Infinite CrownCounterTransition := by
   unfold CrownCounterTransition
   infer_instance""" .
 
-procint:Decl_infinite_transition_countermodel a procint:Decl ;
+procint:Decl_infinite_transition_countermodel_sound_not_bounded a procint:Decl ;
   procint:inModule "Workflow.Countermodel" ;
-  procint:declOrder 11 ;
+  procint:declOrder 14 ;
   procint:declName "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded" ;
   procint:declKind "theorem" ;
-  procint:status "stated" ;
-  procint:leanCode """/-- Main counterexample theorem:
-    There exists a WfNet with infinite transitions that is sound
-    but whose short-circuit is unbounded.
-This proves the crown-jewel theorem (soundness iff liveness + boundedness)
-requires [Finite T].
--/
-theorem WfNet.infinite_transition_countermodel_sound_not_bounded :
+  procint:status "proven" ;
+  procint:auditMsg """'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]""" ;
+  procint:leanCode """theorem WfNet.infinite_transition_countermodel_sound_not_bounded :
     Infinite CrownCounterTransition ∧
     ∃ (W : WfNet CrownCounterPlace CrownCounterTransition),
       W.Sound ∧ ¬ ∃ k, W.shortCircuit.Bounded W.initialMarking k := by

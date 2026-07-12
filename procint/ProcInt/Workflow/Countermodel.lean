@@ -1,11 +1,19 @@
+-- RENDERED by `ggen sync` from the procint TTL declaration catalog (lean-math-pack).
+-- Candidate Lean: admitted only by `lake build`. ggen renders; Lean admits.
+-- Do not edit by hand: candidates enter through the ontology, never here.
 import Mathlib
 import ProcInt.Workflow.Soundness
 
 set_option linter.unusedSimpArgs false
 
+/-! # ProcInt.Workflow.Countermodel
+
+Infinite-transition countermodel demonstrating necessity of [Finite T] for crown theorem. Proves there exists a WfNet with infinite transitions that is sound but whose short-circuit is not bounded, providing the canonical counterexample to the soundness-iff-liveness-and-boundedness equivalence when T is infinite. -/
+
 namespace ProcInt
 
 inductive CrownCounterPlace : Type | i | q | o | c : ℕ → CrownCounterPlace deriving DecidableEq, Repr
+
 def CrownCounterTransition := ℕ ⊕ ℕ
 
 noncomputable def crownCounterNet : PetriNet CrownCounterPlace CrownCounterTransition where
@@ -130,7 +138,7 @@ lemma reachable_is_one_of (M : Marking CrownCounterPlace) :
   intro h
   induction h with
   | refl => exact Or.inl rfl
-  | tail M1 M2 _ hStep ih =>
+  | tail M1 hStep ih =>
     rcases ih with rfl | ⟨n, rfl⟩ | rfl
     · rcases hStep with ⟨t, hEn, rfl⟩
       cases t with
@@ -139,8 +147,8 @@ lemma reachable_is_one_of (M : Marking CrownCounterPlace) :
         solve_fire
       | inr n =>
         exfalso
-        have hEn_q := hEn CrownCounterPlace.q
-        revert hEn_q
+        have hEn_c := hEn (CrownCounterPlace.c n)
+        revert hEn_c
         dsimp [crownCounterWfNet, WfNet.initialMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
         simp [Finsupp.single_apply]
         try omega
@@ -176,10 +184,10 @@ lemma reachable_is_one_of (M : Marking CrownCounterPlace) :
         try omega
       | inr m =>
         exfalso
-        have hEn_q := hEn CrownCounterPlace.q
-        revert hEn_q
+        have hEn_c := hEn (CrownCounterPlace.c m)
+        revert hEn_c
         dsimp [crownCounterWfNet, WfNet.finalMarking, crownCounterNet, PetriNet.Enabled, PetriNet.pre]
-        simp [Finsupp.single_apply]
+        simp [Finsupp.single_apply, Finsupp.update_apply]
         try omega
 
 lemma crownCounter_reaches_mid (n : ℕ) :
@@ -274,5 +282,6 @@ theorem WfNet.infinite_transition_countermodel_sound_not_bounded :
   · infer_instance
   · use crownCounterWfNet
     exact ⟨crownCounter_sound, crownCounter_not_bounded⟩
+
 
 end ProcInt

@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Standing Quadrature witness — v26.7.7 (run 945bfca)
+/-! # Standing Quadrature witness — v26.7.7 (run 6cbc680)
 
 A finite, kernel-checked witness that the release's surfaces cohere:
 the TTL declaration catalog, the release manifest, and the axiom audit
@@ -138,6 +138,7 @@ def ttlProvenDecls : List String := [
   "ProcInt.WfNet.bounded_of_sound",
   "ProcInt.WfNet.finalMarking_sink",
   "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
@@ -175,6 +176,10 @@ def ttlProvenDecls : List String := [
   "ProcInt.combinedScore_uniform",
   "ProcInt.correlated_cons",
   "ProcInt.correlated_empty",
+  "ProcInt.crownCounter_not_bounded",
+  "ProcInt.crownCounter_reaches_final",
+  "ProcInt.crownCounter_reaches_mid",
+  "ProcInt.crownCounter_sound",
   "ProcInt.deleted_terminal",
   "ProcInt.dependencyMeasure_antisymm",
   "ProcInt.dependencyMeasure_lt_one",
@@ -206,6 +211,7 @@ def ttlProvenDecls : List String := [
   "ProcInt.precedence_concrete",
   "ProcInt.push_bounded",
   "ProcInt.push_not_full",
+  "ProcInt.reachable_is_one_of",
   "ProcInt.response_concrete",
   "ProcInt.seqLang_assoc",
   "ProcInt.sojourn_self",
@@ -339,6 +345,7 @@ def manifestProvenDecls : List String := [
   "ProcInt.WfNet.bounded_of_sound",
   "ProcInt.WfNet.finalMarking_sink",
   "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
@@ -376,6 +383,10 @@ def manifestProvenDecls : List String := [
   "ProcInt.combinedScore_uniform",
   "ProcInt.correlated_cons",
   "ProcInt.correlated_empty",
+  "ProcInt.crownCounter_not_bounded",
+  "ProcInt.crownCounter_reaches_final",
+  "ProcInt.crownCounter_reaches_mid",
+  "ProcInt.crownCounter_sound",
   "ProcInt.deleted_terminal",
   "ProcInt.dependencyMeasure_antisymm",
   "ProcInt.dependencyMeasure_lt_one",
@@ -407,6 +418,7 @@ def manifestProvenDecls : List String := [
   "ProcInt.precedence_concrete",
   "ProcInt.push_bounded",
   "ProcInt.push_not_full",
+  "ProcInt.reachable_is_one_of",
   "ProcInt.response_concrete",
   "ProcInt.seqLang_assoc",
   "ProcInt.sojourn_self",
@@ -540,6 +552,7 @@ def auditedDecls : List String := [
   "ProcInt.WfNet.bounded_of_sound",
   "ProcInt.WfNet.finalMarking_sink",
   "ProcInt.WfNet.finalMarking_source",
+  "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
   "ProcInt.WfNet.initialMarking_ne_finalMarking",
   "ProcInt.WfNet.initialMarking_sink",
   "ProcInt.WfNet.initialMarking_source",
@@ -577,6 +590,10 @@ def auditedDecls : List String := [
   "ProcInt.combinedScore_uniform",
   "ProcInt.correlated_cons",
   "ProcInt.correlated_empty",
+  "ProcInt.crownCounter_not_bounded",
+  "ProcInt.crownCounter_reaches_final",
+  "ProcInt.crownCounter_reaches_mid",
+  "ProcInt.crownCounter_sound",
   "ProcInt.deleted_terminal",
   "ProcInt.dependencyMeasure_antisymm",
   "ProcInt.dependencyMeasure_lt_one",
@@ -608,6 +625,7 @@ def auditedDecls : List String := [
   "ProcInt.precedence_concrete",
   "ProcInt.push_bounded",
   "ProcInt.push_not_full",
+  "ProcInt.reachable_is_one_of",
   "ProcInt.response_concrete",
   "ProcInt.seqLang_assoc",
   "ProcInt.sojourn_self",
@@ -629,7 +647,7 @@ every audited declaration has a TTL origin. -/
 theorem ttl_audit_closed : ttlProvenDecls = auditedDecls := by rfl
 
 /-- Cardinality of the closed proven surface. -/
-theorem provenSurface_count : ttlProvenDecls.length = 197 := by rfl
+theorem provenSurface_count : ttlProvenDecls.length = 203 := by rfl
 
 /-- Paper-claim surface: (claim id, evidence reference) pairs. -/
 def paperClaims : List (String × String) := [

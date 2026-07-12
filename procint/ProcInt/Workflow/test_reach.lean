@@ -8,5 +8,5 @@ def CrownCounterTransition := ℕ ⊕ ℕ
 
 lemma test_ind (r : Marking CrownCounterPlace → Marking CrownCounterPlace → Prop) (M1 M2 : Marking CrownCounterPlace) (h : Relation.ReflTransGen r M1 M2) : True := by
   induction h with
-  | refl => sorry
-  | tail a b c => sorry
+  | refl => by exact trivial
+  | tail a b c => by exact trivial

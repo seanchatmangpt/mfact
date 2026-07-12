@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "945bfca5f1a91c4a20b97705b65fc695d16f973e",
+  "runIdentifier": "6cbc680fbd907d290dc3b6b0a980fa0ab94a41cd",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -268,13 +268,13 @@
     },
     {
       "name": "ProcInt.CrownCounterPlace",
-      "hash": "ad9f6f6592f913aaec4ba2ab8db134b7e70c12b68d6a2a3be5db4c7f3be8c078",
+      "hash": "a1a958791689e1163bdd738ec8e979cec59ee5c588bb5409532dfad647a6df95",
       "axioms": [],
       "proven": false
     },
     {
       "name": "ProcInt.CrownCounterTransition",
-      "hash": "e5c4f75300659b56a9860df34e1103075ea52dc90faf07eb0a51d77ea1db952d",
+      "hash": "e83c671242c4f94e9b670a1c85a0b40e59d2c43775f093e418f2b698e2d5642a",
       "axioms": [],
       "proven": false
     },
@@ -2012,9 +2012,9 @@
     },
     {
       "name": "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
-      "hash": "4a1cf62ef7375314afec662b8fe53923a397fa19fb4ab0d6fd1bca6d120c72eb",
+      "hash": "719ef96073aab09ca6792c3fd6817bc8c8df79ac88d050bcae04870e074bed22",
       "axioms": [],
-      "proven": false
+      "proven": true
     },
     {
       "name": "ProcInt.WfNet.initialMarking",
@@ -2423,28 +2423,40 @@
       "proven": true
     },
     {
-      "name": "ProcInt.crownCounter_not_bounded",
-      "hash": "33d92f547e4682257ae4e2b773a77cf44870884782fde40c1fc85ab935249d6f",
+      "name": "ProcInt.crownCounterNet",
+      "hash": "01fae31734368f4ec550ffa7d0d7d32019ed7a7b4b97643f66a8ae7dcc8bba79",
       "axioms": [],
       "proven": false
+    },
+    {
+      "name": "ProcInt.crownCounterWfNet",
+      "hash": "974dca9a5f4af12e215bbf01ff13209e13dd3a222bf71cb870d7810957762796",
+      "axioms": [],
+      "proven": false
+    },
+    {
+      "name": "ProcInt.crownCounter_not_bounded",
+      "hash": "6028d05b79afa5cda979a72553deba2e92a0d4a3a3e251269a6205c5a4110555",
+      "axioms": [],
+      "proven": true
     },
     {
       "name": "ProcInt.crownCounter_reaches_final",
-      "hash": "430650c070aed9d85845220ea468cf7debc95e5bcac54a0507c27117b22f87da",
+      "hash": "27390d2e61c507a9f013f259a05e288abd8d3e969059dc944b478649c630145f",
       "axioms": [],
-      "proven": false
+      "proven": true
     },
     {
       "name": "ProcInt.crownCounter_reaches_mid",
-      "hash": "2a5dcbd9a5cb054731d0e236029d52eb0be36b4c64b344aaac8b47a40187b2f7",
+      "hash": "cc125fe4dff0dcb1678270c91678e9fb5b169f86c366a15802c2abb16e46cd22",
       "axioms": [],
-      "proven": false
+      "proven": true
     },
     {
       "name": "ProcInt.crownCounter_sound",
-      "hash": "947017fba7e65fdb7c0adc978f53ba7cfdf7e233016e545f23a52d226ec52c01",
+      "hash": "194cd96449f3b7cd1a25489a580348c53276bfaa73bfa69270f2381c711d2948",
       "axioms": [],
-      "proven": false
+      "proven": true
     },
     {
       "name": "ProcInt.crownJewel_status",
@@ -2647,7 +2659,7 @@
     },
     {
       "name": "ProcInt.infinite_CrownCounterTransition",
-      "hash": "e5312d501a2f1e909e08902a36e3d4aab826050dba936910926dff65c49bbe40",
+      "hash": "f10d8317e90886838397febfdcfc0561aba0c95526617909fb7ac0cd2bda5dee",
       "axioms": [],
       "proven": false
     },
@@ -2665,7 +2677,7 @@
     },
     {
       "name": "ProcInt.intermediateMarking",
-      "hash": "bbace7d6020d5d280a1529478c9ff93695d53cc9b34b364002d9a25cc45d7709",
+      "hash": "ef7d8c4880c2556bf51353166257a2d45c86cf6d2893c26a60dced34938d3fcb",
       "axioms": [],
       "proven": false
     },
@@ -2722,6 +2734,12 @@
         "propext"
       ],
       "proven": true
+    },
+    {
+      "name": "ProcInt.macros",
+      "hash": "6720624dff8f9f00c1d9b7b086883f8b0eef2b8384656ab46e4cd1a21b5bf24b",
+      "axioms": [],
+      "proven": false
     },
     {
       "name": "ProcInt.modelProjection",
@@ -2802,6 +2820,12 @@
         "propext",
         "Quot.sound"
       ],
+      "proven": true
+    },
+    {
+      "name": "ProcInt.reachable_is_one_of",
+      "hash": "422d5a4c4ae232eaf60c75af24c8878e12deda886464142e6b00527f91617d86",
+      "axioms": [],
       "proven": true
     },
     {
@@ -3823,6 +3847,11 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
+      "hash": "719ef96073aab09ca6792c3fd6817bc8c8df79ac88d050bcae04870e074bed22"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.WfNet.initialMarking_ne_finalMarking",
       "hash": "f196ef9c10be2acaec029a1c4fc89bdef7cc9a84c15b64ddf64087fb2302ed30"
     },
@@ -4008,6 +4037,26 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.crownCounter_not_bounded",
+      "hash": "6028d05b79afa5cda979a72553deba2e92a0d4a3a3e251269a6205c5a4110555"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.crownCounter_reaches_final",
+      "hash": "27390d2e61c507a9f013f259a05e288abd8d3e969059dc944b478649c630145f"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.crownCounter_reaches_mid",
+      "hash": "cc125fe4dff0dcb1678270c91678e9fb5b169f86c366a15802c2abb16e46cd22"
+    },
+    {
+      "kind": "axiomAudit",
+      "subject": "ProcInt.crownCounter_sound",
+      "hash": "194cd96449f3b7cd1a25489a580348c53276bfaa73bfa69270f2381c711d2948"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.deleted_terminal",
       "hash": "a4491c57c61b222a3b5286f2cc18b7b9e2d4e929e79ca6932bc118ec83c89762"
     },
@@ -4163,6 +4212,11 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.reachable_is_one_of",
+      "hash": "422d5a4c4ae232eaf60c75af24c8878e12deda886464142e6b00527f91617d86"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.response_concrete",
       "hash": "03224816e24ea18ca81d3b8bc41cdead7f090f395fb8d52eb6ef0161b504da43"
     },
@@ -4229,12 +4283,7 @@
   ],
   "statedNotProven": [
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
-    "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
-    "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement",
-    "ProcInt.crownCounter_not_bounded",
-    "ProcInt.crownCounter_reaches_final",
-    "ProcInt.crownCounter_reaches_mid",
-    "ProcInt.crownCounter_sound"
+    "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
   ],
-  "foldHash": "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434"
+  "foldHash": "b1edfbebdf64ff895cf20c6581a2dec7cf34140e4631b760dafc57ae20e4e951"
 }

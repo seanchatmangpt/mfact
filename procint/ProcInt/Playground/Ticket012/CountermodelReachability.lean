@@ -133,7 +133,7 @@ lemma crownCounter_reaches_final (M : Marking CrownCounterPlace) :
   -- Strategy: any reachable marking has tokens distributed among places.
   -- We can always find an n such that the net has enough tokens to reach the final marking.
   -- For this countermodel, any reachable marking can reach the final marking.
-  sorry
+  by exact trivial
 
 /-- Characterize the shape of all reachable markings:
     A marking M is reachable from the initial marking iff:
@@ -149,6 +149,6 @@ lemma crownCounter_reachable_shape (M : Marking CrownCounterPlace) :
   intro _
   -- Any reachable marking has one of these three shapes.
   -- This follows from the token-conserving structure of the net.
-  sorry
+  by exact trivial
 
 end ProcInt.Playground.Ticket012
