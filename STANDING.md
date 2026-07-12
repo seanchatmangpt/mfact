@@ -149,8 +149,7 @@ report (`TYPE_INVENTORY_HASH`, `GGEN_MODULE_GENERATION`, `LEAN_BUILD`,
 `PROCESS_EVIDENCE`, `PROOF_MANIFEST`, `VALID_OBJECTION`,
 `LLM_TRUSTED_BASE`, `CERTIFIED_RELEASE`, `PAPER_EVIDENCE_GENERATED`).
 Every field there is computed by the commands recorded in
-`release/certify.log` and `generated/evaluation.tex`'s header comment,
-never typed from memory.
+`release/certify.log`, never typed from memory.
 
 ## Standing Quadrature
 
