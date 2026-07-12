@@ -22,7 +22,7 @@
 --
 -- Correspondence target : wasm4pm_core::conformance_counts (wasm4pm-core/src/conformance_counts.rs) <-> ProcInt.ReplayCounts
 -- Aeneas image          : Wasm4pmVerify.Generated.ReplayCounts
--- Rendered status        : PROVEN
+-- Rendered status        : DECLARED
 import Mathlib
 import ProcInt.Conformance.TokenReplay
 import Wasm4pmVerify.Abs
