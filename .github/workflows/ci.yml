@@ -1,0 +1,49 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-mfact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: mfact
+          test: false
+          lint: false
+      - name: Axiom audit
+        working-directory: mfact
+        run: lake build AxiomAudit
+  build-procint:
+    runs-on: ubuntu-latest
+    needs: build-mfact
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: procint
+          test: false
+          lint: false
+      - name: Axiom audit
+        working-directory: procint
+        run: lake build AxiomAudit
+      - name: Fixtures
+        working-directory: procint
+        run: lake build ProcInt.Fixtures.Positive ProcInt.Fixtures.Negative
+
+# NOTE: leanprover/lean-action@v1's documented input is
+# `lake-package-directory`, not `project` (the task-provided baseline used
+# `project:`, which is not a real input of this action as of the July 2026
+# check of https://github.com/leanprover/lean-action). This file uses
+# `lake-package-directory` instead.
+#
+# `build-procint` depends on `build-mfact` completing because
+# `procint/lakefile.toml` requires `mfact` via a local path
+# (`[[require]] name = "mfact" path = "../mfact"`) — however each job
+# checks out a fresh runner, so lean-action's own `lake build` inside the
+# procint job will still build the local `mfact` dependency from source; the
+# `needs:` ordering here reflects the source dependency, not a required
+# artifact hand-off between jobs (no cache/artifact sharing is configured).
+#
+# This file needs a final version-tag check by a human (pin `@v1` to a
+# specific release tag if the project wants exact reproducibility) before
+# relying on it in production.

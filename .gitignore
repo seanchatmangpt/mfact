@@ -1,0 +1,32 @@
+.lake/
+*.olean
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.bbl
+paper/*.blg
+
+# Editor swap files (accidentally tracked once — never again)
+*.swp
+*.swo
+
+# Python bytecode cache (scripts/ is stdlib-only but still emits this)
+__pycache__/
+*.pyc
+
+# Ephemeral cockpit reports (certified status lives in release/)
+.mfact/reports/
+release/docs_build.log
+
+# Genetic tactic search: scratch candidate files and run logs (exploratory, off-ledger)
+procint/ProcInt/Playground/_scratch_*.lean
+.tactic-search/
+
+# Correspondence-factory extraction toolchain (charon/aeneas binaries) — built
+# by scripts/verif_build_toolchain.sh from pinned revs, never committed.
+# Durable (survives across sessions, unlike /tmp scratchpads) but reproducible
+# from source. Lives here, not in wasm4pm-compat, which stays a clean
+# source-only publishable crate.
+.verif-toolchain/
