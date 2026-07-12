@@ -122,3 +122,12 @@ json.dump(gates, open(OUT_GATES, 'w'), indent=2)
 print(f"artifacts={len(artifacts)} proven={sum(1 for a in artifacts if a['proven'])} "
       f"stated={len(stated)} modules={len(set(modules))} foldHash={acc}")
 print('gates:', gates)
+
+# TYPE_INVENTORY_HASH (release/standing.env, release/type_inventory_provenance.txt)
+# is computed by a dedicated generator, not asserted here — see G9 in
+# GAP_LEDGER_v26.7.12.md. This is the single call site that regenerates both
+# files from the pinned wasm4pm-compat commit; hand-editing either output is
+# GENERATED_OUTPUT_DRIFT.
+subprocess.run(
+    ['python3', os.path.join(ROOT, 'scripts', 'gen_type_inventory_hash.py')],
+    check=True)
