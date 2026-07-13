@@ -295,3 +295,27 @@ diff just doesn't block starting.
   actor; `git log -5` showed no commit outside this session. Per the guard,
   touched nothing further, wrote receipt `.mfact/receipts/20260713T202733Z.json`
   with `collision: true`, and stopped.
+
+- **2026-07-13T21:27:03Z (run `20260713T212703Z`, firing 13) -- COLLISION, no
+  action taken.** Note on numbering: firing 12 ran its STEP 0/1 checks while
+  the coordinating session was in plan mode and could not write a receipt or
+  append here -- that gap is being backfilled out of order by a separately
+  launched workflow (task `wsr99yw42`'s Wave 4c) and may land after this
+  entry rather than before it; this is a cosmetic ordering artifact of two
+  concurrent writers, not a data-loss risk (Read-then-Edit throughout).
+  This firing's own delta check found 2 new untracked paths:
+  `release/certify.log` (0 bytes) and `release/certify.stderr` (87 bytes),
+  mtime 14:10 PDT. Both are process-output artifacts from a real `mfact
+  certify` invocation a concurrent workflow's verify agent ran directly
+  (task `wnz6xi5ce`, a release-ARD/PRD synthesis, now completed) while
+  independently re-checking a PRD claim about the certify gate's current
+  failure state -- not a foreign/uncoordinated actor. Per STEP 1's
+  unconditional rule (any non-empty delta is a real collision, no carve-out
+  for "looks like harmless log output"), this firing did not judge the
+  paths further or attempt to route around the rule. A second workflow
+  (task `wsr99yw42`, implementing a testing-atlas integration plan --
+  most recent commit `e590d1b`, mid-Wave-3 of 4) is also still actively
+  running, reinforcing that staying conservative here was correct. `git log
+  -8` showed no foreign commits. Wrote receipt
+  `.mfact/receipts/20260713T212703Z.json` with `collision: true`, and
+  stopped.
