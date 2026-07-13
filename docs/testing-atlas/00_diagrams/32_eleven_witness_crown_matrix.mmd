@@ -1,0 +1,36 @@
+flowchart TB
+  CLAIM["Crown capability c"]
+  ALIVE["CrownAlive(c)"]
+  W_K["K: Kernel<br/>T001/T002/T006/T007"]
+  CLAIM --> W_K
+  W_K --> ALIVE
+  W_P["P: Positive<br/>T003/T008"]
+  CLAIM --> W_P
+  W_P --> ALIVE
+  W_N["N: Negative<br/>T010/T011/T021/T094"]
+  CLAIM --> W_N
+  W_N --> ALIVE
+  W_Cm["Cm: Countermodel<br/>T050–T054"]
+  CLAIM --> W_Cm
+  W_Cm --> ALIVE
+  W_Pb["Pb: Property<br/>T029–T032"]
+  CLAIM --> W_Pb
+  W_Pb --> ALIVE
+  W_Me["Me: Metamorphic<br/>T041–T049"]
+  CLAIM --> W_Me
+  W_Me --> ALIVE
+  W_Mu["Mu: Mutation<br/>T055"]
+  CLAIM --> W_Mu
+  W_Mu --> ALIVE
+  W_Co["Co: Composition<br/>T004/T063"]
+  CLAIM --> W_Co
+  W_Co --> ALIVE
+  W_F["F: Flow<br/>T064"]
+  CLAIM --> W_F
+  W_F --> ALIVE
+  W_R["R: Replay<br/>T048/T071–T073"]
+  CLAIM --> W_R
+  W_R --> ALIVE
+  W_S["S: Standing Path<br/>T132/T133"]
+  CLAIM --> W_S
+  W_S --> ALIVE

@@ -1,0 +1,26 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["INVENTORY<br/>Proof dependency and theorem-inventory testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T105["T105<br/>Expected theorem existence test<br/>MFW.TST.INVENTORY.EXISTS.105<br/>crown theorem manifest"]
+  FAMILY --> T105
+  T105 --> EVIDENCE
+  T106["T106<br/>Theorem kind test<br/>MFW.TST.INVENTORY.KIND.106<br/>expected theorem"]
+  FAMILY --> T106
+  T106 --> EVIDENCE
+  T107["T107<br/>Theorem module location test<br/>MFW.TST.INVENTORY.MODULE.107<br/>MFW residue theorem"]
+  FAMILY --> T107
+  T107 --> EVIDENCE
+  T108["T108<br/>Allowed axiom dependency test<br/>MFW.TST.INVENTORY.AXIOM_ALLOWLIST.108<br/>crown theorems"]
+  FAMILY --> T108
+  T108 --> EVIDENCE
+  T109["T109<br/>Claim class test<br/>MFW.TST.INVENTORY.CLAIM_CLASS.109<br/>FINITE_VERIFIED vs PROVEN"]
+  FAMILY --> T109
+  T109 --> EVIDENCE
+  T110["T110<br/>Manifest representation test<br/>MFW.TST.INVENTORY.MANIFEST.110<br/>mfact manifest"]
+  FAMILY --> T110
+  T110 --> EVIDENCE
+  T111["T111<br/>Exact theorem inventory equality test<br/>MFW.TST.INVENTORY.EXACT_SET.111<br/>crown inventory"]
+  FAMILY --> T111
+  T111 --> EVIDENCE

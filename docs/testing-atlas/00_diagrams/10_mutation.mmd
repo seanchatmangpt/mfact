@@ -1,0 +1,8 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["MUTATION<br/>Mutation testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T055["T055<br/>Mutation test<br/>MFW.TST.MUTATION.KILL_MUTANT.055<br/>bindDropSeqRight / closureWithoutIdempotence / replayReverseParents"]
+  FAMILY --> T055
+  T055 --> EVIDENCE

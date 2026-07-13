@@ -1,0 +1,122 @@
+[
+  [
+    "KERNEL",
+    "Kernel and theorem testing"
+  ],
+  [
+    "ELAB",
+    "Elaboration and type-system testing"
+  ],
+  [
+    "DIAG",
+    "Diagnostic and refusal testing"
+  ],
+  [
+    "FINITE",
+    "Executable finite testing"
+  ],
+  [
+    "PROPERTY",
+    "Property-based and generative testing"
+  ],
+  [
+    "ALGEBRA",
+    "Algebraic law testing"
+  ],
+  [
+    "METAMORPHIC",
+    "Metamorphic testing"
+  ],
+  [
+    "COUNTERMODEL",
+    "Counterexample and countermodel testing"
+  ],
+  [
+    "MUTATION",
+    "Mutation testing"
+  ],
+  [
+    "DIFFERENTIAL",
+    "Differential testing"
+  ],
+  [
+    "SNAPSHOT",
+    "Golden and snapshot testing"
+  ],
+  [
+    "REGRESSION",
+    "Regression testing"
+  ],
+  [
+    "COMPOSITION",
+    "Cross-theorem composition testing"
+  ],
+  [
+    "FLOW",
+    "World-centered flow and scenario testing"
+  ],
+  [
+    "E2E",
+    "End-to-end controlled-boundary testing"
+  ],
+  [
+    "ROUNDTRIP",
+    "Round-trip testing"
+  ],
+  [
+    "CORRESPONDENCE",
+    "Refinement and correspondence testing"
+  ],
+  [
+    "INVARIANT",
+    "Invariant preservation testing"
+  ],
+  [
+    "CONCURRENCY",
+    "Concurrency and causal-order testing"
+  ],
+  [
+    "REPRO",
+    "Determinism and reproducibility testing"
+  ],
+  [
+    "LAKE",
+    "Lake and package testing"
+  ],
+  [
+    "EXPECTED_FAIL",
+    "Expected-failure build testing"
+  ],
+  [
+    "POLICY",
+    "Linter and repository-policy testing"
+  ],
+  [
+    "INVENTORY",
+    "Proof dependency and theorem-inventory testing"
+  ],
+  [
+    "PERF",
+    "Performance and benchmark testing"
+  ],
+  [
+    "STRESS",
+    "Stress and scale testing"
+  ],
+  [
+    "COMPLEXITY",
+    "Complexity-law testing"
+  ],
+  [
+    "TERMINATION",
+    "Termination and descent testing"
+  ],
+  [
+    "FAITHFULNESS",
+    "Faithfulness and claim-ceiling testing"
+  ],
+  [
+    "STANDING_PATH",
+    "Gap, edge, and standing-path coverage"
+  ]
+]

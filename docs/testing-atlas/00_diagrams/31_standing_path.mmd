@@ -1,0 +1,11 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["STANDING_PATH<br/>Gap, edge, and standing-path coverage"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T132["T132<br/>Gap/edge coverage test<br/>MFW.TST.STANDING_PATH.EDGE_COVERAGE.132<br/>MFW wave graph"]
+  FAMILY --> T132
+  T132 --> EVIDENCE
+  T133["T133<br/>Standing path coverage test<br/>MFW.TST.STANDING_PATH.PATH_COVERAGE.133<br/>TTL→ggen→Lean→Lake→audit crown path"]
+  FAMILY --> T133
+  T133 --> EVIDENCE

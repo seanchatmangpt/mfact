@@ -1,0 +1,134 @@
+id,family,slug,name,instance,question,mechanism,mfw_instance
+T001,KERNEL,ADMISSION,Kernel admission test,MFW.TST.KERNEL.ADMISSION.001,Does the declaration survive Lean elaboration and kernel checking?,Lean declaration / lake build,ProcInt theorem module admission
+T002,KERNEL,THEOREM_PROOF,Theorem proof test,MFW.TST.KERNEL.THEOREM_PROOF.002,Is the stated proposition actually inhabited?,theorem/example,Replay equivalence law
+T003,KERNEL,SPECIALIZATION,Lemma specialization test,MFW.TST.KERNEL.SPECIALIZATION.003,Does a generic theorem fire on the intended concrete carrier?,example applying theorem,SOC2 concrete closure specialization
+T004,KERNEL,COMPOSITION,Theorem composition test,MFW.TST.KERNEL.COMPOSITION.004,Do multiple proved theorems compose on one shared carrier?,shared witness + chained theorem applications,residue → tenancy → execution → replay
+T005,KERNEL,ASSUMPTION_AUDIT,Assumption audit,MFW.TST.KERNEL.ASSUMPTION_AUDIT.005,"Which theorem hypotheses are necessary, redundant, or too strong?",hypothesis inventory + removal companions,Separated / Finite / well-founded assumptions
+T006,KERNEL,AXIOM_DEP,Axiom dependency test,MFW.TST.KERNEL.AXIOM_DEP.006,Which axioms are transitively reachable from a theorem?,Lean.collectAxioms / #print axioms,crown theorem axiom allowlist
+T007,KERNEL,NO_SORRY,No-sorry test,MFW.TST.KERNEL.NO_SORRY.007,Does any controlled declaration depend on sorryAx?,compiled environment inspection,ProcInt namespace audit
+T008,KERNEL,NON_VACUITY,Non-vacuity test,MFW.TST.KERNEL.NON_VACUITY.008,Can the theorem fire on a genuine witness with satisfiable hypotheses?,concrete positive witness,nonidentity ClosureOperator
+T009,ELAB,POSITIVE,Positive elaboration test,MFW.TST.ELAB.POSITIVE.009,Does intended syntax and type inference elaborate?,example/#check,lawful TWorkflow composition
+T010,ELAB,NEGATIVE,Negative elaboration test,MFW.TST.ELAB.NEGATIVE.010,Is illegal code rejected by elaboration?,#guard_msgs(error),illegal color composition
+T011,ELAB,TYPE_MISMATCH,Type mismatch fixture,MFW.TST.ELAB.TYPE_MISMATCH.011,Does a forbidden indexed composition fail to type?,#guard_msgs(error) in #check,raw→plan composed with receipt→replay
+T012,ELAB,INSTANCE_SYNTH,Instance synthesis test,MFW.TST.ELAB.INSTANCE_SYNTH.012,Is the expected typeclass instance found?,#synth / elaboration,DecidableEq / Fintype / LawfulBEq
+T013,ELAB,DEFEQ,Definitional equality test,MFW.TST.ELAB.DEFEQ.013,Are expressions equal under reducible definitional equality?,guard_expr =,normalized workflow expression
+T014,ELAB,SYNTACTIC_EQ,Syntactic equality test,MFW.TST.ELAB.SYNTACTIC_EQ.014,Are expressions structurally identical?,guard_expr =ₛ,ggen-emitted term shape
+T015,ELAB,ALPHA_EQ,Alpha-equivalence test,MFW.TST.ELAB.ALPHA_EQ.015,Are expressions equivalent modulo binder names?,guard_expr =ₐ,generated theorem binder renaming
+T016,ELAB,GOAL_SHAPE,Goal-shape test,MFW.TST.ELAB.GOAL_SHAPE.016,Did a tactic leave exactly the intended target?,guard_target,residue proof subgoal shape
+T017,ELAB,HYP_SHAPE,Hypothesis-shape test,MFW.TST.ELAB.HYP_SHAPE.017,Did elaboration/tactic state produce the intended local context?,guard_hyp,closure assumptions in context
+T018,DIAG,EXACT,Exact diagnostic test,MFW.TST.DIAG.EXACT.018,Did the exact expected compiler message occur?,#guard_msgs,typed illegal composition diagnostic
+T019,DIAG,CLASS,Diagnostic-class test,MFW.TST.DIAG.CLASS.019,Did the expected error/warning/info class occur?,#guard_msgs severity filters,deprecation or refusal diagnostic
+T020,DIAG,PANIC,Panic test,MFW.TST.DIAG.PANIC.020,Did the command panic as expected?,#guard_panic,deliberate internal panic fixture
+T021,DIAG,TYPED_REFUSAL,Typed refusal test,MFW.TST.DIAG.TYPED_REFUSAL.021,Did executable admission return the exact refusal constructor?,Except / pattern match / native_decide,crossTenantLeak refusal
+T022,DIAG,REFUSAL_PRECEDENCE,Refusal precedence test,MFW.TST.DIAG.REFUSAL_PRECEDENCE.022,"When several laws fail, which refusal has priority?",multi-failure fixture,stale observation vs source-not-allowed
+T023,DIAG,STABILITY,Diagnostic stability test,MFW.TST.DIAG.STABILITY.023,Did a public error/refusal surface drift unexpectedly?,#guard_msgs / golden output,stable crown refusal wording
+T024,FINITE,BOOL_GUARD,Boolean guard test,MFW.TST.FINITE.BOOL_GUARD.024,Does an executable Bool evaluate to true?,#guard,regime classifier case
+T025,FINITE,DECIDE,Finite decision test,MFW.TST.FINITE.DECIDE.025,Does a decidable proposition hold on a concrete finite witness?,decide / example,receipt ancestry property
+T026,FINITE,NATIVE_DECIDE,Native decision test,MFW.TST.FINITE.NATIVE_DECIDE.026,Can compiled decision produce a proof of the proposition?,native_decide,finite world invariant
+T027,FINITE,TABLE,Example-table test,MFW.TST.FINITE.TABLE.027,Do named finite cases match expected outputs?,List cases + assertions,singularity routing table
+T028,FINITE,EXHAUSTIVE,Exhaustive finite-domain test,MFW.TST.FINITE.EXHAUSTIVE.028,Does the property hold for every value in an explicit finite universe?,Fintype/list universe + native_decide,all TinyWorkflow worlds at depth n
+T029,PROPERTY,PROPERTY_BASED,Property-based test,MFW.TST.PROPERTY.PROPERTY_BASED.029,Does a law survive generated samples?,Plausible/Testable,closure idempotence over generated carriers
+T030,PROPERTY,RANDOM_GEN,Random generation test,MFW.TST.PROPERTY.RANDOM_GEN.030,Can generated carriers expose unexpected failures?,Plausible Gen,receipt DAG / workflow generator
+T031,PROPERTY,SHRINK,Shrinking test,MFW.TST.PROPERTY.SHRINK.031,Can a failing generated case be reduced to a smaller falsifier?,Plausible shrink / custom shrinker,minimal workflow counterexample
+T032,PROPERTY,DISTRIBUTION,Distribution-sensitive generation,MFW.TST.PROPERTY.DISTRIBUTION.032,Are rare but important regimes intentionally sampled?,weighted generator,cross-tenant and sparse-scale regimes
+T033,ALGEBRA,IDENTITY,Identity law test,MFW.TST.ALGEBRA.IDENTITY.033,Does the identity law hold?,theorem + generated attack,Workflow.bind right identity
+T034,ALGEBRA,ASSOCIATIVITY,Associativity test,MFW.TST.ALGEBRA.ASSOCIATIVITY.034,Does associativity hold?,theorem + generated attack,Workflow.bind associativity
+T035,ALGEBRA,IDEMPOTENCE,Idempotence test,MFW.TST.ALGEBRA.IDEMPOTENCE.035,Does applying the operator twice equal once?,theorem + property attack,closure idempotence
+T036,ALGEBRA,MONOTONICITY,Monotonicity test,MFW.TST.ALGEBRA.MONOTONICITY.036,Does order preservation hold?,theorem,closure monotonicity
+T037,ALGEBRA,EXTENSIVITY,Extensivity test,MFW.TST.ALGEBRA.EXTENSIVITY.037,Is the input contained in its closure?,theorem,closure extensivity
+T038,ALGEBRA,COMMUTATIVITY,Commutativity test,MFW.TST.ALGEBRA.COMMUTATIVITY.038,Do independent operations commute?,theorem + generated attack,independent replay steps
+T039,ALGEBRA,ABSORPTION,Absorption test,MFW.TST.ALGEBRA.ABSORPTION.039,Does the domain-specific absorption law hold?,theorem,normalization/closure absorption
+T040,ALGEBRA,DISTRIBUTIVITY,Distributivity test,MFW.TST.ALGEBRA.DISTRIBUTIVITY.040,Does composition distribute over the declared operator?,theorem,workflow/process algebra law
+T041,METAMORPHIC,EVENT_REORDER,Independent event reordering test,MFW.TST.METAMORPHIC.EVENT_REORDER.041,Does lawful reordering preserve consequence?,transform input then compare outputs,swap independent receipt events
+T042,METAMORPHIC,TRIPLE_REORDER,Graph triple reordering test,MFW.TST.METAMORPHIC.TRIPLE_REORDER.042,Does triple order preserve canonical semantic result?,permute triples,RDF graph canonicalization
+T043,METAMORPHIC,BNODE_CANON,Blank-node canonicalization test,MFW.TST.METAMORPHIC.BNODE_CANON.043,Does reserialization/canonicalization preserve bound identity?,rename/canonicalize/compare,skos:notation binding handles
+T044,METAMORPHIC,DUP_OBS,Duplicate observation elimination test,MFW.TST.METAMORPHIC.DUP_OBS.044,Does duplicating an admitted observation leave consequence unchanged?,duplicate then normalize,observation dedup
+T045,METAMORPHIC,WORKFLOW_NORM,Workflow normalization test,MFW.TST.METAMORPHIC.WORKFLOW_NORM.045,Does normalization preserve workflow consequence?,normalize/interpret compare,seq/par normal form
+T046,METAMORPHIC,SCALE_REFINE,Scale refinement test,MFW.TST.METAMORPHIC.SCALE_REFINE.046,Does lawful refinement preserve the expected aggregate/spectrum relation?,refine partition/scale,multifractal scale schedule
+T047,METAMORPHIC,PARTITION_EQ,Equivalent partition representation test,MFW.TST.METAMORPHIC.PARTITION_EQ.047,Do equivalent partitions yield equal admitted observables?,reencode partition,joint moment field
+T048,METAMORPHIC,RECEIPT_REPLAY,Receipt replay metamorphic test,MFW.TST.METAMORPHIC.RECEIPT_REPLAY.048,Does replay of an equivalent trace preserve final consequence?,TraceEq/replay compare,receipt DAG trace
+T049,METAMORPHIC,TENANT_PERM,Tenant permutation test,MFW.TST.METAMORPHIC.TENANT_PERM.049,Does bijective tenant renaming preserve isolation laws?,rename tenant tags,tenancy residue
+T050,COUNTERMODEL,COUNTEREXAMPLE,Counterexample test,MFW.TST.COUNTERMODEL.COUNTEREXAMPLE.050,Can a concrete witness refute a candidate law?,finite witness,mutant workflow law
+T051,COUNTERMODEL,MIN_COUNTEREXAMPLE,Minimal counterexample test,MFW.TST.COUNTERMODEL.MIN_COUNTEREXAMPLE.051,Is the reported falsifier least under an explicit cost/order?,argmin + proof/witness,least-cost failing architecture world
+T052,COUNTERMODEL,COUNTERMODEL,Countermodel test,MFW.TST.COUNTERMODEL.COUNTERMODEL.052,Can a model satisfy weakened assumptions while falsifying the stronger conclusion?,construct model,infinite-transition crown countermodel
+T053,COUNTERMODEL,HYP_REMOVAL,Hypothesis-removal test,MFW.TST.COUNTERMODEL.HYP_REMOVAL.053,Does removing hypothesis H permit conclusion failure?,companion theorem fixture,tenancy without Separated
+T054,COUNTERMODEL,BOUNDARY,Boundary test,MFW.TST.COUNTERMODEL.BOUNDARY.054,Is the exact theorem fence necessary?,paired positive/negative worlds,Finite T boundary
+T055,MUTATION,KILL_MUTANT,Mutation test,MFW.TST.MUTATION.KILL_MUTANT.055,Would the suite fail if a known-bad implementation replaced the real one?,named mutant + killer witness,bindDropSeqRight / closureWithoutIdempotence / replayReverseParents
+T056,DIFFERENTIAL,IMPL_COMPARE,Differential test,MFW.TST.DIFFERENTIAL.IMPL_COMPARE.056,Do two implementations of one admitted semantics produce equal results?,run A/B + semantic digest,recursive vs fold replay; naive vs seminaive closure; interpreter variants
+T057,SNAPSHOT,GOLDEN_OUTPUT,Golden output test,MFW.TST.SNAPSHOT.GOLDEN_OUTPUT.057,Does stdout/stderr equal the reviewed expected output?,expected file,verifier report
+T058,SNAPSHOT,DIAG_SNAPSHOT,Diagnostic snapshot,MFW.TST.SNAPSHOT.DIAG_SNAPSHOT.058,Did public compiler/refusal diagnostics remain stable?,expected messages,negative fixture output
+T059,SNAPSHOT,PRETTY,Pretty-printer snapshot,MFW.TST.SNAPSHOT.PRETTY.059,Did rendered Lean syntax/terms drift?,pretty output compare,generated declaration rendering
+T060,SNAPSHOT,ARTIFACT,Generated artifact snapshot,MFW.TST.SNAPSHOT.ARTIFACT.060,Did canonical TTL/ggen output drift?,content/hash compare,generated Lean module
+T061,SNAPSHOT,MANIFEST,Manifest snapshot,MFW.TST.SNAPSHOT.MANIFEST.061,Did the expected artifact graph drift?,manifest compare,mfact artifact inventory
+T062,REGRESSION,ESCAPED_DEFECT,Regression test,MFW.TST.REGRESSION.ESCAPED_DEFECT.062,Does a previously escaped defect remain permanently caught?,one bug→one fixture,SocketShadow / StandingForgery / ParallelProjection
+T063,COMPOSITION,CROSS_THEOREM,Composition test,MFW.TST.COMPOSITION.CROSS_THEOREM.063,Do neighboring theorem layers connect on the same concrete object?,shared carrier + chained proofs,Closure→Residue→Tenancy→Execution→Replay
+T064,FLOW,SCENARIO,Flow/scenario test,MFW.TST.FLOW.SCENARIO.064,Does one concrete world exercise a coherent multi-law path?,positive flow + negative companion,SOC2 two-tenant audit / contractor exfiltration
+T065,E2E,CONTROLLED_CHAIN,End-to-end test,MFW.TST.E2E.CONTROLLED_CHAIN.065,Does the full controlled mfact chain agree from source declaration to audit?,TTL→ggen→Lean→Lake→audit,canonical ontology artifact
+T066,ROUNDTRIP,EXACT,Round-trip test,MFW.TST.ROUNDTRIP.EXACT.066,Does decode(encode(x)) = x?,encode/decode theorem or executable check,receipt/workflow serialization
+T067,ROUNDTRIP,CANONICAL,Canonicalized round-trip test,MFW.TST.ROUNDTRIP.CANONICAL.067,Does canonicalize(decode(encode(x))) = canonicalize(x)?,canonicalized equality,RDF blank-node-sensitive carrier
+T068,CORRESPONDENCE,PRESERVE,Refinement/correspondence preservation test,MFW.TST.CORRESPONDENCE.PRESERVE.068,Does a controlled map preserve the declared invariant?,map + preservation theorem,TTL declaration→generated Lean declaration
+T069,CORRESPONDENCE,COMPOSE,Correspondence composition test,MFW.TST.CORRESPONDENCE.COMPOSE.069,Do composed controlled maps equal the declared direct projection?,commuting diagram theorem,TTL→Lean→manifest vs direct claim projection
+T070,INVARIANT,PRESERVATION,Invariant preservation test,MFW.TST.INVARIANT.PRESERVATION.070,Does every admitted transition preserve invariant I?,Preserves theorem + generated attack,zero unreceipted completion / tenant separation
+T071,CONCURRENCY,PAIRWISE_COMMUTE,Pairwise commutation test,MFW.TST.CONCURRENCY.PAIRWISE_COMMUTE.071,Do declared independent events commute?,Commute theorem,freeze identity vs preserve logs on real state
+T072,CONCURRENCY,ADJ_SWAP,Independent adjacent swap test,MFW.TST.CONCURRENCY.ADJ_SWAP.072,Does swapping adjacent independent events preserve replay?,adjacent-swap theorem,oriented swap replay
+T073,CONCURRENCY,LINEXT,Linear-extension equivalence test,MFW.TST.CONCURRENCY.LINEXT.073,Do two linear extensions of one finite poset replay equally?,LinExt theorem,receipt causal DAG
+T074,CONCURRENCY,DIAMOND,Diamond property test,MFW.TST.CONCURRENCY.DIAMOND.074,Do two independent one-step branches rejoin?,diamond theorem,concurrent cloud transitions
+T075,CONCURRENCY,RACE,Race/conflict counterexample test,MFW.TST.CONCURRENCY.RACE.075,Can a claimed-independent pair be shown noncommuting?,counterexample,delete vs snapshot
+T076,CONCURRENCY,MAX_SET,Maximal concurrent-set test,MFW.TST.CONCURRENCY.MAX_SET.076,Is the selected enabled set maximal and pairwise independent?,finite search + proof,automatic POWL concurrency
+T077,REPRO,REPEAT,Repeatability/determinism test,MFW.TST.REPRO.REPEAT.077,Do repeated runs on identical admitted inputs match exactly?,repeat + digest compare,ggen/audit repeat
+T078,REPRO,CLEAN_INCREMENTAL,Clean-vs-incremental reproducibility,MFW.TST.REPRO.CLEAN_INCREMENTAL.078,Do clean and incremental builds manufacture the same artifacts/standing?,two build modes + digest,Lake
+T079,REPRO,SERIAL_PARALLEL,Serial-vs-parallel reproducibility,MFW.TST.REPRO.SERIAL_PARALLEL.079,Do serial and parallel builds agree semantically?,build modes + digest,Lake job scheduling
+T080,REPRO,ENUM_ORDER,File-enumeration-order reproducibility,MFW.TST.REPRO.ENUM_ORDER.080,Does filesystem enumeration order alter outputs?,permute enumeration,manifest generation
+T081,REPRO,RESTART,Process-restart reproducibility,MFW.TST.REPRO.RESTART.081,Does restarting the manufacturing process preserve result?,restart/replay,ggen pipeline
+T082,REPRO,GGEN_REPEAT,Repeated-ggen reproducibility,MFW.TST.REPRO.GGEN_REPEAT.082,Does ggen reach a fixed artifact point?,run twice + no delta,projection idempotence
+T083,LAKE,PACKAGE_CONFIG,Package configuration test,MFW.TST.LAKE.PACKAGE_CONFIG.083,Does lakefile configuration resolve as intended?,lake package test,pinned toolchain and targets
+T084,LAKE,DEPENDENCY,Dependency resolution test,MFW.TST.LAKE.DEPENDENCY.084,Are exact dependencies/revisions resolved?,lake update/manifest audit,mathlib pin
+T085,LAKE,LIB_BUILD,Library build test,MFW.TST.LAKE.LIB_BUILD.085,Does the declared Lean library build?,lake build Lib,ProcInt
+T086,LAKE,EXE_BUILD,Executable build test,MFW.TST.LAKE.EXE_BUILD.086,Does the executable target build?,lake build exe,verifier
+T087,LAKE,CUSTOM_TARGET,Custom target test,MFW.TST.LAKE.CUSTOM_TARGET.087,Does a custom Lake target manufacture its declared projection?,lake build target,standing/claims/residue
+T088,LAKE,TEST_DRIVER,Test driver test,MFW.TST.LAKE.TEST_DRIVER.088,Does lake test execute the configured test driver?,lake test,crown verifier
+T089,LAKE,AS_DEP,Package-as-dependency test,MFW.TST.LAKE.AS_DEP.089,Can a downstream Lake package import the public surface?,fixture package,consumer of ProcInt
+T090,LAKE,CLEAN_BUILD,Clean build test,MFW.TST.LAKE.CLEAN_BUILD.090,Does a fresh checkout/cache state build?,clean + build,release boundary
+T091,LAKE,INCREMENTAL,Incremental build test,MFW.TST.LAKE.INCREMENTAL.091,Does a targeted change rebuild only/admit the expected targets?,touch/change + Lake trace audit,dependency graph
+T092,LAKE,TARGET_SELECT,Build target selection test,MFW.TST.LAKE.TARGET_SELECT.092,Do named targets build the intended projection only?,lake build target,standing vs claims
+T093,LAKE,INSTALL_RELEASE,Install/release behavior test,MFW.TST.LAKE.INSTALL_RELEASE.093,Does install/release packaging preserve expected files and metadata?,package/release fixture,mfact release
+T094,EXPECTED_FAIL,BUILD,Expected-failure build test,MFW.TST.EXPECTED_FAIL.BUILD.094,Does an illegal module/package fail to elaborate or build?,failing fixture package,StandingForgery / CrossTenantGraft / MissingDescent
+T095,POLICY,NO_SORRY,No-sorry policy test,MFW.TST.POLICY.NO_SORRY.095,Are controlled declarations free of sorryAx dependencies?,environment auditor,ProcInt
+T096,POLICY,NO_ADMIT,No-admit policy test,MFW.TST.POLICY.NO_ADMIT.096,Are proof-admission escape hatches absent from controlled source?,syntax/environment audit,ProcInt
+T097,POLICY,FORBIDDEN_IMPORT,Forbidden-import policy test,MFW.TST.POLICY.FORBIDDEN_IMPORT.097,Are disallowed imports absent?,environment/module graph audit,N3/default escape-hatch modules
+T098,POLICY,NO_UMBRELLA,No giant Mathlib umbrella import test,MFW.TST.POLICY.NO_UMBRELLA.098,Are leaf modules using bounded imports?,import graph policy,core theorem modules
+T099,POLICY,SEMANTIC_COORDS,Semantic-coordinate completeness test,MFW.TST.POLICY.SEMANTIC_COORDS.099,Does every public declaration expose required semantic coordinates?,declaration metadata auditor,Law/Carrier/Admission/Preserves/Refuses/Claim ceiling
+T100,POLICY,REFUSAL_COVERAGE,Every RefusalCode tested policy,MFW.TST.POLICY.REFUSAL_COVERAGE.100,Does each refusal constructor have a positive trigger fixture?,constructor inventory vs tests,typed refusal algebra
+T101,POLICY,COUNTERMODEL_CARD,Every crown theorem countermodel-card policy,MFW.TST.POLICY.COUNTERMODEL_CARD.101,Does each crown claim name hypothesis-removal/countermodel obligations?,claim-card auditor,crown theorem rail
+T102,POLICY,PROVENANCE,Generated provenance policy,MFW.TST.POLICY.PROVENANCE.102,Does each generated artifact carry canonical provenance?,manifest/env audit,ggen outputs
+T103,POLICY,CLAIM_EXISTS,Claimed theorem exists policy,MFW.TST.POLICY.CLAIM_EXISTS.103,Does every machine-readable claim resolve to a real theorem declaration?,environment lookup,claim matrix
+T104,POLICY,NO_ORPHANS,No orphan modules policy,MFW.TST.POLICY.NO_ORPHANS.104,Is every intended module reachable from a declared build/import root?,module graph reachability,ProcInt umbrella
+T105,INVENTORY,EXISTS,Expected theorem existence test,MFW.TST.INVENTORY.EXISTS.105,Does each required theorem name exist?,environment lookup,crown theorem manifest
+T106,INVENTORY,KIND,Theorem kind test,MFW.TST.INVENTORY.KIND.106,Is the declaration actually a theorem rather than def/axiom?,ConstantInfo inspection,expected theorem
+T107,INVENTORY,MODULE,Theorem module location test,MFW.TST.INVENTORY.MODULE.107,Is the theorem exported from the intended module boundary?,module/name audit,MFW residue theorem
+T108,INVENTORY,AXIOM_ALLOWLIST,Allowed axiom dependency test,MFW.TST.INVENTORY.AXIOM_ALLOWLIST.108,Are transitive theorem axioms a subset of the allowed set?,collectAxioms,crown theorems
+T109,INVENTORY,CLAIM_CLASS,Claim class test,MFW.TST.INVENTORY.CLAIM_CLASS.109,Does theorem standing/claim metadata match its permitted claim ceiling?,claim metadata reconciliation,FINITE_VERIFIED vs PROVEN
+T110,INVENTORY,MANIFEST,Manifest representation test,MFW.TST.INVENTORY.MANIFEST.110,Is each admitted theorem/artifact represented in the manifest?,environment↔manifest set equality,mfact manifest
+T111,INVENTORY,EXACT_SET,Exact theorem inventory equality test,MFW.TST.INVENTORY.EXACT_SET.111,Does the actual theorem set equal the expected set?,set equality,crown inventory
+T112,PERF,COMPILE,Compile benchmark,MFW.TST.PERF.COMPILE.112,How long does generated code compilation/execution take?,benchmark harness,compiled verifier
+T113,PERF,ELAB,Elaboration benchmark,MFW.TST.PERF.ELAB.113,How expensive is elaboration?,elab benchmark,large theorem module
+T114,PERF,LAKE,Lake benchmark,MFW.TST.PERF.LAKE.114,How expensive are Lake graph operations/targets?,Lake benchmark,standing target
+T115,PERF,BUILD,Build benchmark,MFW.TST.PERF.BUILD.115,How expensive is the whole package build?,build benchmark,ProcInt
+T116,PERF,SIZE,Size benchmark,MFW.TST.PERF.SIZE.116,How large are source/olean/ilean/artifact outputs?,size metrics,generated modules
+T117,PERF,CUSTOM_METRIC,Custom metric benchmark,MFW.TST.PERF.CUSTOM_METRIC.117,Can domain-specific measurements be emitted and tracked?,measurement output,residue candidate count / proof branching
+T118,STRESS,SCALE,Stress/scale test,MFW.TST.STRESS.SCALE.118,At what input scale does the system fail or exceed resources?,parameter sweep,workflow worlds / theorem count
+T119,STRESS,STACK,Stack overflow test,MFW.TST.STRESS.STACK.119,Can deep recursion overflow the execution stack?,deep fixture,workflow bind
+T120,STRESS,RECURSION,Recursion limit test,MFW.TST.STRESS.RECURSION.120,Does recursion-depth policy refuse or fail at the intended boundary?,deep syntax fixture,recursive workflow
+T121,STRESS,HEARTBEAT,Heartbeat exhaustion test,MFW.TST.STRESS.HEARTBEAT.121,Can elaboration/proof search exceed heartbeat bounds?,bounded heartbeat fixture,expensive proof search
+T122,STRESS,MEMORY,Memory exhaustion test,MFW.TST.STRESS.MEMORY.122,What input triggers unacceptable memory growth?,large finite fixture,residue enumeration
+T123,STRESS,TYPECLASS,Typeclass explosion test,MFW.TST.STRESS.TYPECLASS.123,Can instance search branch pathologically?,instance graph fixture,semantic coordinate classes
+T124,STRESS,ELAB_BLOWUP,Elaboration blowup test,MFW.TST.STRESS.ELAB_BLOWUP.124,Can generated syntax cause superlinear elaboration failure?,parametric generated module,deep TWorkflow
+T125,STRESS,EXP_RESIDUE,Exponential residue generation test,MFW.TST.STRESS.EXP_RESIDUE.125,Does exhaustive support enumeration show expected exponential boundary?,n-support sweep,minimal residue
+T126,COMPLEXITY,FORMAL_BOUND,Complexity-law test,MFW.TST.COMPLEXITY.FORMAL_BOUND.126,Can an abstract operation counter be formally bounded by f(|x|)?,Nat cost semantics + theorem,workflow traversal / residue search
+T127,COMPLEXITY,MEASURE_DISTINCTION,Formal-vs-measured complexity distinction test,MFW.TST.COMPLEXITY.MEASURE_DISTINCTION.127,Are formal operation bounds kept separate from wall-clock benchmark claims?,claim reconciliation,complexity theorem vs measured benchmark
+T128,TERMINATION,KERNEL,Kernel termination checking,MFW.TST.TERMINATION.KERNEL.128,Does Lean accept structural/well-founded recursion?,termination checker,recursive definitions
+T129,TERMINATION,WELL_FOUNDED,Well-founded termination theorem,MFW.TST.TERMINATION.WELL_FOUNDED.129,Is the mathematical refinement relation well founded?,WellFounded / DM-style theorem,workflow obligation multiset
+T130,TERMINATION,FINITE_DESCENT,Finite experimental descent test,MFW.TST.TERMINATION.FINITE_DESCENT.130,Do all manufactured bounded refinement steps decrease the declared measure?,finite worlds + native_decide/property attack,obligation refinement corpus
+T131,FAITHFULNESS,CLAIM_CEILING,Faithfulness/claim-ceiling test,MFW.TST.FAITHFULNESS.CLAIM_CEILING.131,Does the theorem statement actually justify the prose/machine claim attached to it?,claim card ↔ theorem AST/metadata audit,global replay claim vs local Nat commutation
+T132,STANDING_PATH,EDGE_COVERAGE,Gap/edge coverage test,MFW.TST.STANDING_PATH.EDGE_COVERAGE.132,Are all declared mathematical/correspondence edges represented by admitted proofs or explicit gaps?,theorem graph audit,MFW wave graph
+T133,STANDING_PATH,PATH_COVERAGE,Standing path coverage test,MFW.TST.STANDING_PATH.PATH_COVERAGE.133,Does every crown claim have a complete admitted path from controlled source to crown consequence?,required-edge graph reachability,TTL→ggen→Lean→Lake→audit crown path

@@ -1,0 +1,23 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["DIAG<br/>Diagnostic and refusal testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T018["T018<br/>Exact diagnostic test<br/>MFW.TST.DIAG.EXACT.018<br/>typed illegal composition diagnostic"]
+  FAMILY --> T018
+  T018 --> EVIDENCE
+  T019["T019<br/>Diagnostic-class test<br/>MFW.TST.DIAG.CLASS.019<br/>deprecation or refusal diagnostic"]
+  FAMILY --> T019
+  T019 --> EVIDENCE
+  T020["T020<br/>Panic test<br/>MFW.TST.DIAG.PANIC.020<br/>deliberate internal panic fixture"]
+  FAMILY --> T020
+  T020 --> EVIDENCE
+  T021["T021<br/>Typed refusal test<br/>MFW.TST.DIAG.TYPED_REFUSAL.021<br/>crossTenantLeak refusal"]
+  FAMILY --> T021
+  T021 --> EVIDENCE
+  T022["T022<br/>Refusal precedence test<br/>MFW.TST.DIAG.REFUSAL_PRECEDENCE.022<br/>stale observation vs source-not-allowed"]
+  FAMILY --> T022
+  T022 --> EVIDENCE
+  T023["T023<br/>Diagnostic stability test<br/>MFW.TST.DIAG.STABILITY.023<br/>stable crown refusal wording"]
+  FAMILY --> T023
+  T023 --> EVIDENCE

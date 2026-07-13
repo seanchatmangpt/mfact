@@ -1,0 +1,15 @@
+/- Test ID: T___
+Stable instance: MFW.TST.____
+Evidence class: KERNEL_PROOF
+Claim ceiling: ______
+-/
+
+def concreteWorld : World := ...
+
+theorem positive_witness :
+    RequiredHypotheses concreteWorld := by
+  ...
+
+example :
+    Conclusion concreteWorld := by
+  exact generic_theorem concreteWorld positive_witness

@@ -1,0 +1,35 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["POLICY<br/>Linter and repository-policy testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T095["T095<br/>No-sorry policy test<br/>MFW.TST.POLICY.NO_SORRY.095<br/>ProcInt"]
+  FAMILY --> T095
+  T095 --> EVIDENCE
+  T096["T096<br/>No-admit policy test<br/>MFW.TST.POLICY.NO_ADMIT.096<br/>ProcInt"]
+  FAMILY --> T096
+  T096 --> EVIDENCE
+  T097["T097<br/>Forbidden-import policy test<br/>MFW.TST.POLICY.FORBIDDEN_IMPORT.097<br/>N3/default escape-hatch modules"]
+  FAMILY --> T097
+  T097 --> EVIDENCE
+  T098["T098<br/>No giant Mathlib umbrella import test<br/>MFW.TST.POLICY.NO_UMBRELLA.098<br/>core theorem modules"]
+  FAMILY --> T098
+  T098 --> EVIDENCE
+  T099["T099<br/>Semantic-coordinate completeness test<br/>MFW.TST.POLICY.SEMANTIC_COORDS.099<br/>Law/Carrier/Admission/Preserves/Refuses/Claim ceiling"]
+  FAMILY --> T099
+  T099 --> EVIDENCE
+  T100["T100<br/>Every RefusalCode tested policy<br/>MFW.TST.POLICY.REFUSAL_COVERAGE.100<br/>typed refusal algebra"]
+  FAMILY --> T100
+  T100 --> EVIDENCE
+  T101["T101<br/>Every crown theorem countermodel-card policy<br/>MFW.TST.POLICY.COUNTERMODEL_CARD.101<br/>crown theorem rail"]
+  FAMILY --> T101
+  T101 --> EVIDENCE
+  T102["T102<br/>Generated provenance policy<br/>MFW.TST.POLICY.PROVENANCE.102<br/>ggen outputs"]
+  FAMILY --> T102
+  T102 --> EVIDENCE
+  T103["T103<br/>Claimed theorem exists policy<br/>MFW.TST.POLICY.CLAIM_EXISTS.103<br/>claim matrix"]
+  FAMILY --> T103
+  T103 --> EVIDENCE
+  T104["T104<br/>No orphan modules policy<br/>MFW.TST.POLICY.NO_ORPHANS.104<br/>ProcInt umbrella"]
+  FAMILY --> T104
+  T104 --> EVIDENCE

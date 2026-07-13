@@ -1,0 +1,18 @@
+flowchart TB
+  DECLARE["Declare test instance ID"]
+  CLASSIFY["Choose exact test family/type"]
+  FENCE["State controlled carrier + claim ceiling"]
+  POS["Positive witness"]
+  NEG["Negative/refusal witness"]
+  PROOF["Kernel theorem / executable finite evidence"]
+  ATTACK["Property / metamorphic / mutation attack"]
+  COMPOSE["Composition + flow"]
+  PATH["Standing-path coverage"]
+  AUDIT["Environment-derived audit"]
+  PROMOTE{"All required witnesses admitted?"}
+  ALIVE["ALIVE"]
+  RESIDUE["Record exact residue / missing edge"]
+
+  DECLARE --> CLASSIFY --> FENCE --> POS --> NEG --> PROOF --> ATTACK --> COMPOSE --> PATH --> AUDIT --> PROMOTE
+  PROMOTE -- yes --> ALIVE
+  PROMOTE -- no --> RESIDUE

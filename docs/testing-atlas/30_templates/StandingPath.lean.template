@@ -1,0 +1,15 @@
+structure NodeId where
+  value : String
+  deriving DecidableEq, Repr
+
+structure RequiredEdge where
+  source : NodeId
+  target : NodeId
+  witnessName : Name
+  deriving DecidableEq, Repr
+
+structure StandingPathReceipt where
+  required : Finset RequiredEdge
+  admitted : Finset RequiredEdge
+  expectedNonempty : required.Nonempty
+  complete : admitted = required

@@ -1,0 +1,23 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["REPRO<br/>Determinism and reproducibility testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T077["T077<br/>Repeatability/determinism test<br/>MFW.TST.REPRO.REPEAT.077<br/>ggen/audit repeat"]
+  FAMILY --> T077
+  T077 --> EVIDENCE
+  T078["T078<br/>Clean-vs-incremental reproducibility<br/>MFW.TST.REPRO.CLEAN_INCREMENTAL.078<br/>Lake"]
+  FAMILY --> T078
+  T078 --> EVIDENCE
+  T079["T079<br/>Serial-vs-parallel reproducibility<br/>MFW.TST.REPRO.SERIAL_PARALLEL.079<br/>Lake job scheduling"]
+  FAMILY --> T079
+  T079 --> EVIDENCE
+  T080["T080<br/>File-enumeration-order reproducibility<br/>MFW.TST.REPRO.ENUM_ORDER.080<br/>manifest generation"]
+  FAMILY --> T080
+  T080 --> EVIDENCE
+  T081["T081<br/>Process-restart reproducibility<br/>MFW.TST.REPRO.RESTART.081<br/>ggen pipeline"]
+  FAMILY --> T081
+  T081 --> EVIDENCE
+  T082["T082<br/>Repeated-ggen reproducibility<br/>MFW.TST.REPRO.GGEN_REPEAT.082<br/>projection idempotence"]
+  FAMILY --> T082
+  T082 --> EVIDENCE

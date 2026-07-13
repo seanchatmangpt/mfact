@@ -1,0 +1,38 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["LAKE<br/>Lake and package testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T083["T083<br/>Package configuration test<br/>MFW.TST.LAKE.PACKAGE_CONFIG.083<br/>pinned toolchain and targets"]
+  FAMILY --> T083
+  T083 --> EVIDENCE
+  T084["T084<br/>Dependency resolution test<br/>MFW.TST.LAKE.DEPENDENCY.084<br/>mathlib pin"]
+  FAMILY --> T084
+  T084 --> EVIDENCE
+  T085["T085<br/>Library build test<br/>MFW.TST.LAKE.LIB_BUILD.085<br/>ProcInt"]
+  FAMILY --> T085
+  T085 --> EVIDENCE
+  T086["T086<br/>Executable build test<br/>MFW.TST.LAKE.EXE_BUILD.086<br/>verifier"]
+  FAMILY --> T086
+  T086 --> EVIDENCE
+  T087["T087<br/>Custom target test<br/>MFW.TST.LAKE.CUSTOM_TARGET.087<br/>standing/claims/residue"]
+  FAMILY --> T087
+  T087 --> EVIDENCE
+  T088["T088<br/>Test driver test<br/>MFW.TST.LAKE.TEST_DRIVER.088<br/>crown verifier"]
+  FAMILY --> T088
+  T088 --> EVIDENCE
+  T089["T089<br/>Package-as-dependency test<br/>MFW.TST.LAKE.AS_DEP.089<br/>consumer of ProcInt"]
+  FAMILY --> T089
+  T089 --> EVIDENCE
+  T090["T090<br/>Clean build test<br/>MFW.TST.LAKE.CLEAN_BUILD.090<br/>release boundary"]
+  FAMILY --> T090
+  T090 --> EVIDENCE
+  T091["T091<br/>Incremental build test<br/>MFW.TST.LAKE.INCREMENTAL.091<br/>dependency graph"]
+  FAMILY --> T091
+  T091 --> EVIDENCE
+  T092["T092<br/>Build target selection test<br/>MFW.TST.LAKE.TARGET_SELECT.092<br/>standing vs claims"]
+  FAMILY --> T092
+  T092 --> EVIDENCE
+  T093["T093<br/>Install/release behavior test<br/>MFW.TST.LAKE.INSTALL_RELEASE.093<br/>mfact release"]
+  FAMILY --> T093
+  T093 --> EVIDENCE

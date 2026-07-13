@@ -1,0 +1,1332 @@
+[
+  {
+    "id": "T001",
+    "family": "KERNEL",
+    "slug": "ADMISSION",
+    "name": "Kernel admission test",
+    "instance": "MFW.TST.KERNEL.ADMISSION.001",
+    "question": "Does the declaration survive Lean elaboration and kernel checking?",
+    "mechanism": "Lean declaration / lake build",
+    "mfw_instance": "ProcInt theorem module admission"
+  },
+  {
+    "id": "T002",
+    "family": "KERNEL",
+    "slug": "THEOREM_PROOF",
+    "name": "Theorem proof test",
+    "instance": "MFW.TST.KERNEL.THEOREM_PROOF.002",
+    "question": "Is the stated proposition actually inhabited?",
+    "mechanism": "theorem/example",
+    "mfw_instance": "Replay equivalence law"
+  },
+  {
+    "id": "T003",
+    "family": "KERNEL",
+    "slug": "SPECIALIZATION",
+    "name": "Lemma specialization test",
+    "instance": "MFW.TST.KERNEL.SPECIALIZATION.003",
+    "question": "Does a generic theorem fire on the intended concrete carrier?",
+    "mechanism": "example applying theorem",
+    "mfw_instance": "SOC2 concrete closure specialization"
+  },
+  {
+    "id": "T004",
+    "family": "KERNEL",
+    "slug": "COMPOSITION",
+    "name": "Theorem composition test",
+    "instance": "MFW.TST.KERNEL.COMPOSITION.004",
+    "question": "Do multiple proved theorems compose on one shared carrier?",
+    "mechanism": "shared witness + chained theorem applications",
+    "mfw_instance": "residue \u2192 tenancy \u2192 execution \u2192 replay"
+  },
+  {
+    "id": "T005",
+    "family": "KERNEL",
+    "slug": "ASSUMPTION_AUDIT",
+    "name": "Assumption audit",
+    "instance": "MFW.TST.KERNEL.ASSUMPTION_AUDIT.005",
+    "question": "Which theorem hypotheses are necessary, redundant, or too strong?",
+    "mechanism": "hypothesis inventory + removal companions",
+    "mfw_instance": "Separated / Finite / well-founded assumptions"
+  },
+  {
+    "id": "T006",
+    "family": "KERNEL",
+    "slug": "AXIOM_DEP",
+    "name": "Axiom dependency test",
+    "instance": "MFW.TST.KERNEL.AXIOM_DEP.006",
+    "question": "Which axioms are transitively reachable from a theorem?",
+    "mechanism": "Lean.collectAxioms / #print axioms",
+    "mfw_instance": "crown theorem axiom allowlist"
+  },
+  {
+    "id": "T007",
+    "family": "KERNEL",
+    "slug": "NO_SORRY",
+    "name": "No-sorry test",
+    "instance": "MFW.TST.KERNEL.NO_SORRY.007",
+    "question": "Does any controlled declaration depend on sorryAx?",
+    "mechanism": "compiled environment inspection",
+    "mfw_instance": "ProcInt namespace audit"
+  },
+  {
+    "id": "T008",
+    "family": "KERNEL",
+    "slug": "NON_VACUITY",
+    "name": "Non-vacuity test",
+    "instance": "MFW.TST.KERNEL.NON_VACUITY.008",
+    "question": "Can the theorem fire on a genuine witness with satisfiable hypotheses?",
+    "mechanism": "concrete positive witness",
+    "mfw_instance": "nonidentity ClosureOperator"
+  },
+  {
+    "id": "T009",
+    "family": "ELAB",
+    "slug": "POSITIVE",
+    "name": "Positive elaboration test",
+    "instance": "MFW.TST.ELAB.POSITIVE.009",
+    "question": "Does intended syntax and type inference elaborate?",
+    "mechanism": "example/#check",
+    "mfw_instance": "lawful TWorkflow composition"
+  },
+  {
+    "id": "T010",
+    "family": "ELAB",
+    "slug": "NEGATIVE",
+    "name": "Negative elaboration test",
+    "instance": "MFW.TST.ELAB.NEGATIVE.010",
+    "question": "Is illegal code rejected by elaboration?",
+    "mechanism": "#guard_msgs(error)",
+    "mfw_instance": "illegal color composition"
+  },
+  {
+    "id": "T011",
+    "family": "ELAB",
+    "slug": "TYPE_MISMATCH",
+    "name": "Type mismatch fixture",
+    "instance": "MFW.TST.ELAB.TYPE_MISMATCH.011",
+    "question": "Does a forbidden indexed composition fail to type?",
+    "mechanism": "#guard_msgs(error) in #check",
+    "mfw_instance": "raw\u2192plan composed with receipt\u2192replay"
+  },
+  {
+    "id": "T012",
+    "family": "ELAB",
+    "slug": "INSTANCE_SYNTH",
+    "name": "Instance synthesis test",
+    "instance": "MFW.TST.ELAB.INSTANCE_SYNTH.012",
+    "question": "Is the expected typeclass instance found?",
+    "mechanism": "#synth / elaboration",
+    "mfw_instance": "DecidableEq / Fintype / LawfulBEq"
+  },
+  {
+    "id": "T013",
+    "family": "ELAB",
+    "slug": "DEFEQ",
+    "name": "Definitional equality test",
+    "instance": "MFW.TST.ELAB.DEFEQ.013",
+    "question": "Are expressions equal under reducible definitional equality?",
+    "mechanism": "guard_expr =",
+    "mfw_instance": "normalized workflow expression"
+  },
+  {
+    "id": "T014",
+    "family": "ELAB",
+    "slug": "SYNTACTIC_EQ",
+    "name": "Syntactic equality test",
+    "instance": "MFW.TST.ELAB.SYNTACTIC_EQ.014",
+    "question": "Are expressions structurally identical?",
+    "mechanism": "guard_expr =\u209b",
+    "mfw_instance": "ggen-emitted term shape"
+  },
+  {
+    "id": "T015",
+    "family": "ELAB",
+    "slug": "ALPHA_EQ",
+    "name": "Alpha-equivalence test",
+    "instance": "MFW.TST.ELAB.ALPHA_EQ.015",
+    "question": "Are expressions equivalent modulo binder names?",
+    "mechanism": "guard_expr =\u2090",
+    "mfw_instance": "generated theorem binder renaming"
+  },
+  {
+    "id": "T016",
+    "family": "ELAB",
+    "slug": "GOAL_SHAPE",
+    "name": "Goal-shape test",
+    "instance": "MFW.TST.ELAB.GOAL_SHAPE.016",
+    "question": "Did a tactic leave exactly the intended target?",
+    "mechanism": "guard_target",
+    "mfw_instance": "residue proof subgoal shape"
+  },
+  {
+    "id": "T017",
+    "family": "ELAB",
+    "slug": "HYP_SHAPE",
+    "name": "Hypothesis-shape test",
+    "instance": "MFW.TST.ELAB.HYP_SHAPE.017",
+    "question": "Did elaboration/tactic state produce the intended local context?",
+    "mechanism": "guard_hyp",
+    "mfw_instance": "closure assumptions in context"
+  },
+  {
+    "id": "T018",
+    "family": "DIAG",
+    "slug": "EXACT",
+    "name": "Exact diagnostic test",
+    "instance": "MFW.TST.DIAG.EXACT.018",
+    "question": "Did the exact expected compiler message occur?",
+    "mechanism": "#guard_msgs",
+    "mfw_instance": "typed illegal composition diagnostic"
+  },
+  {
+    "id": "T019",
+    "family": "DIAG",
+    "slug": "CLASS",
+    "name": "Diagnostic-class test",
+    "instance": "MFW.TST.DIAG.CLASS.019",
+    "question": "Did the expected error/warning/info class occur?",
+    "mechanism": "#guard_msgs severity filters",
+    "mfw_instance": "deprecation or refusal diagnostic"
+  },
+  {
+    "id": "T020",
+    "family": "DIAG",
+    "slug": "PANIC",
+    "name": "Panic test",
+    "instance": "MFW.TST.DIAG.PANIC.020",
+    "question": "Did the command panic as expected?",
+    "mechanism": "#guard_panic",
+    "mfw_instance": "deliberate internal panic fixture"
+  },
+  {
+    "id": "T021",
+    "family": "DIAG",
+    "slug": "TYPED_REFUSAL",
+    "name": "Typed refusal test",
+    "instance": "MFW.TST.DIAG.TYPED_REFUSAL.021",
+    "question": "Did executable admission return the exact refusal constructor?",
+    "mechanism": "Except / pattern match / native_decide",
+    "mfw_instance": "crossTenantLeak refusal"
+  },
+  {
+    "id": "T022",
+    "family": "DIAG",
+    "slug": "REFUSAL_PRECEDENCE",
+    "name": "Refusal precedence test",
+    "instance": "MFW.TST.DIAG.REFUSAL_PRECEDENCE.022",
+    "question": "When several laws fail, which refusal has priority?",
+    "mechanism": "multi-failure fixture",
+    "mfw_instance": "stale observation vs source-not-allowed"
+  },
+  {
+    "id": "T023",
+    "family": "DIAG",
+    "slug": "STABILITY",
+    "name": "Diagnostic stability test",
+    "instance": "MFW.TST.DIAG.STABILITY.023",
+    "question": "Did a public error/refusal surface drift unexpectedly?",
+    "mechanism": "#guard_msgs / golden output",
+    "mfw_instance": "stable crown refusal wording"
+  },
+  {
+    "id": "T024",
+    "family": "FINITE",
+    "slug": "BOOL_GUARD",
+    "name": "Boolean guard test",
+    "instance": "MFW.TST.FINITE.BOOL_GUARD.024",
+    "question": "Does an executable Bool evaluate to true?",
+    "mechanism": "#guard",
+    "mfw_instance": "regime classifier case"
+  },
+  {
+    "id": "T025",
+    "family": "FINITE",
+    "slug": "DECIDE",
+    "name": "Finite decision test",
+    "instance": "MFW.TST.FINITE.DECIDE.025",
+    "question": "Does a decidable proposition hold on a concrete finite witness?",
+    "mechanism": "decide / example",
+    "mfw_instance": "receipt ancestry property"
+  },
+  {
+    "id": "T026",
+    "family": "FINITE",
+    "slug": "NATIVE_DECIDE",
+    "name": "Native decision test",
+    "instance": "MFW.TST.FINITE.NATIVE_DECIDE.026",
+    "question": "Can compiled decision produce a proof of the proposition?",
+    "mechanism": "native_decide",
+    "mfw_instance": "finite world invariant"
+  },
+  {
+    "id": "T027",
+    "family": "FINITE",
+    "slug": "TABLE",
+    "name": "Example-table test",
+    "instance": "MFW.TST.FINITE.TABLE.027",
+    "question": "Do named finite cases match expected outputs?",
+    "mechanism": "List cases + assertions",
+    "mfw_instance": "singularity routing table"
+  },
+  {
+    "id": "T028",
+    "family": "FINITE",
+    "slug": "EXHAUSTIVE",
+    "name": "Exhaustive finite-domain test",
+    "instance": "MFW.TST.FINITE.EXHAUSTIVE.028",
+    "question": "Does the property hold for every value in an explicit finite universe?",
+    "mechanism": "Fintype/list universe + native_decide",
+    "mfw_instance": "all TinyWorkflow worlds at depth n"
+  },
+  {
+    "id": "T029",
+    "family": "PROPERTY",
+    "slug": "PROPERTY_BASED",
+    "name": "Property-based test",
+    "instance": "MFW.TST.PROPERTY.PROPERTY_BASED.029",
+    "question": "Does a law survive generated samples?",
+    "mechanism": "Plausible/Testable",
+    "mfw_instance": "closure idempotence over generated carriers"
+  },
+  {
+    "id": "T030",
+    "family": "PROPERTY",
+    "slug": "RANDOM_GEN",
+    "name": "Random generation test",
+    "instance": "MFW.TST.PROPERTY.RANDOM_GEN.030",
+    "question": "Can generated carriers expose unexpected failures?",
+    "mechanism": "Plausible Gen",
+    "mfw_instance": "receipt DAG / workflow generator"
+  },
+  {
+    "id": "T031",
+    "family": "PROPERTY",
+    "slug": "SHRINK",
+    "name": "Shrinking test",
+    "instance": "MFW.TST.PROPERTY.SHRINK.031",
+    "question": "Can a failing generated case be reduced to a smaller falsifier?",
+    "mechanism": "Plausible shrink / custom shrinker",
+    "mfw_instance": "minimal workflow counterexample"
+  },
+  {
+    "id": "T032",
+    "family": "PROPERTY",
+    "slug": "DISTRIBUTION",
+    "name": "Distribution-sensitive generation",
+    "instance": "MFW.TST.PROPERTY.DISTRIBUTION.032",
+    "question": "Are rare but important regimes intentionally sampled?",
+    "mechanism": "weighted generator",
+    "mfw_instance": "cross-tenant and sparse-scale regimes"
+  },
+  {
+    "id": "T033",
+    "family": "ALGEBRA",
+    "slug": "IDENTITY",
+    "name": "Identity law test",
+    "instance": "MFW.TST.ALGEBRA.IDENTITY.033",
+    "question": "Does the identity law hold?",
+    "mechanism": "theorem + generated attack",
+    "mfw_instance": "Workflow.bind right identity"
+  },
+  {
+    "id": "T034",
+    "family": "ALGEBRA",
+    "slug": "ASSOCIATIVITY",
+    "name": "Associativity test",
+    "instance": "MFW.TST.ALGEBRA.ASSOCIATIVITY.034",
+    "question": "Does associativity hold?",
+    "mechanism": "theorem + generated attack",
+    "mfw_instance": "Workflow.bind associativity"
+  },
+  {
+    "id": "T035",
+    "family": "ALGEBRA",
+    "slug": "IDEMPOTENCE",
+    "name": "Idempotence test",
+    "instance": "MFW.TST.ALGEBRA.IDEMPOTENCE.035",
+    "question": "Does applying the operator twice equal once?",
+    "mechanism": "theorem + property attack",
+    "mfw_instance": "closure idempotence"
+  },
+  {
+    "id": "T036",
+    "family": "ALGEBRA",
+    "slug": "MONOTONICITY",
+    "name": "Monotonicity test",
+    "instance": "MFW.TST.ALGEBRA.MONOTONICITY.036",
+    "question": "Does order preservation hold?",
+    "mechanism": "theorem",
+    "mfw_instance": "closure monotonicity"
+  },
+  {
+    "id": "T037",
+    "family": "ALGEBRA",
+    "slug": "EXTENSIVITY",
+    "name": "Extensivity test",
+    "instance": "MFW.TST.ALGEBRA.EXTENSIVITY.037",
+    "question": "Is the input contained in its closure?",
+    "mechanism": "theorem",
+    "mfw_instance": "closure extensivity"
+  },
+  {
+    "id": "T038",
+    "family": "ALGEBRA",
+    "slug": "COMMUTATIVITY",
+    "name": "Commutativity test",
+    "instance": "MFW.TST.ALGEBRA.COMMUTATIVITY.038",
+    "question": "Do independent operations commute?",
+    "mechanism": "theorem + generated attack",
+    "mfw_instance": "independent replay steps"
+  },
+  {
+    "id": "T039",
+    "family": "ALGEBRA",
+    "slug": "ABSORPTION",
+    "name": "Absorption test",
+    "instance": "MFW.TST.ALGEBRA.ABSORPTION.039",
+    "question": "Does the domain-specific absorption law hold?",
+    "mechanism": "theorem",
+    "mfw_instance": "normalization/closure absorption"
+  },
+  {
+    "id": "T040",
+    "family": "ALGEBRA",
+    "slug": "DISTRIBUTIVITY",
+    "name": "Distributivity test",
+    "instance": "MFW.TST.ALGEBRA.DISTRIBUTIVITY.040",
+    "question": "Does composition distribute over the declared operator?",
+    "mechanism": "theorem",
+    "mfw_instance": "workflow/process algebra law"
+  },
+  {
+    "id": "T041",
+    "family": "METAMORPHIC",
+    "slug": "EVENT_REORDER",
+    "name": "Independent event reordering test",
+    "instance": "MFW.TST.METAMORPHIC.EVENT_REORDER.041",
+    "question": "Does lawful reordering preserve consequence?",
+    "mechanism": "transform input then compare outputs",
+    "mfw_instance": "swap independent receipt events"
+  },
+  {
+    "id": "T042",
+    "family": "METAMORPHIC",
+    "slug": "TRIPLE_REORDER",
+    "name": "Graph triple reordering test",
+    "instance": "MFW.TST.METAMORPHIC.TRIPLE_REORDER.042",
+    "question": "Does triple order preserve canonical semantic result?",
+    "mechanism": "permute triples",
+    "mfw_instance": "RDF graph canonicalization"
+  },
+  {
+    "id": "T043",
+    "family": "METAMORPHIC",
+    "slug": "BNODE_CANON",
+    "name": "Blank-node canonicalization test",
+    "instance": "MFW.TST.METAMORPHIC.BNODE_CANON.043",
+    "question": "Does reserialization/canonicalization preserve bound identity?",
+    "mechanism": "rename/canonicalize/compare",
+    "mfw_instance": "skos:notation binding handles"
+  },
+  {
+    "id": "T044",
+    "family": "METAMORPHIC",
+    "slug": "DUP_OBS",
+    "name": "Duplicate observation elimination test",
+    "instance": "MFW.TST.METAMORPHIC.DUP_OBS.044",
+    "question": "Does duplicating an admitted observation leave consequence unchanged?",
+    "mechanism": "duplicate then normalize",
+    "mfw_instance": "observation dedup"
+  },
+  {
+    "id": "T045",
+    "family": "METAMORPHIC",
+    "slug": "WORKFLOW_NORM",
+    "name": "Workflow normalization test",
+    "instance": "MFW.TST.METAMORPHIC.WORKFLOW_NORM.045",
+    "question": "Does normalization preserve workflow consequence?",
+    "mechanism": "normalize/interpret compare",
+    "mfw_instance": "seq/par normal form"
+  },
+  {
+    "id": "T046",
+    "family": "METAMORPHIC",
+    "slug": "SCALE_REFINE",
+    "name": "Scale refinement test",
+    "instance": "MFW.TST.METAMORPHIC.SCALE_REFINE.046",
+    "question": "Does lawful refinement preserve the expected aggregate/spectrum relation?",
+    "mechanism": "refine partition/scale",
+    "mfw_instance": "multifractal scale schedule"
+  },
+  {
+    "id": "T047",
+    "family": "METAMORPHIC",
+    "slug": "PARTITION_EQ",
+    "name": "Equivalent partition representation test",
+    "instance": "MFW.TST.METAMORPHIC.PARTITION_EQ.047",
+    "question": "Do equivalent partitions yield equal admitted observables?",
+    "mechanism": "reencode partition",
+    "mfw_instance": "joint moment field"
+  },
+  {
+    "id": "T048",
+    "family": "METAMORPHIC",
+    "slug": "RECEIPT_REPLAY",
+    "name": "Receipt replay metamorphic test",
+    "instance": "MFW.TST.METAMORPHIC.RECEIPT_REPLAY.048",
+    "question": "Does replay of an equivalent trace preserve final consequence?",
+    "mechanism": "TraceEq/replay compare",
+    "mfw_instance": "receipt DAG trace"
+  },
+  {
+    "id": "T049",
+    "family": "METAMORPHIC",
+    "slug": "TENANT_PERM",
+    "name": "Tenant permutation test",
+    "instance": "MFW.TST.METAMORPHIC.TENANT_PERM.049",
+    "question": "Does bijective tenant renaming preserve isolation laws?",
+    "mechanism": "rename tenant tags",
+    "mfw_instance": "tenancy residue"
+  },
+  {
+    "id": "T050",
+    "family": "COUNTERMODEL",
+    "slug": "COUNTEREXAMPLE",
+    "name": "Counterexample test",
+    "instance": "MFW.TST.COUNTERMODEL.COUNTEREXAMPLE.050",
+    "question": "Can a concrete witness refute a candidate law?",
+    "mechanism": "finite witness",
+    "mfw_instance": "mutant workflow law"
+  },
+  {
+    "id": "T051",
+    "family": "COUNTERMODEL",
+    "slug": "MIN_COUNTEREXAMPLE",
+    "name": "Minimal counterexample test",
+    "instance": "MFW.TST.COUNTERMODEL.MIN_COUNTEREXAMPLE.051",
+    "question": "Is the reported falsifier least under an explicit cost/order?",
+    "mechanism": "argmin + proof/witness",
+    "mfw_instance": "least-cost failing architecture world"
+  },
+  {
+    "id": "T052",
+    "family": "COUNTERMODEL",
+    "slug": "COUNTERMODEL",
+    "name": "Countermodel test",
+    "instance": "MFW.TST.COUNTERMODEL.COUNTERMODEL.052",
+    "question": "Can a model satisfy weakened assumptions while falsifying the stronger conclusion?",
+    "mechanism": "construct model",
+    "mfw_instance": "infinite-transition crown countermodel"
+  },
+  {
+    "id": "T053",
+    "family": "COUNTERMODEL",
+    "slug": "HYP_REMOVAL",
+    "name": "Hypothesis-removal test",
+    "instance": "MFW.TST.COUNTERMODEL.HYP_REMOVAL.053",
+    "question": "Does removing hypothesis H permit conclusion failure?",
+    "mechanism": "companion theorem fixture",
+    "mfw_instance": "tenancy without Separated"
+  },
+  {
+    "id": "T054",
+    "family": "COUNTERMODEL",
+    "slug": "BOUNDARY",
+    "name": "Boundary test",
+    "instance": "MFW.TST.COUNTERMODEL.BOUNDARY.054",
+    "question": "Is the exact theorem fence necessary?",
+    "mechanism": "paired positive/negative worlds",
+    "mfw_instance": "Finite T boundary"
+  },
+  {
+    "id": "T055",
+    "family": "MUTATION",
+    "slug": "KILL_MUTANT",
+    "name": "Mutation test",
+    "instance": "MFW.TST.MUTATION.KILL_MUTANT.055",
+    "question": "Would the suite fail if a known-bad implementation replaced the real one?",
+    "mechanism": "named mutant + killer witness",
+    "mfw_instance": "bindDropSeqRight / closureWithoutIdempotence / replayReverseParents"
+  },
+  {
+    "id": "T056",
+    "family": "DIFFERENTIAL",
+    "slug": "IMPL_COMPARE",
+    "name": "Differential test",
+    "instance": "MFW.TST.DIFFERENTIAL.IMPL_COMPARE.056",
+    "question": "Do two implementations of one admitted semantics produce equal results?",
+    "mechanism": "run A/B + semantic digest",
+    "mfw_instance": "recursive vs fold replay; naive vs seminaive closure; interpreter variants"
+  },
+  {
+    "id": "T057",
+    "family": "SNAPSHOT",
+    "slug": "GOLDEN_OUTPUT",
+    "name": "Golden output test",
+    "instance": "MFW.TST.SNAPSHOT.GOLDEN_OUTPUT.057",
+    "question": "Does stdout/stderr equal the reviewed expected output?",
+    "mechanism": "expected file",
+    "mfw_instance": "verifier report"
+  },
+  {
+    "id": "T058",
+    "family": "SNAPSHOT",
+    "slug": "DIAG_SNAPSHOT",
+    "name": "Diagnostic snapshot",
+    "instance": "MFW.TST.SNAPSHOT.DIAG_SNAPSHOT.058",
+    "question": "Did public compiler/refusal diagnostics remain stable?",
+    "mechanism": "expected messages",
+    "mfw_instance": "negative fixture output"
+  },
+  {
+    "id": "T059",
+    "family": "SNAPSHOT",
+    "slug": "PRETTY",
+    "name": "Pretty-printer snapshot",
+    "instance": "MFW.TST.SNAPSHOT.PRETTY.059",
+    "question": "Did rendered Lean syntax/terms drift?",
+    "mechanism": "pretty output compare",
+    "mfw_instance": "generated declaration rendering"
+  },
+  {
+    "id": "T060",
+    "family": "SNAPSHOT",
+    "slug": "ARTIFACT",
+    "name": "Generated artifact snapshot",
+    "instance": "MFW.TST.SNAPSHOT.ARTIFACT.060",
+    "question": "Did canonical TTL/ggen output drift?",
+    "mechanism": "content/hash compare",
+    "mfw_instance": "generated Lean module"
+  },
+  {
+    "id": "T061",
+    "family": "SNAPSHOT",
+    "slug": "MANIFEST",
+    "name": "Manifest snapshot",
+    "instance": "MFW.TST.SNAPSHOT.MANIFEST.061",
+    "question": "Did the expected artifact graph drift?",
+    "mechanism": "manifest compare",
+    "mfw_instance": "mfact artifact inventory"
+  },
+  {
+    "id": "T062",
+    "family": "REGRESSION",
+    "slug": "ESCAPED_DEFECT",
+    "name": "Regression test",
+    "instance": "MFW.TST.REGRESSION.ESCAPED_DEFECT.062",
+    "question": "Does a previously escaped defect remain permanently caught?",
+    "mechanism": "one bug\u2192one fixture",
+    "mfw_instance": "SocketShadow / StandingForgery / ParallelProjection"
+  },
+  {
+    "id": "T063",
+    "family": "COMPOSITION",
+    "slug": "CROSS_THEOREM",
+    "name": "Composition test",
+    "instance": "MFW.TST.COMPOSITION.CROSS_THEOREM.063",
+    "question": "Do neighboring theorem layers connect on the same concrete object?",
+    "mechanism": "shared carrier + chained proofs",
+    "mfw_instance": "Closure\u2192Residue\u2192Tenancy\u2192Execution\u2192Replay"
+  },
+  {
+    "id": "T064",
+    "family": "FLOW",
+    "slug": "SCENARIO",
+    "name": "Flow/scenario test",
+    "instance": "MFW.TST.FLOW.SCENARIO.064",
+    "question": "Does one concrete world exercise a coherent multi-law path?",
+    "mechanism": "positive flow + negative companion",
+    "mfw_instance": "SOC2 two-tenant audit / contractor exfiltration"
+  },
+  {
+    "id": "T065",
+    "family": "E2E",
+    "slug": "CONTROLLED_CHAIN",
+    "name": "End-to-end test",
+    "instance": "MFW.TST.E2E.CONTROLLED_CHAIN.065",
+    "question": "Does the full controlled mfact chain agree from source declaration to audit?",
+    "mechanism": "TTL\u2192ggen\u2192Lean\u2192Lake\u2192audit",
+    "mfw_instance": "canonical ontology artifact"
+  },
+  {
+    "id": "T066",
+    "family": "ROUNDTRIP",
+    "slug": "EXACT",
+    "name": "Round-trip test",
+    "instance": "MFW.TST.ROUNDTRIP.EXACT.066",
+    "question": "Does decode(encode(x)) = x?",
+    "mechanism": "encode/decode theorem or executable check",
+    "mfw_instance": "receipt/workflow serialization"
+  },
+  {
+    "id": "T067",
+    "family": "ROUNDTRIP",
+    "slug": "CANONICAL",
+    "name": "Canonicalized round-trip test",
+    "instance": "MFW.TST.ROUNDTRIP.CANONICAL.067",
+    "question": "Does canonicalize(decode(encode(x))) = canonicalize(x)?",
+    "mechanism": "canonicalized equality",
+    "mfw_instance": "RDF blank-node-sensitive carrier"
+  },
+  {
+    "id": "T068",
+    "family": "CORRESPONDENCE",
+    "slug": "PRESERVE",
+    "name": "Refinement/correspondence preservation test",
+    "instance": "MFW.TST.CORRESPONDENCE.PRESERVE.068",
+    "question": "Does a controlled map preserve the declared invariant?",
+    "mechanism": "map + preservation theorem",
+    "mfw_instance": "TTL declaration\u2192generated Lean declaration"
+  },
+  {
+    "id": "T069",
+    "family": "CORRESPONDENCE",
+    "slug": "COMPOSE",
+    "name": "Correspondence composition test",
+    "instance": "MFW.TST.CORRESPONDENCE.COMPOSE.069",
+    "question": "Do composed controlled maps equal the declared direct projection?",
+    "mechanism": "commuting diagram theorem",
+    "mfw_instance": "TTL\u2192Lean\u2192manifest vs direct claim projection"
+  },
+  {
+    "id": "T070",
+    "family": "INVARIANT",
+    "slug": "PRESERVATION",
+    "name": "Invariant preservation test",
+    "instance": "MFW.TST.INVARIANT.PRESERVATION.070",
+    "question": "Does every admitted transition preserve invariant I?",
+    "mechanism": "Preserves theorem + generated attack",
+    "mfw_instance": "zero unreceipted completion / tenant separation"
+  },
+  {
+    "id": "T071",
+    "family": "CONCURRENCY",
+    "slug": "PAIRWISE_COMMUTE",
+    "name": "Pairwise commutation test",
+    "instance": "MFW.TST.CONCURRENCY.PAIRWISE_COMMUTE.071",
+    "question": "Do declared independent events commute?",
+    "mechanism": "Commute theorem",
+    "mfw_instance": "freeze identity vs preserve logs on real state"
+  },
+  {
+    "id": "T072",
+    "family": "CONCURRENCY",
+    "slug": "ADJ_SWAP",
+    "name": "Independent adjacent swap test",
+    "instance": "MFW.TST.CONCURRENCY.ADJ_SWAP.072",
+    "question": "Does swapping adjacent independent events preserve replay?",
+    "mechanism": "adjacent-swap theorem",
+    "mfw_instance": "oriented swap replay"
+  },
+  {
+    "id": "T073",
+    "family": "CONCURRENCY",
+    "slug": "LINEXT",
+    "name": "Linear-extension equivalence test",
+    "instance": "MFW.TST.CONCURRENCY.LINEXT.073",
+    "question": "Do two linear extensions of one finite poset replay equally?",
+    "mechanism": "LinExt theorem",
+    "mfw_instance": "receipt causal DAG"
+  },
+  {
+    "id": "T074",
+    "family": "CONCURRENCY",
+    "slug": "DIAMOND",
+    "name": "Diamond property test",
+    "instance": "MFW.TST.CONCURRENCY.DIAMOND.074",
+    "question": "Do two independent one-step branches rejoin?",
+    "mechanism": "diamond theorem",
+    "mfw_instance": "concurrent cloud transitions"
+  },
+  {
+    "id": "T075",
+    "family": "CONCURRENCY",
+    "slug": "RACE",
+    "name": "Race/conflict counterexample test",
+    "instance": "MFW.TST.CONCURRENCY.RACE.075",
+    "question": "Can a claimed-independent pair be shown noncommuting?",
+    "mechanism": "counterexample",
+    "mfw_instance": "delete vs snapshot"
+  },
+  {
+    "id": "T076",
+    "family": "CONCURRENCY",
+    "slug": "MAX_SET",
+    "name": "Maximal concurrent-set test",
+    "instance": "MFW.TST.CONCURRENCY.MAX_SET.076",
+    "question": "Is the selected enabled set maximal and pairwise independent?",
+    "mechanism": "finite search + proof",
+    "mfw_instance": "automatic POWL concurrency"
+  },
+  {
+    "id": "T077",
+    "family": "REPRO",
+    "slug": "REPEAT",
+    "name": "Repeatability/determinism test",
+    "instance": "MFW.TST.REPRO.REPEAT.077",
+    "question": "Do repeated runs on identical admitted inputs match exactly?",
+    "mechanism": "repeat + digest compare",
+    "mfw_instance": "ggen/audit repeat"
+  },
+  {
+    "id": "T078",
+    "family": "REPRO",
+    "slug": "CLEAN_INCREMENTAL",
+    "name": "Clean-vs-incremental reproducibility",
+    "instance": "MFW.TST.REPRO.CLEAN_INCREMENTAL.078",
+    "question": "Do clean and incremental builds manufacture the same artifacts/standing?",
+    "mechanism": "two build modes + digest",
+    "mfw_instance": "Lake"
+  },
+  {
+    "id": "T079",
+    "family": "REPRO",
+    "slug": "SERIAL_PARALLEL",
+    "name": "Serial-vs-parallel reproducibility",
+    "instance": "MFW.TST.REPRO.SERIAL_PARALLEL.079",
+    "question": "Do serial and parallel builds agree semantically?",
+    "mechanism": "build modes + digest",
+    "mfw_instance": "Lake job scheduling"
+  },
+  {
+    "id": "T080",
+    "family": "REPRO",
+    "slug": "ENUM_ORDER",
+    "name": "File-enumeration-order reproducibility",
+    "instance": "MFW.TST.REPRO.ENUM_ORDER.080",
+    "question": "Does filesystem enumeration order alter outputs?",
+    "mechanism": "permute enumeration",
+    "mfw_instance": "manifest generation"
+  },
+  {
+    "id": "T081",
+    "family": "REPRO",
+    "slug": "RESTART",
+    "name": "Process-restart reproducibility",
+    "instance": "MFW.TST.REPRO.RESTART.081",
+    "question": "Does restarting the manufacturing process preserve result?",
+    "mechanism": "restart/replay",
+    "mfw_instance": "ggen pipeline"
+  },
+  {
+    "id": "T082",
+    "family": "REPRO",
+    "slug": "GGEN_REPEAT",
+    "name": "Repeated-ggen reproducibility",
+    "instance": "MFW.TST.REPRO.GGEN_REPEAT.082",
+    "question": "Does ggen reach a fixed artifact point?",
+    "mechanism": "run twice + no delta",
+    "mfw_instance": "projection idempotence"
+  },
+  {
+    "id": "T083",
+    "family": "LAKE",
+    "slug": "PACKAGE_CONFIG",
+    "name": "Package configuration test",
+    "instance": "MFW.TST.LAKE.PACKAGE_CONFIG.083",
+    "question": "Does lakefile configuration resolve as intended?",
+    "mechanism": "lake package test",
+    "mfw_instance": "pinned toolchain and targets"
+  },
+  {
+    "id": "T084",
+    "family": "LAKE",
+    "slug": "DEPENDENCY",
+    "name": "Dependency resolution test",
+    "instance": "MFW.TST.LAKE.DEPENDENCY.084",
+    "question": "Are exact dependencies/revisions resolved?",
+    "mechanism": "lake update/manifest audit",
+    "mfw_instance": "mathlib pin"
+  },
+  {
+    "id": "T085",
+    "family": "LAKE",
+    "slug": "LIB_BUILD",
+    "name": "Library build test",
+    "instance": "MFW.TST.LAKE.LIB_BUILD.085",
+    "question": "Does the declared Lean library build?",
+    "mechanism": "lake build Lib",
+    "mfw_instance": "ProcInt"
+  },
+  {
+    "id": "T086",
+    "family": "LAKE",
+    "slug": "EXE_BUILD",
+    "name": "Executable build test",
+    "instance": "MFW.TST.LAKE.EXE_BUILD.086",
+    "question": "Does the executable target build?",
+    "mechanism": "lake build exe",
+    "mfw_instance": "verifier"
+  },
+  {
+    "id": "T087",
+    "family": "LAKE",
+    "slug": "CUSTOM_TARGET",
+    "name": "Custom target test",
+    "instance": "MFW.TST.LAKE.CUSTOM_TARGET.087",
+    "question": "Does a custom Lake target manufacture its declared projection?",
+    "mechanism": "lake build target",
+    "mfw_instance": "standing/claims/residue"
+  },
+  {
+    "id": "T088",
+    "family": "LAKE",
+    "slug": "TEST_DRIVER",
+    "name": "Test driver test",
+    "instance": "MFW.TST.LAKE.TEST_DRIVER.088",
+    "question": "Does lake test execute the configured test driver?",
+    "mechanism": "lake test",
+    "mfw_instance": "crown verifier"
+  },
+  {
+    "id": "T089",
+    "family": "LAKE",
+    "slug": "AS_DEP",
+    "name": "Package-as-dependency test",
+    "instance": "MFW.TST.LAKE.AS_DEP.089",
+    "question": "Can a downstream Lake package import the public surface?",
+    "mechanism": "fixture package",
+    "mfw_instance": "consumer of ProcInt"
+  },
+  {
+    "id": "T090",
+    "family": "LAKE",
+    "slug": "CLEAN_BUILD",
+    "name": "Clean build test",
+    "instance": "MFW.TST.LAKE.CLEAN_BUILD.090",
+    "question": "Does a fresh checkout/cache state build?",
+    "mechanism": "clean + build",
+    "mfw_instance": "release boundary"
+  },
+  {
+    "id": "T091",
+    "family": "LAKE",
+    "slug": "INCREMENTAL",
+    "name": "Incremental build test",
+    "instance": "MFW.TST.LAKE.INCREMENTAL.091",
+    "question": "Does a targeted change rebuild only/admit the expected targets?",
+    "mechanism": "touch/change + Lake trace audit",
+    "mfw_instance": "dependency graph"
+  },
+  {
+    "id": "T092",
+    "family": "LAKE",
+    "slug": "TARGET_SELECT",
+    "name": "Build target selection test",
+    "instance": "MFW.TST.LAKE.TARGET_SELECT.092",
+    "question": "Do named targets build the intended projection only?",
+    "mechanism": "lake build target",
+    "mfw_instance": "standing vs claims"
+  },
+  {
+    "id": "T093",
+    "family": "LAKE",
+    "slug": "INSTALL_RELEASE",
+    "name": "Install/release behavior test",
+    "instance": "MFW.TST.LAKE.INSTALL_RELEASE.093",
+    "question": "Does install/release packaging preserve expected files and metadata?",
+    "mechanism": "package/release fixture",
+    "mfw_instance": "mfact release"
+  },
+  {
+    "id": "T094",
+    "family": "EXPECTED_FAIL",
+    "slug": "BUILD",
+    "name": "Expected-failure build test",
+    "instance": "MFW.TST.EXPECTED_FAIL.BUILD.094",
+    "question": "Does an illegal module/package fail to elaborate or build?",
+    "mechanism": "failing fixture package",
+    "mfw_instance": "StandingForgery / CrossTenantGraft / MissingDescent"
+  },
+  {
+    "id": "T095",
+    "family": "POLICY",
+    "slug": "NO_SORRY",
+    "name": "No-sorry policy test",
+    "instance": "MFW.TST.POLICY.NO_SORRY.095",
+    "question": "Are controlled declarations free of sorryAx dependencies?",
+    "mechanism": "environment auditor",
+    "mfw_instance": "ProcInt"
+  },
+  {
+    "id": "T096",
+    "family": "POLICY",
+    "slug": "NO_ADMIT",
+    "name": "No-admit policy test",
+    "instance": "MFW.TST.POLICY.NO_ADMIT.096",
+    "question": "Are proof-admission escape hatches absent from controlled source?",
+    "mechanism": "syntax/environment audit",
+    "mfw_instance": "ProcInt"
+  },
+  {
+    "id": "T097",
+    "family": "POLICY",
+    "slug": "FORBIDDEN_IMPORT",
+    "name": "Forbidden-import policy test",
+    "instance": "MFW.TST.POLICY.FORBIDDEN_IMPORT.097",
+    "question": "Are disallowed imports absent?",
+    "mechanism": "environment/module graph audit",
+    "mfw_instance": "N3/default escape-hatch modules"
+  },
+  {
+    "id": "T098",
+    "family": "POLICY",
+    "slug": "NO_UMBRELLA",
+    "name": "No giant Mathlib umbrella import test",
+    "instance": "MFW.TST.POLICY.NO_UMBRELLA.098",
+    "question": "Are leaf modules using bounded imports?",
+    "mechanism": "import graph policy",
+    "mfw_instance": "core theorem modules"
+  },
+  {
+    "id": "T099",
+    "family": "POLICY",
+    "slug": "SEMANTIC_COORDS",
+    "name": "Semantic-coordinate completeness test",
+    "instance": "MFW.TST.POLICY.SEMANTIC_COORDS.099",
+    "question": "Does every public declaration expose required semantic coordinates?",
+    "mechanism": "declaration metadata auditor",
+    "mfw_instance": "Law/Carrier/Admission/Preserves/Refuses/Claim ceiling"
+  },
+  {
+    "id": "T100",
+    "family": "POLICY",
+    "slug": "REFUSAL_COVERAGE",
+    "name": "Every RefusalCode tested policy",
+    "instance": "MFW.TST.POLICY.REFUSAL_COVERAGE.100",
+    "question": "Does each refusal constructor have a positive trigger fixture?",
+    "mechanism": "constructor inventory vs tests",
+    "mfw_instance": "typed refusal algebra"
+  },
+  {
+    "id": "T101",
+    "family": "POLICY",
+    "slug": "COUNTERMODEL_CARD",
+    "name": "Every crown theorem countermodel-card policy",
+    "instance": "MFW.TST.POLICY.COUNTERMODEL_CARD.101",
+    "question": "Does each crown claim name hypothesis-removal/countermodel obligations?",
+    "mechanism": "claim-card auditor",
+    "mfw_instance": "crown theorem rail"
+  },
+  {
+    "id": "T102",
+    "family": "POLICY",
+    "slug": "PROVENANCE",
+    "name": "Generated provenance policy",
+    "instance": "MFW.TST.POLICY.PROVENANCE.102",
+    "question": "Does each generated artifact carry canonical provenance?",
+    "mechanism": "manifest/env audit",
+    "mfw_instance": "ggen outputs"
+  },
+  {
+    "id": "T103",
+    "family": "POLICY",
+    "slug": "CLAIM_EXISTS",
+    "name": "Claimed theorem exists policy",
+    "instance": "MFW.TST.POLICY.CLAIM_EXISTS.103",
+    "question": "Does every machine-readable claim resolve to a real theorem declaration?",
+    "mechanism": "environment lookup",
+    "mfw_instance": "claim matrix"
+  },
+  {
+    "id": "T104",
+    "family": "POLICY",
+    "slug": "NO_ORPHANS",
+    "name": "No orphan modules policy",
+    "instance": "MFW.TST.POLICY.NO_ORPHANS.104",
+    "question": "Is every intended module reachable from a declared build/import root?",
+    "mechanism": "module graph reachability",
+    "mfw_instance": "ProcInt umbrella"
+  },
+  {
+    "id": "T105",
+    "family": "INVENTORY",
+    "slug": "EXISTS",
+    "name": "Expected theorem existence test",
+    "instance": "MFW.TST.INVENTORY.EXISTS.105",
+    "question": "Does each required theorem name exist?",
+    "mechanism": "environment lookup",
+    "mfw_instance": "crown theorem manifest"
+  },
+  {
+    "id": "T106",
+    "family": "INVENTORY",
+    "slug": "KIND",
+    "name": "Theorem kind test",
+    "instance": "MFW.TST.INVENTORY.KIND.106",
+    "question": "Is the declaration actually a theorem rather than def/axiom?",
+    "mechanism": "ConstantInfo inspection",
+    "mfw_instance": "expected theorem"
+  },
+  {
+    "id": "T107",
+    "family": "INVENTORY",
+    "slug": "MODULE",
+    "name": "Theorem module location test",
+    "instance": "MFW.TST.INVENTORY.MODULE.107",
+    "question": "Is the theorem exported from the intended module boundary?",
+    "mechanism": "module/name audit",
+    "mfw_instance": "MFW residue theorem"
+  },
+  {
+    "id": "T108",
+    "family": "INVENTORY",
+    "slug": "AXIOM_ALLOWLIST",
+    "name": "Allowed axiom dependency test",
+    "instance": "MFW.TST.INVENTORY.AXIOM_ALLOWLIST.108",
+    "question": "Are transitive theorem axioms a subset of the allowed set?",
+    "mechanism": "collectAxioms",
+    "mfw_instance": "crown theorems"
+  },
+  {
+    "id": "T109",
+    "family": "INVENTORY",
+    "slug": "CLAIM_CLASS",
+    "name": "Claim class test",
+    "instance": "MFW.TST.INVENTORY.CLAIM_CLASS.109",
+    "question": "Does theorem standing/claim metadata match its permitted claim ceiling?",
+    "mechanism": "claim metadata reconciliation",
+    "mfw_instance": "FINITE_VERIFIED vs PROVEN"
+  },
+  {
+    "id": "T110",
+    "family": "INVENTORY",
+    "slug": "MANIFEST",
+    "name": "Manifest representation test",
+    "instance": "MFW.TST.INVENTORY.MANIFEST.110",
+    "question": "Is each admitted theorem/artifact represented in the manifest?",
+    "mechanism": "environment\u2194manifest set equality",
+    "mfw_instance": "mfact manifest"
+  },
+  {
+    "id": "T111",
+    "family": "INVENTORY",
+    "slug": "EXACT_SET",
+    "name": "Exact theorem inventory equality test",
+    "instance": "MFW.TST.INVENTORY.EXACT_SET.111",
+    "question": "Does the actual theorem set equal the expected set?",
+    "mechanism": "set equality",
+    "mfw_instance": "crown inventory"
+  },
+  {
+    "id": "T112",
+    "family": "PERF",
+    "slug": "COMPILE",
+    "name": "Compile benchmark",
+    "instance": "MFW.TST.PERF.COMPILE.112",
+    "question": "How long does generated code compilation/execution take?",
+    "mechanism": "benchmark harness",
+    "mfw_instance": "compiled verifier"
+  },
+  {
+    "id": "T113",
+    "family": "PERF",
+    "slug": "ELAB",
+    "name": "Elaboration benchmark",
+    "instance": "MFW.TST.PERF.ELAB.113",
+    "question": "How expensive is elaboration?",
+    "mechanism": "elab benchmark",
+    "mfw_instance": "large theorem module"
+  },
+  {
+    "id": "T114",
+    "family": "PERF",
+    "slug": "LAKE",
+    "name": "Lake benchmark",
+    "instance": "MFW.TST.PERF.LAKE.114",
+    "question": "How expensive are Lake graph operations/targets?",
+    "mechanism": "Lake benchmark",
+    "mfw_instance": "standing target"
+  },
+  {
+    "id": "T115",
+    "family": "PERF",
+    "slug": "BUILD",
+    "name": "Build benchmark",
+    "instance": "MFW.TST.PERF.BUILD.115",
+    "question": "How expensive is the whole package build?",
+    "mechanism": "build benchmark",
+    "mfw_instance": "ProcInt"
+  },
+  {
+    "id": "T116",
+    "family": "PERF",
+    "slug": "SIZE",
+    "name": "Size benchmark",
+    "instance": "MFW.TST.PERF.SIZE.116",
+    "question": "How large are source/olean/ilean/artifact outputs?",
+    "mechanism": "size metrics",
+    "mfw_instance": "generated modules"
+  },
+  {
+    "id": "T117",
+    "family": "PERF",
+    "slug": "CUSTOM_METRIC",
+    "name": "Custom metric benchmark",
+    "instance": "MFW.TST.PERF.CUSTOM_METRIC.117",
+    "question": "Can domain-specific measurements be emitted and tracked?",
+    "mechanism": "measurement output",
+    "mfw_instance": "residue candidate count / proof branching"
+  },
+  {
+    "id": "T118",
+    "family": "STRESS",
+    "slug": "SCALE",
+    "name": "Stress/scale test",
+    "instance": "MFW.TST.STRESS.SCALE.118",
+    "question": "At what input scale does the system fail or exceed resources?",
+    "mechanism": "parameter sweep",
+    "mfw_instance": "workflow worlds / theorem count"
+  },
+  {
+    "id": "T119",
+    "family": "STRESS",
+    "slug": "STACK",
+    "name": "Stack overflow test",
+    "instance": "MFW.TST.STRESS.STACK.119",
+    "question": "Can deep recursion overflow the execution stack?",
+    "mechanism": "deep fixture",
+    "mfw_instance": "workflow bind"
+  },
+  {
+    "id": "T120",
+    "family": "STRESS",
+    "slug": "RECURSION",
+    "name": "Recursion limit test",
+    "instance": "MFW.TST.STRESS.RECURSION.120",
+    "question": "Does recursion-depth policy refuse or fail at the intended boundary?",
+    "mechanism": "deep syntax fixture",
+    "mfw_instance": "recursive workflow"
+  },
+  {
+    "id": "T121",
+    "family": "STRESS",
+    "slug": "HEARTBEAT",
+    "name": "Heartbeat exhaustion test",
+    "instance": "MFW.TST.STRESS.HEARTBEAT.121",
+    "question": "Can elaboration/proof search exceed heartbeat bounds?",
+    "mechanism": "bounded heartbeat fixture",
+    "mfw_instance": "expensive proof search"
+  },
+  {
+    "id": "T122",
+    "family": "STRESS",
+    "slug": "MEMORY",
+    "name": "Memory exhaustion test",
+    "instance": "MFW.TST.STRESS.MEMORY.122",
+    "question": "What input triggers unacceptable memory growth?",
+    "mechanism": "large finite fixture",
+    "mfw_instance": "residue enumeration"
+  },
+  {
+    "id": "T123",
+    "family": "STRESS",
+    "slug": "TYPECLASS",
+    "name": "Typeclass explosion test",
+    "instance": "MFW.TST.STRESS.TYPECLASS.123",
+    "question": "Can instance search branch pathologically?",
+    "mechanism": "instance graph fixture",
+    "mfw_instance": "semantic coordinate classes"
+  },
+  {
+    "id": "T124",
+    "family": "STRESS",
+    "slug": "ELAB_BLOWUP",
+    "name": "Elaboration blowup test",
+    "instance": "MFW.TST.STRESS.ELAB_BLOWUP.124",
+    "question": "Can generated syntax cause superlinear elaboration failure?",
+    "mechanism": "parametric generated module",
+    "mfw_instance": "deep TWorkflow"
+  },
+  {
+    "id": "T125",
+    "family": "STRESS",
+    "slug": "EXP_RESIDUE",
+    "name": "Exponential residue generation test",
+    "instance": "MFW.TST.STRESS.EXP_RESIDUE.125",
+    "question": "Does exhaustive support enumeration show expected exponential boundary?",
+    "mechanism": "n-support sweep",
+    "mfw_instance": "minimal residue"
+  },
+  {
+    "id": "T126",
+    "family": "COMPLEXITY",
+    "slug": "FORMAL_BOUND",
+    "name": "Complexity-law test",
+    "instance": "MFW.TST.COMPLEXITY.FORMAL_BOUND.126",
+    "question": "Can an abstract operation counter be formally bounded by f(|x|)?",
+    "mechanism": "Nat cost semantics + theorem",
+    "mfw_instance": "workflow traversal / residue search"
+  },
+  {
+    "id": "T127",
+    "family": "COMPLEXITY",
+    "slug": "MEASURE_DISTINCTION",
+    "name": "Formal-vs-measured complexity distinction test",
+    "instance": "MFW.TST.COMPLEXITY.MEASURE_DISTINCTION.127",
+    "question": "Are formal operation bounds kept separate from wall-clock benchmark claims?",
+    "mechanism": "claim reconciliation",
+    "mfw_instance": "complexity theorem vs measured benchmark"
+  },
+  {
+    "id": "T128",
+    "family": "TERMINATION",
+    "slug": "KERNEL",
+    "name": "Kernel termination checking",
+    "instance": "MFW.TST.TERMINATION.KERNEL.128",
+    "question": "Does Lean accept structural/well-founded recursion?",
+    "mechanism": "termination checker",
+    "mfw_instance": "recursive definitions"
+  },
+  {
+    "id": "T129",
+    "family": "TERMINATION",
+    "slug": "WELL_FOUNDED",
+    "name": "Well-founded termination theorem",
+    "instance": "MFW.TST.TERMINATION.WELL_FOUNDED.129",
+    "question": "Is the mathematical refinement relation well founded?",
+    "mechanism": "WellFounded / DM-style theorem",
+    "mfw_instance": "workflow obligation multiset"
+  },
+  {
+    "id": "T130",
+    "family": "TERMINATION",
+    "slug": "FINITE_DESCENT",
+    "name": "Finite experimental descent test",
+    "instance": "MFW.TST.TERMINATION.FINITE_DESCENT.130",
+    "question": "Do all manufactured bounded refinement steps decrease the declared measure?",
+    "mechanism": "finite worlds + native_decide/property attack",
+    "mfw_instance": "obligation refinement corpus"
+  },
+  {
+    "id": "T131",
+    "family": "FAITHFULNESS",
+    "slug": "CLAIM_CEILING",
+    "name": "Faithfulness/claim-ceiling test",
+    "instance": "MFW.TST.FAITHFULNESS.CLAIM_CEILING.131",
+    "question": "Does the theorem statement actually justify the prose/machine claim attached to it?",
+    "mechanism": "claim card \u2194 theorem AST/metadata audit",
+    "mfw_instance": "global replay claim vs local Nat commutation"
+  },
+  {
+    "id": "T132",
+    "family": "STANDING_PATH",
+    "slug": "EDGE_COVERAGE",
+    "name": "Gap/edge coverage test",
+    "instance": "MFW.TST.STANDING_PATH.EDGE_COVERAGE.132",
+    "question": "Are all declared mathematical/correspondence edges represented by admitted proofs or explicit gaps?",
+    "mechanism": "theorem graph audit",
+    "mfw_instance": "MFW wave graph"
+  },
+  {
+    "id": "T133",
+    "family": "STANDING_PATH",
+    "slug": "PATH_COVERAGE",
+    "name": "Standing path coverage test",
+    "instance": "MFW.TST.STANDING_PATH.PATH_COVERAGE.133",
+    "question": "Does every crown claim have a complete admitted path from controlled source to crown consequence?",
+    "mechanism": "required-edge graph reachability",
+    "mfw_instance": "TTL\u2192ggen\u2192Lean\u2192Lake\u2192audit crown path"
+  }
+]

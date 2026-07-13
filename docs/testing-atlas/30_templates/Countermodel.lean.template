@@ -1,0 +1,8 @@
+structure BoundaryCountermodel where
+  world : World
+  remaining : RemainingAssumptions world
+  removedHypothesisFails : ¬ RemovedHypothesis world
+  conclusionFails : ¬ Conclusion world
+
+def countermodel : BoundaryCountermodel := by
+  ...

@@ -1,0 +1,20 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["SNAPSHOT<br/>Golden and snapshot testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T057["T057<br/>Golden output test<br/>MFW.TST.SNAPSHOT.GOLDEN_OUTPUT.057<br/>verifier report"]
+  FAMILY --> T057
+  T057 --> EVIDENCE
+  T058["T058<br/>Diagnostic snapshot<br/>MFW.TST.SNAPSHOT.DIAG_SNAPSHOT.058<br/>negative fixture output"]
+  FAMILY --> T058
+  T058 --> EVIDENCE
+  T059["T059<br/>Pretty-printer snapshot<br/>MFW.TST.SNAPSHOT.PRETTY.059<br/>generated declaration rendering"]
+  FAMILY --> T059
+  T059 --> EVIDENCE
+  T060["T060<br/>Generated artifact snapshot<br/>MFW.TST.SNAPSHOT.ARTIFACT.060<br/>generated Lean module"]
+  FAMILY --> T060
+  T060 --> EVIDENCE
+  T061["T061<br/>Manifest snapshot<br/>MFW.TST.SNAPSHOT.MANIFEST.061<br/>mfact artifact inventory"]
+  FAMILY --> T061
+  T061 --> EVIDENCE

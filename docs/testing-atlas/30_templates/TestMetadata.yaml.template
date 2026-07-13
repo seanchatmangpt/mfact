@@ -1,0 +1,14 @@
+test_id: T___
+instance: MFW.TST.____
+family: ____
+controlled_carrier: ____
+law: ____
+mechanism: ____
+primary_evidence_class: ____
+claim_ceiling: ____
+positive_witness: ____
+negative_or_refusal_witness: ____
+falsifier: ____
+neighboring_edge: ____
+expected_artifact_or_diagnostic: ____
+build_required_now: false

@@ -1,0 +1,93 @@
+flowchart LR
+  SRC["Canonical mfact controlled surface<br/>TTL → ggen → Lean → Lake → audit"]
+  CROWN["Crown standing decision"]
+  F_KERNEL["KERNEL<br/>Kernel and theorem testing<br/>8 test types"]
+  SRC --> F_KERNEL
+  F_KERNEL --> CROWN
+  F_ELAB["ELAB<br/>Elaboration and type-system testing<br/>9 test types"]
+  SRC --> F_ELAB
+  F_ELAB --> CROWN
+  F_DIAG["DIAG<br/>Diagnostic and refusal testing<br/>6 test types"]
+  SRC --> F_DIAG
+  F_DIAG --> CROWN
+  F_FINITE["FINITE<br/>Executable finite testing<br/>5 test types"]
+  SRC --> F_FINITE
+  F_FINITE --> CROWN
+  F_PROPERTY["PROPERTY<br/>Property-based and generative testing<br/>4 test types"]
+  SRC --> F_PROPERTY
+  F_PROPERTY --> CROWN
+  F_ALGEBRA["ALGEBRA<br/>Algebraic law testing<br/>8 test types"]
+  SRC --> F_ALGEBRA
+  F_ALGEBRA --> CROWN
+  F_METAMORPHIC["METAMORPHIC<br/>Metamorphic testing<br/>9 test types"]
+  SRC --> F_METAMORPHIC
+  F_METAMORPHIC --> CROWN
+  F_COUNTERMODEL["COUNTERMODEL<br/>Counterexample and countermodel testing<br/>5 test types"]
+  SRC --> F_COUNTERMODEL
+  F_COUNTERMODEL --> CROWN
+  F_MUTATION["MUTATION<br/>Mutation testing<br/>1 test types"]
+  SRC --> F_MUTATION
+  F_MUTATION --> CROWN
+  F_DIFFERENTIAL["DIFFERENTIAL<br/>Differential testing<br/>1 test types"]
+  SRC --> F_DIFFERENTIAL
+  F_DIFFERENTIAL --> CROWN
+  F_SNAPSHOT["SNAPSHOT<br/>Golden and snapshot testing<br/>5 test types"]
+  SRC --> F_SNAPSHOT
+  F_SNAPSHOT --> CROWN
+  F_REGRESSION["REGRESSION<br/>Regression testing<br/>1 test types"]
+  SRC --> F_REGRESSION
+  F_REGRESSION --> CROWN
+  F_COMPOSITION["COMPOSITION<br/>Cross-theorem composition testing<br/>1 test types"]
+  SRC --> F_COMPOSITION
+  F_COMPOSITION --> CROWN
+  F_FLOW["FLOW<br/>World-centered flow and scenario testing<br/>1 test types"]
+  SRC --> F_FLOW
+  F_FLOW --> CROWN
+  F_E2E["E2E<br/>End-to-end controlled-boundary testing<br/>1 test types"]
+  SRC --> F_E2E
+  F_E2E --> CROWN
+  F_ROUNDTRIP["ROUNDTRIP<br/>Round-trip testing<br/>2 test types"]
+  SRC --> F_ROUNDTRIP
+  F_ROUNDTRIP --> CROWN
+  F_CORRESPONDENCE["CORRESPONDENCE<br/>Refinement and correspondence testing<br/>2 test types"]
+  SRC --> F_CORRESPONDENCE
+  F_CORRESPONDENCE --> CROWN
+  F_INVARIANT["INVARIANT<br/>Invariant preservation testing<br/>1 test types"]
+  SRC --> F_INVARIANT
+  F_INVARIANT --> CROWN
+  F_CONCURRENCY["CONCURRENCY<br/>Concurrency and causal-order testing<br/>6 test types"]
+  SRC --> F_CONCURRENCY
+  F_CONCURRENCY --> CROWN
+  F_REPRO["REPRO<br/>Determinism and reproducibility testing<br/>6 test types"]
+  SRC --> F_REPRO
+  F_REPRO --> CROWN
+  F_LAKE["LAKE<br/>Lake and package testing<br/>11 test types"]
+  SRC --> F_LAKE
+  F_LAKE --> CROWN
+  F_EXPECTED_FAIL["EXPECTED_FAIL<br/>Expected-failure build testing<br/>1 test types"]
+  SRC --> F_EXPECTED_FAIL
+  F_EXPECTED_FAIL --> CROWN
+  F_POLICY["POLICY<br/>Linter and repository-policy testing<br/>10 test types"]
+  SRC --> F_POLICY
+  F_POLICY --> CROWN
+  F_INVENTORY["INVENTORY<br/>Proof dependency and theorem-inventory testing<br/>7 test types"]
+  SRC --> F_INVENTORY
+  F_INVENTORY --> CROWN
+  F_PERF["PERF<br/>Performance and benchmark testing<br/>6 test types"]
+  SRC --> F_PERF
+  F_PERF --> CROWN
+  F_STRESS["STRESS<br/>Stress and scale testing<br/>8 test types"]
+  SRC --> F_STRESS
+  F_STRESS --> CROWN
+  F_COMPLEXITY["COMPLEXITY<br/>Complexity-law testing<br/>2 test types"]
+  SRC --> F_COMPLEXITY
+  F_COMPLEXITY --> CROWN
+  F_TERMINATION["TERMINATION<br/>Termination and descent testing<br/>3 test types"]
+  SRC --> F_TERMINATION
+  F_TERMINATION --> CROWN
+  F_FAITHFULNESS["FAITHFULNESS<br/>Faithfulness and claim-ceiling testing<br/>1 test types"]
+  SRC --> F_FAITHFULNESS
+  F_FAITHFULNESS --> CROWN
+  F_STANDING_PATH["STANDING_PATH<br/>Gap, edge, and standing-path coverage<br/>2 test types"]
+  SRC --> F_STANDING_PATH
+  F_STANDING_PATH --> CROWN

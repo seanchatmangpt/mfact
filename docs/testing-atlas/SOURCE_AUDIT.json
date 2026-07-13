@@ -1,0 +1,15 @@
+{
+  "schema": "mfact.testing.atlas.source-audit.v1",
+  "buildAttempted": false,
+  "leanOrLakeInvoked": false,
+  "testTypeCount": 133,
+  "familyCount": 30,
+  "mermaidFileCount": 36,
+  "guideFileCount": 37,
+  "templateFileCount": 12,
+  "missingTestIdsInDiagrams": [],
+  "missingInstancesInDiagrams": [],
+  "missingTestIdsInGuides": [],
+  "missingInstancesInGuides": [],
+  "standing": "SOURCE_COMPLETE_BUILD_NOT_RUN"
+}

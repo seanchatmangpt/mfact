@@ -1,0 +1,8 @@
+def world : World := ...
+
+theorem flow_terminal_consequence : Final world := by
+  have h1 : Layer1 world := theorem1 ...
+  have h2 : Layer2 world := theorem2 h1
+  have h3 : Layer3 world := theorem3 h2
+  have h4 : Layer4 world := theorem4 h3
+  exact terminal h4

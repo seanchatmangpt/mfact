@@ -1,0 +1,20 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["COUNTERMODEL<br/>Counterexample and countermodel testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T050["T050<br/>Counterexample test<br/>MFW.TST.COUNTERMODEL.COUNTEREXAMPLE.050<br/>mutant workflow law"]
+  FAMILY --> T050
+  T050 --> EVIDENCE
+  T051["T051<br/>Minimal counterexample test<br/>MFW.TST.COUNTERMODEL.MIN_COUNTEREXAMPLE.051<br/>least-cost failing architecture world"]
+  FAMILY --> T051
+  T051 --> EVIDENCE
+  T052["T052<br/>Countermodel test<br/>MFW.TST.COUNTERMODEL.COUNTERMODEL.052<br/>infinite-transition crown countermodel"]
+  FAMILY --> T052
+  T052 --> EVIDENCE
+  T053["T053<br/>Hypothesis-removal test<br/>MFW.TST.COUNTERMODEL.HYP_REMOVAL.053<br/>tenancy without Separated"]
+  FAMILY --> T053
+  T053 --> EVIDENCE
+  T054["T054<br/>Boundary test<br/>MFW.TST.COUNTERMODEL.BOUNDARY.054<br/>Finite T boundary"]
+  FAMILY --> T054
+  T054 --> EVIDENCE

@@ -1,0 +1,9 @@
+structure ClaimCard where
+  claimId : String
+  theoremName : Name
+  carrier : String
+  hypotheses : Array String
+  conclusion : String
+  exclusions : Array String
+  falsifier : String
+  ceiling : ClaimCeiling

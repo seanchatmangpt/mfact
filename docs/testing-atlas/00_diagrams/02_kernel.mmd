@@ -1,0 +1,29 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["KERNEL<br/>Kernel and theorem testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T001["T001<br/>Kernel admission test<br/>MFW.TST.KERNEL.ADMISSION.001<br/>ProcInt theorem module admission"]
+  FAMILY --> T001
+  T001 --> EVIDENCE
+  T002["T002<br/>Theorem proof test<br/>MFW.TST.KERNEL.THEOREM_PROOF.002<br/>Replay equivalence law"]
+  FAMILY --> T002
+  T002 --> EVIDENCE
+  T003["T003<br/>Lemma specialization test<br/>MFW.TST.KERNEL.SPECIALIZATION.003<br/>SOC2 concrete closure specialization"]
+  FAMILY --> T003
+  T003 --> EVIDENCE
+  T004["T004<br/>Theorem composition test<br/>MFW.TST.KERNEL.COMPOSITION.004<br/>residue → tenancy → execution → replay"]
+  FAMILY --> T004
+  T004 --> EVIDENCE
+  T005["T005<br/>Assumption audit<br/>MFW.TST.KERNEL.ASSUMPTION_AUDIT.005<br/>Separated / Finite / well-founded assumptions"]
+  FAMILY --> T005
+  T005 --> EVIDENCE
+  T006["T006<br/>Axiom dependency test<br/>MFW.TST.KERNEL.AXIOM_DEP.006<br/>crown theorem axiom allowlist"]
+  FAMILY --> T006
+  T006 --> EVIDENCE
+  T007["T007<br/>No-sorry test<br/>MFW.TST.KERNEL.NO_SORRY.007<br/>ProcInt namespace audit"]
+  FAMILY --> T007
+  T007 --> EVIDENCE
+  T008["T008<br/>Non-vacuity test<br/>MFW.TST.KERNEL.NON_VACUITY.008<br/>nonidentity ClosureOperator"]
+  FAMILY --> T008
+  T008 --> EVIDENCE

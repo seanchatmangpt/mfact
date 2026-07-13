@@ -1,0 +1,10 @@
+/- Test ID: T___
+Stable instance: MFW.TST.____
+Expected refusal/diagnostic: ______
+-/
+
+def illegalCandidate : Candidate := ...
+
+example :
+    admit illegalCandidate = .error Refusal.expectedConstructor := by
+  native_decide

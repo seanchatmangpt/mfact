@@ -1,0 +1,17 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["PROPERTY<br/>Property-based and generative testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T029["T029<br/>Property-based test<br/>MFW.TST.PROPERTY.PROPERTY_BASED.029<br/>closure idempotence over generated carriers"]
+  FAMILY --> T029
+  T029 --> EVIDENCE
+  T030["T030<br/>Random generation test<br/>MFW.TST.PROPERTY.RANDOM_GEN.030<br/>receipt DAG / workflow generator"]
+  FAMILY --> T030
+  T030 --> EVIDENCE
+  T031["T031<br/>Shrinking test<br/>MFW.TST.PROPERTY.SHRINK.031<br/>minimal workflow counterexample"]
+  FAMILY --> T031
+  T031 --> EVIDENCE
+  T032["T032<br/>Distribution-sensitive generation<br/>MFW.TST.PROPERTY.DISTRIBUTION.032<br/>cross-tenant and sparse-scale regimes"]
+  FAMILY --> T032
+  T032 --> EVIDENCE

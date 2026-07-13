@@ -1,0 +1,8 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["EXPECTED_FAIL<br/>Expected-failure build testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T094["T094<br/>Expected-failure build test<br/>MFW.TST.EXPECTED_FAIL.BUILD.094<br/>StandingForgery / CrossTenantGraft / MissingDescent"]
+  FAMILY --> T094
+  T094 --> EVIDENCE

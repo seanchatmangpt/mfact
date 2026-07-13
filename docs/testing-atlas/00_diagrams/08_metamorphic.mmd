@@ -1,0 +1,32 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["METAMORPHIC<br/>Metamorphic testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T041["T041<br/>Independent event reordering test<br/>MFW.TST.METAMORPHIC.EVENT_REORDER.041<br/>swap independent receipt events"]
+  FAMILY --> T041
+  T041 --> EVIDENCE
+  T042["T042<br/>Graph triple reordering test<br/>MFW.TST.METAMORPHIC.TRIPLE_REORDER.042<br/>RDF graph canonicalization"]
+  FAMILY --> T042
+  T042 --> EVIDENCE
+  T043["T043<br/>Blank-node canonicalization test<br/>MFW.TST.METAMORPHIC.BNODE_CANON.043<br/>skos:notation binding handles"]
+  FAMILY --> T043
+  T043 --> EVIDENCE
+  T044["T044<br/>Duplicate observation elimination test<br/>MFW.TST.METAMORPHIC.DUP_OBS.044<br/>observation dedup"]
+  FAMILY --> T044
+  T044 --> EVIDENCE
+  T045["T045<br/>Workflow normalization test<br/>MFW.TST.METAMORPHIC.WORKFLOW_NORM.045<br/>seq/par normal form"]
+  FAMILY --> T045
+  T045 --> EVIDENCE
+  T046["T046<br/>Scale refinement test<br/>MFW.TST.METAMORPHIC.SCALE_REFINE.046<br/>multifractal scale schedule"]
+  FAMILY --> T046
+  T046 --> EVIDENCE
+  T047["T047<br/>Equivalent partition representation test<br/>MFW.TST.METAMORPHIC.PARTITION_EQ.047<br/>joint moment field"]
+  FAMILY --> T047
+  T047 --> EVIDENCE
+  T048["T048<br/>Receipt replay metamorphic test<br/>MFW.TST.METAMORPHIC.RECEIPT_REPLAY.048<br/>receipt DAG trace"]
+  FAMILY --> T048
+  T048 --> EVIDENCE
+  T049["T049<br/>Tenant permutation test<br/>MFW.TST.METAMORPHIC.TENANT_PERM.049<br/>tenancy residue"]
+  FAMILY --> T049
+  T049 --> EVIDENCE

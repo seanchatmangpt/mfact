@@ -1,0 +1,32 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["ELAB<br/>Elaboration and type-system testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T009["T009<br/>Positive elaboration test<br/>MFW.TST.ELAB.POSITIVE.009<br/>lawful TWorkflow composition"]
+  FAMILY --> T009
+  T009 --> EVIDENCE
+  T010["T010<br/>Negative elaboration test<br/>MFW.TST.ELAB.NEGATIVE.010<br/>illegal color composition"]
+  FAMILY --> T010
+  T010 --> EVIDENCE
+  T011["T011<br/>Type mismatch fixture<br/>MFW.TST.ELAB.TYPE_MISMATCH.011<br/>raw→plan composed with receipt→replay"]
+  FAMILY --> T011
+  T011 --> EVIDENCE
+  T012["T012<br/>Instance synthesis test<br/>MFW.TST.ELAB.INSTANCE_SYNTH.012<br/>DecidableEq / Fintype / LawfulBEq"]
+  FAMILY --> T012
+  T012 --> EVIDENCE
+  T013["T013<br/>Definitional equality test<br/>MFW.TST.ELAB.DEFEQ.013<br/>normalized workflow expression"]
+  FAMILY --> T013
+  T013 --> EVIDENCE
+  T014["T014<br/>Syntactic equality test<br/>MFW.TST.ELAB.SYNTACTIC_EQ.014<br/>ggen-emitted term shape"]
+  FAMILY --> T014
+  T014 --> EVIDENCE
+  T015["T015<br/>Alpha-equivalence test<br/>MFW.TST.ELAB.ALPHA_EQ.015<br/>generated theorem binder renaming"]
+  FAMILY --> T015
+  T015 --> EVIDENCE
+  T016["T016<br/>Goal-shape test<br/>MFW.TST.ELAB.GOAL_SHAPE.016<br/>residue proof subgoal shape"]
+  FAMILY --> T016
+  T016 --> EVIDENCE
+  T017["T017<br/>Hypothesis-shape test<br/>MFW.TST.ELAB.HYP_SHAPE.017<br/>closure assumptions in context"]
+  FAMILY --> T017
+  T017 --> EVIDENCE

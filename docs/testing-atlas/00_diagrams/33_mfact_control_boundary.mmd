@@ -1,0 +1,21 @@
+flowchart LR
+  TTL["TTL canonical declarations"]
+  GGEN["ggen projection"]
+  LEAN["Lean 4 elaboration + kernel"]
+  LAKE["Lake package/build graph"]
+  AUDIT["mfact auditor"]
+  STANDING["Standing decision"]
+
+  TTL --> GGEN --> LEAN --> LAKE --> AUDIT --> STANDING
+
+  RUNTIME["External runtime / subcontractor / consumer"]
+  CLOUD["Cloud actuation"]
+  PRAXIS["Praxis / other consumer"]
+
+  STANDING -. validated artifact/spec .-> RUNTIME
+  STANDING -. validated artifact/spec .-> CLOUD
+  STANDING -. validated artifact/spec .-> PRAXIS
+
+  RUNTIME -. "outside mfact test obligation" .-> EXT["Consumer-owned verification"]
+  CLOUD -. "outside mfact test obligation" .-> EXT
+  PRAXIS -. "outside mfact test obligation" .-> EXT

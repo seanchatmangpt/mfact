@@ -1,0 +1,23 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["CONCURRENCY<br/>Concurrency and causal-order testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T071["T071<br/>Pairwise commutation test<br/>MFW.TST.CONCURRENCY.PAIRWISE_COMMUTE.071<br/>freeze identity vs preserve logs on real state"]
+  FAMILY --> T071
+  T071 --> EVIDENCE
+  T072["T072<br/>Independent adjacent swap test<br/>MFW.TST.CONCURRENCY.ADJ_SWAP.072<br/>oriented swap replay"]
+  FAMILY --> T072
+  T072 --> EVIDENCE
+  T073["T073<br/>Linear-extension equivalence test<br/>MFW.TST.CONCURRENCY.LINEXT.073<br/>receipt causal DAG"]
+  FAMILY --> T073
+  T073 --> EVIDENCE
+  T074["T074<br/>Diamond property test<br/>MFW.TST.CONCURRENCY.DIAMOND.074<br/>concurrent cloud transitions"]
+  FAMILY --> T074
+  T074 --> EVIDENCE
+  T075["T075<br/>Race/conflict counterexample test<br/>MFW.TST.CONCURRENCY.RACE.075<br/>delete vs snapshot"]
+  FAMILY --> T075
+  T075 --> EVIDENCE
+  T076["T076<br/>Maximal concurrent-set test<br/>MFW.TST.CONCURRENCY.MAX_SET.076<br/>automatic POWL concurrency"]
+  FAMILY --> T076
+  T076 --> EVIDENCE

@@ -1,0 +1,19 @@
+flowchart LR
+  O["TTL declaration"]
+  P["ggen projected Lean"]
+  T["kernel theorem"]
+  M["theorem manifest entry"]
+  L["Lake target"]
+  A["auditor result"]
+  C["crown claim"]
+
+  O -- E1 --> P
+  P -- E2 --> T
+  T -- E3 --> M
+  M -- E4 --> L
+  L -- E5 --> A
+  A -- E6 --> C
+
+  GAP["Any missing Ei = named standing residue"]
+  FORMULA["PathCoverage(c) = admitted required edges / declared required edges"]
+  GAP --> FORMULA

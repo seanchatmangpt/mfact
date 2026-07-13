@@ -1,0 +1,16 @@
+import Lean
+import Lean.Util.CollectAxioms
+
+open Lean
+
+structure ExpectedTheorem where
+  name : Name
+  module : Name
+  allowedAxioms : NameSet
+
+-- Load the compiled environment.
+-- Resolve exact expected names.
+-- Inspect declaration kind.
+-- collectAxioms for each theorem.
+-- Compare expected and actual exact crown sets.
+-- Refuse empty expected inventory.

@@ -1,0 +1,11 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["ROUNDTRIP<br/>Round-trip testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T066["T066<br/>Round-trip test<br/>MFW.TST.ROUNDTRIP.EXACT.066<br/>receipt/workflow serialization"]
+  FAMILY --> T066
+  T066 --> EVIDENCE
+  T067["T067<br/>Canonicalized round-trip test<br/>MFW.TST.ROUNDTRIP.CANONICAL.067<br/>RDF blank-node-sensitive carrier"]
+  FAMILY --> T067
+  T067 --> EVIDENCE

@@ -1,0 +1,14 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["TERMINATION<br/>Termination and descent testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T128["T128<br/>Kernel termination checking<br/>MFW.TST.TERMINATION.KERNEL.128<br/>recursive definitions"]
+  FAMILY --> T128
+  T128 --> EVIDENCE
+  T129["T129<br/>Well-founded termination theorem<br/>MFW.TST.TERMINATION.WELL_FOUNDED.129<br/>workflow obligation multiset"]
+  FAMILY --> T129
+  T129 --> EVIDENCE
+  T130["T130<br/>Finite experimental descent test<br/>MFW.TST.TERMINATION.FINITE_DESCENT.130<br/>obligation refinement corpus"]
+  FAMILY --> T130
+  T130 --> EVIDENCE

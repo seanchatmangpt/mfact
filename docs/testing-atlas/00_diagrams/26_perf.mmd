@@ -1,0 +1,23 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["PERF<br/>Performance and benchmark testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T112["T112<br/>Compile benchmark<br/>MFW.TST.PERF.COMPILE.112<br/>compiled verifier"]
+  FAMILY --> T112
+  T112 --> EVIDENCE
+  T113["T113<br/>Elaboration benchmark<br/>MFW.TST.PERF.ELAB.113<br/>large theorem module"]
+  FAMILY --> T113
+  T113 --> EVIDENCE
+  T114["T114<br/>Lake benchmark<br/>MFW.TST.PERF.LAKE.114<br/>standing target"]
+  FAMILY --> T114
+  T114 --> EVIDENCE
+  T115["T115<br/>Build benchmark<br/>MFW.TST.PERF.BUILD.115<br/>ProcInt"]
+  FAMILY --> T115
+  T115 --> EVIDENCE
+  T116["T116<br/>Size benchmark<br/>MFW.TST.PERF.SIZE.116<br/>generated modules"]
+  FAMILY --> T116
+  T116 --> EVIDENCE
+  T117["T117<br/>Custom metric benchmark<br/>MFW.TST.PERF.CUSTOM_METRIC.117<br/>residue candidate count / proof branching"]
+  FAMILY --> T117
+  T117 --> EVIDENCE

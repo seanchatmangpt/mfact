@@ -1,0 +1,326 @@
+flowchart TB
+  subgraph SG_KERNEL["KERNEL — Kernel and theorem testing"]
+    T001["T001 Kernel admission test<br/>MFW.TST.KERNEL.ADMISSION.001"]
+    T002["T002 Theorem proof test<br/>MFW.TST.KERNEL.THEOREM_PROOF.002"]
+    T003["T003 Lemma specialization test<br/>MFW.TST.KERNEL.SPECIALIZATION.003"]
+    T004["T004 Theorem composition test<br/>MFW.TST.KERNEL.COMPOSITION.004"]
+    T005["T005 Assumption audit<br/>MFW.TST.KERNEL.ASSUMPTION_AUDIT.005"]
+    T006["T006 Axiom dependency test<br/>MFW.TST.KERNEL.AXIOM_DEP.006"]
+    T007["T007 No-sorry test<br/>MFW.TST.KERNEL.NO_SORRY.007"]
+    T008["T008 Non-vacuity test<br/>MFW.TST.KERNEL.NON_VACUITY.008"]
+  end
+  T001 -. sibling .-> T002
+  T002 -. sibling .-> T003
+  T003 -. sibling .-> T004
+  T004 -. sibling .-> T005
+  T005 -. sibling .-> T006
+  T006 -. sibling .-> T007
+  T007 -. sibling .-> T008
+  subgraph SG_ELAB["ELAB — Elaboration and type-system testing"]
+    T009["T009 Positive elaboration test<br/>MFW.TST.ELAB.POSITIVE.009"]
+    T010["T010 Negative elaboration test<br/>MFW.TST.ELAB.NEGATIVE.010"]
+    T011["T011 Type mismatch fixture<br/>MFW.TST.ELAB.TYPE_MISMATCH.011"]
+    T012["T012 Instance synthesis test<br/>MFW.TST.ELAB.INSTANCE_SYNTH.012"]
+    T013["T013 Definitional equality test<br/>MFW.TST.ELAB.DEFEQ.013"]
+    T014["T014 Syntactic equality test<br/>MFW.TST.ELAB.SYNTACTIC_EQ.014"]
+    T015["T015 Alpha-equivalence test<br/>MFW.TST.ELAB.ALPHA_EQ.015"]
+    T016["T016 Goal-shape test<br/>MFW.TST.ELAB.GOAL_SHAPE.016"]
+    T017["T017 Hypothesis-shape test<br/>MFW.TST.ELAB.HYP_SHAPE.017"]
+  end
+  T009 -. sibling .-> T010
+  T010 -. sibling .-> T011
+  T011 -. sibling .-> T012
+  T012 -. sibling .-> T013
+  T013 -. sibling .-> T014
+  T014 -. sibling .-> T015
+  T015 -. sibling .-> T016
+  T016 -. sibling .-> T017
+  subgraph SG_DIAG["DIAG — Diagnostic and refusal testing"]
+    T018["T018 Exact diagnostic test<br/>MFW.TST.DIAG.EXACT.018"]
+    T019["T019 Diagnostic-class test<br/>MFW.TST.DIAG.CLASS.019"]
+    T020["T020 Panic test<br/>MFW.TST.DIAG.PANIC.020"]
+    T021["T021 Typed refusal test<br/>MFW.TST.DIAG.TYPED_REFUSAL.021"]
+    T022["T022 Refusal precedence test<br/>MFW.TST.DIAG.REFUSAL_PRECEDENCE.022"]
+    T023["T023 Diagnostic stability test<br/>MFW.TST.DIAG.STABILITY.023"]
+  end
+  T018 -. sibling .-> T019
+  T019 -. sibling .-> T020
+  T020 -. sibling .-> T021
+  T021 -. sibling .-> T022
+  T022 -. sibling .-> T023
+  subgraph SG_FINITE["FINITE — Executable finite testing"]
+    T024["T024 Boolean guard test<br/>MFW.TST.FINITE.BOOL_GUARD.024"]
+    T025["T025 Finite decision test<br/>MFW.TST.FINITE.DECIDE.025"]
+    T026["T026 Native decision test<br/>MFW.TST.FINITE.NATIVE_DECIDE.026"]
+    T027["T027 Example-table test<br/>MFW.TST.FINITE.TABLE.027"]
+    T028["T028 Exhaustive finite-domain test<br/>MFW.TST.FINITE.EXHAUSTIVE.028"]
+  end
+  T024 -. sibling .-> T025
+  T025 -. sibling .-> T026
+  T026 -. sibling .-> T027
+  T027 -. sibling .-> T028
+  subgraph SG_PROPERTY["PROPERTY — Property-based and generative testing"]
+    T029["T029 Property-based test<br/>MFW.TST.PROPERTY.PROPERTY_BASED.029"]
+    T030["T030 Random generation test<br/>MFW.TST.PROPERTY.RANDOM_GEN.030"]
+    T031["T031 Shrinking test<br/>MFW.TST.PROPERTY.SHRINK.031"]
+    T032["T032 Distribution-sensitive generation<br/>MFW.TST.PROPERTY.DISTRIBUTION.032"]
+  end
+  T029 -. sibling .-> T030
+  T030 -. sibling .-> T031
+  T031 -. sibling .-> T032
+  subgraph SG_ALGEBRA["ALGEBRA — Algebraic law testing"]
+    T033["T033 Identity law test<br/>MFW.TST.ALGEBRA.IDENTITY.033"]
+    T034["T034 Associativity test<br/>MFW.TST.ALGEBRA.ASSOCIATIVITY.034"]
+    T035["T035 Idempotence test<br/>MFW.TST.ALGEBRA.IDEMPOTENCE.035"]
+    T036["T036 Monotonicity test<br/>MFW.TST.ALGEBRA.MONOTONICITY.036"]
+    T037["T037 Extensivity test<br/>MFW.TST.ALGEBRA.EXTENSIVITY.037"]
+    T038["T038 Commutativity test<br/>MFW.TST.ALGEBRA.COMMUTATIVITY.038"]
+    T039["T039 Absorption test<br/>MFW.TST.ALGEBRA.ABSORPTION.039"]
+    T040["T040 Distributivity test<br/>MFW.TST.ALGEBRA.DISTRIBUTIVITY.040"]
+  end
+  T033 -. sibling .-> T034
+  T034 -. sibling .-> T035
+  T035 -. sibling .-> T036
+  T036 -. sibling .-> T037
+  T037 -. sibling .-> T038
+  T038 -. sibling .-> T039
+  T039 -. sibling .-> T040
+  subgraph SG_METAMORPHIC["METAMORPHIC — Metamorphic testing"]
+    T041["T041 Independent event reordering test<br/>MFW.TST.METAMORPHIC.EVENT_REORDER.041"]
+    T042["T042 Graph triple reordering test<br/>MFW.TST.METAMORPHIC.TRIPLE_REORDER.042"]
+    T043["T043 Blank-node canonicalization test<br/>MFW.TST.METAMORPHIC.BNODE_CANON.043"]
+    T044["T044 Duplicate observation elimination test<br/>MFW.TST.METAMORPHIC.DUP_OBS.044"]
+    T045["T045 Workflow normalization test<br/>MFW.TST.METAMORPHIC.WORKFLOW_NORM.045"]
+    T046["T046 Scale refinement test<br/>MFW.TST.METAMORPHIC.SCALE_REFINE.046"]
+    T047["T047 Equivalent partition representation test<br/>MFW.TST.METAMORPHIC.PARTITION_EQ.047"]
+    T048["T048 Receipt replay metamorphic test<br/>MFW.TST.METAMORPHIC.RECEIPT_REPLAY.048"]
+    T049["T049 Tenant permutation test<br/>MFW.TST.METAMORPHIC.TENANT_PERM.049"]
+  end
+  T041 -. sibling .-> T042
+  T042 -. sibling .-> T043
+  T043 -. sibling .-> T044
+  T044 -. sibling .-> T045
+  T045 -. sibling .-> T046
+  T046 -. sibling .-> T047
+  T047 -. sibling .-> T048
+  T048 -. sibling .-> T049
+  subgraph SG_COUNTERMODEL["COUNTERMODEL — Counterexample and countermodel testing"]
+    T050["T050 Counterexample test<br/>MFW.TST.COUNTERMODEL.COUNTEREXAMPLE.050"]
+    T051["T051 Minimal counterexample test<br/>MFW.TST.COUNTERMODEL.MIN_COUNTEREXAMPLE.051"]
+    T052["T052 Countermodel test<br/>MFW.TST.COUNTERMODEL.COUNTERMODEL.052"]
+    T053["T053 Hypothesis-removal test<br/>MFW.TST.COUNTERMODEL.HYP_REMOVAL.053"]
+    T054["T054 Boundary test<br/>MFW.TST.COUNTERMODEL.BOUNDARY.054"]
+  end
+  T050 -. sibling .-> T051
+  T051 -. sibling .-> T052
+  T052 -. sibling .-> T053
+  T053 -. sibling .-> T054
+  subgraph SG_MUTATION["MUTATION — Mutation testing"]
+    T055["T055 Mutation test<br/>MFW.TST.MUTATION.KILL_MUTANT.055"]
+  end
+  subgraph SG_DIFFERENTIAL["DIFFERENTIAL — Differential testing"]
+    T056["T056 Differential test<br/>MFW.TST.DIFFERENTIAL.IMPL_COMPARE.056"]
+  end
+  subgraph SG_SNAPSHOT["SNAPSHOT — Golden and snapshot testing"]
+    T057["T057 Golden output test<br/>MFW.TST.SNAPSHOT.GOLDEN_OUTPUT.057"]
+    T058["T058 Diagnostic snapshot<br/>MFW.TST.SNAPSHOT.DIAG_SNAPSHOT.058"]
+    T059["T059 Pretty-printer snapshot<br/>MFW.TST.SNAPSHOT.PRETTY.059"]
+    T060["T060 Generated artifact snapshot<br/>MFW.TST.SNAPSHOT.ARTIFACT.060"]
+    T061["T061 Manifest snapshot<br/>MFW.TST.SNAPSHOT.MANIFEST.061"]
+  end
+  T057 -. sibling .-> T058
+  T058 -. sibling .-> T059
+  T059 -. sibling .-> T060
+  T060 -. sibling .-> T061
+  subgraph SG_REGRESSION["REGRESSION — Regression testing"]
+    T062["T062 Regression test<br/>MFW.TST.REGRESSION.ESCAPED_DEFECT.062"]
+  end
+  subgraph SG_COMPOSITION["COMPOSITION — Cross-theorem composition testing"]
+    T063["T063 Composition test<br/>MFW.TST.COMPOSITION.CROSS_THEOREM.063"]
+  end
+  subgraph SG_FLOW["FLOW — World-centered flow and scenario testing"]
+    T064["T064 Flow/scenario test<br/>MFW.TST.FLOW.SCENARIO.064"]
+  end
+  subgraph SG_E2E["E2E — End-to-end controlled-boundary testing"]
+    T065["T065 End-to-end test<br/>MFW.TST.E2E.CONTROLLED_CHAIN.065"]
+  end
+  subgraph SG_ROUNDTRIP["ROUNDTRIP — Round-trip testing"]
+    T066["T066 Round-trip test<br/>MFW.TST.ROUNDTRIP.EXACT.066"]
+    T067["T067 Canonicalized round-trip test<br/>MFW.TST.ROUNDTRIP.CANONICAL.067"]
+  end
+  T066 -. sibling .-> T067
+  subgraph SG_CORRESPONDENCE["CORRESPONDENCE — Refinement and correspondence testing"]
+    T068["T068 Refinement/correspondence preservation test<br/>MFW.TST.CORRESPONDENCE.PRESERVE.068"]
+    T069["T069 Correspondence composition test<br/>MFW.TST.CORRESPONDENCE.COMPOSE.069"]
+  end
+  T068 -. sibling .-> T069
+  subgraph SG_INVARIANT["INVARIANT — Invariant preservation testing"]
+    T070["T070 Invariant preservation test<br/>MFW.TST.INVARIANT.PRESERVATION.070"]
+  end
+  subgraph SG_CONCURRENCY["CONCURRENCY — Concurrency and causal-order testing"]
+    T071["T071 Pairwise commutation test<br/>MFW.TST.CONCURRENCY.PAIRWISE_COMMUTE.071"]
+    T072["T072 Independent adjacent swap test<br/>MFW.TST.CONCURRENCY.ADJ_SWAP.072"]
+    T073["T073 Linear-extension equivalence test<br/>MFW.TST.CONCURRENCY.LINEXT.073"]
+    T074["T074 Diamond property test<br/>MFW.TST.CONCURRENCY.DIAMOND.074"]
+    T075["T075 Race/conflict counterexample test<br/>MFW.TST.CONCURRENCY.RACE.075"]
+    T076["T076 Maximal concurrent-set test<br/>MFW.TST.CONCURRENCY.MAX_SET.076"]
+  end
+  T071 -. sibling .-> T072
+  T072 -. sibling .-> T073
+  T073 -. sibling .-> T074
+  T074 -. sibling .-> T075
+  T075 -. sibling .-> T076
+  subgraph SG_REPRO["REPRO — Determinism and reproducibility testing"]
+    T077["T077 Repeatability/determinism test<br/>MFW.TST.REPRO.REPEAT.077"]
+    T078["T078 Clean-vs-incremental reproducibility<br/>MFW.TST.REPRO.CLEAN_INCREMENTAL.078"]
+    T079["T079 Serial-vs-parallel reproducibility<br/>MFW.TST.REPRO.SERIAL_PARALLEL.079"]
+    T080["T080 File-enumeration-order reproducibility<br/>MFW.TST.REPRO.ENUM_ORDER.080"]
+    T081["T081 Process-restart reproducibility<br/>MFW.TST.REPRO.RESTART.081"]
+    T082["T082 Repeated-ggen reproducibility<br/>MFW.TST.REPRO.GGEN_REPEAT.082"]
+  end
+  T077 -. sibling .-> T078
+  T078 -. sibling .-> T079
+  T079 -. sibling .-> T080
+  T080 -. sibling .-> T081
+  T081 -. sibling .-> T082
+  subgraph SG_LAKE["LAKE — Lake and package testing"]
+    T083["T083 Package configuration test<br/>MFW.TST.LAKE.PACKAGE_CONFIG.083"]
+    T084["T084 Dependency resolution test<br/>MFW.TST.LAKE.DEPENDENCY.084"]
+    T085["T085 Library build test<br/>MFW.TST.LAKE.LIB_BUILD.085"]
+    T086["T086 Executable build test<br/>MFW.TST.LAKE.EXE_BUILD.086"]
+    T087["T087 Custom target test<br/>MFW.TST.LAKE.CUSTOM_TARGET.087"]
+    T088["T088 Test driver test<br/>MFW.TST.LAKE.TEST_DRIVER.088"]
+    T089["T089 Package-as-dependency test<br/>MFW.TST.LAKE.AS_DEP.089"]
+    T090["T090 Clean build test<br/>MFW.TST.LAKE.CLEAN_BUILD.090"]
+    T091["T091 Incremental build test<br/>MFW.TST.LAKE.INCREMENTAL.091"]
+    T092["T092 Build target selection test<br/>MFW.TST.LAKE.TARGET_SELECT.092"]
+    T093["T093 Install/release behavior test<br/>MFW.TST.LAKE.INSTALL_RELEASE.093"]
+  end
+  T083 -. sibling .-> T084
+  T084 -. sibling .-> T085
+  T085 -. sibling .-> T086
+  T086 -. sibling .-> T087
+  T087 -. sibling .-> T088
+  T088 -. sibling .-> T089
+  T089 -. sibling .-> T090
+  T090 -. sibling .-> T091
+  T091 -. sibling .-> T092
+  T092 -. sibling .-> T093
+  subgraph SG_EXPECTED_FAIL["EXPECTED_FAIL — Expected-failure build testing"]
+    T094["T094 Expected-failure build test<br/>MFW.TST.EXPECTED_FAIL.BUILD.094"]
+  end
+  subgraph SG_POLICY["POLICY — Linter and repository-policy testing"]
+    T095["T095 No-sorry policy test<br/>MFW.TST.POLICY.NO_SORRY.095"]
+    T096["T096 No-admit policy test<br/>MFW.TST.POLICY.NO_ADMIT.096"]
+    T097["T097 Forbidden-import policy test<br/>MFW.TST.POLICY.FORBIDDEN_IMPORT.097"]
+    T098["T098 No giant Mathlib umbrella import test<br/>MFW.TST.POLICY.NO_UMBRELLA.098"]
+    T099["T099 Semantic-coordinate completeness test<br/>MFW.TST.POLICY.SEMANTIC_COORDS.099"]
+    T100["T100 Every RefusalCode tested policy<br/>MFW.TST.POLICY.REFUSAL_COVERAGE.100"]
+    T101["T101 Every crown theorem countermodel-card policy<br/>MFW.TST.POLICY.COUNTERMODEL_CARD.101"]
+    T102["T102 Generated provenance policy<br/>MFW.TST.POLICY.PROVENANCE.102"]
+    T103["T103 Claimed theorem exists policy<br/>MFW.TST.POLICY.CLAIM_EXISTS.103"]
+    T104["T104 No orphan modules policy<br/>MFW.TST.POLICY.NO_ORPHANS.104"]
+  end
+  T095 -. sibling .-> T096
+  T096 -. sibling .-> T097
+  T097 -. sibling .-> T098
+  T098 -. sibling .-> T099
+  T099 -. sibling .-> T100
+  T100 -. sibling .-> T101
+  T101 -. sibling .-> T102
+  T102 -. sibling .-> T103
+  T103 -. sibling .-> T104
+  subgraph SG_INVENTORY["INVENTORY — Proof dependency and theorem-inventory testing"]
+    T105["T105 Expected theorem existence test<br/>MFW.TST.INVENTORY.EXISTS.105"]
+    T106["T106 Theorem kind test<br/>MFW.TST.INVENTORY.KIND.106"]
+    T107["T107 Theorem module location test<br/>MFW.TST.INVENTORY.MODULE.107"]
+    T108["T108 Allowed axiom dependency test<br/>MFW.TST.INVENTORY.AXIOM_ALLOWLIST.108"]
+    T109["T109 Claim class test<br/>MFW.TST.INVENTORY.CLAIM_CLASS.109"]
+    T110["T110 Manifest representation test<br/>MFW.TST.INVENTORY.MANIFEST.110"]
+    T111["T111 Exact theorem inventory equality test<br/>MFW.TST.INVENTORY.EXACT_SET.111"]
+  end
+  T105 -. sibling .-> T106
+  T106 -. sibling .-> T107
+  T107 -. sibling .-> T108
+  T108 -. sibling .-> T109
+  T109 -. sibling .-> T110
+  T110 -. sibling .-> T111
+  subgraph SG_PERF["PERF — Performance and benchmark testing"]
+    T112["T112 Compile benchmark<br/>MFW.TST.PERF.COMPILE.112"]
+    T113["T113 Elaboration benchmark<br/>MFW.TST.PERF.ELAB.113"]
+    T114["T114 Lake benchmark<br/>MFW.TST.PERF.LAKE.114"]
+    T115["T115 Build benchmark<br/>MFW.TST.PERF.BUILD.115"]
+    T116["T116 Size benchmark<br/>MFW.TST.PERF.SIZE.116"]
+    T117["T117 Custom metric benchmark<br/>MFW.TST.PERF.CUSTOM_METRIC.117"]
+  end
+  T112 -. sibling .-> T113
+  T113 -. sibling .-> T114
+  T114 -. sibling .-> T115
+  T115 -. sibling .-> T116
+  T116 -. sibling .-> T117
+  subgraph SG_STRESS["STRESS — Stress and scale testing"]
+    T118["T118 Stress/scale test<br/>MFW.TST.STRESS.SCALE.118"]
+    T119["T119 Stack overflow test<br/>MFW.TST.STRESS.STACK.119"]
+    T120["T120 Recursion limit test<br/>MFW.TST.STRESS.RECURSION.120"]
+    T121["T121 Heartbeat exhaustion test<br/>MFW.TST.STRESS.HEARTBEAT.121"]
+    T122["T122 Memory exhaustion test<br/>MFW.TST.STRESS.MEMORY.122"]
+    T123["T123 Typeclass explosion test<br/>MFW.TST.STRESS.TYPECLASS.123"]
+    T124["T124 Elaboration blowup test<br/>MFW.TST.STRESS.ELAB_BLOWUP.124"]
+    T125["T125 Exponential residue generation test<br/>MFW.TST.STRESS.EXP_RESIDUE.125"]
+  end
+  T118 -. sibling .-> T119
+  T119 -. sibling .-> T120
+  T120 -. sibling .-> T121
+  T121 -. sibling .-> T122
+  T122 -. sibling .-> T123
+  T123 -. sibling .-> T124
+  T124 -. sibling .-> T125
+  subgraph SG_COMPLEXITY["COMPLEXITY — Complexity-law testing"]
+    T126["T126 Complexity-law test<br/>MFW.TST.COMPLEXITY.FORMAL_BOUND.126"]
+    T127["T127 Formal-vs-measured complexity distinction test<br/>MFW.TST.COMPLEXITY.MEASURE_DISTINCTION.127"]
+  end
+  T126 -. sibling .-> T127
+  subgraph SG_TERMINATION["TERMINATION — Termination and descent testing"]
+    T128["T128 Kernel termination checking<br/>MFW.TST.TERMINATION.KERNEL.128"]
+    T129["T129 Well-founded termination theorem<br/>MFW.TST.TERMINATION.WELL_FOUNDED.129"]
+    T130["T130 Finite experimental descent test<br/>MFW.TST.TERMINATION.FINITE_DESCENT.130"]
+  end
+  T128 -. sibling .-> T129
+  T129 -. sibling .-> T130
+  subgraph SG_FAITHFULNESS["FAITHFULNESS — Faithfulness and claim-ceiling testing"]
+    T131["T131 Faithfulness/claim-ceiling test<br/>MFW.TST.FAITHFULNESS.CLAIM_CEILING.131"]
+  end
+  subgraph SG_STANDING_PATH["STANDING_PATH — Gap, edge, and standing-path coverage"]
+    T132["T132 Gap/edge coverage test<br/>MFW.TST.STANDING_PATH.EDGE_COVERAGE.132"]
+    T133["T133 Standing path coverage test<br/>MFW.TST.STANDING_PATH.PATH_COVERAGE.133"]
+  end
+  T132 -. sibling .-> T133
+  T008 ==> T009
+  T017 ==> T018
+  T023 ==> T024
+  T028 ==> T029
+  T032 ==> T033
+  T040 ==> T041
+  T049 ==> T050
+  T054 ==> T055
+  T055 ==> T056
+  T056 ==> T057
+  T061 ==> T062
+  T062 ==> T063
+  T063 ==> T064
+  T064 ==> T065
+  T065 ==> T066
+  T067 ==> T068
+  T069 ==> T070
+  T070 ==> T071
+  T076 ==> T077
+  T082 ==> T083
+  T093 ==> T094
+  T094 ==> T095
+  T104 ==> T105
+  T111 ==> T112
+  T117 ==> T118
+  T125 ==> T126
+  T127 ==> T128
+  T130 ==> T131
+  T131 ==> T132

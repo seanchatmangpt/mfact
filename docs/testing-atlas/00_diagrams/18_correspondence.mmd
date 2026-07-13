@@ -1,0 +1,11 @@
+flowchart LR
+  INPUT["MFW controlled object / theorem / artifact"]
+  FAMILY["CORRESPONDENCE<br/>Refinement and correspondence testing"]
+  EVIDENCE["Admitted evidence or explicit refusal"]
+  INPUT --> FAMILY
+  T068["T068<br/>Refinement/correspondence preservation test<br/>MFW.TST.CORRESPONDENCE.PRESERVE.068<br/>TTL declaration→generated Lean declaration"]
+  FAMILY --> T068
+  T068 --> EVIDENCE
+  T069["T069<br/>Correspondence composition test<br/>MFW.TST.CORRESPONDENCE.COMPOSE.069<br/>TTL→Lean→manifest vs direct claim projection"]
+  FAMILY --> T069
+  T069 --> EVIDENCE
