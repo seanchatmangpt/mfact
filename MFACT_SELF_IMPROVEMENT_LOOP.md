@@ -107,3 +107,20 @@ firing.
   (this is firing 1). Per the collision guard, touched nothing, wrote receipt
   `.mfact/receipts/20260713T071516Z.json` with `collision: true`, and stopped.
   Next firing should re-check whether `w3xrg1r0m` has committed by then.
+
+- **2026-07-13T07:43:50Z (run `20260713T074350Z`, firing 2) -- COLLISION again, no
+  action taken.** `w3xrg1r0m` had committed by this firing (HEAD = `c741d46`, this
+  loop's own prior commit -- no unexpected new commits), so firing 1's specific
+  blocker is gone. But the guard still tripped: 8 persistent, unattributed modified
+  files (`.ggen-v2/*`, `artifacts.toml`, `validate.rs`, `ggen.lock`,
+  `release/standing.env`, `web/mfact-ui`) remain uncommitted since before this
+  session's work began, plus a large untracked pile including this session's own
+  not-yet-committed report docs and `.claude/` additions. **Design note, not a bug
+  in this firing's behavior:** the guard as specified compares against "any
+  uncommitted state," not a delta from the last check -- as long as this static
+  pile exists uncommitted, every future firing will collide identically regardless
+  of whether anything new actually happened. The guard is doing exactly what it
+  was told to do; what it was told to do may need revisiting (e.g. snapshot-diff
+  against the last collision's file list, not an absolute clean-tree requirement)
+  if the loop is ever to get past STEP 1. Wrote receipt
+  `.mfact/receipts/20260713T074350Z.json` with `collision: true`, and stopped.
