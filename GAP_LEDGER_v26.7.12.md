@@ -86,6 +86,16 @@ ledger text alone.
   stderr `gate failure: sorryFree=true axiomsClean=true fixturesPass=true
   evidenceComplete=false`. The gates flip landed in ac647a9 (Jul 12); certify.log predates
   it, yet standing.env was regenerated AFTER the flip and still asserts PASS.
+- Update (2026-07-13): the EXIT=1 failure above no longer reproduces. Root cause was
+  scripts/build_manifest.py silently reading triple-quoted auditMsg values as empty — fixed
+  in 0e99a2b (plus ca3cf5c, stripping a literal `\n` escape from axiom names); regenerated
+  manifest/gates/certify.log committed in b2f5b0e. Fresh `just manifest && just certify` at
+  HEAD ee624be: exit 0, gates sorryFree/axiomsClean/fixturesPass/evidenceComplete all true,
+  `certified: v26.7.7 (proven 203/401, objection type uninhabited)`
+  (release/certify.log:2394). Residual keeping this entry OPEN per the fix plan below:
+  countermodel_not_promoted=false is still recorded in release/gates.json and never checked
+  by the certify binary (G4, this entry's upstream dependency), and the final_status/standing
+  regeneration from the fresh PASS has not itself been re-audited.
 - Evidence: `git show HEAD:release/gates.json` => evidenceComplete:false,
   countermodel_not_promoted:false. mfact/Mfact/Cli.lean:36-37,65-67 and
   mfact/Mfact/CertifiedRelease.lean:16-18 make evidenceComplete a hard gate (exit 1).

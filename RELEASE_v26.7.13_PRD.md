@@ -42,18 +42,25 @@ gaps, and non-goals.
   `git diff -- web/mfact-ui`, both re-verified live). Any consumer building from a clean
   checkout of this branch gets the submodule at `1ba3a9b`, not the dirty tree that produced
   the live Pages screenshots.
-- **A `just` recipe surface for reproducing certification**, not yet green. A consumer would
-  run `just check` → `just certify` → `just release`. Re-running the cheap, read-only cockpit
-  recipes against the live tree right now (`just status`, `just doctor`, `just next`) shows
-  certification is **not currently passing**: `evidenceComplete` and `countermodel_not_promoted`
-  gates both `FAIL`, a tag-ancestor check `FAIL`s, `rigor_linter.py` flags surface-level
-  shortcuts, and the tree carries 62 uncommitted paths. Independently re-run for this
-  document: `./mfact/.lake/build/bin/mfact certify release/release-manifest.json
-  release/gates.json` (run from `/Users/sac/mfact/mfact`, matching the certify recipe's own
-  invocation path) reproduces the exact failure —
-  `gate failure: sorryFree=true axiomsClean=true fixturesPass=true evidenceComplete=false`,
-  exit 1 — and `release/gates.json` on disk independently confirms both `evidenceComplete`
-  and `countermodel_not_promoted` are `false`.
+- **A `just` recipe surface for reproducing certification** — the certify leg is now green
+  (re-verified 2026-07-13; `just check`/`just release` were not re-run). A consumer would
+  run `just check` → `just certify` → `just release`. **Correction (2026-07-13):** an earlier
+  draft of this bullet reported a live-reproduced certify failure
+  (`gate failure: sorryFree=true axiomsClean=true fixturesPass=true evidenceComplete=false`,
+  exit 1, with `release/gates.json` recording `evidenceComplete=false` and
+  `countermodel_not_promoted=false`). That failure was root-caused and fixed after the
+  passage was written: `0e99a2b` (triple-quoted `auditMsg` values silently read as empty by
+  `scripts/build_manifest.py`) and `ca3cf5c` (literal `\n` escape stripped from axiom names),
+  with the regenerated manifest/gates/certify.log committed in `b2f5b0e`. A fresh
+  `just manifest && just certify` re-run for this correction (2026-07-13, HEAD `ee624be`)
+  exits 0 and prints `certified: v26.7.7 (proven 203/401, objection type uninhabited)`
+  (`release/certify.log:2394`); `release/gates.json` now records `evidenceComplete=true`.
+  This is deliberately not overclaimed: `release/gates.json` still records
+  `countermodel_not_promoted=false`, and the certify binary never checks that gate — G4
+  remains OPEN (§3.1). The certified version string is still `v26.7.7`, not `v26.7.13`
+  (G6). The other cockpit findings originally reported alongside the certify failure
+  (tag-ancestor check failure, `rigor_linter.py` flags, uncommitted working-tree paths)
+  were not re-checked for this correction and are neither reasserted nor withdrawn here.
 - **Packaged release artifacts are stale relative to this branch's own content, by three
   different counts that disagree with each other.** `release/standing.env`'s header says
   "release v26.7.6" while `STANDING.md`'s prose says "Release `v26.7.7`" — two version
@@ -146,7 +153,11 @@ Source: `GAP_LEDGER_v26.7.12.md`, freshly re-grepped against live HEAD (`f735022
 ### 3.1 Literal `Status: OPEN` — 22 of 51 entries (live count, re-verified)
 
 - **G1** — Fresh `just certify` FAILS while `standing.env`/`final_status` assert CERTIFIED
-  PASS — **reproduced live for this document, byte-for-byte** (see §1).
+  PASS — **corrected 2026-07-13: the failure no longer reproduces.** Fixed by
+  `0e99a2b`/`ca3cf5c` (regen committed in `b2f5b0e`); a fresh `just manifest && just certify`
+  now exits 0 with `certified: v26.7.7 (proven 203/401, objection type uninhabited)` (see
+  §1). Residual: `countermodel_not_promoted=false` is still recorded in `release/gates.json`
+  and never checked by the certify binary — that is G4, which remains OPEN.
 - **G4** — Countermodel promoted STATED→PROVEN; `countermodel_not_promoted` guard is computed
   but never checked by `GateResults`.
 - **G5** — Three drifted count/hash lineages (manifest 401/203, `final_status` 197/397,
@@ -241,10 +252,15 @@ resolve it either; see `RELEASE_v26.7.13_ARD.md` §5.
   this branch (§1 of the ARD) produces workflow-side theorems only; every production-side
   binding remains `ANALOGY` or `MISSING`.
   Compliance/audit teams — see `ROADMAP_SOC2_MATH.md` §3(a) and §5.
-- **Not a certified release.** Per §1, `just certify` currently fails
-  (`evidenceComplete=false`, `countermodel_not_promoted=false`), reproduced live for this
-  document. No `v26.7.13` tag should be cut, and no `CERTIFIED_RELEASE=PASS` claim should be
-  made, until `just manifest && just certify` passes and `just regen-check` shows no drift.
+- **Not a certified v26.7.13 release.** Correction (2026-07-13): the certify failure this
+  bullet previously cited (`evidenceComplete=false`) was fixed in `0e99a2b`/`ca3cf5c` (regen
+  committed in `b2f5b0e`), and a fresh `just manifest && just certify` now passes — exit 0,
+  `certified: v26.7.7 (proven 203/401, objection type uninhabited)` (see §1). That does not
+  make this a certified v26.7.13 release: `release/gates.json` still records
+  `countermodel_not_promoted=false`, a gate the certify binary never checks (G4 OPEN), and
+  the certified version string is `v26.7.7`, not `v26.7.13` (G6). No `v26.7.13` tag should
+  be cut, and no `CERTIFIED_RELEASE=PASS` claim should be made for v26.7.13, until G4 is
+  resolved and `just regen-check` shows no drift.
 - **Not a UI ship.** `web/mfact-ui` is a mostly-placeholder demo, deployed by hand, from a
   dirty gitlink checkout, with no consumer documentation. It is not being represented here as
   a production-ready product surface.
