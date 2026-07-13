@@ -16,17 +16,17 @@ inputs where its hypotheses trivially hold — a guarantee never checked against
 SOC2-relevant control-failure scenario: two tenants (A, B) whose audit-evidence obligations are
 supposed to stay isolated, and a concrete closure operator under which they do not.
 
-Status note (honest, not aspirational): the design for this witness pairs this negative file with
-a positive companion at `ProcInt.Playground.Swarm11.AuditFlow` (a compliant two-tenant closure
-where `Separated` genuinely holds and `crossTenant_residue_disjoint` fires for real). That
-positive file does not exist in this build yet. Rather than import a module that isn't there, or
-gesture at a "compliant case" this repo cannot currently compile, this file is fully
-self-contained: it depends only on `ProcInt.MFW.Residue.Tenancy` and reuses
-`ProcInt.MFW.Residue.TenancyCountermodel` verbatim — `Obl`, `tag`, `C`, `C_zero`, `C_empty`,
-`not_separated`, `singleton_mem_residue` — with no edits to `Tenancy.lean`. When the positive
-companion lands, the two files together let the SOC2 audit-flow test distinguish a compliant run
-from a control-failure run on the same underlying vocabulary (`Obl`, `tag`, `residue`,
-`Separated`); until then, this file stands on its own as a genuine falsifier.
+Status note (updated post-integration; this file was originally built in parallel with its
+positive companion, before either existed, and this note said so at the time — corrected now
+that both are committed): the positive companion is `ProcInt.Playground.SOC2.AuditFlow` (a
+compliant two-tenant closure where `Separated` genuinely holds and `crossTenant_residue_disjoint`
+fires for real), not `ProcInt.Playground.Swarm11.AuditFlow` as an earlier design draft proposed.
+This file remains deliberately self-contained regardless: it depends only on
+`ProcInt.MFW.Residue.Tenancy` and reuses `ProcInt.MFW.Residue.TenancyCountermodel` verbatim —
+`Obl`, `tag`, `C`, `C_zero`, `C_empty`, `not_separated`, `singleton_mem_residue` — with no edits
+to `Tenancy.lean`. Together with `AuditFlow.lean`, the two files let the SOC2 audit-flow test
+distinguish a compliant run from a control-failure run on the same underlying vocabulary (`Obl`,
+`tag`, `residue`, `Separated`).
 
 `TenancyCountermodel` already proves `¬ Separated C tag` (`not_separated`), but stops at showing
 `minimalSupport_tenant_pure`'s single-goal purity conclusion fails. This file goes one step
