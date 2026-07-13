@@ -161,3 +161,26 @@ diff just doesn't block starting.
   succeeded per its own log but produced no binary at the expected path --
   deliberately not chased further this firing to avoid repairing a second,
   unrelated problem; worth a future firing's attention).
+
+- **2026-07-13T16:59:52Z (run `20260713T165952Z`, firing 4) -- SUCCESS, second
+  real gap closed.** Collision guard passed cleanly again. Picked
+  `scripts/stuck_item_guard.py`'s missing wiring (`PRAXIS_SELF_AUDIT.md` PC6/PD4,
+  new ledger entry G50). Re-verified still open: `grep -n stuck_item_guard
+  justfile MFACT_SELF_IMPROVEMENT_LOOP.md` returned nothing despite the script
+  working standalone. Added a `just stuck-item-guard` recipe and a
+  cross-reference in this file's own Stuck-item guard section above.
+  Re-verification (STEP 5) caught a real bug before commit: the recipe first
+  passed the receipts path positionally, matching the neighboring
+  `trajectory-annotate` recipe, but `stuck_item_guard.py`'s `argparse` requires
+  `--receipts DIR` -- first run failed with `unrecognized arguments`. Fixed,
+  re-ran, confirmed exit 0 with correct output. `oracle_rank: 1`. G50 added to
+  `GAP_LEDGER_v26.7.12.md`, `CLOSED` in the same commit (`c636fd3`). Receipt:
+  `.mfact/receipts/20260713T165952Z.json`. `axiom_count` is still `null` this
+  firing -- pass 7's audit (`PRAXIS_SELF_AUDIT.md`) resolved *why* no binary
+  appears at the expected path last firing: `AxiomAudit.lean` has no
+  `main`/entry point and is correctly declared `[[lean_lib]]`, not
+  `[[lean_exe]]`, in both `mfact/` and `procint/` lakefiles -- there was never a
+  binary to find, so that was not a bug. The real, smaller gap: no script in
+  this repo actually computes an `axiom_count` metric yet (parsing `lake build
+  AxiomAudit` stdout would be the real fix) -- fuel for a future firing, not
+  attempted here to stay scoped to the picked item.
