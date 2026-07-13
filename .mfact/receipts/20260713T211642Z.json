@@ -1,0 +1,19 @@
+{
+  "run_id": "20260713T211642Z",
+  "gap_id": "G11",
+  "input_hash": "3be3142b70d761e568ba98cafc0d85d167d19c99a7122ff10aabc78662a91a40",
+  "output_hash": null,
+  "status": "success",
+  "timestamp": "2026-07-13T21:16:42Z",
+  "verify_delta": {
+    "before": "crates/mfact-core/build.rs:44 still did cc::Build::new().file(\"src/lean_ffi_wrapper.c\") -- one of the 6 files firing 10 deleted. just clippy-core passed only because this sandbox's PATH lacks `lean`, so build.rs's Command::new(\"lean\") call fails first and the function returns early, before ever reaching the cc::Build call. Confirmed via `which lean` inside a bare `just` recipe shell: not found here either -- but ~/.bash_profile and ~/.zprofile both add ~/.elan/bin (where lean actually lives) to PATH, so the user's real login shell would reach the missing-file error.",
+    "after": "Re-audited crates/mfact-core/src/{lib,receipt,validate}.rs and src/bin/turbulence.rs: zero extern \"C\" blocks, zero references to thermo_lean or any lp_* FFI symbol -- the entire Lean-FFI-linking apparatus in build.rs was orphaned by firing 10's deletion, not just the one stale path. build.rs reduced to `fn main() {}`; unused `cc = \"1\"` build-dependency removed from Cargo.toml. just clippy-core: exit 0. Full just build (Lean workspace, unaffected by this Rust-only change): 8614+8577+22 jobs, all clean."
+  },
+  "commit_sha": null,
+  "duration_ms": null,
+  "oracle_rank": 1,
+  "collision": false,
+  "root_cause_type": "incomplete_verification",
+  "root_cause_category": "closure check did not inspect a file outside the deleted set that referenced a deleted file",
+  "recovery_behavior": "found by an independent audit pass (pass 15, finding PO1) run against firing 10's own closure claim, not by the fix loop re-checking itself"
+}

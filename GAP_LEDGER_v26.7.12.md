@@ -309,6 +309,27 @@ ledger text alone.
   a real, correct FFI binding would itself be exactly the "implement the code" work
   explicitly out of mfact's scope, so deletion of the fake stand-in is the honest
   resolution, not a placeholder pending a future real implementation.
+- Correction (2026-07-13, self-audit pass 15, finding PO1, fixed same session): the
+  closure evidence above claims deletion had "zero effect on the reachable build," but
+  that check never inspected `crates/mfact-core/build.rs`, which still did
+  `cc::Build::new().file("src/lean_ffi_wrapper.c")` — a literal reference to one of the
+  6 just-deleted files. `just clippy-core` only passed because this sandboxed shell's
+  PATH lacks `lean`, so `build.rs` bails out at the `Command::new("lean")` call before
+  ever reaching the missing-file line; both `~/.bash_profile` and `~/.zprofile` put
+  `~/.elan/bin` (where `lean` actually lives) on PATH, so a build run from the user's
+  real login shell would have reached `cc::Build` and failed on the missing file — an
+  undisclosed landmine the firing-10 closure check missed. Re-audited: no surviving
+  file in `crates/mfact-core/src/` (`lib.rs`, `receipt.rs`, `validate.rs`,
+  `bin/turbulence.rs`) contains an `extern "C"` block or references `thermo_lean`, so
+  the entire Lean-FFI-linking apparatus in `build.rs` (not just the one stale path) was
+  orphaned by firing 10's deletion, not merely one stale reference within it. Fixed:
+  `build.rs` reduced to `fn main() {}`; the now-unused `cc = "1"` build-dependency
+  removed from `Cargo.toml`. Verified with `lean` actually reachable this time (fresh
+  `just clippy-core` after the fix: exit 0; full `just build` — the Lean-side workspace
+  build, unaffected by this Rust-only change — also clean, 8614+8577+22 jobs). This is
+  the second time a G11-adjacent closure claim needed a same-repo correction (see the
+  PJ10 wave-4 count mismatch); noted here rather than amending firing 10's receipt, per
+  this project's fix-forward-only discipline.
 - Residual, NOT addressed this firing: `web/mfact-ui/src/wargames/useWargames.ts:88-89`
   still defines `initStream: () => { new EventSource('http://localhost:8080/stream') }`,
   confirmed still uncalled anywhere in `web/mfact-ui/src/` (`grep -rn "\.initStream"`
