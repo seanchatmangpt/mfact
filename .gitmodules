@@ -1,0 +1,12 @@
+# SELF-IMPROVEMENT-LOOP FIX: web/mfact-ui has been a mode-160000 gitlink
+# since commit 6cbc680 ("Fix UI build and configure GitHub pages deploy")
+# with no .gitmodules entry ever added alongside it, so `git submodule
+# update --init` on a fresh clone fails with "no submodule mapping found
+# in .gitmodules for path web/mfact-ui" -- the pinned commit is otherwise
+# unfetchable by anyone but the original author's local checkout. This
+# entry only maps path -> url; it does not touch the submodule's own
+# pinned commit or its dirty working tree, both of which are a separate,
+# larger reconciliation left open for the UI-owning workstream.
+[submodule "web/mfact-ui"]
+	path = web/mfact-ui
+	url = https://github.com/seanchatmangpt/mfact-command-center.git
