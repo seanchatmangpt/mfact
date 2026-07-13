@@ -7,6 +7,8 @@ import ProcInt.Playground.Swarm11Tests
 import ProcInt.Playground.SOC2.AuditFlow
 import ProcInt.Playground.SOC2.AuditFlowViolation
 import ProcInt.Playground.SOC2.ManufactureTenancyGap
+import ProcInt.Playground.Dogfood.Lifecycle
+import ProcInt.Playground.Dogfood.PowlBounds
 
 open Lean
 open ProcInt.Playground.Swarm11
@@ -59,6 +61,13 @@ already `PROVEN`, so this is purely an aggregation change, no new proof content 
 This verifier remains hand-authored/Playground-exempt, not ggen-rendered, and is still never
 consumed by standing, gates, or the manifest (see `justfile`'s `swarm11-verify`/`soc2-verify`
 comments).
+
+**Operation Dogfood extension (Wave 5).** `dogfoodChecks` additively folds the four Dogfood
+check lists (`Dogfood.checks` — outcome algebra, `Dogfood.guardChecks` — pre-actuation guard,
+`Dogfood.lifecycleChecks` — trace-level lifecycle, `Dogfood.powlChecks` — POWL bounds/bridge),
+the identical `crownFailureCount` way, into new `dogfoodChecks`/`dogfoodCheckFailures` receipt
+fields consumed by `AuditReceipt.ok`. Each list is additionally `#guard`-ed all-pass at its own
+elaboration site, so a regression fails the library build before this executable ever runs.
 -/
 structure AuditReceipt where
   declarationCount : Nat
@@ -73,6 +82,8 @@ structure AuditReceipt where
   crownCheckFailureCount : Nat
   soc2CheckCount : Nat
   soc2CheckFailureCount : Nat
+  dogfoodCheckCount : Nat
+  dogfoodCheckFailureCount : Nat
   deriving Repr
 
 private def countWhere {α : Type}
@@ -125,6 +136,15 @@ private def soc2Checks : List (String × Bool) :=
 private def soc2FailureCount : Nat :=
   countWhere soc2Checks (fun check => !check.2)
 
+/-- Operation Dogfood extension: the four Dogfood check lists combined, folded the identical
+`crownFailureCount` way. See the `AuditReceipt` docstring's "Operation Dogfood extension". -/
+private def dogfoodChecks : List (String × Bool) :=
+  ProcInt.Playground.Dogfood.checks ++ ProcInt.Playground.Dogfood.guardChecks ++
+    ProcInt.Playground.Dogfood.lifecycleChecks ++ ProcInt.Playground.Dogfood.powlChecks
+
+private def dogfoodFailureCount : Nat :=
+  countWhere dogfoodChecks (fun check => !check.2)
+
 /--
 Loads the compiled `ProcInt.Playground.Swarm11` and `...Swarm11Tests` modules
 and derives the audit from the actual environment.
@@ -160,6 +180,8 @@ unsafe def computeAudit : IO AuditReceipt := do
       crownCheckFailureCount := crownFailureCount
       soc2CheckCount := soc2Checks.length
       soc2CheckFailureCount := soc2FailureCount
+      dogfoodCheckCount := dogfoodChecks.length
+      dogfoodCheckFailureCount := dogfoodFailureCount
     }
 
 private def AuditReceipt.ok (receipt : AuditReceipt) : Bool :=
@@ -170,7 +192,8 @@ private def AuditReceipt.ok (receipt : AuditReceipt) : Bool :=
   receipt.partialCount == 0 &&
   receipt.sorryDeclarationCount == 0 &&
   receipt.crownCheckFailureCount == 0 &&
-  receipt.soc2CheckFailureCount == 0
+  receipt.soc2CheckFailureCount == 0 &&
+  receipt.dogfoodCheckFailureCount == 0
 
 private def jsonBool (value : Bool) : String :=
   if value then "true" else "false"
@@ -198,6 +221,8 @@ private def renderJson (receipt : AuditReceipt) : String :=
   s!"  \"crownCheckFailures\": {receipt.crownCheckFailureCount},\n" ++
   s!"  \"soc2Checks\": {receipt.soc2CheckCount},\n" ++
   s!"  \"soc2CheckFailures\": {receipt.soc2CheckFailureCount},\n" ++
+  s!"  \"dogfoodChecks\": {receipt.dogfoodCheckCount},\n" ++
+  s!"  \"dogfoodCheckFailures\": {receipt.dogfoodCheckFailureCount},\n" ++
   s!"  \"admitted\": {jsonBool receipt.ok}\n" ++
   "}"
 
@@ -210,6 +235,12 @@ private def printCrownChecks : IO Unit := do
 `printCrownChecks` style. -/
 private def printSoc2Checks : IO Unit := do
   for check in soc2Checks do
+    IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
+
+/-- Operation Dogfood extension: prints the combined Dogfood checks, `printCrownChecks`
+style. -/
+private def printDogfoodChecks : IO Unit := do
+  for check in dogfoodChecks do
     IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
 
 unsafe def main : IO UInt32 := do
@@ -232,6 +263,8 @@ unsafe def main : IO UInt32 := do
   printCrownChecks
   IO.println "soc2 checks (AuditFlow ++ AuditFlowViolation ++ ManufactureTenancyGap):"
   printSoc2Checks
+  IO.println "dogfood checks (Outcome ++ Guard ++ Lifecycle ++ PowlBounds):"
+  printDogfoodChecks
   IO.println s!"receipt: artifacts/swarm11-verifier.json"
 
   if receipt.ok then

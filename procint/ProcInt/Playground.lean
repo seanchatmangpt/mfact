@@ -39,6 +39,11 @@ import ProcInt.Playground.SOC2.AuditFlowViolation
 import ProcInt.Playground.SOC2.ManufactureTenancyGap
 import ProcInt.Playground.SOC2.AxiomAuditSOC2
 import ProcInt.Playground.SOC2.StandingPathSOC2
+import ProcInt.Playground.Dogfood.Outcome
+import ProcInt.Playground.Dogfood.Guard
+import ProcInt.Playground.Dogfood.Lifecycle
+import ProcInt.Playground.Dogfood.PowlBounds
+import ProcInt.Playground.Dogfood.AxiomAuditDogfood
 
 /-! # ProcInt.Playground
 

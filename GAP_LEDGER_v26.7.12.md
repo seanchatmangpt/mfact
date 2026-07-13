@@ -1333,3 +1333,88 @@ Findings below were disproven by the adversarial pass and must not be re-reporte
   gates named in fix sketches
 - `ROADMAP_GAP_AUTONOMIC.md`, `ROADMAP_GAP_SEMANTIC.md`, `ROADMAP_GAP_THERMO.md` —
   sibling gap docs (untracked; see G12)
+
+### G54 — No unified five-valued outcome type: bare-Bool planner check
+
+- Lens: operation-dogfood-coverage (six-lens audit, outcome-algebra lens; adversarially
+  re-verified by audit Pass 19 PS1 before construction)
+- Status: CLOSED
+- Evidence (gap): no inductive anywhere in procint carried the PRD §6.6 constructors
+  (`inconsistent` had zero repo matches); the planner surface was a bare `Bool`
+  (`Planning/Pddl.lean:50`), so a bounded search was indistinguishable from a
+  provably-infeasible one at the type level.
+- Evidence (closure, commit b6dcfb3): `Playground/Dogfood/Outcome.lean` —
+  `SearchOutcome (P F)` with `bounded (frontier : F)`;
+  `bound_hit_bounded`, `searchGo_exhausted_all_failed` (+`_length_le`),
+  `searchGo_bounded_frontier`, `full_fuel_not_bounded`, `exhausted_stable`,
+  `resume_eq_combined`; countermodel `naive_projection_conflates`/`_lossy`; planner
+  wrapper `pddlSearchOutcome` with `found_valid`/`exhausted_infeasible`/
+  `singleton_iff` against the rendered check (never edited); `FiniteExperiment` wire
+  (`outcomeOfExperiment_never_bounded`, `_exhausted_iff`) — Pass 19 PS3 scoping
+  honored (`reachable_is_one_of` excluded). 9 checks, `#guard`-ed, verifier-folded.
+- Residual (honest): the constructor mirror of the praxis Rust `SearchOutcome<P>` is an
+  edge of type `MISSING` until a correspondence morphism is admitted; pipeline
+  preservation beyond the modeled planner is a consumer obligation.
+
+### G55 — Permission math absent: `authorized` opaque, unenforced, vacuous
+
+- Lens: operation-dogfood-coverage (permission lens; Pass 19 PS1 items B1-B5)
+- Status: CLOSED
+- Evidence (gap): `MayStart` defined and consumed by zero theorems; `completeStep`
+  explicitly excludes enforcement (`Glue/RuntimeReplay.lean:33-37`); the sole
+  instantiation was `AuditFlow.s0.authorized := fun _ => True`; the theorem
+  `{i | completed i ∧ ¬ authorized i} = ∅` could not be meaningfully stated.
+- Evidence (closure, commit 8f7c032): `Playground/Dogfood/Guard.lean` — `Approval`
+  with decidable `covers` and digest-carrying refusal (`not_covered_refused`);
+  `guardedCompleteStep` sound against relational `GuardedStep`
+  (`guardedCompleteStep_ok_sound`); `zero_unauthorized_completion` over
+  `GuardedTrace`, earned by dynamics; countermodel
+  `unguarded_completes_unauthorized` formalizing the disclosed enforcement gap on the
+  same data the guard refuses; approval-derived (non-vacuous) demo authorization.
+  7 checks, `#guard`-ed, verifier-folded.
+- Residual (honest): `planDigest` is a `Nat` label (Runtime.Deterministic dialect),
+  never `Crypto.ComputationallyBinding`; runtime enforcement is the consumer's half
+  of FR-9; ODRL vocabulary remains absent from the Lean tree (C5's ODRL half open).
+
+### G56 — Receipt invariant by construction only; no idempotence/resume/observation split
+
+- Lens: operation-dogfood-coverage (core-equations + receipt/replay lenses)
+- Status: CLOSED
+- Evidence (gap): `zero_unreceipted_completion` unpacks a structure field
+  (`ROADMAP_SOC2_MATH.md §3(c)`); no trace-level orphan refutation, no step
+  idempotence, no resume theorem, no expected≠observed separation existed.
+- Evidence (closure, commit 8a7ceca): `Playground/Dogfood/Lifecycle.lean` —
+  `receiptCheck_false_iff` (orphan iff, arbitrary traces) and
+  `groundedCheck_false_iff` (receipt requires observation); impersonation
+  countermodel (`[actuate, receipt]` passes receipt check alone, refused combined);
+  bridge theorems `renderCompletion_receiptCheck`/`_groundedCheck` (fused dynamics ⊆
+  admitted traces); `completeStep_idem` + `guarded_refuses_duplicate` (NFR-8);
+  `resume_from_receipt` on `replay_append` (NFR-7). 9 checks, `#guard`-ed,
+  verifier-folded.
+- Residual (honest): trace admission is Lean-side; that the runtime emits honest
+  traces is FR-13, harness-owned.
+
+### G57 — POWL boundedness orphaned; zero import edges between the Powl and Termination islands
+
+- Lens: operation-dogfood-coverage (PDDL/POWL lens; Pass 19 PS1 items C1-C4)
+- Status: CLOSED
+- Evidence (gap): the only real POWL boundedness theorems lived in the never-built
+  `procint/test_expand.lean` (outside every Lake target); no module imported both
+  `Models/Powl` and `MFW/Termination/*`.
+- Evidence (closure, commit 40a35df): `Playground/Dogfood/PowlBounds.lean` —
+  `expandLayer`/`Bounded`/`Bounded.mono`/`expandLayer_bounds_strictly` rescued and
+  re-elaborated at HEAD, instantiated at the PDDL8 depth bound
+  (`demo_expansion_bounded_at_depth`, `MAX_PLAN_DEPTH = 64`); the island bridge
+  `atomLayers`/`bounded_atomLayers_lt`/`powl_refinement_manufactureStep` (one strict
+  refinement = one literal `ManufactureStep`) and
+  `powl_refinement_chains_terminate` consuming `no_infinite_productive_mfw_chain`.
+  5 checks, `#guard`-ed, verifier-folded. Orphan file left as historical scratch.
+- Residual (honest): PDDL→POWL preservation stays `MISSING` (this is its first
+  admitted fragment); no claim that a runtime engine's refinements satisfy
+  `ManufactureStep` (`ManufactureDecrease.lean`'s theorem-boundary note governs).
+
+All four closures are axiom-audited (49 `#guard_msgs` pairs,
+`Playground/Dogfood/AxiomAuditDogfood.lean`, every set ⊆
+`[propext, Classical.choice, Quot.sound]`, zero `sorryAx`) and folded into
+`swarm11-verify`: 5 crown + 24 SOC2 + 30 dogfood = 59 checks, 0 failures,
+`admitted: true` (Wave 5 wiring commit).

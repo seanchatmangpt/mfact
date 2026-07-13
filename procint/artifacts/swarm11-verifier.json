@@ -1,0 +1,19 @@
+{
+  "schema": "procint.swarm11verifier.v1",
+  "modules": ["ProcInt.Playground.Swarm11", "ProcInt.Playground.Swarm11Tests"],
+  "declarations": 795,
+  "theorems": 222,
+  "definitions": 473,
+  "inductives": 25,
+  "axioms": 0,
+  "unsafeDeclarations": 0,
+  "partialDeclarations": 0,
+  "sorryDeclarations": 0,
+  "crownChecks": 5,
+  "crownCheckFailures": 0,
+  "soc2Checks": 24,
+  "soc2CheckFailures": 0,
+  "dogfoodChecks": 30,
+  "dogfoodCheckFailures": 0,
+  "admitted": true
+}

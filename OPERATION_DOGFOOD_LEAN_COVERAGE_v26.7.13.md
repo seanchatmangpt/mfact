@@ -109,7 +109,7 @@ report.
 | `just test` | 15 `#guard`, 9 `example`, 14 `decide` | PASS (standing.env) | C1, FR-6 |
 | `just audit` | 203 `#print axioms` pairs, allowlist-only | `AXIOM_AUDIT=PASS` | kernel backing |
 | `AxiomAuditSOC2` | 21 pairs over the SOC2 crown | build-gated | C5/C6/FR-22 |
-| `swarm11-verify` | 795 decls 0-sorry; 5 crown + 24 SOC2 checks | admitted, 0 fail | C6/C9/FR-15,19,22 |
+| `swarm11-verify` | 795 decls 0-sorry; 59 checks (post-W5) | admitted, 0 fail | C6/C9/FR-15,19,22 |
 | `just certify` | proven 203/401; 3 negative controls | certified v26.7.7 | FR-16, FR-22, NFR-2 |
 | `standing-quadrature` | 14 theorems incl. both closures | PASS; orphans 0 | FR-5, FR-22, NFR-1 |
 
@@ -234,8 +234,31 @@ makes the morphism definable, it does not constitute it.
 
 ## Post-construction verdicts
 
-Pending — appended when the waves land, citing compiled theorem names and the refreshed
-`swarm11-verifier.json`.
+All five waves landed 2026-07-13 (commits `b6dcfb3`, `8f7c032`, `8a7ceca`, `40a35df`,
+plus the Wave 5 wiring commit; gap ledger G54–G57). `swarm11-verify` now reports
+5 crown + 24 SOC2 + 30 dogfood = 59 checks, 0 failures, `admitted: true`; all 49 new
+theorems are axiom-audited (`AxiomAuditDogfood.lean`, every set within the allowlist,
+zero `sorryAx`). Row updates earned:
+
+| Row | Was | Now | Earned by |
+|---|---|---|---|
+| C11 | MISSING-ABLE | PARTIAL (Lean core done) | `SearchOutcome` + non-collapse + resume laws |
+| FR-14 | PARTIAL | PARTIAL (strengthened) | unified type joins the refusal vocabulary |
+| C5 / FR-9 | MISSING-ABLE | PARTIAL (Lean half done) | `zero_unauthorized_completion` + soundness |
+| FR-8 | MISSING-ABLE | PARTIAL (shape done) | `Approval.covers`/`admit` digest-carrying refusal |
+| NFR-2 | PARTIAL | PARTIAL (strengthened) | fail-closed guard mechanized |
+| FR-22 | PROVABLE-NOW | PROVABLE-NOW (crutch lifted) | `receiptCheck_false_iff`, arbitrary traces |
+| FR-19 / C9 | PARTIAL | PARTIAL (strengthened) | grounding law + impersonation countermodel |
+| NFR-7 | PARTIAL | PARTIAL (theorem landed) | `resume_from_receipt` |
+| NFR-8 | PARTIAL | PARTIAL (theorem landed) | `completeStep_idem` + `guarded_refuses_duplicate` |
+| C1 / FR-6 | PARTIAL | PARTIAL (strengthened) | boundedness rescued + built at depth 64 |
+| FR-15 | PARTIAL | PARTIAL (strengthened) | POWL refinement = `ManufactureStep`, terminates |
+
+No row is promoted past PARTIAL where the PRD's own claim spans runtime halves the
+scope doctrine assigns to consumers — the Lean halves above are done; the runtime
+halves remain consumer obligations, and per the Status Fence no narrative claim
+supersedes these verdicts. Vision 2030 §8 measures table: "unauthorized mutation" and
+"Bounded collapsed into Exhausted" move from WAVE to HAVE.
 
 ## See also
 
