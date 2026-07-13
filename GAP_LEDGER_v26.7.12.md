@@ -72,7 +72,7 @@ ledger text alone.
 |------------------|-------|----------|
 | Release-blocking | 3     | G1-G3    |
 | Major            | 30    | G4-G33   |
-| Minor            | 16    | G34-G49  |
+| Minor            | 17    | G34-G50  |
 | Refuted          | 3     | appendix |
 
 ## Release-blocking
@@ -993,6 +993,25 @@ ledger text alone.
   than panicking immediately. `tests/sse_transport_test.rs`'s separate, pre-existing
   break (missing `tokio`/`reqwest_eventsource` deps) is untouched — out of scope for
   this item.
+
+### G50 — `scripts/stuck_item_guard.py` implemented but not wired into `just` or the loop doc
+
+- Lens: self-improvement-loop (fix loop, firing 4), cross-referencing
+  `PRAXIS_SELF_AUDIT.md` findings PC6/PD4
+- Status: CLOSED
+- Closure evidence (2026-07-13, cron job f6a6cd52): `scripts/stuck_item_guard.py`
+  existed and worked (`python3 scripts/stuck_item_guard.py` → real output against
+  the 3 real receipts on disk) but `grep -n "stuck_item_guard"` against `justfile`
+  and `MFACT_SELF_IMPROVEMENT_LOOP.md` returned nothing — legitimately in scope,
+  simply unwired. Added a `just stuck-item-guard` recipe and a cross-reference in
+  `MFACT_SELF_IMPROVEMENT_LOOP.md`'s "Stuck-item guard" section. Re-verification
+  caught a real bug before commit: the recipe was first written passing the
+  receipts directory as a positional argument, matching the neighboring
+  `trajectory-annotate` recipe's convention, but `stuck_item_guard.py`'s own
+  `argparse` definition requires `--receipts DIR` — `just stuck-item-guard` failed
+  with `unrecognized arguments` on the first attempt. Corrected to `--receipts
+  .mfact/receipts/`; re-ran and confirmed exit 0 with correct output ("3
+  receipt(s) considered ... Nothing flagged").
 
 ## Refuted during verification
 

@@ -87,6 +87,14 @@ in more than 7 of them with no `status: success` among those attempts, skip it a
 log a `no_op` receipt with `"collision": false` and a note that it may be stuck --
 do not retry it again this run.
 
+Implemented for real at `scripts/stuck_item_guard.py`, wired into `just
+stuck-item-guard` -- a deterministic cross-firing repetition check, explicitly
+**not** the arXiv:2607.09510 real-time trajectory-prefix monitor (that needs
+~600 labeled trajectories to fit/evaluate; this repo has three receipts total as
+of this writing -- see `TRAJECTORY_MONITOR_FEASIBILITY.md` for why that monitor
+is not honestly buildable yet). A firing may run `just stuck-item-guard` as part
+of STEP 2 instead of re-deriving the check by hand from raw receipt files.
+
 ## Collision guard
 
 **v3 (current), delta-based against `.mfact/known-persistent-drift.txt`.** v1/v2's

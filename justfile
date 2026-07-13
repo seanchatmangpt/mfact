@@ -228,6 +228,14 @@ fixtures:
 trajectory-annotate:
     @python3 scripts/trajectory_annotate.py .mfact/receipts/
 
+# Deterministic cross-firing stuck-item check for the self-improvement loop
+# (MFACT_SELF_IMPROVEMENT_LOOP.md "Stuck-item guard"; see
+# scripts/stuck_item_guard.py docstring for why this is a repetition
+# tripwire, not the arXiv:2607.09510 trajectory-prefix monitor). Read-only.
+[group('cockpit')]
+stuck-item-guard:
+    @python3 scripts/stuck_item_guard.py --receipts .mfact/receipts/
+
 # Alias: quadrature-negative-controls.
 [group('manufacture')]
 negative: quadrature-negative-controls
