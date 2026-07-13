@@ -243,6 +243,50 @@ decision to be made first; no card here can proceed past `ANALOGY`/`MISSING` reg
 which substrate is eventually chosen, because the correspondence obligations in §2 are
 substrate-agnostic proof work that has not been attempted yet.
 
+## 5. A composed flow-test witness
+
+`procint/ProcInt/Playground/SOC2/AuditFlow.lean` and `AuditFlowViolation.lean` (both imported by
+the `Playground` umbrella) are a finite, concrete instantiation, not a new general theorem. They
+add nothing to §1's correspondence table and change no cell there: every production-side entry
+remains `ANALOGY` or `MISSING`, exactly as §3(b) states. What they demonstrate is narrower and
+purely on the workflow side — that Cards 1, 2, and 3's already-`PROVEN`/`PROVEN_CONDITIONALLY`
+theorems, each verified in isolation by its own wave, actually compose when instantiated together
+on one shared concrete scenario, which no prior file in this repository had shown.
+
+- **The scenario.** A two-tenant, three-step audit trail: an evidence-collection step (`0`)
+  followed by tenant A's obligation-closing step (`1`) and tenant B's obligation-closing step
+  (`2`), where `1` and `2` are structurally concurrent (`Concurrent order3 1 2`, both depending
+  only on `0`, never on each other).
+- **`AuditFlow.lean` (positive case).** Builds an honest `ClosureOperator` (`C2`/`tag2` over
+  `Fin 4`, i.e. `f2_monotone`/`f2_extensive`/`f2_idempotent`) for which `Separated C2 tag2`
+  (Card 1's hypothesis, `Residue/Tenancy.lean:72`) is proved to genuinely hold
+  (`separated_C2`, closed by `decide` over the full 64-case quantifier), then instantiates on it,
+  in sequence: `minimalSupport_tenant_pure`/`crossTenant_residue_disjoint` (Card 1) on the two
+  tenants' minimal supports; `zero_unreceipted_completion` (Card 2) at three chained
+  `ExecutionState 3` values along the trace; and `Replay.replay_eq_of_traceEq` plus
+  `Replay.manufacturedReceipt_valid` (Card 3) on the tenant-A-first vs. tenant-B-first orderings
+  of the same trace, via `ProcInt.Playground.Glue.concurrent_commute`. Twelve `checks` entries
+  (`List (String × Bool)`, `Crown.lean`-style) re-decide each conclusion independently.
+- **`AuditFlowViolation.lean` (negative companion).** Reuses
+  `ProcInt.MFW.Residue.TenancyCountermodel` verbatim (no edits) to show what a control failure
+  looks like when `Separated` fails: the same
+  obligation is exhibited as the identical minimal support for two different tenants' goals, and
+  `crossTenant_residue_disjoint`'s would-be conclusion (`Disjoint`) is independently shown false
+  (`violation_not_disjoint`) — not merely left unproved, per `AGENTS.md` §3's non-vacuity
+  mandate. Five further `checks` entries cover this file.
+- **Standing: `PROVEN`, scoped to this specific finite scenario.** All seventeen `checks` entries
+  (twelve plus five) evaluate to `true`. `#print axioms` on every top-level declaration in both
+  files reports a subset of `[propext, Classical.choice, Quot.sound]` — no `sorryAx`, hence no
+  `sorry`/`admit`/`native_decide` standing in for a gap anywhere in either file. This standing is
+  local to the concrete `Obl2`/`tag2`/`C2` closure and the concrete 3-step trace built here; it is
+  not a claim that Cards 1-3's hypotheses hold for any other instance, and it proves no new
+  general theorem beyond what `Residue/Tenancy.lean`, `MFW/Runtime.lean`, and `Swarm11/Replay.lean`
+  already established.
+- **What it does not do.** It does not touch `crates/mfact-core` or any Rust; it does not build,
+  assume, or gesture at a carrier for §2's undischarged correspondence maps; and it does not move
+  CC6, PI1.1-PI1.5, or A1.1-A1.3 in §1's table past `ANALOGY`. The scenario is a toy two-tenant
+  audit trail chosen to make the composition legible, not a model of any real audit system.
+
 ## References
 
 - `ROADMAP_CLOUD_MATH.md` — the correspondence-table/theorem-card discipline this document
@@ -252,3 +296,5 @@ substrate-agnostic proof work that has not been attempted yet.
   `CORRESPONDENCE`, `ANALOGY`, `MISSING`) used throughout §1-§2
 - `PRAXIS_SELF_AUDIT.md` PA23, PA24 — the thermo.rs/lean_ffi_wrapper.c finding cited in §3(c):
   a doc comment quoting a real proven theorem while the code path that runs never calls it
+- `procint/ProcInt/Playground/SOC2/AuditFlow.lean`, `AuditFlowViolation.lean` — the composed
+  flow-test witness described in §5
