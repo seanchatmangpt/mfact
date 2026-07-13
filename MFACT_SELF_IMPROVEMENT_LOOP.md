@@ -355,3 +355,19 @@ diff just doesn't block starting.
   STEP 1's unconditional rule, touched nothing further. Wrote receipt
   `.mfact/receipts/20260713T215746Z.json` with `collision: true`, and
   stopped.
+
+- **2026-07-13T22:26:46Z (run `20260713T222646Z`, firing 15) -- COLLISION,
+  no action taken; real progress landed elsewhere.** Delta-based guard
+  found 1 new path: `procint/ProcInt/Playground/Swarm11Verifier.lean`,
+  modified but uncommitted -- task `w5wz0xlhz` (a session-user-directed
+  repair of GAP_LEDGER's G53, the `ManufactureStep`-tenancy soundness
+  gap) mid-way through its second phase, wiring `ManufactureTenancyGap
+  .checks` into the SOC2 verifier fold. Not a foreign actor. Notable
+  since the last firing: G53 itself is already closed (`11b03d2`,
+  "compose ManufactureStep with tenant residue"), and the audit loop's
+  Pass 18 landed cleanly with a self-describing commit message
+  (`4b76101`) -- confirming a prior firing's diagnosed git-index-race
+  fix (making the flush commit message self-identify) worked as
+  intended this time. Per STEP 1's unconditional rule, touched nothing
+  further. Wrote receipt `.mfact/receipts/20260713T222646Z.json` with
+  `collision: true`, and stopped.
