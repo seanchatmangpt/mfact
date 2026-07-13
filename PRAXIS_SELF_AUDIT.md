@@ -356,6 +356,30 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   `sorry_count` trend in metrics-history.jsonl (16->23) is a raw-grep artifact of new "No
   `sorry`" doc-comments, not new proof debt -- the real kernel-level sorry-tactic count
   stayed at 0 throughout (PQ12-PQ14).
+- **2026-07-13 (pass 18):** 10 findings across 3 lenses (wave4-closure-reverify,
+  soc2-standing-path-soundness, release-docs-and-drift-baseline), writing up findings
+  already independently re-verified by a prior audit run rather than re-deriving them
+  from scratch, per this firing's own briefing. Findings reference a check window
+  spanning commits bd7ea3e (G52/G53 ledger entry) through c481ecd (StandingPathSOC2.lean
+  T132/T133 witness); live HEAD had moved further still by write-up time. 7 CONFIRMED, 3
+  REFUTED, 0 DRIFTED, 0 UNVERIFIABLE, 0 FIXED-since-last-pass (1 major, 9 minor). Headline:
+  two REFUTED findings correct real errors rather than merely confirm health. This
+  write-up itself corrects a wrong prior claim that a `sorry` remains at
+  ExperimentalWalkthrough.lean:56 (`rawToPlan.seq`) -- that line is a `#guard_msgs(error)`
+  negative test, not a sorry, and a repo-wide `grep -rnw sorry` over procint/ProcInt
+  (excluding .lake) finds zero actual sorry tactic invocations, consistent with Pass 17's
+  PQ12-PQ14 finding that the true kernel-level count is 0 (PR10). StandingPathSOC2.lean
+  does not overclaim SOC2-crown completeness: its header states "admitted ⊂ required ...
+  is what this file proves -- not admitted = required," `missing_eq_exact_rows` names
+  exactly the four open rows (M_e, M_u, F, S), and no `StandingPathReceipt` with a
+  fabricated `complete := true` field exists (PR4). The drift-baseline staleness concern
+  (PR1, major) also came back REFUTED live: a fresh `comm -23` of git status against
+  known-persistent-drift.txt was empty, and the baseline is currently a superset of live
+  drift rather than a subset -- though release/certify.log.bak has since appeared as one
+  new untracked path, a freshness caveat that does not overturn the verdict. Wave 4's
+  three closure commits (GAP_LEDGER G52/G53, PRAXIS_SELF_AUDIT Pass 16, firing-12
+  backfill) and AxiomAuditSOC2.lean's fresh-build re-check both hold clean (PR2, PR3,
+  PR5, PR6, PR7, PR8, PR9).
 
 ## Quick reference
 
@@ -492,6 +516,15 @@ and 16 totals above:**
 | Major | 5 | 5 CONFIRMED |
 | Minor | 11 | 8 CONFIRMED, 3 UNVERIFIABLE |
 | **Total** | **16** | **13 CONFIRMED, 3 UNVERIFIABLE** |
+
+**Pass 18 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, 12, 13, 14,
+15, 16, and 17 totals above:**
+
+| Severity | Count (pass 18) | Verdicts (pass 18) |
+|---|---|---|
+| Major | 1 | 1 REFUTED |
+| Minor | 9 | 7 CONFIRMED, 2 REFUTED |
+| **Total** | **10** | **7 CONFIRMED, 3 REFUTED** |
 
 ## Critical
 
@@ -5170,4 +5203,200 @@ workflow mid-flight before it finished committing.
   metrics-history.jsonl, so for these two firings the true/false value appears to be
   self-reported rather than freshly re-derived; plausible given neither firing touched Lean
   files, but not evidenced in the record itself.
+- Severity: minor
+
+## Pass 18 findings
+
+### PR1 -- known-persistent-drift.txt causes no new drift right now, but stays stale,
+
+- Lens: wave4-closure-reverify
+- Claim: `.mfact/known-persistent-drift.txt` is many hours stale (single original write,
+  never refreshed) and running the fix loop's exact delta check against current git
+  status will reveal "new" paths that are actually old/legitimate/already-committed
+  session output being miscategorized.
+- Source: orchestrator-provided task context / user check (2); `git status --porcelain |
+  sed -E "s/^.{3}//" | sort | comm -23 - .mfact/known-persistent-drift.txt`, re-run live
+  this pass
+- Verdict: REFUTED
+- Evidence: the exact specified `comm -23` command returned empty output -- zero "new"
+  paths. The drift file is confirmed genuinely stale (single commit 1e47b87 at
+  2026-07-13 08:46:41, ~6h16m old at check time 15:02:21) but is currently a SUPERSET of
+  live git status (76 lines vs 62), not a subset: 14 paths listed in the drift file
+  (crates/mfact-core/*.rs, MFW_WORKFLOW_CATALOG.md, ROADMAP*.md) have since been
+  committed and are now clean, so the tree got cleaner than baseline rather than
+  drifting further. The premise that the gap has "grown" and produced newly
+  miscategorized paths does not hold up under direct re-execution. Freshness caveat:
+  release/certify.log.bak (a harmless build-artifact backup from a certify rerun, not
+  gitignored) has since appeared as one new untracked path -- it does not overturn this
+  REFUTED verdict, since it postdates the check and the check itself already came back
+  empty.
+- Severity: major
+
+### PR2 -- Wave 4a/4b/4c's three closure commits landed exactly as expected, stable,
+
+- Lens: wave4-closure-reverify
+- Claim: Wave 4a/4b/4c (GAP_LEDGER_v26.7.12.md G52/G53 entry, PRAXIS_SELF_AUDIT.md Pass
+  16 append, MFACT_SELF_IMPROVEMENT_LOOP.md firing-12 backfill) will land as 1-3 more
+  commits shortly and should not be treated as stable until confirmed.
+- Source: orchestrator-provided task context; `git log`
+- Verdict: CONFIRMED
+- Evidence: `git log` shows all three landed as real commits before HEAD: bd7ea3e
+  (2026-07-13 14:45:59, GAP_LEDGER_v26.7.12.md), d111cb2 (2026-07-13 14:52:24,
+  PRAXIS_SELF_AUDIT.md), a334ff5 (2026-07-13 14:56:08, MFACT_SELF_IMPROVEMENT_LOOP.md);
+  HEAD at check time (b2f5b0e) sat several commits past all three, so they were safe to
+  treat as stable/landed.
+- Severity: minor
+
+### PR3 -- RELEASE_v26.7.13 docs predate the SOC2 standing-path witness, not a defect,
+
+- Lens: wave4-closure-reverify
+- Claim: RELEASE_v26.7.13_ARD.md and RELEASE_v26.7.13_PRD.md (0a11ad0, corrected
+  4f654d5) are stale/incomplete re: the SOC2 standing-path witness and axiom-audit
+  work, since that work landed after these docs were written.
+- Source: orchestrator-provided task context / user check (1); commit timestamps and a
+  grep of both files for SOC2 standing-path terms
+- Verdict: CONFIRMED
+- Evidence: commit timestamps show 0a11ad0=14:20:02 and 4f654d5=14:24:49 (ARD-only
+  correction), both before e590d1b=14:25:39 (axiom-audit SOC2 crown) and
+  c481ecd=14:38:42 (StandingPathSOC2.lean T132/T133 witness). Grepping both files finds
+  zero mentions of StandingPathSOC2/Eleven-Witness Standing Path/T132/T133 in either.
+  The ARD does mention AxiomAuditSOC2.lean (~lines 248-256) but only as an untracked,
+  growing artifact it explicitly declines to characterize further ("exists, untracked,
+  growing"), predating e590d1b's actual commit. Not a defect -- the ARD is self-aware of
+  its own staleness on this point, and neither doc could have known about
+  StandingPathSOC2 since it did not exist yet.
+- Severity: minor
+
+### PR4 -- StandingPathSOC2.lean proves the SOC2 crown is partial, never claims complete,
+
+- Lens: soc2-standing-path-soundness
+- Claim: StandingPathSOC2.lean's `complete` field/theorem claims full completeness
+  (`admitted = required`) for the SOC2 crown, despite M_e/M_u/F/S rows being only
+  PARTIAL per the earlier dry-run.
+- Source: /Users/sac/mfact/procint/ProcInt/Playground/SOC2/StandingPathSOC2.lean (lines
+  32-39, 260-272, 284-296, 340-349)
+- Verdict: REFUTED
+- Evidence: the file explicitly does not claim `admitted = required`. Its header states
+  "admitted ⊂ required ... is what this file proves -- not admitted = required."
+  `theorem admitted_ssubset_required` (line 263) proves a proper subset. `theorem
+  missing_eq_exact_rows : missing = {rowMe, rowMu, rowF, rowS} := by decide` (line 270)
+  names exactly the four open rows matching the dry-run finding. The template's
+  `StandingPathReceipt` structure with its `complete : admitted = required` field is
+  reproduced (lines 292-296) but deliberately never instantiated -- the docstring at
+  lines 284-291 says explicitly that no honest value of `StandingPathReceipt` for the
+  SOC2 crown exists yet, and none is fabricated with a sorry/decide-forced `complete`
+  field. Instead a `StandingPathStatus` struct with `notComplete := admitted_ne_required`
+  is instantiated as `soc2Status` (lines 301-319), and
+  `soc2CrownAliveClaim.authorized = false` is also proved (line 349). No overclaim
+  exists; the file's claims match the true partial crown state.
+- Severity: minor
+
+### PR5 -- AxiomAuditSOC2.lean's twenty guard/print-axioms pairs still hold fresh,
+
+- Lens: soc2-standing-path-soundness
+- Claim: AxiomAuditSOC2.lean's twenty `#guard_msgs in #print axioms` pairs (Wave 3a,
+  commit e590d1b) still match on a fresh build, i.e. the axiom pins are not stale.
+- Source: `just _lake "cd procint && /Users/sac/.elan/bin/lake build
+  ProcInt.Playground.SOC2.AxiomAuditSOC2"`, freshly re-run this pass
+- Verdict: CONFIRMED
+- Evidence: the fresh `lake build` completed successfully ("Build completed
+  successfully (738 jobs)") with only two pre-existing unused-variable linter warnings
+  in an unrelated file (RuntimeReplay.lean:58,96), no errors. Per the file's own
+  docstring (lines 22-28), any mismatched axiom set or sorry-tainted theorem among the
+  twenty audited targets would fail the build rather than silently pass, so build
+  success is direct evidence all twenty pairs still hold. StandingPathSOC2 itself was
+  also independently rebuilt fresh (740 jobs, success), confirming its `#check`
+  references and decide-closed theorems still type-check.
+- Severity: minor
+
+### PR6 -- Wave 4a/4b/4c's three files are committed and clean, not still in flight,
+
+- Lens: soc2-standing-path-soundness
+- Claim: Wave 4a/4b/4c edits to GAP_LEDGER_v26.7.12.md, PRAXIS_SELF_AUDIT.md, and
+  MFACT_SELF_IMPROVEMENT_LOOP.md have landed as committed, stable content, not to be
+  treated as stable until personally confirmed.
+- Source: `git log --oneline` and `git status --short` for this repo
+- Verdict: CONFIRMED
+- Evidence: `git status --short` shows no uncommitted changes to any of the three files.
+  `git log` confirms: PRAXIS_SELF_AUDIT.md Pass 16 landed in d111cb2 ("docs(audit):
+  append Pass 16 self-audit (PP1-PP17)..."); GAP_LEDGER_v26.7.12.md G52/G53 landed in
+  bd7ea3e ("docs(ledger): add G52 ... and G53 ..."); firing-12 backfill landed in
+  a334ff5 ("chore(loop): backfill firing-12 deferred receipt (plan-mode block)"). All
+  three are safe to treat as stable.
+- Severity: minor
+
+### PR7 -- GAP_LEDGER G53 documents the soundness gap as honestly OPEN, no overclaim,
+
+- Lens: release-docs-and-drift-baseline
+- Claim: GAP_LEDGER_v26.7.12.md's highest entry (G53) documents the
+  ManufactureTenancyGap soundness gap honestly as OPEN, and G52 documents the
+  testing-atlas integration as CLOSED without overclaiming the SOC2 crown's standing
+  path as complete.
+- Source: /Users/sac/mfact/GAP_LEDGER_v26.7.12.md lines 1085-1230 (G52, G53); `git show
+  bd7ea3e`
+- Verdict: CONFIRMED
+- Evidence: G52 (line 1085) explicitly states "Honest result, stated without rounding
+  up: complete came out FALSE" with required=10, admitted=6, four rows (M_e, M_u, F, S)
+  left open, and explicitly defers closing G53 to future work. G53 (line 1170) is
+  Status: OPEN, cites concrete Lean evidence (ManufactureTenancyGap.lean, commit
+  84ab3de), scopes the gap correctly as not a ManufactureStep contract defect, and
+  offers two candidate fixes without claiming either is applied. No G-number beyond G53
+  exists in the file. Commit bd7ea3e (2026-07-13 14:45:59 -0700) was already on HEAD at
+  check time, not still pending.
+- Severity: minor
+
+### PR8 -- firing-12's deferred receipt exists with a genuinely new status value,
+
+- Lens: release-docs-and-drift-baseline
+- Claim: Firing-12's deferred receipt exists at
+  `.mfact/receipts/20260713T205640Z.json` with a status other than
+  success/failed/partial/no_op, since the firing never reached STEP 2.
+- Source: /Users/sac/mfact/.mfact/receipts/20260713T205640Z.json
+- Verdict: CONFIRMED
+- Evidence: the file exists with `status: "deferred"`, `gap_id: null`, `commit_sha:
+  null`, `collision: false`, and a note explaining STEP 0/1 ran clean but the
+  coordinating session was in plan mode so STEPS 2-7 never ran. This is a genuinely new
+  status value, distinct from the loop's other terminal statuses.
+- Severity: minor
+
+### PR9 -- both Wave 4 doc appends are committed, not working-tree drafts,
+
+- Lens: release-docs-and-drift-baseline
+- Claim: MFACT_SELF_IMPROVEMENT_LOOP.md and PRAXIS_SELF_AUDIT.md both received their
+  Wave 4 appends (firing-12 run-log bullet; Pass 16 PP1-PP17 findings) and both are
+  already committed, not still in flight.
+- Source: /Users/sac/mfact/MFACT_SELF_IMPROVEMENT_LOOP.md lines 323-343 (commit
+  a334ff5); /Users/sac/mfact/PRAXIS_SELF_AUDIT.md lines 4499-4828 (commit d111cb2)
+- Verdict: CONFIRMED
+- Evidence: `git log` shows both commits on HEAD (a334ff5 at 14:56:08, d111cb2 at
+  14:52:24, both 2026-07-13 -0700), and neither file appears in `git status
+  --porcelain` as modified/dirty, meaning these are the stable committed versions, not
+  working-tree drafts. Pass 16's PP5 finding (line 4582) accurately describes the
+  pre-G53 state as historical fact rather than being silently edited after G53 landed.
+- Severity: minor
+
+### PR10 -- ExperimentalWalkthrough.lean:56 is a negative test, not a sorry; count is 0,
+
+- Lens: release-docs-and-drift-baseline
+- Claim: One pre-existing `sorry` remains at ExperimentalWalkthrough.lean:56
+  (`rawToPlan.seq`), surfaced as unrelated pre-existing debt during a fresh full
+  testing-atlas / SOC2 Playground build (`just _lake "cd procint &&
+  /Users/sac/.elan/bin/lake build ProcInt.Playground"`), consistent with the loop's
+  tracked sorry-count baseline (22/23) cited in commit a334ff5's message.
+- Source: `just _lake "cd procint && /Users/sac/.elan/bin/lake build
+  ProcInt.Playground"` (freshly re-run this pass); ExperimentalWalkthrough.lean:56;
+  repo-wide `grep -rnw sorry procint/ProcInt` (excluding `.lake`), re-run for this
+  correction
+- Verdict: REFUTED
+- Evidence: the build itself does succeed cleanly -- "Build completed successfully
+  (8714 jobs)," exit 0 -- so that half of the original claim is not in question. But
+  ExperimentalWalkthrough.lean:56 is not a `sorry`: it is a `#guard_msgs(error) in ...`
+  negative test, i.e. deliberately-asserted expected-error test scaffolding, not an
+  unproved tactic obligation. A repo-wide `grep -rnw sorry` over `procint/ProcInt`
+  (excluding `.lake`) finds zero actual `sorry` tactic invocations. The originally
+  cited "22/23 tracked sorry baseline" figure is itself a raw-substring-grep proxy
+  dominated by doc-comment prose (see Pass 17's PQ12-PQ14, which already established
+  the true kernel-level sorry count is 0 and flat); this specific line-56 attribution
+  compounds that known proxy error with a wrong line reference, and is corrected here
+  rather than transcribed.
 - Severity: minor
