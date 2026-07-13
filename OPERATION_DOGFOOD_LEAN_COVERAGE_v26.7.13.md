@@ -184,7 +184,8 @@ makes the morphism definable, it does not constitute it.
    `compat:`/`pi:`. P-Plan, EARL, SPDX, DOAP appear nowhere in the repo.
 2. `ontology/fortune5-cloud-architecture.ttl` (16 `sh:NodeShape`, ~64 ODRL
    permission/prohibition/duty blocks, prov/skos/dcterms/qudt/sosa-rich) is unwired: not a
-   ggen pack, not ledgered in `.mfact/artifacts.toml`, uncommitted at audit time.
+   ggen pack, not ledgered in `.mfact/artifacts.toml`. It is git-tracked (commit `0956080`;
+   an earlier lens report called it uncommitted — corrected by audit Pass 19).
 3. No SHACL conformance predicate exists in Lean — `Graph/Semantic.lean` (untracked) and
    `Planning/SemanticBridge.lean` are declaration-only structs, imported nowhere.
 4. No generated namespace report (NFR-4) exists.
@@ -214,8 +215,10 @@ makes the morphism definable, it does not constitute it.
 
 1. **Wave 1 — `Playground/Dogfood/Outcome.lean`**: unified five-valued outcome algebra,
    `bounded` carrying the resumption frontier (Vision §3.3), bound-hit-never-exhausted,
-   exhausted-only-from-finite-closure, non-collapse countermodel, `PddlPlan.searchOutcome`
-   wrapper with the `validCheck` iff-lemma, PDDL8 constants, resume-composition law.
+   exhausted-only-from-finite-closure (wired to `FiniteExperiment` only — Pass 19 refuted
+   the claim that `reachable_is_one_of` belongs to that machinery), non-collapse
+   countermodel, `PddlPlan.searchOutcome` wrapper with the `validCheck` iff-lemma, PDDL8
+   constants, resume-composition law.
 2. **Wave 2 — `Playground/Dogfood/Guard.lean`**: `Approval` with decidable `covers`,
    `guardedCompleteStep` with typed refusal, `zero_unauthorized_completion` over guarded
    traces, countermodel showing the unguarded step completes an unauthorized node.

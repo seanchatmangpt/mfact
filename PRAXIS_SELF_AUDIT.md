@@ -5400,3 +5400,113 @@ workflow mid-flight before it finished committing.
   compounds that known proxy error with a wrong line reference, and is corrected here
   rather than transcribed.
 - Severity: minor
+
+## Pass 19 findings
+
+Pass 19 ran as a 7-agent read-only workflow (wf_e538e8d0-420) targeting the load-bearing
+claims of the six-lens Operation Dogfood coverage audit — the premises the newly approved
+construction plan builds on — plus the standard sweep of commits since Pass 18. Totals:
+31 findings, 20 VERIFIED, 0 REFUTED, 11 PARTIAL. Full per-claim evidence is the workflow
+journal (`~/.claude/projects/-Users-sac-mfact/.../workflows/wf_e538e8d0-420/journal.jsonl`);
+material findings are transcribed below, batch confirmations compressed into PS1.
+
+### PS1 -- Twenty coverage-audit premises confirmed against the live tree,
+
+- Lens: dogfood-coverage-premise-verify (bundles A-E + inventory)
+- Claim: batch confirmation of the plan's premises.
+- Source: Pass 19 workflow journal; each verified by adversarial re-derivation
+- Verdict: CONFIRMED
+- Evidence: verified verbatim against the tree: `validCheck` bare Bool (Pddl.lean:50); no
+  five-constructor outcome inductive anywhere in procint (zero `inconsistent` matches
+  repo-wide); two near-duplicate Standing inductives (Swarm11 + Experimental); `MayStart`
+  defined and never consumed by any theorem; `completeStep` docstring excludes
+  MayStart enforcement (RuntimeReplay.lean:33-37); `s0.authorized := fun _ => True` is the
+  sole `authorized` instantiation site in the repo; no `completed ∧ ¬authorized` theorem
+  anywhere; `zero_unreceipted_completion` is field-unpacking by construction;
+  test_expand.lean orphan (tracked, unbuilt, `expandLayer_bounds_strictly` at :38);
+  Pddl.lean exactly 1 theorem / Powl.lean exactly 4; zero import edges Termination↔
+  Planning/Powl; SemanticBridge + Graph/Semantic imported nowhere (latter untracked);
+  ggen chain zero public vocab (12 prefixes, 0 hits incl. full-IRI check); no namespace
+  report; no Lean `Injective` dressing of the blake3 fold; verifier JSON 5+24 checks 0
+  failures admitted:true; certify.log:2394 + standing.env CERTIFIED_RELEASE=PASS; all 5
+  firing receipts present with cited SHAs resolving; zero drift delta vs baseline; only
+  2 commits since Pass 18, both session-attributable, no foreign actor.
+- Severity: minor
+
+### PS2 -- fortune5-cloud-architecture.ttl is git-tracked, not uncommitted,
+
+- Lens: rdf-ontology-bundle-D
+- Claim: the RDF lens report stated the fortune5 ontology was git-untracked/uncommitted.
+- Source: `git ls-files ontology/fortune5-cloud-architecture.ttl`; `git log`
+- Verdict: REFUTED (stale claim; counts and unwired status confirmed)
+- Evidence: the file is tracked and clean, committed in 0956080 ("chore(wave0): vendor
+  Fortune-5 cloud ontology, pass-9 self-audit"). The load-bearing parts of the lens claim
+  survive exactly: 16 `sh:NodeShape`, 64 `odrl:Permission`, absent from both
+  `.mfact/artifacts.toml` and `ggen.lock` (unwired from the provable chain). Consequence
+  applied fix-forward: OPERATION_DOGFOOD_LEAN_COVERAGE_v26.7.13.md corrected in the same
+  pass window rather than left citing the stale conjunct.
+- Severity: minor
+
+### PS3 -- reachable_is_one_of is not part of the finite-exhaustion machinery,
+
+- Lens: outcome-algebra-bundle-A + completeness critic
+- Claim: `FiniteExperiment.run`, `run_ne_proven`, and `reachable_is_one_of` together
+  constitute genuine finite-model exhaustion machinery.
+- Source: Workflow/Countermodel.lean:133-191; Experimental/Experiment.lean:74-119
+- Verdict: REFUTED (composition claim; the critic's FLAG-A4 is accepted over the
+  verifier's own PARTIAL, which laundered a false conjunct)
+- Evidence: `FiniteExperiment.run` is genuinely exhaustive over its declared `worlds`
+  list with no fuel parameter, and `run_ne_proven` is real. But `reachable_is_one_of`
+  lives in `ProcInt.Workflow.Countermodel`, has no import or dependency relation to
+  FiniteExperiment, and is structural induction over an unbounded family
+  (`∃ n, M = intermediateMarking n`, n : ℕ) — neither exhaustive enumeration nor a fuel
+  bound. Consequence applied fix-forward: Wave 1's exhausted-only-from-finite-closure
+  wire targets FiniteExperiment alone; the coverage report was corrected accordingly.
+- Severity: major
+
+### PS4 -- CERTIFIED_RELEASE=PASS describes a recorded log, standing caveat kept explicit,
+
+- Lens: recent-commit-bundle-E + completeness critic (FLAG-E3)
+- Claim: certify.log's `certified: v26.7.7 (proven 203/401, objection type uninhabited)`
+  and standing.env's `CERTIFIED_RELEASE=PASS` witness a currently-reproducing green gate.
+- Source: release/certify.log:2394; release/standing.env:14; RELEASE_v26.7.13_PRD.md §1
+- Verdict: PARTIAL
+- Evidence: the literal file contents are exact matches, but both files are
+  modified-uncommitted in the working tree, standing.env's header still says v26.7.6
+  (tracked as G6), and RELEASE_v26.7.13_PRD.md §1 contains a stale statement that fresh
+  certify fails — written before the 0e99a2b/ca3cf5c manifest fixes landed. Per the
+  AGENTS.md "Failure as a Process" scoping, a PASS recorded at observation time is not a
+  reproduction claim; re-running `just certify` post-fix is the cheap discharge and is
+  left to the release loop rather than claimed here.
+- Severity: minor
+
+### PS5 -- Lens-report path and wording caveats, corrected in place,
+
+- Lens: bundles A/C/E precision sweep
+- Claim: three lens citations were imprecise.
+- Source: Playground/Experimental/Closure.lean; ManufactureTenancy.lean; GAP_LEDGER
+- Verdict: CONFIRMED (caveats real, substance intact)
+- Evidence: (a) `ClosureRefusal.fuelExhausted` exists exactly as described but at
+  `Playground/Experimental/Closure.lean`, not the lens-cited `Experimental/Closure.lean`;
+  (b) G53 ledger/commit/theorem cross-check is substantively confirmed (11b03d2, 050d067,
+  `TenantPureManufactureStep` :81, `manufactureStep_tenant_pure_of_residue` :103) with a
+  wording-level caveat only; (c) ARD bridge-file spot-checks verified "with unusual
+  precision" (line-exact theorem locations), PRD spot-checks PARTIAL on the same stale
+  certify sentence covered by PS4.
+- Severity: minor
+
+### PS6 -- Three unaudited surfaces named for the next pass,
+
+- Lens: completeness critic (CR-1..CR-3)
+- Claim: Pass 19's coverage left three risky surfaces unexamined.
+- Source: git status --porcelain, re-run at critic time
+- Verdict: CONFIRMED (queued, not discharged)
+- Evidence: (1) the uncommitted `.ggen-v2/receipt.json` + `receipt-log.jsonl` + dirty
+  `ggen.lock` chain has not been fold-replayed against artifacts.toml — a dirty receipt
+  chain is exactly where a decisive error precedes observability; (2) ~15 modified
+  `research-papers/**/*.lean` files (bio_signals, quantum_hall, random_walk, smfdcca,
+  etc.) have had no sorry/axiom/vacuous-tautology sweep since the "mechanically" applied
+  countermodel-proof fix commit; (3) the uncommitted `crates/mfact-core/src/validate.rs`
+  diff is unexamined and sits in the receipt-verification crate other findings rely on
+  transitively. All three are queued for Pass 20.
+- Severity: major
