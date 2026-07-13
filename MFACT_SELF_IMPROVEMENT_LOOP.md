@@ -319,3 +319,23 @@ diff just doesn't block starting.
   -8` showed no foreign commits. Wrote receipt
   `.mfact/receipts/20260713T212703Z.json` with `collision: true`, and
   stopped.
+
+- **2026-07-13T20:56:40Z (run `20260713T205640Z`, firing 12) -- DEFERRED, no
+  action taken; backfilled after firing 13.** STEP 0 (deadline check) passed:
+  `date` showed 2026-07-13 13:56:40 PDT, well before the 2026-07-13 16:49:04
+  PDT deadline -- not a self-terminate case. STEP 1 (delta-based collision
+  guard) also passed clean: `git status --porcelain | sed -E "s/^.{3}//" |
+  sort` piped through `comm -23` against `.mfact/known-persistent-drift.txt`
+  was empty -- firing 11's collision (task `wup6bpemk`) had committed by then
+  as `84ab3de`, and `git log -5 --oneline` showed no foreign commits. But the
+  coordinating session was in plan mode at firing time, which by design
+  cannot write receipts, commit, or append to this log -- so STEPS 2-7 (pick
+  a gap, fix, verify, commit, write receipt) never ran: no gap was picked,
+  nothing was touched, and no commit belongs to this firing itself. Not a
+  failure (nothing was attempted and botched) and not a success/no_op (no
+  check ran to report on) -- receipt uses a new `status: "deferred"` value
+  (see Receipt schema above). Written once plan mode lifted, out of run_id
+  order: this entry lands after firing 13's above rather than before it, the
+  same ordering artifact firing 13's own entry already anticipated. Receipt:
+  `.mfact/receipts/20260713T205640Z.json`. The firing that actually resumes
+  STEPS 2-7 should proceed normally from a clean STEP 0/1 baseline.
