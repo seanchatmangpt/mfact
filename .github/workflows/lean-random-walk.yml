@@ -1,0 +1,65 @@
+name: Lean CI (research-papers/random_walk)
+
+# GitHub Actions only discovers workflow files under the repo-root
+# .github/workflows/ directory, never in a subdirectory - see
+# LEAN_ECOSYSTEM_LEVEL11_SURVEY.md finding #7. This file replaces the
+# formerly-inert research-papers/random_walk/.github/workflows/lean_action_ci.yml,
+# which was git-tracked but had never actually run in CI. Path-scoped
+# triggers below mean a push/PR touching only another research-papers/<pkg>/
+# directory does not run this job, and vice versa - each of the 12 packages
+# gets its own independent build signal instead of one all-or-nothing job.
+
+on:
+  push:
+    paths:
+      - "research-papers/random_walk/**"
+      - ".github/workflows/lean-random-walk.yml"
+  pull_request:
+    paths:
+      - "research-papers/random_walk/**"
+      - ".github/workflows/lean-random-walk.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build + leanchecker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: research-papers/random_walk
+          # This package has no stray lakefile.lean today, but 6 of the other
+          # 11 research-papers packages do - Lake silently prefers an empty
+          # lakefile.lean over the real lakefile.toml when both exist, which then
+          # fails to configure at all. --file lakefile.toml is applied uniformly
+          # across all 12 research-papers jobs for defense-in-depth; it is a
+          # no-op here. Verified locally 2026-07-12.
+          build-args: "--file lakefile.toml"
+          test: false
+          lint: false
+
+      # Independent kernel replay (LEAN_ECOSYSTEM_LEVEL11_SURVEY.md finding
+      # #1): leanchecker re-checks the compiled .olean declarations against
+      # the Lean kernel, architecturally decoupled from the elaborator that
+      # produced them - it catches a compiled environment that entered via
+      # a build-path shortcut without passing back through kernel
+      # acceptance. Ships in the pinned toolchain (bundled since v4.28.0;
+      # this repo pins v4.31.0). NOT using lean-action's own
+      # `leanchecker: true` input: that input runs bare `lake env
+      # leanchecker` with no module argument, which guesses a root module
+      # name from the *package* name ("random_walk" -> "Random_walk")
+      # rather than the actual lean_lib name ("RandomWalk") and fails with
+      # "Could not find any oleans for: Random_walk" - verified
+      # locally against all 12 research-papers packages 2026-07-12.
+      # Passing the real lib module name explicitly avoids that.
+      - name: leanchecker (independent kernel replay)
+        working-directory: research-papers/random_walk
+        run: lake --file lakefile.toml env leanchecker RandomWalk
+
+      # This package (uniquely among the 12) declares a pinned Mathlib
+      # dependency in lakefile.toml, so this job downloads Mathlib's build
+      # cache on every run (same mechanism already used by the root ci.yml's
+      # build-mfact/build-procint jobs). Verified locally 2026-07-12: full
+      # build + leanchecker succeed (~30s incl. cache fetch).

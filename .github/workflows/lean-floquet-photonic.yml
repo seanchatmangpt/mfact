@@ -1,0 +1,67 @@
+name: Lean CI (research-papers/floquet_photonic)
+
+# GitHub Actions only discovers workflow files under the repo-root
+# .github/workflows/ directory, never in a subdirectory - see
+# LEAN_ECOSYSTEM_LEVEL11_SURVEY.md finding #7. This file replaces the
+# formerly-inert research-papers/floquet_photonic/.github/workflows/lean_action_ci.yml,
+# which was git-tracked but had never actually run in CI. Path-scoped
+# triggers below mean a push/PR touching only another research-papers/<pkg>/
+# directory does not run this job, and vice versa - each of the 12 packages
+# gets its own independent build signal instead of one all-or-nothing job.
+
+on:
+  push:
+    paths:
+      - "research-papers/floquet_photonic/**"
+      - ".github/workflows/lean-floquet-photonic.yml"
+  pull_request:
+    paths:
+      - "research-papers/floquet_photonic/**"
+      - ".github/workflows/lean-floquet-photonic.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build + leanchecker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: research-papers/floquet_photonic
+          # research-papers/floquet_photonic/lakefile.lean is an empty stray file that
+          # Lake prefers over lakefile.toml when both are present ("lakefile.lean
+          # and lakefile.toml are both present; using lakefile.lean"), which then
+          # fails with "configuration file is missing a `package` declaration".
+          # --file forces the real lakefile.toml. Verified locally 2026-07-12.
+          build-args: "--file lakefile.toml"
+          test: false
+          lint: false
+
+      # Independent kernel replay (LEAN_ECOSYSTEM_LEVEL11_SURVEY.md finding
+      # #1): leanchecker re-checks the compiled .olean declarations against
+      # the Lean kernel, architecturally decoupled from the elaborator that
+      # produced them - it catches a compiled environment that entered via
+      # a build-path shortcut without passing back through kernel
+      # acceptance. Ships in the pinned toolchain (bundled since v4.28.0;
+      # this repo pins v4.31.0). NOT using lean-action's own
+      # `leanchecker: true` input: that input runs bare `lake env
+      # leanchecker` with no module argument, which guesses a root module
+      # name from the *package* name ("floquet_photonic" -> "Floquet_photonic")
+      # rather than the actual lean_lib name ("FloquetPhotonic") and fails with
+      # "Could not find any oleans for: Floquet_photonic" - verified
+      # locally against all 12 research-papers packages 2026-07-12.
+      # Passing the real lib module name explicitly avoids that.
+      - name: leanchecker (independent kernel replay)
+        working-directory: research-papers/floquet_photonic
+        run: lake --file lakefile.toml env leanchecker FloquetPhotonic
+
+      # KNOWN PRE-EXISTING FAILURE (not a CI-config bug, out of scope for this
+      # workflow change): defaultTargets = ["floquetphotonic"] builds only the
+      # `floquetphotonic` executable (root Main.lean), which currently fails to
+      # link ("undefined symbol: main") because Main.lean is empty. Verified
+      # locally 2026-07-12: `lake build FloquetPhotonic` (the library target)
+      # succeeds and leanchecker passes on it; the bare default-target build
+      # (this job) does not, and is left as-is so this job honestly reports
+      # red instead of quietly narrowing the build target to dodge it.
