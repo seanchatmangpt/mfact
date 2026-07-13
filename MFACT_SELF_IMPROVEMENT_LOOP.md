@@ -227,3 +227,16 @@ diff just doesn't block starting.
   double-checked attribution precisely against `git log` rather than
   assuming). Wrote receipt `.mfact/receipts/20260713T182657Z.json` with
   `collision: true`, and stopped.
+
+- **2026-07-13T18:57:04Z (run `20260713T185704Z`, firing 8) -- COLLISION, no
+  action taken.** `wkw4npeny` finished (waves 0-7 all landed, pass 10
+  independently confirmed 9/10 CONFIRMED). New collision: `ROADMAP_SOC2_MATH.md`,
+  a fresh file from a separately-launched SOC2 Trust-Services-Criteria
+  correspondence workflow (task `w3uu76xt9`), Draft phase just completed.
+  The coordinating session owes this file a scope-correction pass (two
+  post-dispatch user clarifications: praxis owns any Rust/runtime
+  correspondence work, not mfact; the validated Lake>Lean4>TTL>ggen chain is
+  mfact's complete boundary, no FFI-closing machinery belongs here) before it
+  should be treated as settled. No foreign commits. Wrote receipt
+  `.mfact/receipts/20260713T185704Z.json` with `collision: true`, and
+  stopped.
