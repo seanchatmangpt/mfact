@@ -1174,8 +1174,8 @@ ledger text alone.
   rather than taken on that citation alone — `PP5` does not yet appear in
   `PRAXIS_SELF_AUDIT.md`, whose Pass 15 findings (`PO1`-`PO11`) are the newest entries
   committed to that file as of this ledger entry)
-- Status: OPEN
-- Evidence: `procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean` (commit
+- Status: CLOSED
+- Evidence (gap, as originally exhibited): `procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean` (commit
   84ab3de, hand-authored, Playground-exempt per its own header). `ManufactureStep`'s
   definition (`ManufactureDecrease.lean:68-70`, `∀ c ∈ children, c < a`) is a pure
   order-descent condition with no tenancy awareness — `ObligationRank.lean`'s own
@@ -1198,15 +1198,91 @@ ledger text alone.
   for its own counterexample. Not a defect in `ManufactureStep`'s own contract (it was
   never specified to enforce tenancy); the gap is for any caller who assumes Crown
   II's termination guarantee also implies tenant isolation — it does not.
-- Fix: either (a) strengthen `ManufactureStep`'s hypothesis to require `∀ c ∈ children,
-  tag c = tag a` (or an explicit `Separated`-preservation side condition) and
-  re-verify every existing `ManufactureStep` call site still typechecks under the
-  stronger contract, or (b) leave `ManufactureStep` as pure order-descent and add an
-  explicit, separately-checked tenancy-purity obligation at every call site that
-  currently relies on it implicitly (audit `ManufactureDecrease.lean`'s callers
-  first). Either path needs its own theorem card per AGENTS.md section 4 before
-  landing — out of scope for this entry, which documents the gap and does not close
-  it.
+- Closure evidence (2026-07-13, commits `11b03d21d8ff3604647fcafadf6ce9572eb28140` (construct
+  phase) and the verifier-wiring commit immediately following it on the same branch,
+  independently re-derived here rather than taken on either session's own report):
+  - **Repair theorem** (`procint/ProcInt/MFW/Termination/ManufactureTenancy.lean`, new
+    file, hand-authored/Playground-and-MFW-exempt per its own header): implements Fix
+    option (a) from this entry's original text in generalized form —
+    `TenantPureManufactureStep` (`ManufactureStep`'s existential shape plus a tenancy
+    conjunct `∀ c ∈ children, tag c = tag a`) and the general repair theorem
+    `manufactureStep_tenant_pure_of_residue`, which shows a `ManufactureStep` is
+    automatically tenant-pure once its children are literally a `residue` witness
+    (`hS`) for the goal, under `Separated` (`sep`) and a tenant-pure context (`hG`).
+    Composes the pre-existing `minimalSupport_tenant_pure` (Crown I/CM2 tenancy half)
+    with `ManufactureStep`'s own witness shape (Crown II descent half) — no new
+    machinery, per `AGENTS.md` §3. `TenantPureManufactureStep.toManufactureStep`
+    confirms it genuinely strengthens (not merely resembles) `ManufactureStep`.
+  - **Positive specialization + hypothesis-removal link**
+    (`procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean`, extended in place):
+    `positiveRepair_manufactureStep : TenantPureManufactureStep AuditFlow.tag2
+    repairSource repairTarget` instantiates the general theorem on the *same*
+    `AuditFlow.Obl2`/`tag2`/`C2` carrier the original gap witness uses, with
+    `goal := AuditFlow.g1` (tenant A's own goal) in place of the mismatched
+    `AuditFlow.g2` — the minimal edit turning the broken case into the repaired case.
+    `hS1_not_sufficient_for_g2` / `hS1_notMem_residue_g2` prove the mismatched
+    instantiation's `hS` hypothesis is genuinely unsatisfiable (not merely unproved):
+    `C2 (G2 ∪ S1) = C2 {0} = {0,1}` (confirmed directly from `AuditFlow.C2_zero`/
+    `stepA`/`f2`'s live definitions, not asserted) and `g2 = 3 ∉ {0,1}`.
+    `hypothesisRemoval_is_gap_witness` conjoins that with
+    `manufactureStep_not_tenant_pure` to connect the repair's missing-hypothesis case
+    directly to the pre-existing gap witness, closing the loop rather than leaving two
+    unconnected facts.
+  - **Independent re-verification performed by this closure pass, not assumed from the
+    construct phase's report:**
+    1. Fresh build from clean state: `just _lake "cd procint && lake build
+       ProcInt.MFW.Termination.ManufactureTenancy
+       ProcInt.Playground.SOC2.ManufactureTenancyGap"` — exit 0, "Build completed
+       successfully (727 jobs)", only pre-existing unrelated linter warnings
+       (`RuntimeReplay.lean`).
+    2. `grep -n "sorry\|admit\|native_decide"` on both files: the only hits are prose —
+       `ManufactureTenancy.lean:56` states in its own docstring that it contains none;
+       `ManufactureTenancyGap.lean:8,31,63` use "admit"/"admits" as an ordinary English
+       verb ("`ManufactureStep` admits tenancy-crossing children", "a carrier can admit
+       more than one such order"), never the `admit` tactic. No `sorry` or
+       `native_decide` tactic call in either file.
+    3. Axiom-cleanliness check via a temporary scratch file
+       (`procint/ProcInt/Playground/SOC2/_AxiomCheckScratch.lean`, written, built, then
+       deleted — never committed) issuing `#print axioms` on all five
+       theorems (`manufactureStep_tenant_pure_of_residue`,
+       `TenantPureManufactureStep.toManufactureStep`, `positiveRepair_manufactureStep`,
+       `hypothesisRemoval_is_gap_witness`, `manufactureStep_not_tenant_pure`): all five
+       depend only on subsets of `[propext, Classical.choice, Quot.sound]` — no
+       `sorryAx`, no custom axioms.
+    4. `procint/ProcInt/Playground/Swarm11Verifier.lean` (the file Wave 3b's
+       `AuditFlow.checks ++ AuditFlowViolation.checks` fold lives in, at
+       `soc2Checks`/`printSoc2Checks`) extended this closure pass to additionally fold
+       `ManufactureTenancyGap.checks` — which the construct phase itself had extended
+       with three new entries (`repair-positive-descent-legal`,
+       `repair-positive-same-tenant`, `repair-mismatched-hS-fails`) — into the same
+       `soc2Checks`/`soc2FailureCount` aggregate, reversing this file's prior
+       deliberate-exclusion note (G52's closure text above, "`ManufactureTenancyGap.checks`
+       deliberately excluded, out of scope per the task") now that the repair makes it
+       genuinely load-bearing rather than a standalone refutation. Fresh `just
+       swarm11-verify` run: exit 0, `crown checks` 5/5 PASS (unchanged), `soc2 checks`
+       now **24/24 PASS** (was 17/17 before this wiring — the 7 new: the pre-existing
+       4 `gap-*` rows plus the 3 new `repair-*` rows, all previously unexercised by the
+       verifier), `artifacts/swarm11-verifier.json` reports `"soc2Checks": 24,
+       "soc2CheckFailures": 0, "admitted": true`, `STANDING: ALIVE`.
+  - Fix-option accounting against this entry's original text: option (a) (strengthen
+    with an explicit tenancy conjunct) is the path taken, but as an additive
+    `TenantPureManufactureStep` predicate proved *sufficient* under extra hypotheses
+    (`sep`/`hG`/`hS`) rather than a breaking change to `ManufactureStep`'s own
+    signature — so "re-verify every existing call site still typechecks" was moot:
+    no existing call site's type changed. This is a narrower, non-breaking discharge
+    of the same fix intent, not the literal breaking-change path originally sketched;
+    recorded here so a future reader does not assume `ManufactureStep`'s definition
+    itself was altered (it was not — `ManufactureDecrease.lean` is untouched by this
+    closure).
+  - What remains open, stated without rounding up: `manufactureStep_tenant_pure_of_residue`
+    is a SUFFICIENT condition, proved once, on one obligation/tenant carrier
+    (`AuditFlow.Obl2`/`tag2`). It does not retroactively certify that every other
+    `ManufactureStep` call site in the tree already satisfies `sep`/`hG`/`hS` — an
+    audit of other call sites against this new sufficient condition is future work,
+    not claimed here. G53 itself — "does a legal `ManufactureStep` exist with no
+    accompanying repair theorem" — is closed: the repair theorem, its positive
+    witness, and its connection to the original gap witness are now all `PROVEN` and
+    load-bearing in `just swarm11-verify`'s exit code.
 
 ## Refuted during verification
 

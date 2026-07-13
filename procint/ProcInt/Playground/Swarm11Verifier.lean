@@ -6,6 +6,7 @@ import ProcInt.Playground.Swarm11
 import ProcInt.Playground.Swarm11Tests
 import ProcInt.Playground.SOC2.AuditFlow
 import ProcInt.Playground.SOC2.AuditFlowViolation
+import ProcInt.Playground.SOC2.ManufactureTenancyGap
 
 open Lean
 open ProcInt.Playground.Swarm11
@@ -43,10 +44,18 @@ dropped.
 `ProcInt.Playground.SOC2.AuditFlow.checks` and `ProcInt.Playground.SOC2.AuditFlowViolation.checks`
 the identical `List (String × Bool)`-fold way `crownFailureCount` already folds
 `Swarm11.Crown.checks` — a small, additive change, not a rewrite of the existing Swarm11
-behavior. `ManufactureTenancyGap.checks` is deliberately left out of this fold: the task that
-added this extension named only `AuditFlow.checks`/`AuditFlowViolation.checks` explicitly, and
-`ManufactureTenancyGap` is a standalone soundness-gap refutation, not part of the two-tenant
-audit-flow crown proper — folding it in silently would be scope creep beyond what was asked.
+behavior.
+
+**G53 closure wiring (this wave).** `ProcInt.Playground.SOC2.ManufactureTenancyGap.checks` is now
+also folded into `soc2Checks` below, superseding the earlier note in this docstring that excluded
+it as out-of-scope. `ManufactureTenancyGap.checks` was itself extended (same wave) with three
+`repair-*` entries (`repair-positive-descent-legal`, `repair-positive-same-tenant`,
+`repair-mismatched-hS-fails`) exercising `manufactureStep_tenant_pure_of_residue`'s positive
+specialization (`positiveRepair_manufactureStep`) and the hypothesis-removal corollary
+(`hypothesisRemoval_is_gap_witness`) — G53's repair theorems are now genuinely load-bearing in
+`just swarm11-verify`'s exit code, not sitting in an unreferenced list. The pre-existing
+`gap-*` entries (the soundness-gap counterexample itself) are folded in alongside them; both were
+already `PROVEN`, so this is purely an aggregation change, no new proof content here.
 This verifier remains hand-authored/Playground-exempt, not ggen-rendered, and is still never
 consumed by standing, gates, or the manifest (see `justfile`'s `swarm11-verify`/`soc2-verify`
 comments).
@@ -106,11 +115,12 @@ private def isCompilerSynthesizedRec (name : Name) : Bool :=
 private def crownFailureCount : Nat :=
   countWhere Crown.checks (fun check => !check.2)
 
-/-- SOC2 extension: `AuditFlow.checks` and `AuditFlowViolation.checks` combined, folded the
-identical `crownFailureCount` way. See the `AuditReceipt` docstring's "SOC2 extension" note for
-why `ManufactureTenancyGap.checks` is deliberately excluded. -/
+/-- SOC2 extension: `AuditFlow.checks`, `AuditFlowViolation.checks`, and (G53 closure, this wave)
+`ManufactureTenancyGap.checks` combined, folded the identical `crownFailureCount` way. See the
+`AuditReceipt` docstring's "G53 closure wiring" note. -/
 private def soc2Checks : List (String × Bool) :=
-  ProcInt.Playground.SOC2.AuditFlow.checks ++ ProcInt.Playground.SOC2.AuditFlowViolation.checks
+  ProcInt.Playground.SOC2.AuditFlow.checks ++ ProcInt.Playground.SOC2.AuditFlowViolation.checks ++
+    ProcInt.Playground.SOC2.ManufactureTenancyGap.checks
 
 private def soc2FailureCount : Nat :=
   countWhere soc2Checks (fun check => !check.2)
@@ -195,8 +205,9 @@ private def printCrownChecks : IO Unit := do
   for check in Crown.checks do
     IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
 
-/-- SOC2 extension: prints `AuditFlow.checks ++ AuditFlowViolation.checks`, `printCrownChecks`
-style. -/
+/-- SOC2 extension: prints
+`AuditFlow.checks ++ AuditFlowViolation.checks ++ ManufactureTenancyGap.checks`,
+`printCrownChecks` style. -/
 private def printSoc2Checks : IO Unit := do
   for check in soc2Checks do
     IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
@@ -219,7 +230,7 @@ unsafe def main : IO UInt32 := do
   IO.println s!"sorry-bearing decls   : {receipt.sorryDeclarationCount}"
   IO.println "crown checks:"
   printCrownChecks
-  IO.println "soc2 checks (AuditFlow ++ AuditFlowViolation):"
+  IO.println "soc2 checks (AuditFlow ++ AuditFlowViolation ++ ManufactureTenancyGap):"
   printSoc2Checks
   IO.println s!"receipt: artifacts/swarm11-verifier.json"
 
