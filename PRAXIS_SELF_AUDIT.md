@@ -120,6 +120,33 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   collide on this file precisely because this recurring audit keeps appending
   to it -- unconfirmed since no firing occurred this pass, but mechanically
   implied by the guard's own documented logic (PF1).
+- **2026-07-13 (pass 7):** 18 findings across 3 lenses (g49-closure-reverify,
+  axiom-count-gap-investigation, general-status-and-next-firing-catch),
+  re-verifying fix loop `f6a6cd52`'s first real (non-collision) firing --
+  commit `eabe589` claims to restore `simulate_workload` in
+  `crates/mfact-core/src/bin/turbulence.rs` and close ledger item G49. HEAD
+  stayed at `6329c9d` throughout (09:39-09:46 PDT), porcelain count held at
+  76, matching the pass-6 baseline exactly. 15 CONFIRMED, 2 DRIFTED, 1
+  UNVERIFIABLE, 0 REFUTED, 0 FIXED-since-last-pass. Headline: the G49
+  closure genuinely holds under live re-verification -- `simulate_workload`
+  is a real scalar loop with a `black_box` guard, `cargo check --bin
+  turbulence` and `cargo run --bin turbulence` both succeed from
+  `crates/mfact-core`, the pre-fix blob really did reference an undefined
+  function, and the ledger/metrics-history bookkeeping is internally
+  consistent (PG14-PG16). A separate, higher-severity finding surfaced while
+  chasing a reported "AxiomAudit binary missing" gap: `AxiomAudit.lean` in
+  both `mfact/` and `procint/` has no `main` and is correctly declared
+  `[[lean_lib]]`, not `[[lean_exe]]`, in both lakefiles -- there was never a
+  binary to find, so a fix framed as a lakefile change would target the
+  wrong file; the real fix belongs in whatever script computes
+  `axiom_count`, which does not exist yet (PG1-PG2). Two DRIFTED findings:
+  the ledger's own documented `grep` command for confirming no
+  empirical-ingestion replacement exists is not reproducible as literally
+  written (missing `-E`, so `|` is treated literally, not as alternation),
+  though the underlying conclusion holds under a corrected re-run (PG11);
+  and `sse_transport_test.rs`'s pre-existing break is broader than "missing
+  tokio/reqwest_eventsource deps" -- `transport.rs` also exists unwired,
+  never declared via `mod transport;` in `lib.rs` (PG12).
 
 ## Quick reference
 
@@ -173,6 +200,14 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
 | Major | 1 | 1 UNVERIFIABLE |
 | Minor | 6 | 6 CONFIRMED |
 | **Total** | **7** | **6 CONFIRMED, 1 UNVERIFIABLE** |
+
+**Pass 7 (2026-07-13) totals -- alongside, not replacing, the pass-1/2/3/4/5/6 totals above:**
+
+| Severity | Count (pass 7) | Verdicts (pass 7) |
+|---|---|---|
+| Major | 2 | 2 CONFIRMED |
+| Minor | 16 | 13 CONFIRMED, 2 DRIFTED, 1 UNVERIFIABLE |
+| **Total** | **18** | **15 CONFIRMED, 2 DRIFTED, 1 UNVERIFIABLE** |
 
 ## Critical
 
@@ -2212,6 +2247,298 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   produced any specific historical PID. The earlier-logged PIDs
   (71338/71341) were not independently re-observed this pass and remain
   formally unattributed.
+- Severity: minor
+
+## Pass 7 findings
+
+### PG1 -- AxiomAudit.lean has no main/entry point, not meant to be an executable,
+
+- Lens: axiom-count-gap-investigation
+- Claim: `AxiomAudit.lean` is not meant to be a standalone executable -- it has no
+  `main`/entry point and consists solely of `#guard_msgs in #print axioms ...`
+  compile-time diagnostic directives.
+- Source: read `mfact/AxiomAudit.lean` and `procint/AxiomAudit.lean` (both
+  identical in structure) in full
+- Verdict: CONFIRMED
+- Evidence: `mfact/AxiomAudit.lean` is `import Mfact` followed by four `/-- info:
+  ... -/ #guard_msgs in #print axioms Mfact.xxx` blocks, no `def main`.
+  `procint/AxiomAudit.lean` is the ggen-rendered analog for `ProcInt.*`, same
+  pattern (header states "ggen renders; Lean admits."). The axiom-set
+  assertions are checked by the Lean elaborator at build time via
+  `#guard_msgs`; the build fails if the printed axiom list drifts from the
+  expected `info` comment. There is nothing to run afterward.
+- Severity: major
+
+### PG2 -- Both lakefiles correctly declare AxiomAudit as lean_lib, not lean_exe,
+
+- Lens: axiom-count-gap-investigation
+- Claim: Both `lakefile.toml` files declare `AxiomAudit` as a `[[lean_lib]]`, not
+  a `[[lean_exe]]`, so Lake correctly never produces a binary for it -- this is
+  the root cause of "no binary at the expected path", and it is by design, not
+  a bug in the lakefile.
+- Source: read `mfact/lakefile.toml` and `procint/lakefile.toml`
+- Verdict: CONFIRMED
+- Evidence: `mfact/lakefile.toml` has `[[lean_lib]] name = "AxiomAudit"`
+  alongside `[[lean_lib]] name = "Mfact"`; its only `[[lean_exe]]` is `name =
+  "mfact", root = "Mfact.Cli"`. `procint/lakefile.toml` matches --
+  `[[lean_lib]] name = "AxiomAudit"`, with the only `[[lean_exe]]` being
+  `swarm11Verifier` (explicitly commented "Hand-authored demo executable ...
+  Not a default target"). Since AxiomAudit has no `main`, declaring it
+  `lean_exe` would not even compile -- `lean_lib` is the structurally correct
+  declaration.
+- Severity: major
+
+### PG3 -- .lake/build/bin/ never contained an AxiomAudit binary in either package,
+
+- Lens: axiom-count-gap-investigation
+- Claim: The actual `.lake/build/bin/` directories in both packages contain no
+  AxiomAudit binary at all -- only the real `lean_exe` targets -- confirming
+  the "missing binary" isn't a stale/broken build artifact but reflects that
+  no such target has ever existed.
+- Source: `ls mfact/.lake/build/bin/` and `ls procint/.lake/build/bin/`
+- Verdict: CONFIRMED
+- Evidence: `mfact/.lake/build/bin/` contains only `mfact` (98MB executable +
+  hash/rsp/trace). `procint/.lake/build/bin/` contains only `swarm11Verifier`
+  (137MB executable + hash/rsp/trace). Neither directory has ever contained an
+  AxiomAudit entry.
+- Severity: minor
+
+### PG4 -- AxiomAudit does build successfully as a library in both packages,
+
+- Lens: axiom-count-gap-investigation
+- Claim: AxiomAudit *does* build successfully as a library -- `.olean`/`.ilean`
+  artifacts exist for it in both packages -- consistent with the firing-3
+  log's own claim that the build "succeeded per its own log".
+- Source: `ls -la` on `.lake/build/lib/lean/AxiomAudit.*` in both `mfact/` and
+  `procint/`
+- Verdict: CONFIRMED
+- Evidence: mfact: `AxiomAudit.olean` (2664 bytes), `.ilean`, `.trace` all
+  present, mtime Jul 7 20:11. procint: same set present, mtime Jul 12 01:52.
+  Both predate the firing-3 timestamp (Jul 13 16:31:30Z), meaning lake did not
+  need to recompile them this firing (hashes already up to date) -- plausible
+  as a true incremental no-op "success" rather than evidence the build was
+  actually re-run and re-verified this firing.
+- Severity: minor
+
+### PG5 -- No checked-in script computes axiom_count; JSONL field is illustrative,
+
+- Lens: axiom-count-gap-investigation
+- Claim: No checked-in script in the repo computes/writes an `axiom_count` field
+  into `metrics-history.jsonl`; the JSONL format is only illustrated as a
+  documentation example, so the "expected path" the firing-3 process looked
+  for a binary at was presumably an ad hoc assumption made in-session, not a
+  bug in a fixed tool.
+- Source: `grep -rn axiom_count` and `grep -rln gaps_closed_this_firing` across
+  the repo (excluding `.lake` and worktrees)
+- Verdict: CONFIRMED
+- Evidence: Only hits for `axiom_count` are the
+  `MFACT_SELF_IMPROVEMENT_LOOP.md` documentation example line (`{"timestamp":
+  "...", ... "axiom_count": 3}`) and its own prose about the firing-3 null.
+  `scripts/build_quadrature.py` and `scripts/independent_replay.sh` reference
+  `AxiomAudit.lean`/`lake build AxiomAudit` but never a binary path, and no
+  script writes `metrics-history.jsonl` at all -- that file is hand/agent-
+  maintained per firing, not tool-generated.
+- Severity: minor
+
+### PG6 -- Candidate future fix: derive axiom_count from build stdout, not a binary,
+
+- Lens: axiom-count-gap-investigation
+- Claim: Candidate fix for a future firing: the axiom-count collection logic
+  (not the lakefile) is what's broken. AxiomAudit is correctly a `lean_lib`
+  and should stay one; the fix is to derive `axiom_count` by parsing `lake
+  build AxiomAudit`'s stdout for the `#print axioms` info messages (or by
+  scanning `AxiomAudit.lean` for `depends on axioms:` vs total `#print axioms`
+  directive count) rather than expecting a compiled binary to execute.
+- Source: synthesis of PG1-PG5 (`mfact/AxiomAudit.lean`, `mfact/lakefile.toml`,
+  `procint/lakefile.toml`, bin/ directory listings)
+- Verdict: UNVERIFIABLE
+- Evidence: This is a recommendation, not a re-run verification -- `lake` is
+  not installed/on PATH in this sandbox (`lake: command not found`), so the
+  actual stdout format of `lake build AxiomAudit` could not be captured live
+  this pass. Framing it as a "one-line lakefile change" would be wrong: the
+  lakefile is already correct as-is; the real fix belongs in whatever
+  script/prompt computes `axiom_count`, not in either `lakefile.toml`.
+- Severity: minor
+
+### PG7 -- simulate_workload is a real scalar-loop implementation, not a stub,
+
+- Lens: g49-closure-reverify
+- Claim: `simulate_workload` in `crates/mfact-core/src/bin/turbulence.rs` is a
+  real implementation (scalar loop + `black_box`), not a stub.
+- Source: `crates/mfact-core/src/bin/turbulence.rs` lines 16-22 (read in full)
+- Verdict: CONFIRMED
+- Evidence: `fn simulate_workload(iterations: usize)` loops `0..iterations`
+  doing `wrapping_add`/`wrapping_mul` on an accumulator and calls
+  `std::hint::black_box(acc)` at the end -- genuine CPU work with a dead-code-
+  elimination guard, matching its doc comment's stated purpose.
+- Severity: minor
+
+### PG8 -- cargo check --bin turbulence exits 0 from the crate directory,
+
+- Lens: g49-closure-reverify
+- Claim: `cargo check --bin turbulence` exits 0.
+- Source: live re-run of `cargo check --bin turbulence`
+- Verdict: CONFIRMED
+- Evidence: From `/Users/sac/mfact` (repo root) the command fails with "no bin
+  target named turbulence in default-run packages" because the root
+  `Cargo.toml` (package `mfact`) is not a workspace -- `crates/mfact-core` is
+  a standalone crate. From `crates/mfact-core` the command genuinely finishes
+  with "Finished dev profile ... in 0.02s", exit 0.
+- Severity: minor
+
+### PG9 -- cargo run --bin turbulence executes and prints real benchmark output,
+
+- Lens: g49-closure-reverify
+- Claim: `cargo run --bin turbulence` actually executes and prints real
+  benchmark output rather than panicking.
+- Source: live re-run of `timeout 60 cargo run --bin turbulence` from
+  `crates/mfact-core`
+- Verdict: CONFIRMED
+- Evidence: Produced a full benchmark table across 11 work/task scales with
+  genuinely varying density values (19,067 to 154,507,779 tasks/s) and
+  correctly triggered the phase-transition detection branch at
+  Work/Task=50000, alpha=-0.3508 -- dynamic data-dependent output, not a
+  stub/panic.
+- Severity: minor
+
+### PG10 -- sse_transport_test.rs's separate pre-existing break is untouched,
+
+- Lens: g49-closure-reverify
+- Claim: `tests/sse_transport_test.rs`'s separate pre-existing break is
+  untouched, out of scope for the G49 fix.
+- Source: `git diff --stat eabe589^ 6329c9d -- crates/mfact-core/tests/
+  sse_transport_test.rs`; `git status`; file mtime
+- Verdict: CONFIRMED
+- Evidence: Diff across the fix commits is empty. File is untracked (`git
+  status` shows `??`) with mtime Jul 12 05:46:45 2026, predating the Jul 13
+  09:31 fix commit. `mfact-core/Cargo.toml` still has no tokio/
+  futures_util/reqwest_eventsource deps, so the break persists unchanged.
+- Severity: minor
+
+### PG11 -- G49 ledger's own documented grep command is not reproducible as written,
+
+- Lens: g49-closure-reverify
+- Claim: G49 ledger entry: `grep -rn "empirical.ingestion|empirical_data"`
+  across the crate found no empirical-ingestion replacement code.
+- Source: `GAP_LEDGER_v26.7.12.md` lines 984-987; re-ran the exact documented
+  command
+- Verdict: DRIFTED
+- Evidence: The documented command omits `-E`, so grep's basic-regex mode
+  treats `|` as a literal character, not alternation -- the command as
+  written cannot match either search term and trivially returns nothing
+  regardless of whether replacement code exists. Re-running with `-E` against
+  the pre-fix tree (`eabe589^`) across every file in the crate independently
+  confirms the underlying conclusion is true (only match is the doc comment
+  itself), but the literal command quoted in the ledger is not reproducible
+  as claimed.
+- Severity: minor
+
+### PG12 -- sse_transport_test.rs break is broader than "missing deps" alone,
+
+- Lens: g49-closure-reverify
+- Claim: `sse_transport_test.rs`'s pre-existing break is due to "missing
+  tokio/reqwest_eventsource deps".
+- Source: commit `eabe589` message and `GAP_LEDGER_v26.7.12.md` G49 entry; live
+  `cargo check --test sse_transport_test`
+- Verdict: DRIFTED
+- Evidence: Live compile also fails with `error[E0432]: unresolved import
+  mfact_core::transport` -- `crates/mfact-core/src/transport.rs` exists on
+  disk but is never declared via `mod transport;`/`pub mod transport;` in
+  `src/lib.rs` (`lib.rs` only declares `pub mod receipt;` and `pub mod
+  validate;`). The break is broader than "missing deps" -- there's also an
+  unwired module -- though this doesn't affect G49's own validity since the
+  file remains correctly untouched and out of scope.
+- Severity: minor
+
+### PG13 -- No drift this pass: HEAD unchanged, porcelain count matches baseline,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: Working tree porcelain count matches the pass-6 baseline (76) with
+  zero new drift, and HEAD stayed at `6329c9d` through the pass window with no
+  firing-4 landing.
+- Source: `git status --porcelain | wc -l`; `.mfact/known-persistent-drift.txt`;
+  `git log --oneline -5` sampled at 09:39 and 09:42:54 PDT, and again live at
+  09:46:27 PDT during this write-up
+- Verdict: CONFIRMED
+- Evidence: Count was 76 at all three samples (09:39, 09:42:54, 09:46:27
+  PDT). `comm -23` between sorted live `git status` paths and
+  `known-persistent-drift.txt` was empty in both directions (exact 76=76
+  1:1 match) at every sample. HEAD stayed at `6329c9d` "chore(loop): record
+  firing-3 success receipt (G49 closure)" atop `eabe589` throughout; no new
+  commit appeared during this pass.
+- Severity: minor
+
+### PG14 -- Pre-fix build was genuinely broken exactly as G49/the receipt describe,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: Pre-fix build was genuinely broken exactly as described, and the
+  "empirical ingestion" doc-comment claim was stale/unsupported.
+- Source: `git show 02e7a5e:crates/mfact-core/src/bin/turbulence.rs`; live grep
+  for `empirical.ingestion|empirical_data`
+- Verdict: CONFIRMED
+- Evidence: The parent commit's blob calls `simulate_workload(work_per_task)`
+  at line 16 with no definition anywhere in the file -- matches the receipt's
+  claimed `E0425` at `turbulence.rs:16:13` exactly. Live grep finds zero real
+  "empirical ingestion" implementation anywhere in the crate, only the fix's
+  own comment referencing the search.
+- Severity: minor
+
+### PG15 -- GAP_LEDGER's G49=CLOSED entry lands in the fix commit, totals check out,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `GAP_LEDGER_v26.7.12.md` was updated with G49=CLOSED in the same
+  commit as the fix, and totals are internally consistent.
+- Source: `GAP_LEDGER_v26.7.12.md` (commit `eabe589` diff and live file)
+- Verdict: CONFIRMED
+- Evidence: G49 was added with `Status: CLOSED` in the identical commit as the
+  code fix (`eabe589`, not a follow-up). Live `grep -c '^### G'` = 49; totals
+  row math 3+30+16=49 checks out; Minor row correctly bumped 15->16, range
+  34-48->34-49.
+- Severity: minor
+
+### PG16 -- metrics-history's gaps_open:23 matches an independent live count,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `metrics-history.jsonl`'s `gaps_open:23` matches an independent live
+  count of ledger OPEN items.
+- Source: `.mfact/metrics-history.jsonl`; live grep of `Status: [A-Z]+` in
+  `GAP_LEDGER_v26.7.12.md`
+- Verdict: CONFIRMED
+- Evidence: Live count: 23 OPEN / 14 BLOCKED / 11 CLOSED / 1 PARTIAL = 49
+  total, matching `metrics-history.jsonl`'s `gaps_open:23` and the ledger's
+  own G1-G49 total.
+- Severity: minor
+
+### PG17 -- cargo check --all-targets still fails, but for a separate reason,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `cargo check --all-targets` still fails for mfact-core, but for a
+  separate pre-existing reason unrelated to G49, and the receipt never
+  overclaims all-targets now passes.
+- Source: live `cargo check --all-targets` in `crates/mfact-core/`; `git
+  ls-files` on `src/main.rs` and `src/transport.rs`
+- Verdict: CONFIRMED
+- Evidence: Live `--all-targets` fails with E0432 (missing transport module
+  wiring), E0433 (tokio), E0752 (async main) in `src/main.rs`, a different bin
+  target untouched by `eabe589`. Both `main.rs` and `transport.rs` are
+  untracked (`git ls-files` returns empty for both), part of the pre-existing
+  untracked pile already in `known-persistent-drift.txt`. Receipt/ledger only
+  ever claim `--bin turbulence` passes, never `--all-targets`, so scoping is
+  honest -- flagged for future-pass awareness only.
+- Severity: minor
+
+### PG18 -- sorry_count:16 only reproduces via a loose, prose-matching grep,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `sorry_count:16` is reproducible only via a loose, non-word-bounded
+  grep that also matches prose, making it a weak proxy despite the honest
+  "not a kernel-level check" caveat.
+- Source: `GAP_LEDGER_v26.7.12.md` G49 note; live grep over `procint/ProcInt/`
+- Verdict: CONFIRMED
+- Evidence: `grep -rn 'sorry' procint/ProcInt/` (substring) = 16, matching the
+  claim exactly, but includes prose hits like "sorry-free", "sorry-backed",
+  "sorry-bearing". Word-boundary grep (`\bsorry\b`) over the same scope
+  yields 11, not 16.
 - Severity: minor
 
 ## References
