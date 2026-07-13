@@ -1,8 +1,25 @@
 use rayon::prelude::*;
+use std::hint::black_box;
 use std::time::Instant;
 
-/// Synthetic workload simulation removed in favor of empirical ingestion.
-/// Real throughput execution metric calculation will now be derived from empirical data traces.
+// SELF-IMPROVEMENT-LOOP FIX: mfact-core-turbulence-build-break -- restored a real
+// `simulate_workload` after the function was called (below) but never defined,
+// breaking `cargo check --all-targets`. The removed doc comment claimed the
+// synthetic simulation was "removed in favor of empirical ingestion", but no such
+// empirical-ingestion code exists anywhere in this crate (grep confirmed) -- that
+// was a stale, unfalsifiable claim, not a real migration, so it is corrected here
+// rather than preserved.
+
+/// Performs `iterations` units of real scalar CPU work, used as the per-task cost
+/// in `measure_regime`'s synthetic workflow-topology benchmark. `black_box` keeps
+/// the accumulator live so the loop cannot be optimized away.
+fn simulate_workload(iterations: usize) {
+    let mut acc: u64 = 0;
+    for i in 0..iterations {
+        acc = acc.wrapping_add((i as u64).wrapping_mul(2654435761));
+    }
+    black_box(acc);
+}
 
 /// Measures the execution density and throughput of a simulated workflow topology.
 /// Topologies are defined by `depth` (sequential stages) and `width` (parallel tasks per stage).

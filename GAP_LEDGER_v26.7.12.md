@@ -72,7 +72,7 @@ ledger text alone.
 |------------------|-------|----------|
 | Release-blocking | 3     | G1-G3    |
 | Major            | 30    | G4-G33   |
-| Minor            | 15    | G34-G48  |
+| Minor            | 16    | G34-G49  |
 | Refuted          | 3     | appendix |
 
 ## Release-blocking
@@ -972,6 +972,27 @@ ledger text alone.
   workflow_state.
 - Fix: note the 011 gap as intentional (or fill it) and list the ticket_012 companion
   files in index.md.
+
+### G49 — mfact-core `turbulence` binary fails to build: undefined `simulate_workload`
+
+- Lens: self-improvement-loop (fix loop, first successful firing under the v3
+  delta-based collision guard)
+- Status: CLOSED
+- Closure evidence (2026-07-13, cron job f6a6cd52): `crates/mfact-core/src/bin/
+  turbulence.rs:16` called `simulate_workload`, a function that was never defined —
+  `cargo check --all-targets` failed with `error[E0425]: cannot find function
+  'simulate_workload' in this scope`. The removed doc comment claimed the synthetic
+  simulation was "removed in favor of empirical ingestion", but `grep -rn
+  "empirical.ingestion|empirical_data"` across the crate found no such replacement
+  anywhere — a stale, unfalsifiable claim, not a real migration. Implemented a real
+  `simulate_workload` (a genuine scalar CPU loop using `std::hint::black_box` so the
+  compiler cannot optimize it away, matching the function's stated purpose of
+  measuring per-task cost in the density/throughput benchmark) rather than a stub.
+  Re-verified: `cargo check --bin turbulence` → exit 0, and `cargo run --bin
+  turbulence` (10s timeout) actually executes and prints real benchmark output rather
+  than panicking immediately. `tests/sse_transport_test.rs`'s separate, pre-existing
+  break (missing `tokio`/`reqwest_eventsource` deps) is untouched — out of scope for
+  this item.
 
 ## Refuted during verification
 
