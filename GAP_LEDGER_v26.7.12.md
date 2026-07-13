@@ -287,7 +287,35 @@ ledger text alone.
 ### G11 — mfact-core SSE/thermo/broker subsystem is dead: orphan modules, missing deps
 
 - Lenses: rust-build, reachability (merged: 6 findings)
-- Status: OPEN
+- Status: CLOSED (Rust side); one residual item noted below, not addressed this firing
+- Closure evidence (2026-07-13, cron job f6a6cd52, self-improvement-loop firing 10):
+  applied this entry's own "Fix (b), Abandon it" path. Deleted `broker.rs`, `thermo.rs`
+  (the PA23 fake FFI stub — `thermo_helmholtz`/`thermo_f`/`evaluate_thermodynamic_pressure`
+  each called an unrelated package's FFI symbol, e.g. `lp_thermo_energy_bio_signals`,
+  ignoring the real input state), `transport.rs`, `lean.rs`, `lean_ffi_wrapper.c` (the
+  PA24 fake stand-ins — `lp_mathlib_Finset_instDecidableRelSubset___redArg`
+  unconditionally `return 1`, etc.), `main.rs` (the sole caller of the now-deleted
+  `transport` module, itself broken independent of this fix: missing `tokio` dep), and
+  the two orphaned integration tests (`tests/thermo_integration_test.rs`,
+  `tests/sse_transport_test.rs`) that imported the deleted modules. All 6 files/dirs
+  were confirmed unreferenced from `lib.rs`/`receipt.rs`/`validate.rs` before deletion
+  (`grep -n "mod broker\|mod thermo\|mod transport\|mod lean\b\|lean_ffi_wrapper"` →
+  empty). Re-verified via `just clippy-core` before and after: exit 0, "Finished" both
+  times, confirming deletion had zero effect on the reachable build (as expected for
+  genuinely dead code) and remaining test files (`proptest_invariants.rs`,
+  `concurrent_validation_tests.rs`) do not reference any deleted module. This decision
+  (delete rather than wire in for real) follows this session's scope clarification:
+  mfact proves math and does not build production Rust/runtime/FFI machinery — building
+  a real, correct FFI binding would itself be exactly the "implement the code" work
+  explicitly out of mfact's scope, so deletion of the fake stand-in is the honest
+  resolution, not a placeholder pending a future real implementation.
+- Residual, NOT addressed this firing: `web/mfact-ui/src/wargames/useWargames.ts:88-89`
+  still defines `initStream: () => { new EventSource('http://localhost:8080/stream') }`,
+  confirmed still uncalled anywhere in `web/mfact-ui/src/` (`grep -rn "\.initStream"`
+  returns only its own definition). This is a TypeScript/UI dead reference, a different
+  domain than this firing's Rust cleanup — left open rather than scope-creeping into a
+  web-layer edit under this firing's time budget. A future firing or the next audit
+  pass should pick this up specifically.
 - Verdict: three CONFIRMED verdicts downgraded release-blocking -> major (the crate is
   outside every build graph and no status surface claims /stream as a production marker);
   one verifier (orphan-modules finding) held release-blocking on "cargo build is broken".
