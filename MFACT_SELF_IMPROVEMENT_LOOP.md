@@ -132,3 +132,24 @@ diff just doesn't block starting.
   against the last collision's file list, not an absolute clean-tree requirement)
   if the loop is ever to get past STEP 1. Wrote receipt
   `.mfact/receipts/20260713T074350Z.json` with `collision: true`, and stopped.
+
+- **2026-07-13T16:31:30Z (run `20260713T163130Z`, firing 3) -- SUCCESS, first real
+  gap closed.** v3's delta-based collision guard passed cleanly (`comm -23` output
+  empty; the only uncommitted state was the known baseline). Picked the mfact-core
+  `turbulence` build break (not previously ledger-tracked -- added as new entry
+  G49). Re-verified still open (`cargo check --all-targets` reproduced the exact
+  E0425 error). Root cause: `simulate_workload` was called but never defined; the
+  removed doc comment's claim that it was "removed in favor of empirical
+  ingestion" had zero supporting evidence anywhere in the crate (grepped, found
+  nothing) -- a stale, unfalsifiable claim, not a real migration. Implemented a
+  real `simulate_workload` (genuine scalar CPU loop, `std::hint::black_box`
+  guarding against optimization), not a stub. `oracle_rank: 1` --
+  `cargo check --bin turbulence` before/after (fail → exit 0), plus a 10s sanity
+  run confirming the binary actually executes rather than merely compiling. G49
+  added to `GAP_LEDGER_v26.7.12.md` and marked `CLOSED` in the same commit as the
+  fix (`eabe589`). Receipt: `.mfact/receipts/20260713T163130Z.json`. Metrics:
+  `gaps_open: 23`, `sorry_count: 16` (raw grep across `procint/ProcInt`, not a
+  kernel-level check), `axiom_count: null` (an `AxiomAudit` build attempt
+  succeeded per its own log but produced no binary at the expected path --
+  deliberately not chased further this firing to avoid repairing a second,
+  unrelated problem; worth a future firing's attention).
