@@ -197,3 +197,19 @@ diff just doesn't block starting.
   `--lib --bin turbulence` because `src/main.rs`/`sse_transport_test.rs` are
   G2/G11 dead-pile files failing compile independent of lints. `oracle_rank:
   1`. Commit `0639081`; receipt `.mfact/receipts/20260713T173045Z.json`.
+
+- **2026-07-13T17:57:00Z (run `20260713T175700Z`, firing 6) -- COLLISION, no
+  action taken.** Delta-based guard found 7 new paths outside the tolerated
+  baseline: `ontology/fortune5-cloud-architecture.ttl`,
+  `PRAXIS_SELF_AUDIT.md`, `procint/ProcInt/MFW/Residue/Tenancy.lean`,
+  `procint/ProcInt/MFW/Termination/`, `procint/ProcInt/Playground/Glue/`,
+  `procint/ProcInt/Playground/Multifractal/UniformWitness.lean`,
+  `procint/ProcInt/Playground/Swarm11/Correspondence/LedgerBridge.lean`. All
+  attributable to a separately-launched 10-agent construction workflow (task
+  `wkw4npeny`, user-directed, implementing an approved plan to connect mfact's
+  independent Lean layers) still mid-flight in the Construct phase -- no
+  foreign commits, HEAD unchanged at `5dc2f5c`. This is exactly the scenario
+  the v3 redesign anticipated: a large, legitimate, concurrent effort that
+  simply hasn't committed yet. Wrote receipt
+  `.mfact/receipts/20260713T175700Z.json` with `collision: true`, and stopped.
+  Next firing should re-check whether `wkw4npeny` has committed by then.
