@@ -1,6 +1,7 @@
 -- Hand-authored. Not rendered by ggen. Not ledgered in .mfact/artifacts.toml.
 -- Edits here are ordinary code review, not artifact drift.
 import ProcInt.MFW.Termination.ManufactureDecrease
+import ProcInt.MFW.Termination.ManufactureTenancy
 import ProcInt.Playground.SOC2.AuditFlow
 
 /-!
@@ -125,6 +126,85 @@ theorem manufactureStep_not_tenant_pure :
   obtain ⟨c, hc, hne⟩ := gap_tenant_crossing
   exact hne (hpure c hc)
 
+/-! ## G53 repair — positive specialization + hypothesis-removal link
+
+The general theorem `ManufactureTenancy.manufactureStep_tenant_pure_of_residue` (imported above)
+closes the edge this file's own `manufactureStep_not_tenant_pure` exhibits as missing. This
+section instantiates it on the exact same `AuditFlow.Obl2`/`tag2`/`C2` carrier the gap witness
+above already uses — same `children := AuditFlow.S1.val`, but `goal := AuditFlow.g1` (tenant A's
+own goal) instead of `AuditFlow.g2` (tenant B's goal): literally the minimal edit that turns the
+broken case into the repaired case. It then proves the mismatched instantiation's missing `hS`
+hypothesis is genuinely unsatisfiable — not merely unproved — connecting that fact directly to
+`manufactureStep_not_tenant_pure` rather than reproving anything. -/
+
+/-- The frontier before the positive repair step: tenant A's own goal `g1`, nothing else open.
+Sibling to `gapSource`, with `a := g1` instead of `a := g2`. -/
+def repairSource : CrownState AuditFlow.Obl2 := ⟨{AuditFlow.g1}⟩
+
+/-- The frontier after the positive repair step: `g1` replaced by tenant A's own minimal support
+`S1`, nothing else open. Sibling to `gapTarget`; same `children`, different goal. -/
+def repairTarget : CrownState AuditFlow.Obl2 := ⟨AuditFlow.S1.val⟩
+
+/-- `AuditFlow.S1`'s underlying `Multiset`, re-`toFinset`'d, is `AuditFlow.S1` itself
+(`Finset.val_toFinset`) — the coercion `manufactureStep_tenant_pure_of_residue`'s `hS` hypothesis
+needs to consume `AuditFlow.hS1` (stated over the `Finset`) as evidence about
+`AuditFlow.S1.val` (the `Multiset` `ManufactureStep`'s own children live in). -/
+theorem hS1_toFinset :
+    AuditFlow.S1.val.toFinset ∈ residue AuditFlow.C2 AuditFlow.G1 AuditFlow.g1 := by
+  rw [Finset.val_toFinset]
+  exact AuditFlow.hS1
+
+/-- The descent hypothesis, independent of `hS1_toFinset` (residue membership does not imply
+order descent — see `ManufactureTenancy.lean`'s "Deliberately separate hypotheses"): every member
+of `S1.val` (just `0`) is strictly below `g1` (`= 1`) in `Fin 4`'s standard order. -/
+theorem hdescent_repair : ∀ c ∈ AuditFlow.S1.val, c < AuditFlow.g1 := by decide
+
+/-- **The positive repair witness.** Manufacturing tenant A's own goal `g1` from tenant A's own
+proven minimal support `S1` is a genuine `TenantPureManufactureStep`, not merely a legal
+`ManufactureStep` (contrast `gap_manufactureStep`, same `children := S1.val`, `goal := g2`
+instead of `g1`). Built from `manufactureStep_tenant_pure_of_residue` by composing
+`AuditFlow.separated_C2` (already `PROVEN`), `AuditFlow.hG1_pure` (already `PROVEN`),
+`hS1_toFinset`/`hdescent_repair` (this section) — no new machinery. -/
+theorem positiveRepair_manufactureStep :
+    TenantPureManufactureStep AuditFlow.tag2 repairSource repairTarget :=
+  manufactureStep_tenant_pure_of_residue (common := 0)
+    AuditFlow.separated_C2 AuditFlow.hG1_pure hS1_toFinset hdescent_repair
+    (by simp [repairSource]) (by simp [repairTarget])
+
+/-- **The hypothesis-removal fact.** For the mismatched pair `(goal := g2, children := S1.val)`
+that `gap_manufactureStep`/`gap_tenant_crossing` exploit, the general theorem's `hS` hypothesis is
+not merely unproved but genuinely false: `S1` is not even *sufficient* for `g2`, let alone a
+minimal support. Concretely `C2 (G2 ∪ S1) = C2 {0} = {0, 1}` (`AuditFlow.C2_zero`, since
+`G2 = ∅`), and `g2 = 3 ∉ {0, 1}`. -/
+theorem hS1_not_sufficient_for_g2 :
+    ¬ IsSufficient AuditFlow.C2 AuditFlow.G2 AuditFlow.g2 AuditFlow.S1 := by
+  show ¬ (3 : AuditFlow.Obl2) ∈
+    AuditFlow.C2 ((∅ : Finset AuditFlow.Obl2) ∪ ({0} : Finset AuditFlow.Obl2))
+  rw [Finset.empty_union, AuditFlow.C2_zero]
+  decide
+
+/-- `hS1_not_sufficient_for_g2` immediately rules out residue membership too: a set that fails
+sufficiency cannot be a minimal support. -/
+theorem hS1_notMem_residue_g2 :
+    AuditFlow.S1 ∉ residue AuditFlow.C2 AuditFlow.G2 AuditFlow.g2 :=
+  fun h => hS1_not_sufficient_for_g2 h.1
+
+/-- **The connective corollary.** Dropping the general theorem's `hS` hypothesis for the
+mismatched pair `(goal := g2, children := S1.val)` — exactly what `hS1_notMem_residue_g2` shows is
+unsatisfiable, not merely unsupplied — is exactly what `gap_manufactureStep` does anyway (via
+`ManufactureStep`'s own weaker, tenancy-silent descent-only clause), and exactly what
+`manufactureStep_not_tenant_pure` shows breaks tenant purity when it is done. The mismatched
+instantiation is the gap witness; the correctly-matched instantiation
+(`positiveRepair_manufactureStep`) is its repair. No new proof obligation beyond the two already-
+proven facts conjoined here. -/
+theorem hypothesisRemoval_is_gap_witness :
+    AuditFlow.S1 ∉ residue AuditFlow.C2 AuditFlow.G2 AuditFlow.g2 ∧
+    ¬ (∀ (a : AuditFlow.Obl2) (children common : Multiset AuditFlow.Obl2),
+        ManufactureStep (Obligation := AuditFlow.Obl2)
+          ⟨common + {a}⟩ ⟨common + children⟩ →
+        ∀ c ∈ children, AuditFlow.tag2 c = AuditFlow.tag2 a) :=
+  ⟨hS1_notMem_residue_g2, manufactureStep_not_tenant_pure⟩
+
 /-! ## `checks` — standing-aware Bool aggregator, `AuditFlow`/`Crown.lean`-style -/
 
 /-- Standing-aware checks for this file's counterexample, mirroring
@@ -137,7 +217,14 @@ def checks : List (String × Bool) := [
   ("gap-resolved-obligation-is-tenantB",
     decide (AuditFlow.tag2 a = true)),
   ("gap-child-is-tenantA-not-tenantB",
-    decide (AuditFlow.tag2 (0 : AuditFlow.Obl2) ≠ AuditFlow.tag2 a))
+    decide (AuditFlow.tag2 (0 : AuditFlow.Obl2) ≠ AuditFlow.tag2 a)),
+  ("repair-positive-descent-legal",
+    decide (∀ c ∈ AuditFlow.S1.val, c < AuditFlow.g1)),
+  ("repair-positive-same-tenant",
+    decide (∀ c ∈ AuditFlow.S1.val, AuditFlow.tag2 c = AuditFlow.tag2 AuditFlow.g1)),
+  ("repair-mismatched-hS-fails",
+    decide ((AuditFlow.g2 : AuditFlow.Obl2) ∉
+      AuditFlow.C2 (AuditFlow.G2 ∪ AuditFlow.S1)))
 ]
 
 end ManufactureTenancyGap
