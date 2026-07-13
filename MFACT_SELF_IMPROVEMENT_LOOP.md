@@ -271,3 +271,27 @@ diff just doesn't block starting.
   `EventSource` reference (TypeScript, different domain, noted in G11's
   closure evidence for a future pass). `oracle_rank: 1`. Commit `108bf5b`;
   receipt `.mfact/receipts/20260713T200505Z.json`.
+
+- **2026-07-13T20:27:33Z (run `20260713T202733Z`, firing 11) -- COLLISION, one
+  self-cleanup landed first.** Before this firing, an independent audit pass
+  (pass 15, finding PO1) had caught that firing 10's G11 closure left a
+  landmine: `crates/mfact-core/build.rs` still referenced the just-deleted
+  `lean_ffi_wrapper.c` via `cc::Build`, undetected because this sandbox's
+  PATH lacks `lean` so `build.rs` bails out before reaching that call. That
+  was fixed directly (outside this firing, same session): `build.rs` reduced
+  to `fn main() {}`, unused `cc` build-dep dropped from `Cargo.toml`, G11's
+  ledger entry corrected with a dated note rather than silently amending
+  firing 10's original claim (commit `5608deb`). This firing's own STEP 1
+  delta check then caught a genuine leftover from that work: `Cargo.lock`'s
+  matching `cc`-entry removal had never been staged. Confirmed by diff that
+  its only change matched the already-committed `Cargo.toml` edit exactly --
+  self-attributable, not a collision -- so it was committed separately
+  (`05f64df`) before re-running the delta. The re-run still showed 2 new
+  paths: `procint/ProcInt/Playground.lean` (import registration) and the new
+  `procint/ProcInt/Playground/Glue/OrientedSwapReplay.lean` (11.5KB) --
+  both the still-running 10-agent Lean-testing-landscape workflow's (task
+  `wup6bpemk`) just-completed first build spec. Legitimate concurrent work
+  mid-flight (its own Verify+Integrate phase hasn't run yet), not a foreign
+  actor; `git log -5` showed no commit outside this session. Per the guard,
+  touched nothing further, wrote receipt `.mfact/receipts/20260713T202733Z.json`
+  with `collision: true`, and stopped.
