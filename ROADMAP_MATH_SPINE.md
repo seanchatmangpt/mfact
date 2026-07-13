@@ -336,6 +336,29 @@ with `wellFounded_isDershowitzMannaLT`. The four files built for this wave impor
 needs; no file under `MFW/Termination/` references `Residue.residue` or either theorem (verified
 by grep against the built files, not asserted). §1.1 is corrected accordingly (see that file).
 
+**Tenancy-crossing gap in `ManufactureStep`, exhibited (2026-07-13).**
+`procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean` makes the consequence of the
+correction above concrete: `ManufactureStep`'s definition (`ManufactureDecrease.lean:68-70`) is
+`∀ c ∈ children, c < a` — an order-descent condition alone, silent on tenancy — so nothing in its
+type stops a legal manufacture step from replacing a resolved obligation with children drawn from
+a different tenant's obligation universe. Witnessed concretely, reusing `SOC2/AuditFlow.lean`'s
+already-proven two-tenant closure (`Obl2`, `tag2`, `separated_C2`) verbatim rather than building a
+new one: replacing tenant B's goal obligation (`g2 = 3`, `tag2 = true`) with tenant A's
+already-proven minimal support (`S1 = {0}`, `tag2 = false`) is a fully legal `ManufactureStep`,
+licensed only by `0 < 3` in `Fin 4`'s standard order (registered as a file-local, non-canonical
+`AdmittedObligationOrder Obl2` instance — `Glue/RankOrder.lean` already establishes that a carrier
+can admit more than one such order, so no global instance is claimed). `gap_manufactureStep` is
+the witness; `manufactureStep_not_tenant_pure` is the general refutation, in the same
+exhibited-counterexample style `not_orientedSwap_locallyConfluent` uses
+(`Swarm11/OrientedSwap.lean:390-414`): it is false that every `ManufactureStep` instance keeps
+`children` tenant-pure relative to `a`. This is not a bug in `ManufactureStep` — it was never
+specified to enforce tenancy — but a previously-unstated soundness gap for any caller who would
+assume Crown II's termination guarantee also implies tenant isolation. Standing: `PROVEN` (as a
+refutation), axioms ⊆ `[propext, Classical.choice, Quot.sound]` (scratch-checked, no `sorryAx`).
+Scope: a finite-scenario witness at the concrete `AuditFlow.Obl2` carrier, not a claim that every
+`AdmittedObligationOrder`/tenant-tag pair admits the same crossing — that would need a second,
+independent construction per carrier.
+
 ### Wave M2 — Free process monad and grafting
 
 Target: `procint/ProcInt/MFW/Workflow/{Signature,Free,SocketSubstitution,Graft,GraftLaws}.lean`
@@ -372,10 +395,10 @@ Perron–Frobenius and CKA remain Mathlib gaps to scope before any promise.
 
 ### Cross-layer glue (Playground) — rank-order and runtime-replay bridges
 
-Two small bridge files under `procint/ProcInt/Playground/Glue/`, added 2026-07-13, connecting
+Three small bridge files under `procint/ProcInt/Playground/Glue/`, added 2026-07-13, connecting
 previously-unconnected layers of this spine to each other and to `Playground`'s runtime/replay
-machinery. Neither is itself a numbered Wave M0-M5 deliverable; both are cheap instantiations of
-vocabulary those waves already declared.
+machinery. None is itself a numbered Wave M0-M5 deliverable; each is a cheap instantiation (or, for
+the third, a direct composition) of vocabulary those waves already declared.
 
 - `Glue/RankOrder.lean` — `DAG.admittedOrder` (`def`, `@[reducible]`, not `instance`: a type `V`
   can carry many distinct `DAG` structures, so the witness is non-inferable data, matching
@@ -400,10 +423,29 @@ vocabulary those waves already declared.
   (`MFW.Order`'s separate job). `frontier_interleaving_replay_eq` transports
   `Replay.replay_eq_of_traceEq` onto `completeStep` by direct instantiation. Standing: `PROVEN`,
   axioms ⊆ `[propext, Classical.choice, Quot.sound]` for every declaration.
+- `Glue/OrientedSwapReplay.lean` (added 2026-07-13) — composes the previous bullet with
+  `Swarm11/OrientedSwap.lean`'s open theorem card. `not_orientedSwap_locallyConfluent`
+  (`OrientedSwap.lean:390-414`) shows `LocallyConfluent (OrientedSwap step priority)` fails for a
+  general `step`; `orientedSwap_overlap_confluent_of_commute13` (`OrientedSwap.lean:436-472`)
+  names the missing hypothesis precisely — a third `Commute step e1 e3` witness at every
+  overlapping triple. `concurrent_commute`'s proof body never actually consumes its own
+  `Concurrent p i j` hypothesis (`RuntimeReplay.lean:96-105`; the field updates are unconditional
+  `Or`-reassociations), so `completeStep p` supplies that missing witness for *every* triple,
+  unconditionally (`completeStep_commute_all`). Newman's Lemma
+  (`Relation.LocallyConfluent.Terminating_toConfluent`,
+  `cslib/Foundations/Relation/Confluence.lean:269`) then applies without qualification:
+  `orientedSwap_locallyConfluent_completeStep` gives unconditional `LocallyConfluent`, and
+  `orientedSwap_confluent_completeStep` gives `Confluent (OrientedSwap (completeStep p) priority)`
+  for every `p : StrictOrder n` and `priority : Fin n → ℕ`. `orientedSwap_replay_eq_completeStep`
+  is the replay payoff: any two `completeStep p`-traces `OrientedSwap`-reachable from a common
+  source replay to the same `ExecutionState`. Standing: `PROVEN` — a genuine general theorem
+  about the concrete `completeStep` family, not a hand-picked instance of the counterexample
+  `step` `OrientedSwap.lean` §6 exhibits — axioms ⊆ `[propext, Classical.choice, Quot.sound]` for
+  every declaration (`#print axioms`, scratch-checked, no `sorryAx`).
 
-Neither file connects to `MFW.Termination` (Wave M1, below): they bridge `Workflow.Multifractal`/
-`Playground.MFW`/`Playground.Swarm11.Replay` to each other and to Wave M0's obligation-order
-vocabulary, not to Crown II's descent argument.
+None of these three files connects to `MFW.Termination` (Wave M1, below): they bridge
+`Workflow.Multifractal`/`Playground.MFW`/`Playground.Swarm11.{Replay,OrientedSwap}` to each other
+and to Wave M0's obligation-order vocabulary, not to Crown II's descent argument.
 
 ---
 
