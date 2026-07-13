@@ -24,6 +24,7 @@ import ProcInt.Playground.PddlPlanningWalkthrough
 import ProcInt.Playground.Multifractal
 import ProcInt.Playground.Experimental
 import ProcInt.Playground.ExperimentalWalkthrough
+import ProcInt.Playground.MFW
 
 /-! # ProcInt.Playground
 
