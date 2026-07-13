@@ -39,3 +39,13 @@ procint/ProcInt/Playground/_scratch_*.lean
 
 /target
 target/
+
+# SELF-IMPROVEMENT-LOOP FIX: justfile's certify recipe (line 93) is
+# `mfact certify ... > certify.log 2> certify.stderr && cat certify.stderr
+# >> certify.log && rm certify.stderr`. The `&&` chain only merges and
+# removes certify.stderr on a passing run; a failing `mfact certify`
+# (nonzero exit) always leaves it behind as untracked debris. Unlike
+# certify.log (intentionally tracked evidence since commit a2aaf68),
+# certify.stderr never carries information that isn't already folded into
+# certify.log on a successful run, so it should never be committed.
+release/certify.stderr
