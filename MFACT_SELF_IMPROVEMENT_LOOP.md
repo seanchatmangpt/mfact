@@ -240,3 +240,14 @@ diff just doesn't block starting.
   should be treated as settled. No foreign commits. Wrote receipt
   `.mfact/receipts/20260713T185704Z.json` with `collision: true`, and
   stopped.
+
+- **2026-07-13T19:26:56Z (run `20260713T192656Z`, firing 9) -- COLLISION, no
+  action taken.** New path: `procint/ProcInt/Playground/SOC2/`, from the SOC2
+  flow-test construction workflow (task `wfigivqnl`, Build phase writing
+  `AuditFlow.lean`/`AuditFlowViolation.lean` -- concrete Lean witnesses
+  composing Waves 1-7's already-proven theorems on a two-tenant audit
+  scenario; pass 13 confirmed zero files as of ~12:14 PDT, this firing sees
+  the directory created ~12 minutes later, i.e. genuinely in-progress, not
+  stalled). No foreign commits. Wrote receipt
+  `.mfact/receipts/20260713T192656Z.json` with `collision: true`, and
+  stopped.
