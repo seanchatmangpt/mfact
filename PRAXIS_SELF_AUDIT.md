@@ -81,6 +81,45 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   unchanged from pass 3. `MFW_WORKFLOW_CATALOG.md` (task `wjeyru8a7`) remains
   absent from the tree and untraceable from this session's task tracker or any of
   the 7 fix-loop worktrees on disk.
+- **2026-07-13 (pass 5):** 15 findings across 3 lenses (idle-gap-confirmation,
+  no-unexpected-drift-during-gap, mfw-catalog-top-claim-verify), auditing the fix
+  loop's own briefing narrative of an ~8h idle gap between pass 4 (~00:48 PDT) and
+  this pass (~08:49 PDT), during which cron job `6f81400b` allegedly never fired.
+  6 CONFIRMED, 3 REFUTED, 3 DRIFTED, 3 UNVERIFIABLE, 0 FIXED-since-last-pass.
+  Headline: the briefing's own core claim -- "HEAD stayed at a824ebc" for the
+  entire idle gap -- is false at critical severity. `a824ebc` and its two parents
+  `1e47b87`/`17b4c51` were all committed at 08:45:39-08:47:56 PDT, i.e. in the two
+  minutes immediately before this pass ran, not eight hours ago; HEAD actually sat
+  at `da4f21a` (pass 4's own last commit) throughout the real gap, per `git
+  reflog`. The genuine idle window is also shorter than claimed and ends later:
+  filesystem writes continued until 01:27:43 PDT (`MFW_WORKFLOW_CATALOG.md`,
+  Lean/cargo build output), so true silence ran roughly 7h23m (01:28-08:44 PDT),
+  not the ~8h02m implied by the stated 00:48 start. Despite these framing errors,
+  the substantive negative claims hold up under fresh re-verification: zero new
+  commits or receipts landed during the actual 01:28-08:44 PDT silence, `git
+  status --porcelain` is still 76 lines and byte-identical in file-set to pass 4,
+  `git fsck` is clean (no error/missing/corrupt/broken lines), and a fresh
+  re-check of `MFW_WORKFLOW_CATALOG.md` section 1.1 (Mathlib's
+  `wellFounded_isDershowitzMannaLT` at pinned rev `fabf563a` composed with Wave
+  M0's proven residue lemmas) reconfirms Wave M0 is genuinely proven and Wave M1
+  (`ProcInt/MFW/Termination/`) genuinely does not exist yet -- the catalog's own
+  framing as a not-yet-started proposal is accurate.
+- **2026-07-13 (pass 6):** 7 findings across 2 lenses (status-delta-investigation,
+  fix-loop-firing-detection), auditing the git-status delta from the pass-4/5
+  baseline (76 to 77 lines) and whether fix loop `f6a6cd52`'s ~09:12 PDT slot
+  produced its first real (non-collision) v3 firing. HEAD unchanged at `a824ebc`
+  across five fresh samples spanning 09:11-09:16 PDT; no new commit or receipt
+  landed. 6 CONFIRMED, 0 REFUTED, 0 DRIFTED, 1 UNVERIFIABLE, 0
+  FIXED-since-last-pass. Headline: the entire +1 delta is
+  `PRAXIS_SELF_AUDIT.md` transitioning from clean to modified -- pass 5's own
+  307-line uncommitted append -- not external drift; but that same fact exposes
+  a live design gap in the v3 collision guard, whose own doc states it treats
+  any path *not* in `known-persistent-drift.txt` as a real collision, and
+  `PRAXIS_SELF_AUDIT.md` was clean (hence absent from that baseline) when it was
+  snapshotted. The very next firing that reaches STEP 1 is therefore likely to
+  collide on this file precisely because this recurring audit keeps appending
+  to it -- unconfirmed since no firing occurred this pass, but mechanically
+  implied by the guard's own documented logic (PF1).
 
 ## Quick reference
 
@@ -117,6 +156,23 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
 | Major | 3 | 2 CONFIRMED, 1 UNVERIFIABLE |
 | Minor | 3 | 2 CONFIRMED, 1 REFUTED |
 | **Total** | **8** | **6 CONFIRMED, 1 UNVERIFIABLE, 1 REFUTED** |
+
+**Pass 5 (2026-07-13) totals -- alongside, not replacing, the pass-1/2/3/4 totals above:**
+
+| Severity | Count (pass 5) | Verdicts (pass 5) |
+|---|---|---|
+| Critical | 1 | 1 REFUTED |
+| Major | 3 | 1 DRIFTED, 1 UNVERIFIABLE, 1 REFUTED |
+| Minor | 11 | 2 DRIFTED, 6 CONFIRMED, 1 REFUTED, 2 UNVERIFIABLE |
+| **Total** | **15** | **6 CONFIRMED, 3 REFUTED, 3 DRIFTED, 3 UNVERIFIABLE** |
+
+**Pass 6 (2026-07-13) totals -- alongside, not replacing, the pass-1/2/3/4/5 totals above:**
+
+| Severity | Count (pass 6) | Verdicts (pass 6) |
+|---|---|---|
+| Major | 1 | 1 UNVERIFIABLE |
+| Minor | 6 | 6 CONFIRMED |
+| **Total** | **7** | **6 CONFIRMED, 1 UNVERIFIABLE** |
 
 ## Critical
 
@@ -1740,6 +1796,422 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   The persistent pile itself (8 modified, ~72 untracked) is unchanged in content
   across all three samples -- the loop's own bookkeeping does not leave residual
   mess once it commits.
+- Severity: minor
+
+## Pass 5 findings
+
+### PE1 -- Briefing's core claim: HEAD sat at a824ebc the whole idle gap,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: HEAD stayed at `a824ebc` for the entire ~8-hour idle gap between pass 4
+  (~00:48 PDT) and pass 5 (~08:49 PDT), i.e. the repo was untouched the whole
+  time.
+- Source: `git reflog show HEAD`; `git log -5 --format='%h %ci %s'`; independently
+  re-run this pass at 08:54:27 PDT via `date` + `git log -3 --format='%h %ci %s'`
+- Verdict: REFUTED
+- Evidence: `a824ebc`'s own commit timestamp is 2026-07-13 08:47:56 -0700, against
+  a system clock of 08:52:11 PDT at original check time and 08:54:27 PDT at this
+  pass's independent re-check -- it was created minutes before this pass, not 8
+  hours earlier. It is preceded by two more same-burst commits: `17b4c51`
+  (08:45:39, 19 files/3587 insertions: new `.claude/agents/*`, hooks,
+  `settings.json`, this file) and `1e47b87` (08:46:41). The commit actually
+  contemporaneous with pass 4's stated time is `da4f21a` at 00:45:22 -0700 (`git
+  reflog show HEAD` confirms `da4f21a HEAD@{3}`, three moves behind current HEAD).
+  HEAD moved three commits in a two-minute window immediately before this pass
+  ran; it did not sit still for eight hours.
+- Severity: critical
+
+### PE2 -- Same HEAD-frozen claim, the idle-gap lens's own framing also fails,
+
+- Lens: idle-gap-confirmation
+- Claim: `"HEAD stayed at a824ebc"` throughout the 8-hour idle gap between pass 4
+  and pass 5.
+- Source: `git log --pretty=fuller` on `a824ebc`/`1e47b87`/`17b4c51`; `git reflog`
+- Verdict: DRIFTED
+- Evidence: `a824ebc`, `1e47b87`, and `17b4c51` all have CommitDate 2026-07-13
+  08:45:39-08:47:56 -0700 -- made in the current pass-5 turn seconds before this
+  check (`date` showed 08:50:23 -0700 at original check time). During the actual
+  gap, HEAD was at `da4f21a` (reflog: `HEAD@{2026-07-13 00:45:22 -0700}`), pass
+  4's last commit. The briefing conflates "current HEAD right now" with "HEAD
+  throughout the gap" -- a narrower framing error than PE1's outright falsity, so
+  scored one severity step lower even though it names the identical underlying
+  fact.
+- Severity: major
+
+### PE3 -- Cron non-fire attributed to session-idle mechanics is unverifiable,
+
+- Lens: idle-gap-confirmation
+- Claim: Cron job `6f81400b` never fired despite its 07:47:32 PDT deadline
+  passing, "confirming cron jobs in this environment do not fire without an
+  active/idle session."
+- Source: filesystem/git scan (no cron execution log accessible)
+- Verdict: UNVERIFIABLE
+- Evidence: Neither this subagent nor the resumed session has access to any
+  execution log for a cron job registered in a prior, now-closed session -- cron
+  state is described as session-scoped/in-memory. The only available evidence is
+  negative (no commits, no receipts, no file writes anywhere in the tree from
+  01:27:43 to 08:45:39 PDT), which is consistent with non-firing but does not
+  directly prove it; the strong causal conclusion about the mechanism is asserted
+  with more certainty than the available evidence supports.
+- Severity: major
+
+### PE4 -- known-persistent-drift.txt baseline postdates pass 4, diff is circular,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: Diffing current `git status` against `.mfact/known-persistent-drift.txt`
+  and finding zero delta is valid evidence that nothing changed since pass 4.
+- Source: `git log -- .mfact/known-persistent-drift.txt`; `ls -la` on the file;
+  `comm -23`/`comm -13` of a fresh porcelain-status file-list against the baseline
+- Verdict: REFUTED
+- Evidence: `.mfact/known-persistent-drift.txt` has exactly one commit in its
+  history, `1e47b87` at 2026-07-13 08:46:41 -0700 ("baseline the
+  known-persistent-drift pile for the collision guard"), matching its file mtime
+  (this pass's own re-run of `git log --follow` on the path confirms the single
+  commit and Jul 13 08:46 mtime). It did not exist during pass 4. The empty diff
+  against it (0 lines added/removed via `comm`) is therefore circular: it proves
+  the working tree matches a snapshot of itself taken six minutes before this
+  audit ran, not that nothing changed since pass 4.
+- Severity: major
+
+### PE5 -- Stated idle-start time (00:48) undercounts real tail activity,
+
+- Lens: idle-gap-confirmation
+- Claim: The session went idle at "~00:48 PDT" (i.e., roughly when pass 4 ended).
+- Source: `stat` mtimes across `/Users/sac/mfact` for the 00:50-08:44 window vs. a
+  tighter 01:28-08:44 rescan
+- Verdict: DRIFTED
+- Evidence: Files continued to be written until 01:27:43 PDT:
+  `PRAXIS_SELF_AUDIT.md` (00:50:25), `.lake/build` Lean artifacts for
+  `random_walk`/`pair_correlation` (00:50:21-00:55:36), cargo/rustc incremental
+  build output under `crates/mfact-core/target/debug/` (00:53:24-00:56:13), and
+  `MFW_WORKFLOW_CATALOG.md` (01:27:43, last write). A rescan restricted to
+  01:28:00-08:44:00 returned zero files anywhere in the tree, so genuine silence
+  began at ~01:28, not ~00:48 -- about 40 minutes later than stated.
+- Severity: minor
+
+### PE6 -- Receipt count off by one: three files exist, not two,
+
+- Lens: idle-gap-confirmation
+- Claim: "The two existing receipt files" under `.mfact/receipts/` are both
+  timestamped ~00:15-00:44, with no newer ones.
+- Source: `ls -la` and `stat` on `/Users/sac/mfact/.mfact/receipts/`, re-run this
+  pass
+- Verdict: DRIFTED
+- Evidence: Three files exist: `20260713T071516Z.json` (mtime 00:15:29),
+  `20260713T074350Z.json` (00:44:04), and `latest.json` (00:44:13, 1113 bytes --
+  identical size to `074350Z.json`, and a real regular file per `ls -la`, not a
+  symlink, i.e. a written duplicate). This pass's own fresh `ls -la` reproduces
+  the same three files and byte counts (998/1113/1113). The 00:15-00:44 range and
+  "nothing newer" are correct, but "two files" undercounts what's on disk by one.
+- Severity: minor
+
+### PE7 -- Zero commits/receipts during the true 01:28-08:44 silence window,
+
+- Lens: idle-gap-confirmation
+- Claim: The core assertion that the environment was idle the entire gap -- zero
+  new commits, zero new receipts -- between pass 4 and pass 5.
+- Source: `git log --since="2026-07-13 00:50:00" --oneline`; full-tree `find
+  -newermt` for 2026-07-13 01:28:00..08:44:00 excluding `.git`
+- Verdict: CONFIRMED
+- Evidence: `git log --since` matched only the 3 commits made by the current turn
+  (PE1/PE2), none backdated into the gap. An unrestricted filesystem scan across
+  the whole repo for the 01:28-08:44 window (the true post-tail-activity gap,
+  per PE5) returned no files at all.
+- Severity: minor
+
+### PE8 -- Roughly-8-hours elapsed-time claim holds within stated tolerance,
+
+- Lens: idle-gap-confirmation
+- Claim: "Roughly 8 real-world hours passed between pass 4 (~00:48 PDT) and this
+  pass (~08:49 PDT)."
+- Source: `date`; `PRAXIS_SELF_AUDIT.md` pass 4's own "00:45:22" timestamp
+- Verdict: CONFIRMED
+- Evidence: `date` returned Mon Jul 13 08:50:23 PDT 2026 at original check time,
+  and 08:54:27 PDT at this pass's own independent re-check. Against the stated
+  ~00:48 mark: ~8h02m elapsed. Against pass 4's actual last commit (00:45:22):
+  ~8h05m. Against the true end of filesystem activity (01:27:43, per PE5):
+  ~7h23m of genuine idle silence. All are consistent with "roughly 8 hours," even
+  though the sub-components are imprecise.
+- Severity: minor
+
+### PE9 -- Working-tree drift count (76) is unchanged from pass 4,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: Working-tree drift count is unchanged: `git status --porcelain` line
+  count is still 76, matching pass 4's logged 76, and the file-path set is
+  unchanged.
+- Source: `git status --porcelain | wc -l`; `comm -23`/`comm -13` against
+  `known-persistent-drift.txt`
+- Verdict: CONFIRMED
+- Evidence: Fresh `git status --porcelain | wc -l` = 76, both at original check
+  time and re-confirmed by this pass's own re-run. Both `comm -23` (files newly
+  dirty, not in baseline) and `comm -13` (files no longer dirty) returned empty
+  output -- the 76-entry sets are identical. This holds independent of PE4's
+  provenance caveat: the untracked/modified file set itself has not drifted, at
+  least since the baseline was captured six minutes before the original check.
+- Severity: minor
+
+### PE10 -- git fsck shows a clean repo, no corruption after the idle span,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: `git fsck` integrity check reveals a repo integrity concern after the
+  long idle span.
+- Source: `git fsck --no-progress 2>&1 | grep -Ei 'error|missing|corrupt|broken'`;
+  `git count-objects -v`, both re-run fresh this pass
+- Verdict: REFUTED
+- Evidence: Original check reported 4028 dangling objects (3998 blobs, 14
+  commits, 10 tags, 6 trees) but zero lines matching
+  `error|missing|corrupt|broken`; sampled dangling commits were pre-existing
+  `git stash` "WIP on v26.7.12-close..." byproducts dated 2026-07-07 through
+  2026-07-12, none from the claimed idle window. This pass's own fresh re-run of
+  the same grep returned zero matches again, and `git count-objects -v` shows
+  `garbage: 0`, `size-garbage: 0`, one clean pack (`count: 4493`,
+  `in-pack: 5056`). No stray `.lock` files in `.git`. Repo is intact.
+- Severity: minor
+
+### PE11 -- .mfact/receipts/ gained zero files, loop stayed dormant,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: `.mfact/receipts/` gained zero new files since pass 4, confirming the
+  cron-driven fix loop did not fire.
+- Source: `ls -la .mfact/receipts/`, re-run fresh this pass
+- Verdict: CONFIRMED
+- Evidence: Directory contains only `20260713T071516Z.json` (00:15 PDT),
+  `20260713T074350Z.json` and `latest.json` (both 00:44 PDT) -- nothing newer,
+  reproduced identically by this pass's own `ls -la`. This specifically confirms
+  the automated/cron fix-loop mechanism stayed dormant; it does not mean the repo
+  was untouched overall, since PE1 shows separate interactive-session commits
+  landed at 08:45-08:48 outside that mechanism.
+- Severity: minor
+
+### PE12 -- Cron scheduler internals are not directly introspectable,
+
+- Lens: no-unexpected-drift-during-gap
+- Claim: Cron job `6f81400b`'s 07:47:32 PDT deadline passed without firing, per
+  the pass narrative.
+- Source: no direct scheduler introspection tool available in this environment;
+  inferred only from receipts absence (PE11)
+- Verdict: UNVERIFIABLE
+- Evidence: Cannot independently query cron-scheduler internal state from this
+  sandbox -- only observable effects (receipts, commits) were checked. Receipt
+  evidence is consistent with non-firing but is not direct confirmation of the
+  deadline mechanics themselves.
+- Severity: minor
+
+### PE13 -- Catalog 1.1's Mathlib+Wave-M0 composition proposal re-verified,
+
+- Lens: mfw-catalog-top-claim-verify
+- Claim: Catalog section 1.1 ("wave-m1-crown-descent") composes Mathlib's
+  `Multiset.wellFounded_isDershowitzMannaLT` (pinned rev `fabf563a`) with Wave
+  M0's already-proven residue formalization (`residue`, `residue_isAntichain`,
+  `residue_purity` in `Antichain.lean:64,75,113`; `AdmittedObligationOrder` in
+  `EntailmentOrder.lean:46`) to formalize the Dershowitz-Manna crown-descent
+  chain, and lists this as unstarted future work (blank marker
+  `MFW_M1_DM_DESCENT_FORMALIZED=`, no `Termination/` files yet).
+- Source: `MFW_WORKFLOW_CATALOG.md:85-109`; independently re-grepped this pass
+- Verdict: CONFIRMED
+- Evidence: Both halves independently re-verified. (1)
+  `Mathlib.Data.Multiset.DershowitzManna.lean:165-171` in the vendored package at
+  `procint/.lake/packages/mathlib/` declares
+  `theorem wellFounded_isDershowitzMannaLT [WellFoundedLT α] : WellFounded
+  (IsDershowitzMannaLT : Multiset α → Multiset α → Prop)`, fully proved (no
+  sorry), and `procint/lake-manifest.json` pins mathlib at
+  `fabf563a7c95a166b8d7b6efca11c8b4dc9d911f` -- confirmed again this pass via
+  direct grep, exact match to the "fabf563a" short-rev claim. (2) A fresh grep of
+  all four Wave M0 files this pass (`Obligation.lean`, `EntailmentOrder.lean`,
+  `MinimalSupport.lean`, `Antichain.lean`) for `sorry|admit` returns only
+  docstring prose ("admitted obligation", "No `sorry`.") never a Lean tactic;
+  `.olean` build artifacts (Jul 12 22:47:17-22:47:22) are confirmed strictly
+  newer than every corresponding `.lean` source file (21:46:54-21:52:44),
+  reconfirming a real `lake build` succeeded after the current source was
+  written. `residue`/`residue_isAntichain`/`residue_purity`
+  (`Antichain.lean:64,75,113`) and `AdmittedObligationOrder`
+  (`EntailmentOrder.lean:46,53`) exist at exactly the cited line numbers.
+  `procint/ProcInt/MFW/Termination` still does not exist (`find` returns "No
+  such file or directory", re-run fresh this pass) -- the catalog's own framing
+  (proposal, not yet done) remains internally consistent.
+- Severity: minor
+
+### PE14 -- Wave M0 residue theorems remain genuinely proven, no gaps,
+
+- Lens: mfw-catalog-top-claim-verify
+- Claim: Wave M0's residue theorems are "already-proven" / kernel-checked as the
+  catalog states, with no gaps in the load-bearing chain the proposal depends on.
+- Source: `procint/ProcInt/MFW/Residue/Antichain.lean:40-45` docstring
+- Verdict: CONFIRMED
+- Evidence: Read-only inspection confirms the file's own standing claim matches
+  reality: no `sorry`/`admit` tactics present, and build artifacts (`.olean`,
+  Jul 12 22:47) postdate the source (Jul 12 21:52), consistent with a genuine
+  successful `lake build` of these files. The file itself flags a separate,
+  narrower caveat unrelated to the catalog's claim: `orFree_residue_subsingleton`
+  only covers a semantic reading of OR-freeness, with the syntactic-to-semantic
+  bridge marked MISSING in `AGENTS.md` taxonomy -- but the catalog's proposal
+  only cites `residue`/`residue_isAntichain`/`residue_purity`, not
+  `orFree_residue_subsingleton`, so this caveat does not touch the specific
+  composition the catalog proposes.
+- Severity: minor
+
+### PE15 -- This pass could not literally re-run `lake build` (read-only mandate),
+
+- Lens: mfw-catalog-top-claim-verify
+- Claim: Task framing states the residue build must be verified by "re-running
+  the actual build command" (i.e., `lake build`).
+- Source: fix-loop task instructions for this pass
+- Verdict: UNVERIFIABLE
+- Evidence: This subagent operates under a hard read-only mandate (no file
+  creation, no commands that change system state) and cannot invoke `lake build`
+  or `lake env lean`, since both write `.lake` build-cache/`.olean`/`.trace`
+  artifacts to disk. Verification was instead performed via static evidence:
+  absence of `sorry`/`admit` in source, and `.olean`/`.trace` mtimes (22:47
+  Jul 12) strictly newer than the corresponding `.lean` source mtimes
+  (21:46-21:52 Jul 12), the strongest signal obtainable without executing a
+  build. A parent agent/session with write permission would need to actually
+  re-run `lake build ProcInt.MFW.Residue` (or the four individual targets) and
+  paste `#print axioms` output to fully close this per the task's own
+  falsifiability bar (catalog line 106-109 requires exactly that for the *new*
+  Wave M1 work, not Wave M0, so this gap does not affect PE13's verdict, only the
+  literal "re-run the build command" instruction).
+- Severity: minor
+
+## Pass 6 findings
+
+### PF1 -- v3 collision guard is likely to flag PRAXIS_SELF_AUDIT.md next firing,
+
+- Lens: status-delta-investigation
+- Claim: The v3 delta-based collision guard, which treats any `git status
+  --porcelain` path not listed in `.mfact/known-persistent-drift.txt` as a real
+  collision, will trigger on `PRAXIS_SELF_AUDIT.md`'s now-uncommitted 307-line
+  append at the fix loop's next STEP 1 check, because the file was clean (and
+  thus absent from the baseline) at snapshot time.
+- Source: `MFACT_SELF_IMPROVEMENT_LOOP.md` lines 90-103 ("Collision guard"
+  section); `.mfact/known-persistent-drift.txt` (76 lines, no
+  `PRAXIS_SELF_AUDIT.md` entry); `git diff --stat -- PRAXIS_SELF_AUDIT.md`
+  (307 insertions, uncommitted)
+- Verdict: UNVERIFIABLE
+- Evidence: The design doc states verbatim: "v3 ... diffs live `git status
+  --porcelain` against a baseline snapshot ... and only treats paths NOT in
+  that baseline as a real collision." `known-persistent-drift.txt` was
+  generated by commit `1e47b87` at 08:46:41 PDT, 62 seconds after
+  `PRAXIS_SELF_AUDIT.md` was last committed clean by `17b4c51` (08:45:39 PDT),
+  so the baseline correctly has no line for it. Pass 5 then appended 307
+  uncommitted lines to that same file afterward, and this pass added more
+  (see PF2-PF4). Mechanically, the next STEP 1 check that diffs current `git
+  status --porcelain` against the baseline will find `PRAXIS_SELF_AUDIT.md`
+  present only on the "current" side -- exactly the shape the guard defines
+  as a collision. No firing has reached STEP 1 since the append landed, so
+  this pass cannot confirm the abort with a live observation (verdict is
+  UNVERIFIABLE, not CONFIRMED, for that reason), but the risk is actionable:
+  every pass that appends findings to this file without committing recreates
+  the condition v1/v2's absolute-clean-tree guard was redesigned to avoid.
+- Severity: major
+
+### PF2 -- Single new-since-baseline path is PRAXIS_SELF_AUDIT.md, fully explained,
+
+- Lens: status-delta-investigation
+- Claim: The lone path new since the pass-4/5 baseline is
+  `PRAXIS_SELF_AUDIT.md`, fully accounted for by pass 5's own uncommitted
+  307-line append to the tracked, previously-clean file.
+- Source: `comm -23` of a freshly sorted `git status --porcelain` path list
+  against a freshly sorted `.mfact/known-persistent-drift.txt`; `git diff
+  --stat -- PRAXIS_SELF_AUDIT.md`; `git log --follow -3 --
+  PRAXIS_SELF_AUDIT.md`; `git show HEAD:PRAXIS_SELF_AUDIT.md | grep 'Pass 5
+  findings'`
+- Verdict: CONFIRMED
+- Evidence: `comm -23` (current-only paths) returned exactly one line:
+  `PRAXIS_SELF_AUDIT.md`. `git diff --stat` shows `1 file changed, 307
+  insertions(+)`, zero deletions. The file's only commit is `17b4c51`
+  (2026-07-13 08:45:39 -0700); `git show HEAD:PRAXIS_SELF_AUDIT.md` has
+  content only through `## Pass 4 findings`, no "Pass 5 findings" header,
+  confirming the committed blob predates pass 5's append. File mtime (08:57)
+  is ~11 minutes after the baseline-generating commit (08:46:41).
+- Severity: minor
+
+### PF3 -- 76-to-77 delta is arithmetically fully accounted for, no other drops,
+
+- Lens: status-delta-investigation
+- Claim: The 76->77 porcelain-line delta is exactly the one path in PF2 gaining
+  a diff; no baseline path disappeared and no second new/untracked path
+  appeared.
+- Source: `comm -13`/`comm -23` between the freshly sorted baseline and
+  current status lists; `wc -l` on both
+- Verdict: CONFIRMED
+- Evidence: `comm -13` (baseline-only, i.e. anything dropped) returned zero
+  lines. `comm -23` (current-only) returned exactly the one line from PF2.
+  77 - 76 = 1, matching exactly.
+- Severity: minor
+
+### PF4 -- The uncommitted append is well-formed and not a product of this pass,
+
+- Lens: status-delta-investigation
+- Claim: The uncommitted append to `PRAXIS_SELF_AUDIT.md` is not truncated or
+  corrupted mid-write, and no "Pass 6" content existed in the file prior to
+  this pass's own edits.
+- Source: `git diff --numstat -- PRAXIS_SELF_AUDIT.md`; `tail -20
+  PRAXIS_SELF_AUDIT.md`; `git diff -- PRAXIS_SELF_AUDIT.md | tail -30`; `grep
+  -n 'Pass 6\|pass 6' PRAXIS_SELF_AUDIT.md`
+- Verdict: CONFIRMED
+- Evidence: The diff was purely additive (307/0). Its last hunk closed
+  finding PE15 cleanly, immediately followed by the pre-existing `##
+  References` section; the working file's tail matched the diff's tail
+  exactly. The pre-edit `grep` for "Pass 6" returned nothing, ruling out this
+  pass having already written to the file before this check ran.
+- Severity: minor
+
+### PF5 -- Fix loop f6a6cd52 produced no observable activity through 09:16 PDT,
+
+- Lens: fix-loop-firing-detection
+- Claim: Fix loop `f6a6cd52` has not fired under the v3 guard at any point
+  during this pass, including through and past its ~09:12 PDT scheduled slot.
+- Source: `date` + `git log -1 --format='%H %ci %s'` + `ls -la
+  .mfact/receipts/`, freshly sampled at 09:11:11, 09:14:23, 09:14:48, and
+  09:16:12 PDT
+- Verdict: CONFIRMED
+- Evidence: HEAD stayed at `a824ebc` across all samples. `.mfact/receipts/`
+  held only the same two pre-existing files (`20260713T071516Z.json`,
+  `20260713T074350Z.json`, plus `latest.json`) at every sample -- no new file
+  appeared even ~4 minutes past the stated ~09:12 slot.
+- Severity: minor
+
+### PF6 -- Both existing receipts predate the v3 delta-based guard,
+
+- Lens: fix-loop-firing-detection
+- Claim: The two receipts on disk (07:15:16Z, 07:43:50Z) reflect the pre-v3
+  (v1/v2, absolute-clean-tree) collision guard, not v3 -- consistent with "a
+  real v3 firing hasn't happened yet."
+- Source: `.mfact/receipts/20260713T071516Z.json`,
+  `.../20260713T074350Z.json`; `MFACT_SELF_IMPROVEMENT_LOOP.md` run log and
+  "Collision guard" section; commit timestamps for `1e47b87`/`a824ebc`
+- Verdict: CONFIRMED
+- Evidence: Both receipts are timestamped 00:15/00:44 PDT, while the v3
+  baseline file was created by `1e47b87` at 08:46:41 PDT and the v3 design
+  doc committed as `a824ebc` at 08:47:56 PDT -- roughly 8 hours after the
+  receipts. The run log labels both as testing the pre-v3 behavior
+  explicitly.
+- Severity: minor
+
+### PF7 -- ps sightings of an "unrelated process" are this shell's own find,
+
+- Lens: fix-loop-firing-detection
+- Claim: A process observed via `ps aux` running receipts/git-log/find-style
+  checks against this repo, previously logged as an unattributable "unrelated
+  process," is explained by this Claude Code shell's own `find` -> `bfs`
+  wrapper, not necessarily by an external session.
+- Source: `type find` and `which find` in this shell; `ps aux | grep -iE
+  'receipts|f6a6cd52|mfact'` run immediately after issuing a `find` command
+  this pass
+- Verdict: CONFIRMED
+- Evidence: `type find` shows `find` is a zsh function in this environment's
+  shell snapshot that execs the Claude Code binary with `ARGV0=bfs`
+  (`bfs -S dfs -regextype findutils-default ...`). A fresh `ps aux` sampled
+  seconds after this pass's own `find -newermt ...` call caught PID 73925
+  running that exact command line under the name `bfs`. Because any Claude
+  Code shell (this session's or a concurrent one, including the fix loop's
+  own subagent shell) uses the identical wrapper, a bare `bfs` sighting
+  cannot by itself distinguish this session's own commands from a genuinely
+  separate session's -- it only proves the mechanism, not which session
+  produced any specific historical PID. The earlier-logged PIDs
+  (71338/71341) were not independently re-observed this pass and remain
+  formally unattributed.
 - Severity: minor
 
 ## References
