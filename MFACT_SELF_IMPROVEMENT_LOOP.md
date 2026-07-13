@@ -388,3 +388,21 @@ diff just doesn't block starting.
   cargo). Receipt `.mfact/receipts/20260713T233418Z.json`, oracle_rank 3.
   Final firing inside the window (deadline 16:49:04 PDT) -- the next cron
   fire self-terminates the loop per STEP 0.
+
+- 2026-07-13 16:58 PDT (cron f6a6cd52): **LOOP COMPLETE (deadline reached).** STEP 0
+  fired at 16:58:07 PDT, past the 16:49:04 PDT bound; CronDelete f6a6cd52 executed.
+  Whole-run summary from the Run log and the 17 receipts on disk: 16 firings across
+  the two granted windows. Outcomes: 5 success (G49 eabe589, G50 c636fd3, G51 0639081,
+  G11 in two stages 108bf5b + 5608deb), 1 no_op (firing 16: G50 re-verified already
+  closed -- the trigger's candidate list had gone stale), 1 deferred (firing 12, plan
+  mode blocked writes; backfilled by a334ff5), and 10 collision stops -- every one of
+  which was the delta guard working as designed against this session's own concurrent
+  workflows (atlas integration, G53 repair, release-80/20, audit passes), never a
+  foreign actor. Notable loop-produced diagnoses that outlived the loop: the
+  git-index race (fixed by surgical pathspec commits, confirmed working from Pass 18
+  onward), the PO1 build.rs landmine fix, and the candidate-list staleness pattern
+  (three trigger candidates -- stuck-item-guard wiring, G1 certify, G50 -- were closed
+  by other actors while the list kept offering them; STEP 3's re-verify-before-trust
+  rule caught all three). The loop leaves no stuck items: no gap_id appears in more
+  than 7 of the last 10 receipts. Companion loops (audit 9bab36de, release 76f42877)
+  remain active and are not governed by this deadline.
