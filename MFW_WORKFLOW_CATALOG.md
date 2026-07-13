@@ -87,6 +87,12 @@ and it is left for the user.
 **Source:** Wave M1 (Crown II, `ROADMAP_MATH_SPINE.md:55`, target theorem,
 blank marker `MFW_M1_DM_DESCENT_FORMALIZED=`).
 
+**Executed 2026-07-13** (see `ROADMAP_MATH_SPINE.md` §4 Wave M1 for the current status:
+`PROVEN` for the abstract `CrownState`/`ManufactureStep` carrier, no concrete workflow-engine
+correspondence yet). The bullet below is corrected in place — the original overstated which
+Wave M0 assets are actually load-bearing; the built files import and use only
+`AdmittedObligationOrder`.
+
 Formalizes the Dershowitz-Manna crown-descent theorem chain
 (`ObligationRank -> MultisetDescent -> ManufactureDecrease ->
 CrownWellFounded`) over Wave M0's proven residue vocabulary.
@@ -95,14 +101,16 @@ CrownWellFounded`) over Wave M0's proven residue vocabulary.
   state the manufacture-decrease hypothesis as an explicit un-proved
   variable (not a bare axiom), derive multiset descent, derive
   well-foundedness, verify and `#print axioms`.
-- **Real math assets:** `Mathlib.Data.Multiset.DershowitzManna`
-  (`wellFounded_isDershowitzMannaLT`, pinned rev `fabf563a`) composed with
-  this session's own kernel-checked Wave M0 output — `residue`,
-  `residue_isAntichain`, `residue_purity`
-  (`procint/ProcInt/MFW/Residue/Antichain.lean:64,75,113`) and
-  `AdmittedObligationOrder`
-  (`procint/ProcInt/MFW/Residue/EntailmentOrder.lean:46`), already
-  authored as Wave-M1 scaffolding.
+- **Real math assets (corrected 2026-07-13):** `Mathlib.Data.Multiset.DershowitzManna`
+  (`wellFounded_isDershowitzMannaLT`, pinned rev `fabf563a`) composed with this session's own
+  kernel-checked Wave M0 output — `AdmittedObligationOrder`
+  (`procint/ProcInt/MFW/Residue/EntailmentOrder.lean:53`), already authored as Wave-M1
+  scaffolding. The original bullet also listed `residue`, `residue_isAntichain`, `residue_purity`
+  (`Residue/Antichain.lean:64,75,113`) as Wave-M1 assets; that overstated the dependency —
+  `procint/ProcInt/MFW/Termination/*.lean` neither imports nor references `Residue.residue`,
+  `residue_isAntichain`, or `residue_purity` (confirmed by grep against the built files). Those
+  three answer a Crown I question (which supports are minimal for one entailment check), not a
+  premise of Crown II's descent argument.
 - **Falsifiable artifact:** four new files under
   `procint/ProcInt/MFW/Termination/`, `lake build` clean, zero
   `sorry`/`admit`, `#print axioms` output on

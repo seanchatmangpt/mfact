@@ -310,6 +310,32 @@ below it) is the theorem boundary. Then `crown_multiset_strictly_decreases` via
 `Multiset.wellFounded_isDershowitzMannaLT`. The runtime event (remove one socket obligation,
 manufacture finitely many strictly-smaller obligations) is a one-step DM descent witness.
 
+**Status (2026-07-13): `PROVEN` for the abstract carrier.** All four target files exist and are
+kernel-checked. `CrownState (Obligation : Type*)` (a `Multiset`, not `Finset` — the same
+obligation may sit open at two independent sockets at once, and `Multiset.IsDershowitzMannaLT`
+is itself a `Multiset` order) and `rank := CrownState.frontier` fix the carrier.
+`ManufactureStep` bakes the `manufacture_children_strictly_descend` side condition directly into
+its own definition (`∀ c ∈ children, c < a`) rather than restating it a second time as a
+free-standing hypothesis or axiom — a separate identity theorem would have unfolded to `id` on
+`ManufactureStep`'s own body and was omitted as redundant scaffolding (`AGENTS.md` §3).
+`crown_multiset_strictly_decreases` (axioms: `[propext, Quot.sound]`) and
+`no_infinite_productive_mfw_chain` (axioms: `[propext, Classical.choice, Quot.sound]`, additional
+hypothesis `[WellFoundedLT Obligation]` not supplied by `AdmittedObligationOrder` alone) are both
+`sorry`-free. **Scope, precisely**: this proves Crown II for the abstract
+`CrownState`/`ManufactureStep` pair only — no concrete workflow engine's transition relation has
+yet been shown to correspond to `ManufactureStep` (`AGENTS.md` §4), so this does not yet discharge
+Crown II for any real MFW instantiation. `[WellFoundedLT Obligation]` is also not yet shown to
+hold for any concrete `Obligation` representation.
+
+**Correction to `MFW_WORKFLOW_CATALOG.md` §1.1** (`wave-m1-crown-descent`): that section's "Real
+math assets" bullet listed `residue`, `residue_isAntichain`, `residue_purity`
+(`Residue/Antichain.lean`) alongside `AdmittedObligationOrder` as Wave-M1 scaffolding composed
+with `wellFounded_isDershowitzMannaLT`. The four files built for this wave import and use only
+`AdmittedObligationOrder` — `residue_isAntichain`/`residue_purity` answer a Crown I question
+(which supports are minimal for one entailment check) that Crown II's descent argument never
+needs; no file under `MFW/Termination/` references `Residue.residue` or either theorem (verified
+by grep against the built files, not asserted). §1.1 is corrected accordingly (see that file).
+
 ### Wave M2 — Free process monad and grafting
 
 Target: `procint/ProcInt/MFW/Workflow/{Signature,Free,SocketSubstitution,Graft,GraftLaws}.lean`
@@ -507,7 +533,7 @@ row below at a stronger level than shown here.
 | Correspondence required to cross standing domains | Foundational law |
 | Semantic closure extensive/monotone/idempotent | Theorem, scoped to `L = P(Atoms)` |
 | Residue is a minimal-support antichain (Crown I) | Target theorem, Wave M0 |
-| Strict DM descent bars infinite refinement (Crown II) | Target theorem, Wave M1; DM route |
+| Strict DM descent bars infinite refinement (Crown II) | `PROVEN` for the abstract `CrownState`/`ManufactureStep` carrier (Wave M1, 2026-07-13, DM route); no concrete workflow engine's transitions yet correspond to `ManufactureStep` |
 | Free-monad grafting; independent grafts commute (III) | Target theorem, Wave M2 |
 | Recursive coalgebra ⇒ unique replay (Crown IV) | Target theorem, Wave M3, conditional |
 | POWL compilation preserves behavior | Undischarged assumption A10 |
