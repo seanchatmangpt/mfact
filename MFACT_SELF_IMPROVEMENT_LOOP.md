@@ -213,3 +213,17 @@ diff just doesn't block starting.
   simply hasn't committed yet. Wrote receipt
   `.mfact/receipts/20260713T175700Z.json` with `collision: true`, and stopped.
   Next firing should re-check whether `wkw4npeny` has committed by then.
+
+- **2026-07-13T18:26:57Z (run `20260713T182657Z`, firing 7) -- COLLISION
+  again, no action taken; correction noted.** `wkw4npeny` had committed
+  Waves 1-5 by this firing (`69df262`, `250fcc7`, `d6fc2a3`, `782bf6c`,
+  `6270a44`, all real, none foreign). The 7 remaining paths -- Wave 6's
+  `procint/ProcInt/MFW/Termination/*.lean`, Wave 7's `OrientedSwap.lean`, the
+  `Playground.lean` import edit, and `ROADMAP_MATH_SPINE.md` -- are Waves 6/7
+  still mid-integration, correctly identified precisely (pass 11's audit,
+  `PRAXIS_SELF_AUDIT.md` PK9, flagged firing 6 for attributing all 7 of its
+  paths to the construction workflow when one, `PRAXIS_SELF_AUDIT.md` itself,
+  was actually this audit loop's own pass-9 output -- this firing's receipt
+  double-checked attribution precisely against `git log` rather than
+  assuming). Wrote receipt `.mfact/receipts/20260713T182657Z.json` with
+  `collision: true`, and stopped.
