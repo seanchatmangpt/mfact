@@ -148,6 +148,15 @@ Format follows `ROADMAP_MATH_SPINE.md` §4. Ceilings use its marker schema.
 - Reuses: catalog §2.3 (admission typing), §6.3 (exactly-once dispatch + authority tokens),
   §6.6 (chained boundary receipts) from `MFW_WORKFLOW_CATALOG.md`.
 - Ceiling: `DEFINITIONAL` + one admission-refusal countermodel per carrier.
+- Carrier note (2026-07-13): `ontology/fortune5-cloud-architecture.ttl` (public-vocabulary-only
+  Turtle graph — `dcat`/`prov`/`org`/`odrl`/`sh`/`sosa`/`qudt`/`skos`/`schema`/`togaf` prefixes,
+  no private namespace, no custom `@base`, all enterprise-specific resources are blank nodes) is
+  now vendored in-repo as a candidate data carrier for this wave's `cloud:` namespace, verified
+  byte-identical to its source via SHA-256 (`2ba847d7c27a775fcad263f55d43bfaf41133316dfae93d9ebf19985bd53ba2c`,
+  1,664,092 bytes). This is a production/carrier fact only: no correspondence morphism between
+  the ontology's PROV shape (`prov:Entity`, `dcat:Dataset`, receipt-shaped blank nodes) and any
+  MFW Lean type is admitted (`AGENTS.md` §4), so vendoring it does not raise the standing of any
+  theorem card in this document. Status: `CARRIER-ONLY`.
 
 ### Wave CM1 — Telemetry correspondence for the cost ceiling
 

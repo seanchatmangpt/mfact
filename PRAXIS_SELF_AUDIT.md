@@ -170,6 +170,69 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   `commit_sha` as a 7-char short hash while the immediately preceding G49
   receipt stored the full 40-char SHA, a minor audit-trail schema
   inconsistency worth normalizing in a future firing.
+- **2026-07-13 (pass 11):** 14 findings across 3 lenses
+  (construction-workflow-progress, fix-loop-firing6-continuity,
+  zip-and-ggen-findings-recheck). Pass 10 is reserved for the separately-running
+  10-agent construction workflow's (task `wkw4npeny`) own Verify-phase writeup,
+  which has not landed yet, so this pass is numbered 11 rather than 10 to avoid
+  a future collision. HEAD held at `d2e6d01` throughout (fix loop `f6a6cd52`'s
+  firing-6 collision-receipt commit, checked repeatedly 11:10-11:18 PDT); no new
+  commit or receipt landed during this pass's window. 11 CONFIRMED, 1 REFUTED,
+  2 DRIFTED, 0 UNVERIFIABLE, 0 FIXED-since-last-pass. Headline: all 9 named
+  target files/dirs for the construction workflow's 4 in-scope waves (Glue/,
+  Termination/, UniformWitness.lean, Tenancy.lean, LedgerBridge.lean) plus the
+  actively-growing Swarm11/OrientedSwap.lean exist, are non-empty, contain zero
+  `sorry`/`admit` placeholder tactics, and end in well-formed closing `end`
+  statements rather than mid-write truncation -- the workflow is genuinely
+  still mid-flight, not stalled or faking completion. Live `git status
+  --porcelain` (79 lines) reconciles exactly to the 76-line
+  `known-persistent-drift.txt` baseline minus 5 already-committed paths plus 8
+  new paths, all 8 attributable to the concurrent construction workflow. The
+  one REFUTED finding: firing 6's own collision receipt and commit message
+  claim all 7 of its flagged new paths are "attributable to" `wkw4npeny`, but
+  one of the 7, `PRAXIS_SELF_AUDIT.md`, is actually this self-audit loop's own
+  uncommitted pass-9 append (mtime 10:51, before firing 6 ran at 10:57) -- the
+  guard's decision to stop was still correct, but its stated diagnosis
+  misattributes this session's own output, a pattern now compounding as this
+  pass adds a second uncommitted append on top of pass 9's. HEAD is also no
+  longer byte-identical to `origin/v26.7.12-close` (1 unpushed commit,
+  `d2e6d01`), DRIFTED from pass 9's "pushed" finding. Independently re-run
+  `ggen doctor run` (still refuses on `post-release-pack` lockfile drift plus
+  `PostRelease.lean` receipt staleness) and the extracted-zip `sorry`/`axiom`
+  checks (still zero hits, both narrow and broad patterns) reproduce unchanged.
+- **2026-07-13 (pass 9):** 6 findings across 2 lenses (g51-closure-reverify,
+  general-status-and-next-firing-catch), re-verifying fix loop `f6a6cd52`'s
+  firing 5 -- commit `0639081` claims to add a `[lints.clippy]` gate to
+  `crates/mfact-core/Cargo.toml` (todo/unimplemented/dbg_macro deny,
+  unwrap_used/expect_used warn) plus a `just clippy-core` recipe, closing
+  ledger item G51, with commit `321dd7c` recording the firing's success
+  receipt and commit `5dc2f5c` (also HEAD) tracking `MFW_WORKFLOW_CATALOG.md`
+  and four ROADMAP gap docs. 6 CONFIRMED, 0 REFUTED, 0 DRIFTED,
+  0 UNVERIFIABLE, 0 FIXED-since-last-pass. Headline: the G51 closure
+  genuinely holds -- the live `Cargo.toml` lint block matches the ledger's
+  closure text exactly (verified via direct `grep`, not trusted from the
+  commit message), `just clippy-core` runs clean (exit 0) against the
+  crate's `--lib --bin turbulence` scope, and the claimed negative-control
+  revert is intact: no `dbg!` occurrence remains in
+  `crates/mfact-core/src/lib.rs`. HEAD (`5dc2f5c`) is byte-identical to
+  `origin/v26.7.12-close` (`git log origin/v26.7.12-close..HEAD` empty,
+  both resolve to the same 40-char SHA), so the branch is genuinely pushed,
+  not just locally committed. `ROADMAP_CLOUD_MATH.md`'s five theorem-card
+  citations (`replay_eq_of_traceEq` `Swarm11/Replay.lean:105`,
+  `replay_preserved` `Correspondence/AtomVM.lean:54`,
+  `zero_unreceipted_completion` `MFW/Runtime.lean:62`,
+  `enabled_frontier_isAntichain` `MFW/Order.lean:48`, `work_bounds`
+  `Thermo.lean:30`) all reproduce a matching `theorem <name>` line at the
+  exact cited line number in `procint/ProcInt/Playground/` (and
+  `procint/ProcInt/Thermo.lean` for the last). The collision-guard baseline
+  check found no *unexplained* drift: `git status --porcelain` dropped from
+  76 to 71 lines since pass 8, but all 5 removed paths
+  (`MFW_WORKFLOW_CATALOG.md` and the four `ROADMAP_GAP_*.md`/`ROADMAP.md`
+  docs) are exactly the files commit `5dc2f5c` newly tracked, and zero new
+  paths appeared in git status that aren't already in
+  `.mfact/known-persistent-drift.txt` -- the 76-entry baseline file itself
+  is now stale by those same 5 entries and worth refreshing in a future
+  firing, a bookkeeping note rather than a defect.
 
 ## Quick reference
 
@@ -238,6 +301,21 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
 |---|---|---|
 | Minor | 18 | 16 CONFIRMED, 2 DRIFTED |
 | **Total** | **18** | **16 CONFIRMED, 2 DRIFTED** |
+
+**Pass 9 (2026-07-13) totals -- alongside, not replacing, the pass-1..8 totals above:**
+
+| Severity | Count (pass 9) | Verdicts (pass 9) |
+|---|---|---|
+| Minor | 6 | 6 CONFIRMED |
+| **Total** | **6** | **6 CONFIRMED** |
+
+**Pass 11 (2026-07-13) totals -- alongside, not replacing, the pass-1..9 totals above
+(pass 10 reserved for the construction workflow's own Verify-phase writeup):**
+
+| Severity | Count (pass 11) | Verdicts (pass 11) |
+|---|---|---|
+| Minor | 14 | 11 CONFIRMED, 1 REFUTED, 2 DRIFTED |
+| **Total** | **14** | **11 CONFIRMED, 1 REFUTED, 2 DRIFTED** |
 
 ## Critical
 
@@ -2862,6 +2940,352 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   for 3 minutes past the last manual check also did not observe a new commit
   before this report was filed. Only commits c636fd3 and 672fdeb (both already
   audited above) are new since pass 7's cd911f9.
+- Severity: minor
+
+## Pass 9 findings
+
+### PI1 -- Cargo.toml [lints.clippy] block matches G51 closure text exactly,
+
+- Lens: g51-closure-reverify
+- Claim: `crates/mfact-core/Cargo.toml` has a `[lints.clippy]` block with
+  `todo`/`unimplemented`/`dbg_macro` set to `"deny"` and
+  `unwrap_used`/`expect_used` set to `"warn"`, matching G51's closure
+  evidence verbatim.
+- Source: crates/mfact-core/Cargo.toml lines 23-28
+- Verdict: CONFIRMED
+- Evidence: Live `grep`/`sed` of the file shows `[lints.clippy]` at line 23
+  immediately followed by `todo = "deny"`, `unimplemented = "deny"`,
+  `dbg_macro = "deny"`, `unwrap_used = "warn"`, `expect_used = "warn"` --
+  an exact match to both the ledger's G51 closure text and this pass's own
+  independent re-verification (not taken on the ledger's word alone).
+- Severity: minor
+
+### PI2 -- just clippy-core runs clean, exit 0, against --lib --bin turbulence,
+
+- Lens: g51-closure-reverify
+- Claim: `just clippy-core` runs successfully with exit 0, scoped to the
+  crate's two real compiled targets (`--lib --bin turbulence`).
+- Source: justfile `clippy-core` recipe; live command `just clippy-core`
+- Verdict: CONFIRMED
+- Evidence: Output: `cd crates/mfact-core && cargo clippy --lib --bin
+  turbulence` -> `Finished \`dev\` profile [unoptimized + debuginfo]
+  target(s) in 0.21s` (cached build, no clippy warnings/errors printed).
+  Exit code 0.
+- Severity: minor
+
+### PI3 -- No dbg! remains in lib.rs; the claimed negative-control revert is intact,
+
+- Lens: g51-closure-reverify
+- Claim: The `dbg!("negative-control")` macro call injected during G51's
+  negative-control test was reverted, and no `dbg!` occurrence remains in
+  `crates/mfact-core/src/lib.rs`.
+- Source: live `grep -n "dbg!" crates/mfact-core/src/lib.rs`
+- Verdict: CONFIRMED
+- Evidence: `grep -n "dbg!" crates/mfact-core/src/lib.rs` returns no matches
+  (exit 1, empty output) -- combined with PI2's clean `just clippy-core`
+  exit 0, this independently confirms the negative-control macro was fully
+  reverted rather than merely hidden behind an allow.
+- Severity: minor
+
+### PI4 -- HEAD (5dc2f5c) is byte-identical to origin/v26.7.12-close; branch is pushed,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: The local branch, currently at commit `5dc2f5c`, is pushed and in
+  sync with `origin/v26.7.12-close` -- no local-only commits.
+- Source: live `git rev-parse HEAD`, `git rev-parse origin/v26.7.12-close`,
+  `git log origin/v26.7.12-close..HEAD`
+- Verdict: CONFIRMED
+- Evidence: `git rev-parse HEAD` and `git rev-parse origin/v26.7.12-close`
+  both resolve to the identical 40-char SHA
+  `5dc2f5c7326f89f95792ec53b42d4e7abde47faa` after a fresh `git fetch
+  origin`. `git log origin/v26.7.12-close..HEAD --oneline` returns empty
+  (exit 0, zero lines) -- no commit exists on HEAD that isn't already on
+  the remote.
+- Severity: minor
+
+### PI5 -- ROADMAP_CLOUD_MATH.md's 5 theorem-card citations all resolve at their exact cited lines,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `ROADMAP_CLOUD_MATH.md`'s five theorem-card citations
+  (`replay_eq_of_traceEq` `Swarm11/Replay.lean:105`, `replay_preserved`
+  `Correspondence/AtomVM.lean:54`, `zero_unreceipted_completion`
+  `MFW/Runtime.lean:62`, `enabled_frontier_isAntichain`
+  `MFW/Order.lean:48`, `work_bounds` `Thermo.lean:30`) are all real and
+  present at exactly the cited line.
+- Source: ROADMAP_CLOUD_MATH.md lines 24-31, 48, 64, 78, 91, 104;
+  procint/ProcInt/Playground/Swarm11/Replay.lean;
+  procint/ProcInt/Playground/Swarm11/Correspondence/AtomVM.lean;
+  procint/ProcInt/Playground/MFW/Runtime.lean;
+  procint/ProcInt/Playground/MFW/Order.lean; procint/ProcInt/Thermo.lean
+- Verdict: CONFIRMED
+- Evidence: `sed -n '<line>p'` against each live file at exactly the cited
+  line number returns: `theorem replay_eq_of_traceEq` (105),
+  `theorem replay_preserved` (54), `theorem zero_unreceipted_completion (s
+  : ExecutionState n) :` (62), `theorem enabled_frontier_isAntichain` (48),
+  `theorem work_bounds {S G : State} (p : Process S G) :` (30) -- all 5
+  match a genuine `theorem` declaration for the exact cited name at the
+  exact cited line, in the crate's real (non-worktree,
+  non-research-papers-namesake) source tree.
+- Severity: minor
+
+### PI6 -- No unexplained collision-guard baseline drift; the 76->71 delta is fully accounted for,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: `git status --porcelain` (71 lines) shows no path absent from the
+  76-entry `.mfact/known-persistent-drift.txt` baseline; the count drop is
+  explained, not unexplained drift.
+- Source: live `git status --porcelain`;
+  .mfact/known-persistent-drift.txt; commit 5dc2f5c
+- Verdict: CONFIRMED
+- Evidence: `comm -23` of sorted live-status paths against the sorted
+  baseline returns empty -- zero paths in git status are missing from the
+  baseline (no new, unexplained drift). `comm -13` (the reverse direction)
+  returns exactly 5 paths: `MFW_WORKFLOW_CATALOG.md`,
+  `ROADMAP_GAP_AUTONOMIC.md`, `ROADMAP_GAP_SEMANTIC.md`,
+  `ROADMAP_GAP_THERMO.md`, `ROADMAP.md` -- all 5 are precisely the files
+  commit `5dc2f5c` ("docs: track MFW_WORKFLOW_CATALOG.md and the four
+  ROADMAP gap docs") newly added to git, so they correctly dropped out of
+  `git status --porcelain`'s untracked listing. Caveat (not a defect): the
+  76-entry baseline file itself is now stale by these same 5 entries and
+  should be refreshed in a future firing so the guard's own diff stays
+  minimal.
+- Severity: minor
+
+## Pass 11 findings
+
+### PK1 -- All 9 named construction-workflow target files/dirs exist and are non-empty,
+
+- Lens: construction-workflow-progress
+- Claim: The 4 in-scope waves' target files/dirs (Playground/Glue/,
+  MFW/Termination/, Playground/Multifractal/UniformWitness.lean,
+  MFW/Residue/Tenancy.lean, Playground/Swarm11/Correspondence/LedgerBridge.lean)
+  all exist, non-empty, current.
+- Source: live `ls -la` on each target path
+- Verdict: CONFIRMED
+- Evidence: Glue/RankOrder.lean (4031B, 10:55), Glue/RuntimeReplay.lean
+  (5970B, 10:55); Termination/CrownWellFounded.lean (3777B, 10:59),
+  ManufactureDecrease.lean (4020B, 10:57), MultisetDescent.lean (3000B,
+  10:55), ObligationRank.lean (4825B, 10:55); UniformWitness.lean (9280B,
+  10:59); Tenancy.lean (12185B, 11:05); LedgerBridge.lean (8723B, 10:56).
+  All world-readable (0644), all mtimes within the pass window.
+- Severity: minor
+
+### PK2 -- No sorry/admit placeholder tactics in any of the 10 in-scope files,
+
+- Lens: construction-workflow-progress
+- Claim: None of the 9 target files, plus the actively-growing
+  OrientedSwap.lean, contain an actual `sorry`/`admit` placeholder tactic.
+- Source: live `grep -n 'sorry'` and `grep -n '\badmit\b'` on each file
+- Verdict: CONFIRMED
+- Evidence: All hits are prose inside doc comments asserting absence of
+  `sorry` (e.g. CrownWellFounded.lean:38 "No `sorry`.", Tenancy.lean:47
+  "No `sorry`.", OrientedSwap.lean:478 inside a closing-summary doc block)
+  or unrelated English ("this file exists to admit."). No bare `sorry` or
+  `admit` tactic keyword found. No build was attempted, so this confirms
+  absence of admitted-gap placeholders in text only, not that files
+  typecheck.
+- Severity: minor
+
+### PK3 -- Termination/'s two small files are complete def-only infra, not stubs,
+
+- Lens: construction-workflow-progress
+- Claim: ManufactureDecrease.lean and ObligationRank.lean contain zero
+  theorem/lemma declarations (`def`-only) and are not truncated mid-write.
+- Source: live `grep -cE '^\s*(theorem|lemma)\s'` and `tail -8` on each file
+- Verdict: CONFIRMED
+- Evidence: Both files return 0 theorem/lemma matches. Both end in a
+  complete, well-formed `def` (`ManufactureStep`, `rank` resp.) followed by
+  `end ProcInt.MFW.Termination`, not a dangling partial statement --
+  finished infrastructure by design, not incomplete proofs.
+- Severity: minor
+
+### PK4 -- OrientedSwap.lean is the largest, most recent, self-scoped file,
+
+- Lens: construction-workflow-progress
+- Claim: Swarm11/OrientedSwap.lean (517 lines, 10 theorems) is the
+  freshest and largest in-scope file, closing with a self-documented
+  "Closing summary" that names what remains unproven rather than
+  overclaiming.
+- Source: live `wc -l`, `grep -cE` theorem count, `tail -60` on the file
+- Verdict: CONFIRMED
+- Evidence: `wc -l` = 517, theorem/lemma count = 10. File ends with a
+  "## 7. Closing summary" doc block: "Proven, unconditionally,
+  kernel-checked ... no sorry:" followed by "Not proven, and not falsely
+  claimed:" naming `Relation.LocallyConfluent (OrientedSwap step
+  priority)` unconditionally as the open item, then closes cleanly with
+  `end Replay` / `end ProcInt.Playground.Swarm11`.
+- Severity: minor
+
+### PK5 -- Tenancy.lean includes a genuine negative-result countermodel,
+
+- Lens: construction-workflow-progress
+- Claim: Residue/Tenancy.lean (245 lines, 16 theorem/lemma declarations)
+  includes a `TenancyCountermodel` section proving
+  `tenant_purity_conclusion_fails`, demonstrating a hypothesis is
+  load-bearing rather than decorative.
+- Source: live `wc -l`, `grep -cE` theorem count, `tail -16` on the file
+- Verdict: CONFIRMED
+- Evidence: `wc -l` = 245, theorem/lemma count = 16. File ends with
+  `theorem tenant_purity_conclusion_fails : ¬ (∀ a ∈ ({0} : Finset Obl),
+  tag a = tag (1 : Obl))` proved by `intro/have/rw/exact
+  Bool.false_ne_true`, followed by `end TenancyCountermodel` /
+  `end ProcInt.MFW.Residue` -- a complete, closed module.
+- Severity: minor
+
+### PK6 -- git status count (79) reconciles exactly to baseline plus deltas,
+
+- Lens: construction-workflow-progress
+- Claim: Live `git status --porcelain` (79 lines) equals the 76-line
+  `known-persistent-drift.txt` baseline minus 5 already-committed paths
+  plus 8 new unexplained-but-attributable paths.
+- Source: live `git status --porcelain | wc -l`;
+  `.mfact/known-persistent-drift.txt`; `comm -23`/`comm -13`
+- Verdict: CONFIRMED
+- Evidence: Live count = 79 (76 - 5 + 8 = 79). `comm -23` (new, not in
+  baseline) returns exactly 8 paths: `ontology/fortune5-cloud-architecture.ttl`,
+  `PRAXIS_SELF_AUDIT.md`, `procint/ProcInt/MFW/Residue/Tenancy.lean`,
+  `procint/ProcInt/MFW/Termination/`, `procint/ProcInt/Playground/Glue/`,
+  `procint/ProcInt/Playground/Multifractal/UniformWitness.lean`,
+  `procint/ProcInt/Playground/Swarm11/Correspondence/LedgerBridge.lean`,
+  `procint/ProcInt/Playground/Swarm11/OrientedSwap.lean`. `comm -13`
+  (stale baseline entries) returns the same 5 paths pass 9 flagged. The
+  count fluctuates minute-to-minute as the construction workflow writes
+  files; this is a single fresh snapshot, not a claim of stability.
+- Severity: minor
+
+### PK7 -- Firing 6's collision receipt correctly stopped, made no other change,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: `.mfact/receipts/20260713T175700Z.json` (commit `d2e6d01`)
+  correctly identified concurrent construction-workflow activity, took no
+  action, and left history clean.
+- Source: live `cat .mfact/receipts/20260713T175700Z.json`;
+  `git log --all --oneline`, `git reflog`
+- Verdict: CONFIRMED
+- Evidence: Receipt has `"status": "failed"`, `"commit_sha": null`,
+  `"collision": true`, `"duration_ms": 0`,
+  `"after": "not attempted -- collision guard stopped the firing before
+  any action"`. `git log -1` and repeated re-checks across the pass window
+  (11:10-11:18 PDT) all show HEAD unchanged at `d2e6d01`; no foreign
+  commits landed in between.
+- Severity: minor
+
+### PK8 -- Construction workflow still mid-flight; 1 new path since firing 6,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: Task `wkw4npeny` has not committed anything yet and is still
+  actively writing files; `OrientedSwap.lean` is a path that appeared
+  after firing 6's receipt was written.
+- Source: live `git status --porcelain` vs
+  `.mfact/known-persistent-drift.txt` via `comm -23`; `ls -la` mtimes
+- Verdict: CONFIRMED
+- Evidence: `comm -23` returns 8 paths (PK6), one more than firing 6's
+  receipt-listed 7: `procint/ProcInt/Playground/Swarm11/OrientedSwap.lean`.
+  That file's mtime is 10:59 (its `.ttl`/companion writes) through 11:09,
+  i.e. after firing 6's 10:57 receipt timestamp. `git log`/`git reflog`
+  show zero new commits, confirming `wkw4npeny` remains uncommitted.
+- Severity: minor
+
+### PK9 -- Firing 6's blanket misattribution of PRAXIS_SELF_AUDIT.md's diff,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: Firing 6's receipt and commit message state all 7 flagged new
+  paths are "attributable to" the construction workflow (`wkw4npeny`).
+  This is false for `PRAXIS_SELF_AUDIT.md`.
+- Source: live `git diff --stat PRAXIS_SELF_AUDIT.md`; `git diff` content;
+  `stat` mtime; receipt `.mfact/receipts/20260713T175700Z.json`
+- Verdict: REFUTED
+- Evidence: `git diff --stat` shows a single 149-line insertion; the diff
+  content is entirely pass 9's own self-audit findings text ("pass 9",
+  PI1-PI6, the pass-9 run-log paragraph). `stat` shows mtime `10:51:17`,
+  before firing 6 ran (`10:57:00` per the receipt timestamp) -- a
+  Lean-construction workflow whose other 6 flagged paths are all
+  `.lean`/`.ttl` artifacts would not write this content. The guard's
+  decision to stop was still correct (any unexplained diff should halt
+  the firing), but its stated diagnosis misattributes this session's own
+  uncommitted output.
+- Severity: minor
+
+### PK10 -- HEAD no longer byte-identical to origin/v26.7.12-close,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: HEAD is pushed and in sync with `origin/v26.7.12-close`, per
+  pass 9's PI4.
+- Source: live `git fetch origin`, `git rev-parse HEAD`,
+  `git rev-parse origin/v26.7.12-close`,
+  `git log origin/v26.7.12-close..HEAD --oneline`
+- Verdict: DRIFTED
+- Evidence: `git rev-parse HEAD` = `d2e6d01b06d92feca14aec38f1fdab8335849714`;
+  `git rev-parse origin/v26.7.12-close` still = `5dc2f5c7326f89f95792ec53b42d4e7abde47faa`.
+  `git log origin/v26.7.12-close..HEAD --oneline` returns exactly 1 commit,
+  `d2e6d01` (firing 6's own collision-receipt commit). Not a defect on its
+  own, but pass 9's specific "byte-identical, pushed" claim no longer
+  holds for current HEAD.
+- Severity: minor
+
+### PK11 -- known-persistent-drift.txt baseline still stale by same 5 entries,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: The 76-entry baseline file is stale by the same 5
+  already-committed entries pass 9 flagged, unaddressed across two more
+  firings and two more passes.
+- Source: live `comm -13` of sorted `git status --porcelain` paths against
+  sorted `.mfact/known-persistent-drift.txt`
+- Verdict: CONFIRMED
+- Evidence: `comm -13` returns the identical 5 paths pass 9 reported
+  (`MFW_WORKFLOW_CATALOG.md`, `ROADMAP_GAP_AUTONOMIC.md`,
+  `ROADMAP_GAP_SEMANTIC.md`, `ROADMAP_GAP_THERMO.md`, `ROADMAP.md`) --
+  all committed in `5dc2f5c` and no longer in `git status --porcelain`,
+  but still listed in the baseline untouched since before pass 9. Harmless
+  for the collision guard's `comm -23` direction, but a second consecutive
+  pass confirming the suggested refresh has not happened.
+- Severity: minor
+
+### PK12 -- Pass 9's audit append still uncommitted, now spanning 3+ passes,
+
+- Lens: fix-loop-firing6-continuity
+- Claim: Pass 9's 149-line self-audit findings addition has sat
+  uncommitted through firing 6 and into this pass, unlike passes 5-8
+  which were each committed promptly.
+- Source: live `git log --oneline -- PRAXIS_SELF_AUDIT.md`;
+  `git diff --stat PRAXIS_SELF_AUDIT.md`; `stat` mtime
+- Verdict: CONFIRMED
+- Evidence: `git log --oneline -- PRAXIS_SELF_AUDIT.md` shows the most
+  recent commit touching this file is `e0366b4` ("append pass 8"); pass
+  9's findings were never committed (mtime `10:51`, no later commit
+  touches the file). This directly caused PK9's misattribution and will
+  recur at the next firing unless committed -- this pass's own append
+  compounds the same uncommitted-file risk.
+- Severity: minor
+
+### PK13 -- ggen doctor run still refuses on identical lockfile/receipt drift,
+
+- Lens: zip-and-ggen-findings-recheck
+- Claim: `ggen doctor run` refuses due to post-release-pack/ggen.lock
+  content-hash drift plus a stale `PostRelease.lean` receipt.
+- Source: live command `ggen doctor run` executed at HEAD `d2e6d01`
+- Verdict: CONFIRMED
+- Evidence: Fresh run returns: "doctor found 2 failing check(s):
+  lockfile_drift: ... pack `post-release-pack` ... content hash mismatch:
+  ggen.lock has `blake3:7189211c...` but the pack on disk hashes to
+  `blake3:e421e0e4...`. ...; receipt_staleness: 1 receipt output(s)
+  missing or hash-mismatched on disk: procint/ProcInt/Release/PostRelease.lean".
+  Matches the claimed refusal mode and root cause exactly.
+- Severity: minor
+
+### PK14 -- 0 sorry/axiom reconfirmed in the extracted f5-core zip package,
+
+- Lens: zip-and-ggen-findings-recheck
+- Claim: The extracted `procint-multifractal-workflow-f5-core` package has
+  0 `sorry`/`axiom` occurrences.
+- Source: live `grep -rn 'sorry\|axiom '` and a broader
+  `grep -rniE 'sorry|axiom'` against the extracted `ProcInt/` directory in
+  the scratchpad
+- Verdict: CONFIRMED
+- Evidence: The extracted directory still exists, 51 `.lean` files. Both
+  the narrow and the case-insensitive broad grep return zero matches
+  (exit 1, empty output), independently reconfirming the "0 sorry/0
+  axiom" finding for this package.
 - Severity: minor
 
 ## References
