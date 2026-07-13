@@ -256,6 +256,22 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   pass's polling. `known-persistent-drift.txt` is flagged (again) as stale by the same 5
   already-committed paths pass 10/11 already named, not yet refreshed per this audit's
   own read-only discipline.
+- **2026-07-13 (pass 13):** 13 findings across 3 lenses (soc2-scope-correction-audit,
+  fix-loop-health-check, soc2-flow-test-workflow-catch). HEAD held at `852d343` throughout
+  (the scope-corrected `ROADMAP_SOC2_MATH.md` commit); no new firing/commit landed during
+  this pass's 12:09-12:15 PDT checking window. 8 CONFIRMED, 3 REFUTED (1 major), 1
+  DRIFTED, 1 UNVERIFIABLE, 0 FIXED-since-last-pass. Headline: every scope-correction claim
+  in `ROADMAP_SOC2_MATH.md` re-derives cleanly against the live file and Lean sources --
+  the scope-boundary paragraph, CC8/PI1.1-PI1.5 category text, all four theorem-card line
+  citations, the markdown conventions, and the PA23/PA24 cross-reference all reproduce
+  verbatim, not merely restated from the commit message. On the fix loop: firings 6/7/8
+  colliding three times running is REFUTED as a "malfunction" -- fresh reads of all three
+  collision receipts show three distinct, correctly self-diagnosed concurrent-work causes
+  (10-agent workflow `wkw4npeny` for 6 and 7, unrelated task `w3uu76xt9` for 8), not the
+  same blocker repeating. Firing 9 (due ~12:12-12:15 PDT per cron `f6a6cd52`) had not
+  landed as of this pass's 12:14:41 PDT check. The SOC2 flow-test construction workflow
+  (task `wfigivqnl`) has produced zero files yet -- no `Playground/SOC2/` directory, no
+  `AuditFlow` or `wfigivqnl` hits anywhere in the tree.
 
 ## Quick reference
 
@@ -348,6 +364,15 @@ quick-reference row was ever added for it, a pre-existing gap this pass does not
 |---|---|---|
 | Minor | 13 | 10 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE |
 | **Total** | **13** | **10 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE** |
+
+**Pass 13 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, and 12
+totals above:**
+
+| Severity | Count (pass 13) | Verdicts (pass 13) |
+|---|---|---|
+| Major | 1 | 1 REFUTED |
+| Minor | 12 | 8 CONFIRMED, 2 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE |
+| **Total** | **13** | **8 CONFIRMED, 3 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE** |
 
 ## Critical
 
@@ -3741,6 +3766,221 @@ workflow mid-flight before it finished committing.
   the same spirit as pass 10's PJ10 and pass 11's PK9 catches of prior passes' own
   citation errors -- this time the citation being corrected belongs to this pass's own
   pre-commit draft, not a prior published pass.
+- Severity: minor
+
+## Pass 13 findings
+
+### PM1 -- Firings 6/7/8 colliding is three distinct legitimate causes, not a malfunction,
+
+- Lens: fix-loop-health-check
+- Claim: fix loop `f6a6cd52` colliding three times in a row at firings 6, 7, 8 reflects a
+  loop malfunction or a design flaw in the collision guard, rather than expected behavior.
+- Source: fresh `git log --format='%h %ad %s' --date=iso-local d2e6d01..ec9001e`, plus
+  `python3`-parsed contents of `.mfact/receipts/{20260713T175700Z,20260713T182657Z,
+  20260713T185704Z}.json` (the three collision receipts themselves), all re-read this pass.
+- Verdict: REFUTED
+- Evidence: firing 6's receipt (`17:57:00Z` = 10:57 PDT) names 7 uncommitted paths from
+  10-agent workflow `wkw4npeny`, "still mid-flight (has not committed anything yet)".
+  Firing 7's receipt (`18:26:57Z` = 11:26:57 PDT) re-checks and precisely attributes the
+  remaining 7 paths to that same workflow's Wave 6/Wave 7, explicitly correcting a prior
+  pass's overgeneralized attribution. Firing 8's receipt (`18:57:04Z` = 11:57:04 PDT) names
+  a single, unrelated path, `ROADMAP_SOC2_MATH.md`, from task `w3uu76xt9`, checked after
+  `wkw4npeny` had fully landed (`ae5c2a5`, 11:28:40 PDT). Three collisions, three distinct,
+  correctly self-diagnosed concurrent-work causes -- not the same blocker repeating; this
+  is the guard behaving exactly as designed.
+- Severity: major
+
+### PM2 -- known-persistent-drift.txt is stale but causes zero live drift-detection error,
+
+- Lens: fix-loop-health-check
+- Claim: `.mfact/known-persistent-drift.txt` is stale and needs regenerating because 5
+  listed files (`MFW_WORKFLOW_CATALOG.md`, `ROADMAP.md`, `ROADMAP_GAP_AUTONOMIC.md`,
+  `ROADMAP_GAP_SEMANTIC.md`, `ROADMAP_GAP_THERMO.md`) have since been committed.
+- Source: fresh `git status --porcelain -- <5 files>` (all empty) and `comm -23` between a
+  freshly sorted live `git status --porcelain` and the sorted baseline file, run now.
+- Verdict: REFUTED
+- Evidence: `comm -23` of the live git-status paths against the baseline is currently empty
+  -- every dirty/untracked path right now already appears in the baseline. The 5
+  now-committed files simply no longer appear in `git status` at all, so their stale
+  baseline entries cause no false positive or negative in the delta check right now; no
+  regeneration is required for correctness this instant, even though the entries are
+  literally outdated bookkeeping (confirmed present at baseline lines 15, 70-73).
+- Severity: minor
+
+### PM3 -- Firing 9 had not landed as of this pass's check window,
+
+- Lens: fix-loop-health-check
+- Claim: firing 9 of cron `f6a6cd52` has landed and should be audited this pass.
+- Source: `ls -la .mfact/receipts/`, `cat .mfact/receipts/latest.json`, `git log --oneline
+  -10`, `date`, `CronList`, all re-run at 12:14:41 PDT.
+- Verdict: REFUTED
+- Evidence: `latest.json` still points at `run_id: "20260713T185704Z"` (firing 8, 11:57:04
+  PDT); no receipt file with a later timestamp exists; HEAD is unchanged at `852d343`. Cron
+  `f6a6cd52`'s live schedule is `12,42 * * * *`, so firing 9 is due right around this
+  pass's own 12:12-12:15 PDT check window but had not fired as of 12:14:41 PDT.
+- Severity: minor
+
+### PM4 -- Firing 7's "Wave 6 still mid-integration" framing is off by about 2 seconds,
+
+- Lens: fix-loop-health-check
+- Claim: firing 7's collision was caused by Wave 6 (`Termination/*.lean`, commit `d4ed2f3`)
+  and Wave 7 files still being uncommitted at check time.
+- Source: `git log --format='%h %ad %s' --date=iso-local -1 d4ed2f3` compared against
+  firing 7's receipt `timestamp` field (`.mfact/receipts/20260713T182657Z.json`).
+- Verdict: DRIFTED
+- Evidence: `d4ed2f3` (wave6/M1, Dershowitz-Manna crown descent) has commit timestamp
+  `11:26:55 -0700`, two seconds before firing 7's `18:26:57Z` (11:26:57 PDT) check. The
+  receipt's own text is already precise on this point -- it names the still-open paths as
+  the 4 `Termination/*.lean` files, `Playground.lean`, `OrientedSwap.lean`, and
+  `ROADMAP_MATH_SPINE.md`, not `d4ed2f3`'s own commit content -- so the shorthand is close
+  enough at 2-second granularity to be substantively correct, but should not be read as
+  meaning `d4ed2f3` itself was uncommitted at that instant; it landed fractionally earlier.
+- Severity: minor
+
+### PM5 -- Firing 9 is predicted, not yet confirmed, to pass the collision guard cleanly,
+
+- Lens: fix-loop-health-check
+- Claim: given the live tree's delta against the baseline is currently empty, firing 9
+  should pass the collision guard and pick a real gap, unlike firings 6/7/8.
+- Source: same `comm -23` re-check as PM2, plus `MFACT_SELF_IMPROVEMENT_LOOP.md`'s stated
+  v3 guard logic (only paths outside the baseline count as a collision).
+- Verdict: UNVERIFIABLE
+- Evidence: the live delta is empty right now (12:14:41 PDT), which predicts a
+  non-collision outcome per the guard's documented logic -- but firing 9 had not executed
+  as of this pass, and the prediction is contingent on no new uncommitted work landing in
+  the intervening minutes. Cannot be confirmed until firing 9's own receipt appears;
+  deferred to the next pass.
+- Severity: minor
+
+### PM6 -- 852d343's "scope-corrected" claim is substantively present in the file body,
+
+- Lens: soc2-scope-correction-audit
+- Claim: `852d343`'s commit message claims `ROADMAP_SOC2_MATH.md` was scope-corrected per
+  two post-dispatch user clarifications; this is checked against the file body directly,
+  not trusted from the commit message alone.
+- Source: `grep -n` for scope-boundary language directly in the committed file content
+  (`ROADMAP_SOC2_MATH.md` lines 20, 29, 209, 221, 224), independent of `git log`.
+- Verdict: CONFIRMED
+- Evidence: the scope-boundary framing is verbatim in the file's own prose, not just
+  asserted in the commit message: L20 "Scope boundary, stated once here..."; L29 "...is
+  the consumer's responsibility to get right, not a roadmap item for mfact"; L209
+  "...whether a consumer didn't is the consumer's job, not mfact's"; L221 "This is not a
+  gap mfact's proofs need to close, and mfact does not build FFI shims"; L224 "(Lake, Lean
+  4, the TTL ontology, ggen) is validated once by an auditor". A real artifact property,
+  not prose dressing on top of an unchanged file.
+- Severity: minor
+
+### PM7 -- Scope-boundary paragraph is internally consistent with all 4 theorem cards,
+
+- Lens: soc2-scope-correction-audit
+- Claim: the "Scope boundary" paragraph (L20-31) is internally consistent with section 2's
+  four theorem cards and section 3(c): no remaining sentence implies mfact itself should
+  build a correspondence carrier, wire an FFI shim, or "close the gap".
+- Source: `sed -n` reads of `ROADMAP_SOC2_MATH.md` L20-31, L99-102, L122-131, L151-156,
+  L174-180, L205-233, re-run fresh this pass, not reused from a prior pass's read.
+- Verdict: CONFIRMED
+- Evidence: L26-31 states building carriers/wiring runtimes/auditing routing is "the
+  consumer's responsibility... not a roadmap item for mfact", and every "correspondence
+  map (undischarged)" note describes what a *consumer* would need to build, not an
+  imperative directed at mfact (re-confirmed for Card 1 L99-102 and Card 2's PI1.1-PI1.5
+  text at L122-131). L205-207 states plainly "This document does not close that gap; it
+  inherits it." L221-223 disclaims: "mfact does not build FFI shims, wire runtimes to
+  invariant-carrying types, or continuously re-verify...". No contradicting sentence found.
+- Severity: minor
+
+### PM8 -- CC8 is correctly labeled Change Management, distinct from Processing Integrity,
+
+- Lens: soc2-scope-correction-audit
+- Claim: CC8 is described as Change Management (not Processing Integrity) in the
+  correspondence table.
+- Source: `sed -n '55,65p' ROADMAP_SOC2_MATH.md`, re-read fresh this pass.
+- Verdict: CONFIRMED
+- Evidence: line 59 reads "| CC8 -- Change Management | none | -- | MISSING |", matching
+  the AICPA 2017 TSC Common Criteria structure where CC8 is Change Management, distinct
+  from the separate Processing Integrity (PI) category on line 62 of the same table.
+- Severity: minor
+
+### PM9 -- PI1.1-PI1.5 wording is accurately described as ordinary business-data controls,
+
+- Lens: soc2-scope-correction-audit
+- Claim: PI1.1-PI1.5 is described as being about business-data completeness/accuracy/
+  authorization/timeliness, not receipts or audit trails.
+- Source: `sed -n '118,132p' ROADMAP_SOC2_MATH.md`, re-read fresh this pass.
+- Verdict: CONFIRMED
+- Evidence: lines 122-131 state the wording is about "completeness, accuracy,
+  authorization, and timeliness of ordinary business data processing... PI is explicitly
+  not about receipts, cryptographic logging, or audit trails in the sense this theorem
+  uses receipt." This matches the actual AICPA PI1.1-PI1.5 sub-criteria structure
+  (objectives, input, processing, output, storage controls).
+- Severity: minor
+
+### PM10 -- All 4 theorem-card citations resolve to the exact stated Lean line numbers,
+
+- Lens: soc2-scope-correction-audit
+- Claim: all four theorem-card citations resolve to the exact stated line numbers in the
+  live Lean files at HEAD `852d343`.
+- Source: fresh `grep -n` against `procint/ProcInt/MFW/Residue/Tenancy.lean`,
+  `procint/ProcInt/Playground/MFW/Runtime.lean`,
+  `procint/ProcInt/Playground/Swarm11/Replay.lean`,
+  `procint/ProcInt/MFW/Residue/Antichain.lean`,
+  `procint/ProcInt/MFW/Residue/MinimalSupport.lean`, run this pass, not reused output.
+- Verdict: CONFIRMED
+- Evidence: `Tenancy.lean:72` = `def Separated`, `:86` = `theorem
+  minimalSupport_tenant_pure`, `:111` = `theorem crossTenant_residue_disjoint`.
+  `Runtime.lean:52-56` = `structure ExecutionState` with `completionReceipted` on `:56`,
+  `:62` = `theorem zero_unreceipted_completion`. `Swarm11/Replay.lean:27` = `def replay`,
+  `:105` = `theorem replay_eq_of_traceEq`. `Antichain.lean:75` = `theorem
+  residue_isAntichain`, `:113` = `theorem residue_purity`. `MinimalSupport.lean:97` =
+  `theorem eq_of_subset_of_sufficient_of_isMinimalSupport`. No line has shifted.
+- Severity: minor
+
+### PM11 -- Markdown conventions hold: single H1, only table rows exceed 100 chars,
+
+- Lens: soc2-scope-correction-audit
+- Claim: markdown conventions hold after the scope-correction edit: single H1, no prose
+  line over 100 chars.
+- Source: `grep -n '^# [^#]'` and an `awk` length-check over all 254 lines of
+  `ROADMAP_SOC2_MATH.md`, re-run fresh this pass.
+- Verdict: CONFIRMED
+- Evidence: `grep` finds exactly one H1 match (line 1, the title). The length check finds
+  only 4 lines over 100 chars (57, 61, 62, 63), all markdown-table rows in section 1's
+  correspondence table, not prose paragraphs -- matching the same table-row-length
+  precedent already established in `ROADMAP_CLOUD_MATH.md`, so the convention's table
+  exemption is applied consistently.
+- Severity: minor
+
+### PM12 -- Section 3(c)'s PA23/PA24 citation accurately reflects that file's content,
+
+- Lens: soc2-scope-correction-audit
+- Claim: section 3(c)'s citation of `PRAXIS_SELF_AUDIT.md` PA23/PA24 accurately reflects
+  that file's content (thermo.rs FFI shim + `lean_ffi_wrapper.c` hardcoded-constant
+  findings).
+- Source: `sed -n '435p;457p' PRAXIS_SELF_AUDIT.md` (heading text) cross-checked against
+  `sed -n '205,225p;250,254p' ROADMAP_SOC2_MATH.md`.
+- Verdict: CONFIRMED
+- Evidence: `PRAXIS_SELF_AUDIT.md:435` heading is "### PA23 -- thermo_helmholtz doc
+  comment..." and `:457` is "### PA24 -- lean_ffi_wrapper.c provides Lean/Mathlib FFI
+  bindings...", matching the roadmap's L210-219 description (doc comment quotes real
+  theorem but FFI symbol ignores input; hand-written Mathlib stand-ins return fixed
+  constants) and the L253-255 References-section citation of both PA numbers.
+- Severity: minor
+
+### PM13 -- SOC2 flow-test construction workflow has produced no files yet,
+
+- Lens: soc2-flow-test-workflow-catch
+- Claim: the SOC2 flow-test construction workflow (task `wfigivqnl`) has not produced any
+  files yet -- `procint/ProcInt/Playground/SOC2/{AuditFlow,AuditFlowViolation}.lean` do
+  not exist.
+- Source: `find .../Playground/SOC2 -type f`, `ls -la .../Playground/SOC2`, `git status
+  --porcelain`, `grep -rl "AuditFlow" --include='*.lean' .`, `grep -rl wfigivqnl .`, all
+  re-run fresh this pass.
+- Verdict: CONFIRMED
+- Evidence: `find`/`ls` both report the `SOC2` directory does not exist; `git status
+  --porcelain` (71 lines) contains no SOC2/AuditFlow paths; `grep` for `AuditFlow` across
+  all `.lean` files in the repo returns zero matches; `grep` for the task id `wfigivqnl`
+  anywhere in the tree returns zero matches. `Playground/` itself has other active
+  subdirs (`Swarm11`, `Multifractal`, `MFW`, `Glue`, `Experimental`, `Trajectory`), but
+  nothing under `SOC2` has been created.
 - Severity: minor
 
 ## References
