@@ -22,6 +22,8 @@ import ProcInt.Playground.AnalyticsRelationsWalkthrough
 import ProcInt.Playground.AnalyticsTemporalWalkthrough
 import ProcInt.Playground.PddlPlanningWalkthrough
 import ProcInt.Playground.Multifractal
+import ProcInt.Playground.Experimental
+import ProcInt.Playground.ExperimentalWalkthrough
 
 /-! # ProcInt.Playground
 
