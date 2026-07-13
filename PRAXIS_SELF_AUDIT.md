@@ -296,6 +296,25 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   (`lake build`) this pass to avoid racing the still-running construction workflow, so full
   typecheck confirmation remains UNVERIFIABLE, as does whether fix loop `f6a6cd52`'s next
   firing (due ~12:42 PDT) had landed by the end of this pass's own check window.
+- **2026-07-13 (pass 15):** 11 findings across 3 lenses (g11-deletion-reverify,
+  status-count-drop-explained, lean-testing-workflow-catch), independently re-verifying
+  firing-10's G11 closure commit (108bf5b: delete broker.rs/thermo.rs/transport.rs/
+  lean.rs/lean_ffi_wrapper.c/main.rs plus two integration tests from crates/mfact-core)
+  and the resulting `git status --porcelain` drop from 71 to 63 lines. HEAD held at
+  `836fb53` throughout this pass's ~13:09-13:18 PDT window; `git log a50c5e9..836fb53`
+  shows exactly 5 self-loop commits, no foreign intrusion. 8 CONFIRMED, 1 REFUTED, 1
+  DRIFTED (major), 1 FIXED-since-last-pass, 0 UNVERIFIABLE. Headline: the deletion
+  itself, its untracked-file git-history claim, and the 71->63 porcelain arithmetic all
+  reproduce exactly on fresh commands -- but `build.rs` (untracked, unchecked by the
+  closure's own verification) still does
+  `cc::Build::new().file("src/lean_ffi_wrapper.c")`, a literal reference to one of the 8
+  just-deleted files. `just clippy-core` currently passes only because this sandboxed
+  shell's PATH lacks `lean`, so build.rs bails out before reaching that call; both
+  `~/.bash_profile` and `~/.zprofile` add `$HOME/.elan/bin` to PATH, and `~/.elan/bin/
+  lean --print-prefix` runs successfully when invoked directly -- so the user's actual
+  login shell would hit a real build failure the closure never disclosed (PO1, major
+  DRIFTED). Pass 14's PN1 docstring-drift finding was independently confirmed FIXED by
+  commit bb25faf (diff read directly, not trusted from its message).
 
 ## Quick reference
 
@@ -405,6 +424,15 @@ totals above:**
 |---|---|---|
 | Minor | 12 | 7 CONFIRMED, 2 DRIFTED, 2 UNVERIFIABLE, 1 FIXED-since-last-pass |
 | **Total** | **12** | **7 CONFIRMED, 2 DRIFTED, 2 UNVERIFIABLE, 1 FIXED-since-last-pass** |
+
+**Pass 15 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, 12, 13,
+and 14 totals above:**
+
+| Severity | Count (pass 15) | Verdicts (pass 15) |
+|---|---|---|
+| Major | 1 | 1 DRIFTED |
+| Minor | 10 | 8 CONFIRMED, 1 REFUTED, 1 FIXED-since-last-pass |
+| **Total** | **11** | **8 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 FIXED-since-last-pass** |
 
 ## Critical
 
@@ -4221,6 +4249,179 @@ workflow mid-flight before it finished committing.
   ~12:42 PDT estimate for the next firing had not yet arrived within this pass's
   observation window, so no new firing to audit could be captured this pass -- consistent
   with prior passes occasionally landing just outside the sampled window.
+- Severity: minor
+
+## Pass 15 findings
+
+### PO1 -- build.rs still references the deleted lean_ffi_wrapper.c, a login-shell landmine,
+
+- Lens: g11-deletion-reverify
+- Claim: firing-10's G11 closure (commit 108bf5b) deleted `lean_ffi_wrapper.c` and
+  reported the deletion has zero effect on the reachable build, verified via `just
+  clippy-core` passing before and after. That verification never checked `build.rs`.
+- Source: crates/mfact-core/build.rs (untracked); direct `~/.elan/bin/lean
+  --print-prefix`; `~/.bash_profile`; `~/.zprofile`
+- Verdict: DRIFTED
+- Evidence: live `cat build.rs` shows `cc::Build::new()....file("src/
+  lean_ffi_wrapper.c")....compile("thermo_lean")` -- a literal reference to one of the 8
+  just-deleted files. `just clippy-core` currently passes only because
+  `Command::new("lean").arg("--print-prefix")` fails to resolve on this sandboxed
+  shell's PATH (`which lean` -> not found), so build.rs prints a warning and returns
+  before reaching `cc::Build`. But `~/.bash_profile:14` and `~/.zprofile:8` both
+  `export PATH="$HOME/.elan/bin:$PATH"`, and `~/.elan/bin/lean --print-prefix` resolves
+  and exits 0 with a real toolchain prefix when invoked directly. In the user's actual
+  login shell, `cargo build`/`check`/`clippy` on mfact-core would reach the `cc::Build`
+  call and fail on the missing file -- an undisclosed build-breakage landmine in the
+  exact FFI domain this firing was working in.
+- Severity: major
+
+### PO2 -- 10-agent workflow wup6bpemk has produced no artifacts yet as of this pass,
+
+- Lens: lean-testing-workflow-catch
+- Claim: the "Lean-testing-landscape-and-gaps" workflow (task wup6bpemk) has produced
+  new files under procint/ProcInt/Playground since GAP_LEDGER_v26.7.12.md was written.
+- Source: `find procint/ProcInt/Playground -newer GAP_LEDGER_v26.7.12.md -type f`;
+  `grep -rn wup6bpemk /Users/sac/mfact`
+- Verdict: REFUTED
+- Evidence: both commands returned empty. No file under Playground is newer than
+  GAP_LEDGER_v26.7.12.md (mtime 13:04 PDT), and no reference to wup6bpemk exists
+  anywhere in the tree. Reported plainly, not as a problem -- the workflow may simply
+  still be in an early/dispatch stage as of this pass's ~13:15 PDT check.
+- Severity: minor
+
+### PO3 -- pass 14's PN1 (stale Swarm11.AuditFlow docstring reference) is fixed,
+
+- Lens: status-count-drop-explained
+- Claim: pass 14's PN1 finding (AuditFlowViolation.lean's docstring forward-referencing
+  the nonexistent `ProcInt.Playground.Swarm11.AuditFlow`) was fixed by a commit landing
+  inside this pass's review window.
+- Source: `git show bb25faf --stat` and full diff, read directly rather than trusted
+  from the commit message
+- Verdict: FIXED-since-last-pass
+- Evidence: commit bb25faf (12:46:42 PDT, between pass-14 HEAD a50c5e9 and this pass's
+  HEAD 836fb53) rewrites the docstring, replacing the stale `Swarm11.AuditFlow`
+  reference with the actual committed location `ProcInt.Playground.SOC2.AuditFlow`.
+  Confirmed by reading the diff body, not the commit message. Does not affect the
+  porcelain-count delta (touches an already-tracked file).
+- Severity: minor
+
+### PO4 -- all 8 named files are genuinely deleted and were never tracked history,
+
+- Lens: g11-deletion-reverify, lean-testing-workflow-catch
+- Claim: broker.rs, thermo.rs, transport.rs, lean.rs, lean_ffi_wrapper.c, main.rs,
+  tests/thermo_integration_test.rs, tests/sse_transport_test.rs are all genuinely
+  deleted, and commit 108bf5b's claim they were "all untracked, never committed" is
+  accurate.
+- Source: `[ -e ]` existence check on all 8 paths; `git log --all --oneline -- <path>`
+  per path (fresh re-run this pass)
+- Verdict: CONFIRMED
+- Evidence: all 8 paths report "gone" on live existence check; `git log --all` returns
+  zero commits for every one of the 8 paths, confirming none was ever a git object in
+  this repo's history -- matching commit 108bf5b's own message verbatim.
+- Severity: minor
+
+### PO5 -- porcelain drop from 71 to 63 is fully and exactly explained by the deletion,
+
+- Lens: g11-deletion-reverify, status-count-drop-explained, lean-testing-workflow-catch
+- Claim: `git status --porcelain`'s line-count drop from 71 (prior baseline) to 63 is
+  fully explained by the 8-file deletion, with no other unaccounted drift.
+- Source: fresh `git status --porcelain | wc -l`; `grep -c '^ M'`; `grep -c '^ D'`
+- Verdict: CONFIRMED
+- Evidence: live count = 63 = 71 - 8 exactly. Tracked `M` set is unchanged at 7 files
+  (.ggen-v2/receipt-log.jsonl, .ggen-v2/receipt.json, .mfact/artifacts.toml,
+  crates/mfact-core/src/validate.rs, ggen.lock, release/standing.env, web/mfact-ui);
+  `^ D` count is 0, confirming these were untracked-file removals, not tracked
+  deletions.
+- Severity: minor
+
+### PO6 -- remaining crate builds clean; no dead references in the surviving tests,
+
+- Lens: g11-deletion-reverify
+- Claim: `just clippy-core` still passes on a genuine fresh recompile, and the two
+  remaining test files (proptest_invariants.rs, concurrent_validation_tests.rs)
+  reference nothing that was deleted.
+- Source: live `touch validate.rs` then `just clippy-core`; `grep -rnE
+  'broker|thermo|transport|lean_ffi|\blean\b' src/ tests/`
+- Verdict: CONFIRMED
+- Evidence: rerun this pass: "Checking mfact-core v0.1.0 ... Finished `dev` profile
+  ... target(s) in 0.16s", exit 0 -- a real recompile triggered by the touch, not a
+  stale cache hit. The grep across src/ and tests/ returns zero matches in either
+  remaining test file (only build.rs itself matches -- see PO1).
+- Severity: minor
+
+### PO7 -- GAP_LEDGER_v26.7.12.md's G11 entry is genuinely closed with matching evidence,
+
+- Lens: g11-deletion-reverify, status-count-drop-explained, lean-testing-workflow-catch
+- Claim: G11's ledger entry is marked CLOSED (Rust side) with closure evidence matching
+  the PA23/PA24 findings it cites, and honestly discloses the one item it did not fix
+  (the dead EventSource reference in web/mfact-ui) rather than silently dropping it.
+- Source: `grep -n '^### G11' -A 16 GAP_LEDGER_v26.7.12.md`; PRAXIS_SELF_AUDIT.md:492-529
+  (PA23/PA24); web/mfact-ui/src/wargames/useWargames.ts
+- Verdict: CONFIRMED
+- Evidence: line 290 reads "Status: CLOSED (Rust side); one residual item noted below,
+  not addressed this firing." Closure evidence cites the same PA23 (fake FFI stub
+  calling an unrelated package's symbol) and PA24 (hand-written fake Mathlib
+  stand-ins) findings verbatim. The disclosed residual is still present:
+  useWargames.ts:89 still does `new EventSource('http://localhost:8080/stream')`
+  against a server that no longer exists.
+- Severity: minor
+
+### PO8 -- known-persistent-drift.txt diff shows zero unexplained new drift this pass,
+
+- Lens: status-count-drop-explained
+- Claim: a comm-based diff of the live 63-path `git status` against the 76-line
+  `.mfact/known-persistent-drift.txt` baseline shows zero unexplained new drift.
+- Source: fresh `sort` + `comm -23`/`comm -13` between live git status paths and the
+  sorted baseline file
+- Verdict: CONFIRMED
+- Evidence: `comm -23` (live paths absent from baseline) is empty -- every live path is
+  already tolerated. `comm -13` (stale baseline entries) is exactly 13 lines: the 8
+  G11-deleted files plus 5 previously-flagged-stale roadmap docs
+  (MFW_WORKFLOW_CATALOG.md, ROADMAP.md, ROADMAP_GAP_AUTONOMIC.md,
+  ROADMAP_GAP_SEMANTIC.md, ROADMAP_GAP_THERMO.md, first noted at pass 9 and
+  reconfirmed every pass since). Arithmetic closes exactly: 76 - 13 = 63.
+- Severity: minor
+
+### PO9 -- G2 and every other gap entry are untouched by commit 108bf5b,
+
+- Lens: g11-deletion-reverify
+- Claim: no gap entry other than G11 was touched or incorrectly claimed-closed by
+  commit 108bf5b.
+- Source: `git show 108bf5b -- GAP_LEDGER_v26.7.12.md` full diff; live re-read of G2
+- Verdict: CONFIRMED
+- Evidence: the commit's diff to GAP_LEDGER_v26.7.12.md is confined entirely to the G11
+  section (29 insertions, 1 deletion). G2 ("crates/mfact-core excluded from
+  workspace") still reads "Status: BLOCKED" with its own unrelated 2026-07-12 blocker,
+  untouched.
+- Severity: minor
+
+### PO10 -- no foreign commits landed in this pass's 5-commit review window,
+
+- Lens: status-count-drop-explained, lean-testing-workflow-catch
+- Claim: HEAD is 836fb53 as this pass starts, and the 5-commit range since pass 14's
+  a50c5e9 is fully self-consistent loop/audit activity with no foreign commit.
+- Source: `git log -1 --format='%H %ci'`; `git log --oneline a50c5e9..836fb53`
+- Verdict: CONFIRMED
+- Evidence: HEAD = 836fb53193b327fce9580e81298139a6fd773839, 2026-07-13 13:06:22
+  -0700. Exactly 5 commits separate a50c5e9 from 836fb53: 8338516 (SOC2 witness
+  composition), 16322a5 (pass-14 audit doc), bb25faf (docstring fix, see PO3), 108bf5b
+  (G11 deletion), 836fb53 (loop receipt). Same author throughout; all attributable to
+  the documented self-improvement loop.
+- Severity: minor
+
+### PO11 -- known-persistent-drift.txt still lists the 8 now-deleted G11 paths,
+
+- Lens: status-count-drop-explained
+- Claim: `.mfact/known-persistent-drift.txt` still lists all 8 now-deleted G11 paths,
+  making it stale, though this causes zero functional error in the collision guard.
+- Source: `grep -nE` for the 8 filenames against the baseline file; `git log -1
+  --format='%ad' -- .mfact/known-persistent-drift.txt`
+- Verdict: CONFIRMED
+- Evidence: the baseline file was last written 2026-07-13 08:46:41 -0700 and never
+  refreshed since; it still carries the 8 dead-path entries (matched at lines 5-13 by
+  grep). Per PO8's comm semantics, an unmatched baseline entry for a nonexistent path
+  simply never surfaces in a `comm -23` diff, so the collision guard is unaffected --
+  real staleness worth a future refresh, not a live defect.
 - Severity: minor
 
 ## References
