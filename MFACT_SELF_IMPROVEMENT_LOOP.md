@@ -184,3 +184,16 @@ diff just doesn't block starting.
   this repo actually computes an `axiom_count` metric yet (parsing `lake build
   AxiomAudit` stdout would be the real fix) -- fuel for a future firing, not
   attempted here to stay scoped to the picked item.
+
+- **2026-07-13T17:30:45Z (run `20260713T173045Z`, firing 5) -- SUCCESS, G51
+  closed.** Added the `[lints.clippy]` gate to `crates/mfact-core/Cargo.toml`
+  (todo/unimplemented/dbg_macro deny; unwrap_used/expect_used warn -- all 5
+  existing unwraps are in `#[cfg(test)]`, exempt per house style) and a `just
+  clippy-core` recipe. Two notable events: (1) the `.claude/hooks/
+  require-just.sh` guardrail blocked this firing's first bare `cargo clippy`
+  call -- worked as designed, forced the recipe to exist; (2) verification used
+  a real negative control: an injected `dbg!` failed the gate (`-D
+  clippy::dbg-macro`), the reverted tree passes clean. Recipe scoped to
+  `--lib --bin turbulence` because `src/main.rs`/`sse_transport_test.rs` are
+  G2/G11 dead-pile files failing compile independent of lints. `oracle_rank:
+  1`. Commit `0639081`; receipt `.mfact/receipts/20260713T173045Z.json`.
