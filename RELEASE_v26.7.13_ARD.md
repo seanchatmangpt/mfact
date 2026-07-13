@@ -172,7 +172,11 @@ model/production boundary did not.
 ## 4. No-Ambient-Theorem-Authority enforcement state
 
 `AGENTS.md` §4 is not aspirational prose in this branch — it is mechanically applied. Fresh
-`grep -rl "Standing:"` across `.lean`/`.md` hits 35 files. Every one of the nine bridge files
+`grep -rl "Standing:"` across `.lean`/`.md` hits 36 files, not 35: 35 in the rest of the tree,
+plus this document itself (which uses the literal string "Standing:" twice in §2's theorem
+prose and therefore necessarily matches its own count the instant this sentence is saved to
+disk — a self-referential effect, corrected here rather than left as a stale figure). Every one
+of the nine bridge files
 in §2 carries an explicit module-header theorem card (Object / Imported theorem / Source
 hypotheses / Correspondence map / Preserves / Excludes / Standing / Falsifier / Downstream),
 matching the exact shape §4 prescribes. The edge taxonomy (`DEFINITIONAL`, `PROVEN`,
@@ -236,9 +240,21 @@ Two enforcement gaps remain open, disclosed rather than papered over:
 
 ## 6. Scale reference
 
-`procint/ProcInt` contains 185 `.lean` files total (fresh count); `Playground/` (the
-hand-authored demonstration surface, not ggen-rendered, not release-gating) contains 109;
-`MFW/` (the formal core — `Residue/` plus `Termination/` plus other layers) contains 9. The
+`procint/ProcInt` contains 186 `.lean` files total (fresh count, re-measured after this
+document's first draft); `Playground/` (the hand-authored demonstration surface, not
+ggen-rendered, not release-gating) contains 110; `MFW/` (the formal core — `Residue/` plus
+`Termination/` plus other layers) contains 9. The 185/109 figures in this document's first
+draft were accurate at the time of writing; both are stale by exactly one file as of this
+correction, traced to `procint/ProcInt/Playground/SOC2/AxiomAuditSOC2.lean` — an untracked
+axiom-audit file that did not exist when this document's first draft was written (mtime 14:21
+vs. this document's first-draft mtime 14:19) and that grew further, in place, while this
+correction was being written (33 lines at first observation, 141 lines and 20 `#guard_msgs`
+theorem-axiom assertions at second observation minutes later) — live, direct evidence of this
+branch's cron-driven self-audit loop (`RELEASE_v26.7.13_PRD.md` §2 workstream 3) writing to the
+tree concurrently with this document's authorship. Because that file is still being actively
+rewritten as of this correction, its own content is deliberately not characterized further
+here beyond "exists, untracked, growing" — any more specific snapshot would itself be stale by
+the time this document is read. The
 nine files in §2 are a small but structurally load-bearing slice: they are the only files in
 the tree that cross previously-disconnected layers rather than adding depth within one layer.
 
