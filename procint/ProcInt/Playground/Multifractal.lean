@@ -10,6 +10,7 @@ import ProcInt.Playground.Multifractal.Spectrum
 import ProcInt.Playground.Multifractal.Legendre
 import ProcInt.Playground.Multifractal.BirkhoffSpectrum
 import ProcInt.Playground.Multifractal.HausdorffSpectrum
+import ProcInt.Playground.Multifractal.UniformWitness
 
 /-!
 # ProcInt.Playground.Multifractal

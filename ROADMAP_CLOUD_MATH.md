@@ -29,7 +29,7 @@ the binding's current honest type.
 | Multi-region topology, forced cuts | `projection_path_independence` (`Workflow/Multifractal.lean:53`), `edge_to_in_boundary` (`:67`) | PROVEN | ANALOGY |
 | Governance / evidence ceilings | `Standing`, `canClaimTheorem` (`Swarm11/Standing.lean:25,47`) | PROVEN | ANALOGY |
 | Capacity cost ceiling | `work_bounds` (`Thermo.lean:30`) | PROVEN | ANALOGY (see card 5) |
-| Workload heterogeneity spectra | `Playground/Multifractal/*` (`Z(q,n)`, `τ(q)`, `f(α)` defs) | DEFINITIONAL only | MISSING (see §3) |
+| Workload heterogeneity spectra | `Playground/Multifractal/*` (`Z(q,n)`, `τ(q)`, `f(α)` defs); `UniformWitness.lean`'s `hasMassExponent_uniform`, `lowerGeneralizedDimension_uniform` (uniform/monofractal instance only) | DEFINITIONAL (general); PROVEN (uniform-partition instance, not a genuine multifractal) | MISSING (see §3) |
 | Tenancy isolation | none — closest: residue independence + boundary cuts | — | MISSING (Wave CM2) |
 | Quota / rate limits | none (G32 shows an *unenforced* internal bound) | — | MISSING (Wave CM0) |
 | Trust-boundary ingress | Wave S0 admission `a_i : O_i → O_i* ∪ Refusal` (`ROADMAP_SWARM_SUPPLY_CHAIN.md`, unbuilt) | TARGET | MISSING (Wave CM0) |
@@ -119,12 +119,24 @@ apparatus: partition function `Z(q,n)` (`PartitionFunction.lean:57`), mass expon
 as a filter limit (`MassExponent.lean:22-46`), generalized dimensions `D_q`
 (`GeneralizedDimension.lean:28`), local Hölder exponent `α(x)` (`LocalExponent.lean:45`),
 and the genuine singularity spectrum `f(α)` as `dimH` of exponent level sets
-(`HausdorffSpectrum.lean:40-47`). The only proven lemma in the package is a one-line
-`csInf_le` Legendre bound (`Legendre.lean:32`). No convergence, no scaling law, no computed
-spectrum. Elsewhere, "multifractal" names non-fractal math: `Workflow/Multifractal.lean` is
-DAG boundary-cut functoriality (real theorems, zero measure theory); `MFW/Multifractal.lean`
-is finite `Nat` moment arithmetic whose own docstring refuses the asymptotic claim;
-`research-papers/smfdcca` is a stub whose one theorem re-extracts its hypothesis fields.
+(`HausdorffSpectrum.lean:40-47`). Until 2026-07-13 the only proven lemma in the package was a
+one-line `csInf_le` Legendre bound (`Legendre.lean:32`) — no convergence, no scaling law, no
+computed spectrum. `UniformWitness.lean` (added 2026-07-13) now exercises the full
+partition-function → mass-exponent → dimension pipeline end-to-end for the first time, on
+Lebesgue measure under the uniform dyadic partition: `partitionFunction_uniformDyadic` computes
+`Z(q,n)` exactly (not asymptotically), `hasMassExponent_uniform` proves the genuine `Tendsto`
+limit `τ(q) = q - 1`, and `lowerGeneralizedDimension_uniform`/`upperGeneralizedDimension_uniform`
+compute `D_q = 1` at every admissible Rényi order — the classical "Lebesgue measure is
+monofractal" fact, exhibited as a computed limit. This is deliberately the *unweighted*
+(monofractal) case, not yet a genuine multifractal: `f(α)` is still not computed for any
+non-degenerate spectrum, and building the two-weight/Bernoulli-cascade measure a genuine
+multifractal witness needs remains refused, not attempted, at this Mathlib pin
+(`fabf563a7c95a166b8d7b6efca11c8b4dc9d911f` ships no `Fintype`-free infinite-product /
+Ionescu–Tulcea cylinder-measure construction). Elsewhere, "multifractal" names non-fractal
+math: `Workflow/Multifractal.lean` is DAG boundary-cut functoriality (real theorems, zero
+measure theory); `MFW/Multifractal.lean` is finite `Nat` moment arithmetic whose own docstring
+refuses the asymptotic claim; `research-papers/smfdcca` is a stub whose one theorem re-extracts
+its hypothesis fields.
 
 The minimal object that would make the name load-bearing for cloud workload heterogeneity:
 a multiplicative-cascade measure `μ` on the boundary space of a POWL execution tree, with
