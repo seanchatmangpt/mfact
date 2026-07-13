@@ -1,0 +1,16 @@
+{
+  "run_id": "20260713T071516Z",
+  "gap_id": null,
+  "input_hash": null,
+  "output_hash": null,
+  "status": "failed",
+  "timestamp": "2026-07-13T07:15:16Z",
+  "verify_delta": {
+    "before": "git status --porcelain showed staged (A/M) changes from an uncommitted in-flight workflow (task w3xrg1r0m: RootCause.lean, RecoveryBehavior.lean, MFACT_SELF_IMPROVEMENT_LOOP.md, TRAJECTORY_CASE_STUDY_TRUNCATION.md, TRAJECTORY_MONITOR_FEASIBILITY.md, scripts/trajectory_annotate.py, scripts/stuck_item_guard.py, edits to AGENTS.md/justfile/procint/ProcInt/Playground.lean), plus long-standing unattributed modifications to .ggen-v2/receipt-log.jsonl, .ggen-v2/receipt.json, .mfact/artifacts.toml, crates/mfact-core/src/validate.rs, ggen.lock, release/standing.env, web/mfact-ui already flagged in PRAXIS_SELF_AUDIT.md passes 1-3.",
+    "after": "not attempted -- collision guard stopped the firing before any action"
+  },
+  "commit_sha": null,
+  "duration_ms": 0,
+  "oracle_rank": 1,
+  "collision": true
+}

@@ -96,5 +96,14 @@ firing.
 
 ## Run log
 
-(Awaiting first firing under this design. Prior design, v1, was created and paused
-before ever firing -- no entries carry over.)
+- **2026-07-13T07:15:16Z (run `20260713T071516Z`, firing 1) -- COLLISION, no action
+  taken.** `git status --porcelain` showed staged (`A`/`M`) changes from an
+  uncommitted in-flight workflow (task `w3xrg1r0m`: the two new Trajectory Lean
+  files, this file's own schema section, the two new scripts, and edits to
+  `AGENTS.md`/`justfile`/`Playground.lean`), plus the long-standing unattributed
+  modifications to `.ggen-v2/*`, `.mfact/artifacts.toml`, `validate.rs`,
+  `ggen.lock`, `release/standing.env`, `web/mfact-ui` already flagged across
+  `PRAXIS_SELF_AUDIT.md` passes 1-3. None of this is this loop's own prior work
+  (this is firing 1). Per the collision guard, touched nothing, wrote receipt
+  `.mfact/receipts/20260713T071516Z.json` with `collision: true`, and stopped.
+  Next firing should re-check whether `w3xrg1r0m` has committed by then.
