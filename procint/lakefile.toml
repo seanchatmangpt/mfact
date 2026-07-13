@@ -38,3 +38,10 @@ roots = ["ProcInt.Release.PostRelease"]
 [[lean_lib]]
 name = "Playground"
 roots = ["ProcInt.Playground"]
+
+# Hand-authored demo executable — audits the compiled Playground.Swarm11
+# environment via Environment.constants (not a regex/self-report claim
+# file). Not a default target; invoked explicitly via `just swarm11-verify`.
+[[lean_exe]]
+name = "swarm11Verifier"
+root = "ProcInt.Playground.Swarm11Verifier"

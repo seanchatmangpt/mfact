@@ -114,6 +114,18 @@ playground:
 pylab:
     cd pylab && uv run pytest
 
+# Compiled-environment audit of Playground.Swarm11(Tests): real
+# Environment.constants/ConstantInfo introspection, not a self-reported
+# claim file. Writes procint/artifacts/swarm11-verifier.json. Exit 0 only
+# when declarations>0, theorems>0, and axioms/unsafe/partial/sorry are all
+# zero (compiler-synthesized `_unsafe_rec` recursion auxiliaries excluded
+# from the partial count — see Swarm11Verifier.lean for why). Never feeds
+# standing, gates, or the manifest.
+[group('demo')]
+swarm11-verify:
+    just _lake "cd procint && /Users/sac/.elan/bin/lake build swarm11Verifier"
+    cd procint && /Users/sac/.elan/bin/lake exe swarm11Verifier
+
 # Genetic tactic search over a Playground warm-up target — exploratory, off-ledger.
 # See docs/genetic-tactic-search.md. Never writes to packs/*/fragments/*.ttl.
 [group('demo')]

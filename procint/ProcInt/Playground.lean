@@ -25,6 +25,8 @@ import ProcInt.Playground.Multifractal
 import ProcInt.Playground.Experimental
 import ProcInt.Playground.ExperimentalWalkthrough
 import ProcInt.Playground.MFW
+import ProcInt.Playground.Swarm11
+import ProcInt.Playground.Swarm11Tests
 
 /-! # ProcInt.Playground
 
