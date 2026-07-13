@@ -272,6 +272,30 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   landed as of this pass's 12:14:41 PDT check. The SOC2 flow-test construction workflow
   (task `wfigivqnl`) has produced zero files yet -- no `Playground/SOC2/` directory, no
   `AuditFlow` or `wfigivqnl` hits anywhere in the tree.
+- **2026-07-13 (pass 14):** 12 findings across 2 lenses (soc2-flow-test-quality-check,
+  general-drift-and-fixloop-check), auditing the SOC2 flow-test construction workflow
+  (task `wfigivqnl`) now that both `procint/ProcInt/Playground/SOC2/{AuditFlow,
+  AuditFlowViolation}.lean` exist (683 total lines, mtimes 12:16/12:36 PDT), superseding
+  pass 13's "zero files yet" finding. HEAD held at `a50c5e9` throughout this pass's
+  12:39-12:41 PDT window; `git log -5` shows only expected self-loop commits (firing-9
+  collision, pass-13 doc, `ROADMAP_SOC2_MATH.md`, firing-8 collision, pass-12 doc). 7
+  CONFIRMED, 2 DRIFTED, 2 UNVERIFIABLE, 1 FIXED-since-last-pass, 0 REFUTED. Headline: both
+  files are genuine, substantive constructive artifacts, not stubs. `AuditFlow.lean` (535
+  lines) is an 82-declaration near-complete positive witness whose docstring citations to
+  `ROADMAP_SOC2_MATH.md` Cards 1-3 and to specific Lean line numbers in `Tenancy.lean`,
+  `Runtime.lean`, and `Swarm11/Replay.lean` all resolve exactly on fresh re-grep.
+  `AuditFlowViolation.lean` (148 lines) correctly reuses the pre-existing
+  `TenancyCountermodel` section rather than reinventing a countermodel, and both files
+  contain zero `sorry`/`admit`/`native_decide` as actual tactics. One drift-worthy defect:
+  `AuditFlowViolation.lean`'s docstring still forward-references the (at-write-time
+  nonexistent) positive companion as `ProcInt.Playground.Swarm11.AuditFlow`, but the file
+  actually built lives at `ProcInt.Playground.SOC2.AuditFlow` -- a stale, cosmetic-only
+  comment not yet corrected. `known-persistent-drift.txt` is again exactly one path behind
+  live `git status` (`procint/ProcInt/Playground/SOC2/`), the same expected-but-unbaselined
+  pattern noted for prior in-flight workflows. Per instructions, files were not built
+  (`lake build`) this pass to avoid racing the still-running construction workflow, so full
+  typecheck confirmation remains UNVERIFIABLE, as does whether fix loop `f6a6cd52`'s next
+  firing (due ~12:42 PDT) had landed by the end of this pass's own check window.
 
 ## Quick reference
 
@@ -373,6 +397,14 @@ totals above:**
 | Major | 1 | 1 REFUTED |
 | Minor | 12 | 8 CONFIRMED, 2 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE |
 | **Total** | **13** | **8 CONFIRMED, 3 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE** |
+
+**Pass 14 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, 12, and 13
+totals above:**
+
+| Severity | Count (pass 14) | Verdicts (pass 14) |
+|---|---|---|
+| Minor | 12 | 7 CONFIRMED, 2 DRIFTED, 2 UNVERIFIABLE, 1 FIXED-since-last-pass |
+| **Total** | **12** | **7 CONFIRMED, 2 DRIFTED, 2 UNVERIFIABLE, 1 FIXED-since-last-pass** |
 
 ## Critical
 
@@ -3981,6 +4013,214 @@ workflow mid-flight before it finished committing.
   anywhere in the tree returns zero matches. `Playground/` itself has other active
   subdirs (`Swarm11`, `Multifractal`, `MFW`, `Glue`, `Experimental`, `Trajectory`), but
   nothing under `SOC2` has been created.
+- Severity: minor
+
+## Pass 14 findings
+
+### PN1 -- AuditFlowViolation.lean's docstring still forward-references Swarm11.AuditFlow,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: AuditFlowViolation.lean's docstring still describes the (at-the-time-nonexistent)
+  positive companion as living at `ProcInt.Playground.Swarm11.AuditFlow`, but the file
+  actually built now lives at `ProcInt.Playground.SOC2.AuditFlow` -- a stale forward-
+  reference never corrected after AuditFlow.lean was written.
+- Source: procint/ProcInt/Playground/SOC2/AuditFlowViolation.lean:19-22 vs
+  procint/ProcInt/Playground/SOC2/AuditFlow.lean:69-71
+- Verdict: DRIFTED
+- Evidence: AuditFlowViolation.lean line 20-21 reads: "the design for this witness pairs
+  this negative file with a positive companion at `ProcInt.Playground.Swarm11.AuditFlow`...
+  That positive file does not exist in this build yet." But AuditFlow.lean (written later,
+  mtime 12:36 vs AuditFlowViolation.lean's 12:16) declares `namespace
+  ProcInt.Playground.SOC2` (line 69) then `namespace AuditFlow` (line 71), i.e. its fully-
+  qualified name is `ProcInt.Playground.SOC2.AuditFlow`, not `Swarm11.AuditFlow`.
+  AuditFlow.lean's own docstring (line 12) correctly names the sibling as
+  `ProcInt.Playground.SOC2.AuditFlowViolation`, so only the older file's forward-looking
+  guess is wrong/unupdated. Cosmetic (comment-only, doesn't affect compilation) but is a
+  genuine documentation-drift artifact worth a follow-up edit.
+- Severity: minor
+
+### PN2 -- known-persistent-drift.txt has not yet been extended to cover Playground/SOC2/,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: the only path in `git status --porcelain` not already covered by
+  `.mfact/known-persistent-drift.txt` is `procint/ProcInt/Playground/SOC2/`, and it is not
+  yet in the baseline file.
+- Source: `git -C /Users/sac/mfact status --porcelain | sed -E 's/^.{3}//' | sort | comm
+  -23 - /Users/sac/mfact/.mfact/known-persistent-drift.txt` (fresh run this pass)
+- Verdict: DRIFTED
+- Evidence: `comm -23` output is exactly one line: `procint/ProcInt/Playground/SOC2/`.
+  Full `git status --porcelain` otherwise matches the known-drift set 1:1
+  (.ggen-v2/receipt-log.jsonl, .mfact/artifacts.toml, crates/mfact-core/{build.rs,src/*.rs,
+  tests/*.rs}, ggen.lock, procint/ProcInt/Graph/, procint/artifacts/, pylab/*,
+  research-papers/*, release/standing.env, scripts/*, web/mfact-ui). This new path is
+  expected (SOC2 flow-test construction workflow, task wfigivqnl) but has not yet been
+  added to the baseline file, so it correctly still surfaces as delta -- consistent with
+  pass 13's finding of the same pattern for prior in-progress workflow outputs before they
+  get baselined.
+- Severity: minor
+
+### PN3 -- Pass 13's "SOC2 flow-test workflow produced zero files" finding now supersedes,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: pass 13's finding that the SOC2 flow-test workflow (task wfigivqnl) had produced
+  zero files as of ~12:14 PDT is now superseded -- the files exist as of this pass,
+  confirming genuine construction progress rather than a stalled workflow.
+- Source: cross-reference of PRAXIS_SELF_AUDIT.md pass-13 entry (lines 271-274, 3971-3984)
+  against fresh ls/wc of procint/ProcInt/Playground/SOC2/ this pass
+- Verdict: FIXED-since-last-pass
+- Evidence: pass 13 (PRAXIS_SELF_AUDIT.md:3971-3984) confirmed via find/ls/grep that
+  Playground/SOC2/ did not exist and wfigivqnl had zero hits in the tree as of ~12:14 PDT.
+  This pass's fresh ls/wc shows the directory now exists with two substantive files (683
+  total lines) with mtimes 12:16 and 12:36 -- the workflow advanced between the two passes,
+  matching the task description that it is "now past Build into Verify/Integrate".
+- Severity: minor
+
+### PN4 -- AuditFlow.lean is a genuine, near-complete concrete witness, not a stub,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: AuditFlow.lean (535 lines, 26705 bytes) is a genuine, near-complete concrete
+  witness mirroring Swarm11/Crown.lean's `checks : List (String x Bool)` aggregator
+  pattern, with a module docstring citing specific ROADMAP_SOC2_MATH.md Cards per check.
+- Source: procint/ProcInt/Playground/SOC2/AuditFlow.lean (full read, lines 1-535)
+- Verdict: CONFIRMED
+- Evidence: docstring (lines 8-67) explicitly cites Card 1 (CC6, lines 24-31), Card 2
+  (PI1.1-PI1.5, lines 32-40), Card 3 (Availability A1.1-A1.3, lines 41-56) from
+  ROADMAP_SOC2_MATH.md, cross-checked against ROADMAP_SOC2_MATH.md lines 57/61/62/81-160
+  and matching. Line citations verified against source: `minimalSupport_tenant_pure`/
+  `crossTenant_residue_disjoint` at Residue/Tenancy.lean:86/111 (grep-confirmed),
+  `zero_unreceipted_completion` at MFW/Runtime.lean:62 (matches), `replay_eq_of_traceEq`/
+  `manufacturedReceipt_valid` at Swarm11/Replay.lean:105/149 (both confirmed exact).
+  `checks` (lines 505-531) is a 12-entry `List (String x Bool)` using `decide (...)` on
+  real predicates over concrete data (C2, s1/s2/s3, auditReceipt), identical shape to
+  Crown.lean:82 `def checks : List (String x Bool)`. Body contains 82 top-level
+  theorem/def/instance/abbrev declarations, 35 uses of `decide`, 14 of `rfl`, zero
+  occurrences of `sorry`/`admit`/`native_decide` as tactics (only in docstring prose
+  disclaiming their absence). Proofs (e.g. f2_monotone, f2_idempotent, separated_C2,
+  hS1/hS2, s3_eq_s2alt) are substantive, non-trivial tactic proofs, not placeholders.
+- Severity: minor
+
+### PN5 -- AuditFlowViolation.lean genuinely reuses TenancyCountermodel, no reinvention,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: AuditFlowViolation.lean (148 lines, 9165 bytes) genuinely reuses Tenancy.lean's
+  existing `TenancyCountermodel` section rather than reinventing a new countermodel.
+- Source: procint/ProcInt/Playground/SOC2/AuditFlowViolation.lean (full read)
+  cross-checked against procint/ProcInt/MFW/Residue/Tenancy.lean
+- Verdict: CONFIRMED
+- Evidence: file imports only `ProcInt.MFW.Residue.Tenancy` (line 3) and references
+  `TenancyCountermodel.Obl`, `.tag`, `.tag_zero`, `.tag_one`, `.C`, `.C_zero`, `.C_empty`,
+  `.not_separated`, `.singleton_mem_residue` throughout (lines 62-143) with zero local
+  re-definitions of `Obl`/`tag`/`C`. Grep of Tenancy.lean confirms `namespace
+  TenancyCountermodel` (line 131) through `end TenancyCountermodel` (line 243) genuinely
+  defines all of these: `tag_zero`/`tag_one` (140-141), `C_zero`/`C_empty` (187/191),
+  `not_separated` (197), `singleton_mem_residue` (214).
+  `AuditFlowViolation.violation_shared_support` (lines 86-93) directly composes
+  `zero_mem_residue_for_zero_goal` (new, proved locally) with
+  `TenancyCountermodel.singleton_mem_residue` (reused verbatim) -- exactly the claimed
+  non-reinvention pattern.
+- Severity: minor
+
+### PN6 -- Both SOC2 flow-test files are free of sorry/admit/native_decide proof gaps,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: both files are free of `sorry`/`admit`/`native_decide` proof gaps.
+- Source: grep across both SOC2/AuditFlow.lean and SOC2/AuditFlowViolation.lean
+- Verdict: CONFIRMED
+- Evidence: all matches of the strings "sorry", "admit", "native_decide" in both files
+  occur only inside docstring prose disclaiming their use (e.g.
+  AuditFlowViolation.lean:40,44-45: "no `sorry`/fake ... no `sorry`, no `admit`, no
+  `native_decide` standing in for a gap"), never as actual tactics in a proof body.
+- Severity: minor
+
+### PN7 -- Both SOC2 files are untracked, consistent with in-progress construction,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: both files are untracked (uncommitted) new files at the current HEAD, consistent
+  with an in-progress construction workflow rather than a completed/merged deliverable.
+- Source: `git status --short procint/ProcInt/Playground/SOC2/` ; `git log -1
+  --format='%H %cd'`
+- Verdict: CONFIRMED
+- Evidence: `git status --short` reports `?? procint/ProcInt/Playground/SOC2/` (untracked
+  directory); HEAD is a50c5e9b9b007e7c2f0df8b143829fb1add7654f at 2026-07-13 12:27:48
+  -0700, matching the stated starting HEAD for this pass.
+- Severity: minor
+
+### PN8 -- HEAD is a50c5e9 as stated; git log -5 shows only expected self-loop commits,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: HEAD is a50c5e9 as the pass description states, and `git log -5` shows only
+  expected loop/audit commits (firing-9 collision receipt, pass-13 audit doc,
+  ROADMAP_SOC2_MATH.md, firing-8 collision receipt, pass-12 audit doc) -- no foreign or
+  unexpected commits landed.
+- Source: `git -C /Users/sac/mfact rev-parse HEAD; git -C /Users/sac/mfact log --oneline
+  -5` (re-run fresh this pass at 12:39-12:41 PDT)
+- Verdict: CONFIRMED
+- Evidence: `rev-parse` returns a50c5e9b9b007e7c2f0df8b143829fb1add7654f exactly. `log -5`:
+  a50c5e9 (firing-9 collision), f81790a (pass 13 audit doc), 852d343
+  (ROADMAP_SOC2_MATH.md), ec9001e (firing-8 collision), 804f39c (pass 12 audit doc) -- all
+  previously-known self-loop commits, no drive-by/foreign commit.
+- Severity: minor
+
+### PN9 -- Both SOC2 flow-test files exist with substantive content, not stubs,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: both SOC2 flow-test files (AuditFlow.lean, AuditFlowViolation.lean) now exist
+  under procint/ProcInt/Playground/SOC2/ with substantive real content, not stubs, and
+  contain no `sorry`/`admit` placeholders.
+- Source: `ls -la`, `wc -l`, `head -20`, and `grep -nw 'sorry'` on both files (fresh reads
+  this pass)
+- Verdict: CONFIRMED
+- Evidence: AuditFlow.lean = 535 lines (mtime 12:36), AuditFlowViolation.lean = 148 lines
+  (mtime 12:16). Headers describe real mathematical content: AuditFlow.lean composes
+  Waves 1-7 theorems into a positive two-tenant compliant-closure witness;
+  AuditFlowViolation.lean is the negative/violation companion reusing
+  TenancyCountermodel. `grep -nw sorry` on both files returns zero matches on the literal
+  `sorry` tactic token (only prose text mentioning "no sorry" inside comments/docstrings).
+- Severity: minor
+
+### PN10 -- Cron f6a6cd52's firing history is documented consistently across 3 files,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: the cron identifier f6a6cd52 referenced in this pass's instructions is the same
+  fix-loop job tracked continuously since pass 6, and its firing history (firing-1 through
+  firing-9) is documented consistently across MFACT_SELF_IMPROVEMENT_LOOP.md,
+  PRAXIS_SELF_AUDIT.md, and GAP_LEDGER_v26.7.12.md.
+- Source: `grep -rn 'f6a6cd52'` across *.md (fresh run this pass)
+- Verdict: CONFIRMED
+- Evidence: cron job f6a6cd52 is referenced consistently: PRAXIS_SELF_AUDIT.md pass 6
+  (~09:12 PDT slot) through pass 13, GAP_LEDGER_v26.7.12.md closure evidence entries
+  (G49/G50/G51 fixes), and MFACT_SELF_IMPROVEMENT_LOOP.md's firing-9 collision-receipt
+  entry -- same identifier, continuous timeline, no discrepancy.
+- Severity: minor
+
+### PN11 -- Files were not built/compiled this pass; check is source-inspection only,
+
+- Lens: soc2-flow-test-quality-check
+- Claim: files were not built/compiled as part of this check (read-only lens, per
+  instructions) -- completeness assessment is based on source inspection only, not a
+  passing `lake build`.
+- Source: task instructions; no build command was run
+- Verdict: UNVERIFIABLE
+- Evidence: per explicit instruction to avoid racing a concurrent mid-edit agent, no `lake
+  build`/`lake env lean` was invoked. All claims above are structural/textual verification
+  (imports, namespaces, docstring cross-references, decide/rfl/sorry occurrence counts)
+  rather than confirmation that the files actually typecheck.
+- Severity: minor
+
+### PN12 -- Fix loop f6a6cd52's next firing had not landed by this pass's check window,
+
+- Lens: general-drift-and-fixloop-check
+- Claim: fix loop f6a6cd52's next firing (~12:42 PDT) had not landed as of this pass's
+  check window (12:39-12:41 PDT); latest receipt remains firing-9 (20260713T192656Z,
+  12:26:56 PDT) and HEAD is unchanged at a50c5e9.
+- Source: `ls -la /Users/sac/mfact/.mfact/receipts/` and `git log -3`, sampled twice this
+  pass (12:39:53 and 12:40:58 PDT)
+- Verdict: UNVERIFIABLE
+- Evidence: both samples show latest.json / 20260713T192656Z.json unchanged (876 bytes,
+  mtime 12:27) and HEAD unchanged at a50c5e9 across the ~65-second window checked. The
+  ~12:42 PDT estimate for the next firing had not yet arrived within this pass's
+  observation window, so no new firing to audit could be captured this pass -- consistent
+  with prior passes occasionally landing just outside the sampled window.
 - Severity: minor
 
 ## References
