@@ -4,6 +4,8 @@ import Lean
 import Lean.Util.Sorry
 import ProcInt.Playground.Swarm11
 import ProcInt.Playground.Swarm11Tests
+import ProcInt.Playground.SOC2.AuditFlow
+import ProcInt.Playground.SOC2.AuditFlowViolation
 
 open Lean
 open ProcInt.Playground.Swarm11
@@ -35,6 +37,19 @@ this toolchain pin (leanprover/lean4:v4.31.0), not a defect in the counted
 values below, and is out of scope for this integration to chase further.
 Left as a known open question rather than shipped broken or silently
 dropped.
+
+**SOC2 extension (added alongside `StandingPathSOC2.lean`, same wave).** The Swarm11 crown's
+`Crown.checks` fold below is unchanged. Additively, this file now also folds
+`ProcInt.Playground.SOC2.AuditFlow.checks` and `ProcInt.Playground.SOC2.AuditFlowViolation.checks`
+the identical `List (String × Bool)`-fold way `crownFailureCount` already folds
+`Swarm11.Crown.checks` — a small, additive change, not a rewrite of the existing Swarm11
+behavior. `ManufactureTenancyGap.checks` is deliberately left out of this fold: the task that
+added this extension named only `AuditFlow.checks`/`AuditFlowViolation.checks` explicitly, and
+`ManufactureTenancyGap` is a standalone soundness-gap refutation, not part of the two-tenant
+audit-flow crown proper — folding it in silently would be scope creep beyond what was asked.
+This verifier remains hand-authored/Playground-exempt, not ggen-rendered, and is still never
+consumed by standing, gates, or the manifest (see `justfile`'s `swarm11-verify`/`soc2-verify`
+comments).
 -/
 structure AuditReceipt where
   declarationCount : Nat
@@ -47,6 +62,8 @@ structure AuditReceipt where
   sorryDeclarationCount : Nat
   crownCheckCount : Nat
   crownCheckFailureCount : Nat
+  soc2CheckCount : Nat
+  soc2CheckFailureCount : Nat
   deriving Repr
 
 private def countWhere {α : Type}
@@ -89,6 +106,15 @@ private def isCompilerSynthesizedRec (name : Name) : Bool :=
 private def crownFailureCount : Nat :=
   countWhere Crown.checks (fun check => !check.2)
 
+/-- SOC2 extension: `AuditFlow.checks` and `AuditFlowViolation.checks` combined, folded the
+identical `crownFailureCount` way. See the `AuditReceipt` docstring's "SOC2 extension" note for
+why `ManufactureTenancyGap.checks` is deliberately excluded. -/
+private def soc2Checks : List (String × Bool) :=
+  ProcInt.Playground.SOC2.AuditFlow.checks ++ ProcInt.Playground.SOC2.AuditFlowViolation.checks
+
+private def soc2FailureCount : Nat :=
+  countWhere soc2Checks (fun check => !check.2)
+
 /--
 Loads the compiled `ProcInt.Playground.Swarm11` and `...Swarm11Tests` modules
 and derives the audit from the actual environment.
@@ -122,6 +148,8 @@ unsafe def computeAudit : IO AuditReceipt := do
         countWhere declarations (fun entry => constantHasSorry entry.2)
       crownCheckCount := Crown.checks.length
       crownCheckFailureCount := crownFailureCount
+      soc2CheckCount := soc2Checks.length
+      soc2CheckFailureCount := soc2FailureCount
     }
 
 private def AuditReceipt.ok (receipt : AuditReceipt) : Bool :=
@@ -131,7 +159,8 @@ private def AuditReceipt.ok (receipt : AuditReceipt) : Bool :=
   receipt.unsafeCount == 0 &&
   receipt.partialCount == 0 &&
   receipt.sorryDeclarationCount == 0 &&
-  receipt.crownCheckFailureCount == 0
+  receipt.crownCheckFailureCount == 0 &&
+  receipt.soc2CheckFailureCount == 0
 
 private def jsonBool (value : Bool) : String :=
   if value then "true" else "false"
@@ -157,11 +186,19 @@ private def renderJson (receipt : AuditReceipt) : String :=
   s!"  \"sorryDeclarations\": {receipt.sorryDeclarationCount},\n" ++
   s!"  \"crownChecks\": {receipt.crownCheckCount},\n" ++
   s!"  \"crownCheckFailures\": {receipt.crownCheckFailureCount},\n" ++
+  s!"  \"soc2Checks\": {receipt.soc2CheckCount},\n" ++
+  s!"  \"soc2CheckFailures\": {receipt.soc2CheckFailureCount},\n" ++
   s!"  \"admitted\": {jsonBool receipt.ok}\n" ++
   "}"
 
 private def printCrownChecks : IO Unit := do
   for check in Crown.checks do
+    IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
+
+/-- SOC2 extension: prints `AuditFlow.checks ++ AuditFlowViolation.checks`, `printCrownChecks`
+style. -/
+private def printSoc2Checks : IO Unit := do
+  for check in soc2Checks do
     IO.println s!"  {check.1}: {if check.2 then "PASS" else "FAIL"}"
 
 unsafe def main : IO UInt32 := do
@@ -182,6 +219,8 @@ unsafe def main : IO UInt32 := do
   IO.println s!"sorry-bearing decls   : {receipt.sorryDeclarationCount}"
   IO.println "crown checks:"
   printCrownChecks
+  IO.println "soc2 checks (AuditFlow ++ AuditFlowViolation):"
+  printSoc2Checks
   IO.println s!"receipt: artifacts/swarm11-verifier.json"
 
   if receipt.ok then

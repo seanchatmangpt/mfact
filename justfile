@@ -119,8 +119,10 @@ pylab:
 # claim file. Writes procint/artifacts/swarm11-verifier.json. Exit 0 only
 # when declarations>0, theorems>0, and axioms/unsafe/partial/sorry are all
 # zero (compiler-synthesized `_unsafe_rec` recursion auxiliaries excluded
-# from the partial count — see Swarm11Verifier.lean for why). Never feeds
-# standing, gates, or the manifest.
+# from the partial count — see Swarm11Verifier.lean for why). Additively
+# also folds SOC2 AuditFlow.checks/AuditFlowViolation.checks (same file,
+# same wave as StandingPathSOC2.lean) into the same exit-0 gate. Never
+# feeds standing, gates, or the manifest.
 [group('demo')]
 swarm11-verify:
     just _lake "cd procint && /Users/sac/.elan/bin/lake build swarm11Verifier"

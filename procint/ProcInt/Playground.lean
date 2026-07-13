@@ -38,6 +38,7 @@ import ProcInt.Playground.SOC2.AuditFlow
 import ProcInt.Playground.SOC2.AuditFlowViolation
 import ProcInt.Playground.SOC2.ManufactureTenancyGap
 import ProcInt.Playground.SOC2.AxiomAuditSOC2
+import ProcInt.Playground.SOC2.StandingPathSOC2
 
 /-! # ProcInt.Playground
 
