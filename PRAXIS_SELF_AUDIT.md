@@ -147,6 +147,29 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   and `sse_transport_test.rs`'s pre-existing break is broader than "missing
   tokio/reqwest_eventsource deps" -- `transport.rs` also exists unwired,
   never declared via `mod transport;` in `lib.rs` (PG12).
+- **2026-07-13 (pass 8):** 18 findings across 3 lenses (g50-closure-reverify,
+  metrics-integrity-check, general-status-and-next-firing-catch),
+  re-verifying fix loop `f6a6cd52`'s second real firing -- commit `c636fd3`
+  claims to wire `scripts/stuck_item_guard.py` into `just stuck-item-guard`
+  and `MFACT_SELF_IMPROVEMENT_LOOP.md`, adding ledger entry G50 after
+  catching and fixing a real CLI-argument bug (positional vs. `--receipts`
+  flag) during its own re-verification step. HEAD held at `672fdeb`
+  throughout (~10:09-10:13 PDT), porcelain count held at 76, matching the
+  pass-7 baseline exactly. 16 CONFIRMED, 2 DRIFTED, 0 REFUTED,
+  0 UNVERIFIABLE, 0 FIXED-since-last-pass. Headline: the G50 closure
+  genuinely holds -- `just stuck-item-guard` runs clean (exit 0, "Nothing
+  flagged"), the justfile recipe correctly uses `--receipts` not a
+  positional arg, and the claimed first-attempt failure ("unrecognized
+  arguments") reproduces verbatim, including confirmation that the claimed
+  convention mismatch with the neighboring `trajectory-annotate` recipe
+  (which does use a positional arg) is real. Two DRIFTED findings, both
+  loose wording rather than substantive errors: the ledger/commit phrase
+  "argparse requires `--receipts` DIR" overstates the cause -- `--receipts`
+  is optional with a default, not required, and the true cause is that no
+  positional argument exists at all; and the G50 receipt stores
+  `commit_sha` as a 7-char short hash while the immediately preceding G49
+  receipt stored the full 40-char SHA, a minor audit-trail schema
+  inconsistency worth normalizing in a future firing.
 
 ## Quick reference
 
@@ -208,6 +231,13 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
 | Major | 2 | 2 CONFIRMED |
 | Minor | 16 | 13 CONFIRMED, 2 DRIFTED, 1 UNVERIFIABLE |
 | **Total** | **18** | **15 CONFIRMED, 2 DRIFTED, 1 UNVERIFIABLE** |
+
+**Pass 8 (2026-07-13) totals -- alongside, not replacing, the pass-1..7 totals above:**
+
+| Severity | Count (pass 8) | Verdicts (pass 8) |
+|---|---|---|
+| Minor | 18 | 16 CONFIRMED, 2 DRIFTED |
+| **Total** | **18** | **16 CONFIRMED, 2 DRIFTED** |
 
 ## Critical
 
@@ -2539,6 +2569,299 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   claim exactly, but includes prose hits like "sorry-free", "sorry-backed",
   "sorry-bearing". Word-boundary grep (`\bsorry\b`) over the same scope
   yields 11, not 16.
+- Severity: minor
+
+## Pass 8 findings
+
+### PH1 -- just stuck-item-guard runs successfully with exit 0 against live receipts,
+
+- Lens: g50-closure-reverify
+- Claim: `just stuck-item-guard` runs successfully with exit 0 against the
+  live receipts directory.
+- Source: live command: `just stuck-item-guard` at HEAD 672fdeb
+- Verdict: CONFIRMED
+- Evidence: Output: '4 receipt(s) considered (window=10, threshold=7). No
+  gap_id exceeds the threshold with zero successes in the window. Nothing
+  flagged.' Exit code 0. (Count is 4, not the 3 cited in the ledger's closure
+  evidence, because the G50 firing's own receipt 20260713T165952Z.json was
+  added after that evidence text was written -- expected, not a discrepancy.)
+- Severity: minor
+
+### PH2 -- justfile recipe uses --receipts flag, not positional, matching commit claim,
+
+- Lens: g50-closure-reverify
+- Claim: The justfile recipe uses `--receipts` flag, not a positional
+  argument, matching the commit's claim.
+- Source: justfile lines 236-238
+- Verdict: CONFIRMED
+- Evidence: `stuck-item-guard:\n    @python3 scripts/stuck_item_guard.py
+  --receipts .mfact/receipts/`
+- Severity: minor
+
+### PH3 -- MFACT_SELF_IMPROVEMENT_LOOP.md cross-references the script and just recipe,
+
+- Lens: g50-closure-reverify
+- Claim: MFACT_SELF_IMPROVEMENT_LOOP.md's 'Stuck-item guard' section cross-
+  references the script and the just recipe.
+- Source: MFACT_SELF_IMPROVEMENT_LOOP.md lines 83-95
+- Verdict: CONFIRMED
+- Evidence: 'Implemented for real at `scripts/stuck_item_guard.py`, wired into
+  `just stuck-item-guard` -- a deterministic cross-firing repetition check...
+  A firing may run `just stuck-item-guard` as part of STEP 2 instead of re-
+  deriving the check by hand from raw receipt files.'
+- Severity: minor
+
+### PH4 -- First recipe attempt failed: positional arg vs. script's --receipts-only flags,
+
+- Lens: g50-closure-reverify
+- Claim: First recipe attempt failed with 'unrecognized arguments' because it
+  passed the receipts dir positionally while the script's argparse only
+  defines --receipts as a flag (no positional param). The claimed convention
+  mismatch with the neighboring trajectory-annotate recipe (which does pass
+  its target positionally) is also real, not fabricated.
+- Source: scripts/stuck_item_guard.py argparse block; reproduced live via
+  `python3 scripts/stuck_item_guard.py .mfact/receipts/`; justfile:228-229
+  (trajectory-annotate); scripts/trajectory_annotate.py:522
+- Verdict: CONFIRMED
+- Evidence: Script defines only --receipts/--window/--threshold/--json (all
+  optional flags, no positional arg). Reproducing the claimed first attempt:
+  `python3 scripts/stuck_item_guard.py .mfact/receipts/` ->
+  'stuck_item_guard.py: error: unrecognized arguments: .mfact/receipts/', exit
+  2 -- verbatim match to the error text quoted in the G50 ledger entry and
+  receipt 20260713T165952Z.json's verify_delta.after field. Separately
+  confirmed the neighboring `trajectory-annotate` recipe (justfile:228-229)
+  does call `scripts/trajectory_annotate.py .mfact/receipts/` positionally,
+  and trajectory_annotate.py's argparse (line 522) does define a positional
+  `target` arg -- so the two scripts genuinely use different calling
+  conventions, which is the source of the confusion the commit describes.
+- Severity: minor
+
+### PH5 -- 'argparse requires --receipts DIR' overstates the cause; it is optional,
+
+- Lens: g50-closure-reverify
+- Claim: 'stuck_item_guard.py's argparse requires --receipts DIR' (commit
+  message and ledger wording).
+- Source: commit c636fd3 message; GAP_LEDGER_v26.7.12.md G50 entry
+- Verdict: DRIFTED
+- Evidence: Technically imprecise: --receipts has default=None and is not
+  required=True; `python3 scripts/stuck_item_guard.py` with zero args works
+  fine (falls back to repo-relative .mfact/receipts/, verified live, exit 0).
+  The actual cause of the first-attempt failure is that the parser defines no
+  positional argument at all, not that --receipts is mandatory. The reproduced
+  failure/fix behavior itself is accurate; only the causal description
+  ('requires') is loosely worded.
+- Severity: minor
+
+### PH6 -- c636fd3 touched exactly 3 doc/config files; the script pre-existed untouched,
+
+- Lens: g50-closure-reverify
+- Claim: Commit c636fd3 touched exactly justfile,
+  MFACT_SELF_IMPROVEMENT_LOOP.md, and GAP_LEDGER_v26.7.12.md;
+  scripts/stuck_item_guard.py already existed standalone and was not modified
+  by this commit.
+- Source: git show c636fd3 --stat; git log -1 -- scripts/stuck_item_guard.py
+- Verdict: CONFIRMED
+- Evidence: `git show c636fd3 --stat` lists only the 3 doc/config files (36
+  insertions, 1 deletion). `git log --oneline -1 --
+  scripts/stuck_item_guard.py` shows the script's last change was commit
+  4fabb1c (trajectory tooling), not c636fd3 -- consistent with the claim that
+  the script pre-existed and worked before being wired in. All four files are
+  clean (no uncommitted diffs) at HEAD 672fdeb.
+- Severity: minor
+
+### PH7 -- metrics-history.jsonl line 1 (firing 3, git_head eabe589): sorry_count=16,
+
+- Lens: metrics-integrity-check
+- Claim: metrics-history.jsonl line 1 (firing 3, git_head eabe589):
+  sorry_count=16
+- Source: .mfact/metrics-history.jsonl:1
+- Verdict: CONFIRMED
+- Evidence: Live re-run of `grep -rn "sorry" procint/ProcInt
+  --include="*.lean" | grep -v "^\s*--\|/-" | wc -l` on the current tree
+  returns 16, matching the logged value exactly.
+- Severity: minor
+
+### PH8 -- metrics-history.jsonl line 2 (firing 4, git_head c636fd3): sorry_count=16,
+
+- Lens: metrics-integrity-check
+- Claim: metrics-history.jsonl line 2 (firing 4, git_head c636fd3):
+  sorry_count=16
+- Source: .mfact/metrics-history.jsonl:2
+- Verdict: CONFIRMED
+- Evidence: Same live re-run of the sorry-count command returns 16 against
+  current HEAD (672fdeb), which is a strict descendant of c636fd3 and touched
+  no .lean files in between (only justfile, MFACT_SELF_IMPROVEMENT_LOOP.md,
+  GAP_LEDGER, and receipt files) -- so 16 is correct for that commit too.
+- Severity: minor
+
+### PH9 -- Both metrics-history.jsonl lines log gaps_open=23,
+
+- Lens: metrics-integrity-check
+- Claim: Both metrics-history.jsonl lines log gaps_open=23
+- Source: .mfact/metrics-history.jsonl:1-2
+- Verdict: CONFIRMED
+- Evidence: Live `grep -c "^- Status: OPEN" GAP_LEDGER_v26.7.12.md` on the
+  current tree returns 23. Additionally re-derived historically via `git show
+  <rev>:GAP_LEDGER_v26.7.12.md | grep -c "^- Status: OPEN"` at eabe589,
+  c636fd3, and 672fdeb -- all three return 23, matching both logged snapshots
+  and the current tree.
+- Severity: minor
+
+### PH10 -- Flat gaps_open=23 across both firings is correct, not a miscount -- caveat noted,
+
+- Lens: metrics-integrity-check
+- Claim: gaps_open staying flat at 23 across both firings is expected/correct
+  given G49 and G50 were each added-then-closed within the same commit
+- Source: .mfact/metrics-history.jsonl (both lines) + GAP_LEDGER_v26.7.12.md
+  G49/G50 entries
+- Verdict: CONFIRMED
+- Evidence: Checked the actual diffs: `git show eabe589 --
+  GAP_LEDGER_v26.7.12.md | grep '^+.*Status'` shows exactly one added line,
+  `+- Status: CLOSED` (no prior `+- Status: OPEN` line for G49 ever existed in
+  git history). Same for `git show c636fd3 -- GAP_LEDGER_v26.7.12.md`: one
+  added line, `+- Status: CLOSED`, for G50. Confirmed neither gap section
+  existed at all in the parent commit (`git show 02e7a5e:GAP_LEDGER... | grep
+  -c '### G49\|### G50'` = 0), and the OPEN count at that pre-G49 parent
+  commit was already 23. Because the grep counts only lines literally reading
+  `- Status: OPEN` at a given snapshot, and G49/G50 were each introduced
+  directly with `Status: CLOSED` (never committed in an OPEN state), they were
+  mathematically incapable of ever incrementing the OPEN count -- at creation
+  or after. A gap opened-and-closed within the same commit is invisible to a
+  point-in-time OPEN-status grep by construction, so flat-at-23 across both
+  firings is exactly the correct behavior here, not evidence of miscounting or
+  gaming. Caveat (not a defect): gaps_open as currently computed can never
+  reflect newly-discovered-and-immediately-fixed items -- it only moves if a
+  firing leaves a new gap OPEN, or resolves/reopens a pre-existing OPEN entry.
+- Severity: minor
+
+### PH11 -- c636fd3 wires the script into just and cross-references it in the loop doc,
+
+- Lens: metrics-integrity-check
+- Claim: c636fd3 wires scripts/stuck_item_guard.py into `just stuck-item-
+  guard` and cross-references it in MFACT_SELF_IMPROVEMENT_LOOP.md
+- Source: justfile:236-238, MFACT_SELF_IMPROVEMENT_LOOP.md:90-96
+- Verdict: CONFIRMED
+- Evidence: Live justfile has a `stuck-item-guard:` recipe at line 236 running
+  `python3 scripts/stuck_item_guard.py --receipts .mfact/receipts/`. Live-
+  executed `just stuck-item-guard` from the repo root succeeded: "4 receipt(s)
+  considered (window=10, threshold=7). No gap_id exceeds the threshold...
+  Nothing flagged." (4 matches the current receipt count on disk, one more
+  than the 3 present when G50 was closed, since firing 4's own receipt was
+  written afterward). MFACT_SELF_IMPROVEMENT_LOOP.md's "Stuck-item guard"
+  section (line 83) now cross-references `just stuck-item-guard` at lines
+  90-96.
+- Severity: minor
+
+### PH12 -- G50/G49 closure narratives both hold: real bug caught, real fix landed,
+
+- Lens: metrics-integrity-check
+- Claim: G50 closure text: re-verification caught a real positional-
+  vs-`--receipts`-flag bug in the just recipe before commit; G49 closure text:
+  simulate_workload was truly undefined and is now genuinely implemented
+- Source: GAP_LEDGER_v26.7.12.md:1006-1014,
+  scripts/stuck_item_guard.py:118-134, crates/mfact-core/src/bin/turbulence.rs
+- Verdict: CONFIRMED
+- Evidence: scripts/stuck_item_guard.py's argparse only defines `--receipts`
+  (plus --window/--threshold/--json) with no positional argument at all --
+  passing the path positionally would indeed raise argparse's "unrecognized
+  arguments" error, exactly as claimed. The live justfile recipe correctly
+  uses `--receipts .mfact/receipts/`. Independently reproduced G49's build fix
+  too: crates/mfact-core is a standalone crate (not part of the root
+  Cargo.toml's workspace -- root Cargo.toml has no [workspace] section), and
+  running `cargo check --bin turbulence` from inside crates/mfact-core
+  succeeds with exit 0, and `cargo run --bin turbulence` (12s) prints real
+  benchmark table output rather than panicking, matching both receipt files'
+  verify_delta text.
+- Severity: minor
+
+### PH13 -- GAP_LEDGER summary table (Minor 17, G34-G50) is internally consistent,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: GAP_LEDGER_v26.7.12.md summary table (Minor 17, G34-G50) and G50
+  entry are internally consistent with the rest of the ledger
+- Source: GAP_LEDGER_v26.7.12.md:73-76, G50 section
+- Verdict: CONFIRMED
+- Evidence: grep -oE '^### G[0-9]+' returns exactly 50 headers (G1-G50),
+  matching the table's 3+30+17=50. Status-line tally: 22 'OPEN' + 1 'OPEN
+  (evidence partially unverified...)' = 23 open, exactly matching metrics-
+  history.jsonl's new line `gaps_open: 23` for git_head c636fd3.
+- Severity: minor
+
+### PH14 -- G50 closure correctly cites prior audit findings PC6 and PD4 as its basis,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: G50 closure cites PRAXIS_SELF_AUDIT.md findings PC6 (REFUTED, scope-
+  creep question) and PD4 (CONFIRMED, still-unwired) as the basis for the gap
+- Source: PRAXIS_SELF_AUDIT.md:1633-1650, 1751-1764
+- Verdict: CONFIRMED
+- Evidence: Both sections exist verbatim as described: PC6 refutes 'scope
+  creep' but flags the real unwired-recipe gap; PD4 reconfirms the same gap is
+  still open as of pass 4, citing identical grep-based evidence. G50's framing
+  ('legitimately in scope, simply unwired') accurately reflects both.
+- Severity: minor
+
+### PH15 -- G50 receipt stores a short 7-char commit_sha, unlike G49's full 40-char sha,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: G50 receipt (.mfact/receipts/20260713T165952Z.json) commit_sha uses
+  the same format convention as prior receipts
+- Source: .mfact/receipts/20260713T165952Z.json vs
+  .mfact/receipts/20260713T163130Z.json (G49)
+- Verdict: DRIFTED
+- Evidence: G50's receipt stores commit_sha as a short 7-char abbreviation
+  ('c636fd3'), while the immediately preceding G49 receipt stored the full
+  40-char SHA ('eabe589af9a5868dcc2b33cc281490af94b16e41'). Minor internal
+  schema inconsistency in the audit-trail receipts, not a functional bug --
+  worth a future firing normalizing to full SHAs for reliable git lookups.
+- Severity: minor
+
+### PH16 -- 672fdeb addendum: AxiomAudit is lean_lib not lean_exe, reconfirmed directly,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: 672fdeb's addendum: AxiomAudit.lean has no main/entry point and is
+  correctly declared [[lean_lib]] not [[lean_exe]] in both mfact/ and procint/
+  lakefiles, explaining why no binary appears at the expected path
+- Source: MFACT_SELF_IMPROVEMENT_LOOP.md (672fdeb addition);
+  mfact/lakefile.toml; procint/lakefile.toml
+- Verdict: CONFIRMED
+- Evidence: grep against both lakefile.toml files shows `[[lean_lib]]`
+  immediately followed by `name = "AxiomAudit"` in both mfact/lakefile.toml
+  and procint/lakefile.toml, with no corresponding `[[lean_exe]]` entry for
+  AxiomAudit in either file. Claim verified directly this pass, not just
+  inherited from pass 7's PG1/PG2 assertion.
+- Severity: minor
+
+### PH17 -- Collision-guard baseline (76 entries) still matches live git status exactly,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: Collision-guard baseline .mfact/known-persistent-drift.txt (76
+  entries) still matches the live git status --porcelain path set exactly
+- Source: .mfact/known-persistent-drift.txt; live `git status --porcelain`
+- Verdict: CONFIRMED
+- Evidence: Beyond the requested 2-3 spot checks (5 entries individually
+  verified: crates/mfact-core/src/broker.rs, research-
+  papers/floquet_photonic/, release/standing.env, pylab/src/mpops/thermo.py,
+  .mfact/artifacts.toml -- all present in git status with matching status
+  codes), a full `comm -23`/`comm -13` diff between the sorted baseline file
+  and the sorted git-status path list returned empty in both directions: zero
+  entries in git status missing from the baseline, zero stale baseline entries
+  no longer in git status.
+- Severity: minor
+
+### PH18 -- No drift this pass: porcelain count 76, HEAD held at 672fdeb throughout,
+
+- Lens: general-status-and-next-firing-catch
+- Claim: git status --porcelain count is 76 (matches baseline) and HEAD is
+  672fdeb with no new fix-loop firing (~10:12 or 10:42) landing during this
+  pass
+- Source: live `git status --porcelain | wc -l` and `git log --oneline -5`,
+  checked at pass start (10:09:53), mid-pass, and end (10:12:51)
+- Verdict: CONFIRMED
+- Evidence: All three checks across the pass returned status count 76 and HEAD
+  672fdeb unchanged. A live background monitor watching `git rev-parse HEAD`
+  for 3 minutes past the last manual check also did not observe a new commit
+  before this report was filed. Only commits c636fd3 and 672fdeb (both already
+  audited above) are new since pass 7's cd911f9.
 - Severity: minor
 
 ## References
