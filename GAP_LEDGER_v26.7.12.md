@@ -1082,6 +1082,132 @@ ledger text alone.
   tried a bare `cargo clippy` — the hook worked as designed and forced the
   recipe to exist.
 
+### G52 — Lean Testing Atlas integration (Waves 0-3): vendored, corrected, cross-walked, and exercised against the SOC2 crown — standing path found incomplete
+
+- Lens: self-improvement-loop (testing-atlas integration effort, Waves 0-3)
+- Status: CLOSED
+- Closure evidence (2026-07-13, commits f735022, 0afed7f, f23ad02, 84ab3de, e590d1b,
+  c481ecd):
+  - **Wave 0** (f735022): vendored the external Lean Testing Atlas (133-test-type
+    curriculum, 30 families, 36 Mermaid diagrams, 37 LLM guides, 12 templates) verbatim
+    into `docs/testing-atlas/` — 93 files, every file's sha256/size independently
+    checked against the atlas's own `SOURCE_DELIVERY_MANIFEST.json` (92 entries, 0
+    mismatches) before commit. No content edits landed then or since;
+    `docs/testing-atlas/**` stays a frozen import.
+  - **Wave 1** (0afed7f, `docs/TESTING_ATLAS_INTEGRATION.md`): the atlas self-reports
+    `SOURCE_COMPLETE_BUILD_NOT_RUN` in its own `SOURCE_AUDIT.json` — its authors never
+    ran `lake build`/`lean` against a single catalog entry. Independent re-verification
+    against the live `procint/` tree found 6 catalog claims (T055, T062, T094, T021,
+    T068, T029-T032) naming Lean artifacts/mechanisms
+    (`closureWithoutIdempotence`/`replayReverseParents`, `SocketShadow`,
+    `StandingForgery`, `CrossTenantGraft`, `MissingDescent`, `crossTenantLeak`, a
+    TTL->Lean `StepCorrespondence` instance, Plausible-sampled closure/receipt-DAG laws)
+    that do not exist anywhere under `procint/` — each row's disproving grep is recorded
+    so a future agent re-runs it instead of trusting the table on faith. The doc also
+    cross-walks atlas vocabulary against AGENTS.md section 4's standing lattice (atlas
+    `FINITE_VERIFIED`/`PROVEN`/`ALIVE` are explicitly NOT AGENTS.md `PROVEN`, citing
+    `Standing.finiteVerified.canClaimTheorem = false` proved by `rfl` as the load-bearing
+    kernel fact) and rules Property testing (`P_b`) `NOT_APPLICABLE` — not skipped — for
+    this repo's finite `decide`-closed carriers, quoting Plausible's own
+    admit-on-success doc comment (`procint/.lake/packages/plausible/Plausible/Tactic.lean:137-138`)
+    as the reason exhaustive `decide` dominates sampling here.
+  - **Wave 2** (f23ad02): one doctrine paragraph added to AGENTS.md section 4 (mirrors
+    the existing arXiv:2607.09510 empirical-grounding paragraph's shape), declaring the
+    atlas methodology-only with no ambient standing, governed by
+    `docs/TESTING_ATLAS_INTEGRATION.md`; one pointer line added to each of 5
+    `.claude/agents/*.md` files (lean-verifier, adversarial-auditor,
+    release-gate-auditor, theorem-card-reviewer, rust-hygiene-auditor). Verified pure
+    addition via `git diff` — no existing verification criteria altered, only lines
+    appended.
+  - **Wave 3a** (84ab3de, `procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean`):
+    while building the SOC2 crown material Wave 3b audits, exhibited a real
+    descent-soundness gap in `ManufactureStep` — tracked separately as **G53** below
+    (new G-number, left OPEN; documented, not closed, by this entry).
+  - **Wave 3b** (e590d1b, `AxiomAuditSOC2.lean`; c481ecd, `StandingPathSOC2.lean`):
+    instantiated atlas T006/T007 (axiom-dependency, no-sorry) against 20 real
+    SOC2/Runtime/Swarm11 theorems — `lake build ProcInt.Playground.SOC2.AxiomAuditSOC2`
+    exit 0, all 20 `#guard_msgs` axiom-string assertions matching captured `#print
+    axioms` output (verified before writing, not guessed). Then instantiated the
+    atlas's Standing Path family (T132 EDGE_COVERAGE, T133 PATH_COVERAGE) against the
+    SOC2 two-tenant audit-flow crown's Eleven-Witness Crown Matrix `W_C(SOC2) =
+    (K,P,N,C_m,P_b,M_e,M_u,C_o,F,R,S)`. **Honest result, stated without rounding up:
+    `complete` came out FALSE.** `required` = 10 rows (11 minus the `P_b` carve-out,
+    `required_card`); `admitted` = 6 (`K,P,N,C_m,C_o,R`, `admitted_card`, each cited to
+    a real previously-committed theorem via a `#check` that fails to compile if the
+    target disappears). `admitted_ssubset_required : admitted ⊂ required` is the
+    proven headline fact; the template's `complete : admitted = required` field is
+    explicitly never written or forced — `StandingPathReceipt` makes `complete` a proof
+    obligation baked into the structure, and no honest witness of that structure exists
+    yet for this crown. Four rows remain open (`missing_eq_exact_rows`,
+    machine-checked by `decide`): `M_e` (Metamorphic) and `M_u` (Mutation) —
+    grep-confirmed absent from the SOC2 files; `F` (Flow) — a genuine carrier mismatch
+    (`AuditFlow`'s `Obl2`/`C2` vs `AuditFlowViolation`'s reused
+    `TenancyCountermodel.Obl`/`C` are not the same concrete carrier); `S` (Standing
+    Path itself) — correctly self-referentially open, since the crown this file audits
+    isn't complete, marking `S` admitted would be circular.
+    `soc2CrownAliveClaim.authorized = false` by `rfl`, agreeing with
+    `admitted_ssubset_required`. Build: `lake build
+    ProcInt.Playground.SOC2.StandingPathSOC2` and `lake build Playground` (8715/8715
+    jobs) both exit 0, no sorry/admit. `Swarm11Verifier.lean` additively folds
+    `AuditFlow.checks ++ AuditFlowViolation.checks` into the existing crown check fold
+    (`ManufactureTenancyGap.checks` deliberately excluded, out of scope per the task);
+    `lake exe swarm11Verifier` run: 5/5 crown checks PASS, 17/17 SOC2 checks PASS,
+    STANDING: ALIVE, exit 0 — that `ALIVE`/PASS result is the check-fold aggregate, not
+    a claim that the crown's standing path (S-row) is complete. Per this same doc's own
+    vocabulary-crosswalk rule, an atlas `ALIVE` verdict is capped at the weakest
+    admitted witness and must never be read or written as AGENTS.md `PROVEN`.
+  - Every wave's stated build/verification command was independently re-confirmed
+    against `git log`/`git show` for this ledger entry (commits f735022, 0afed7f,
+    f23ad02, 84ab3de, e590d1b, c481ecd all present at HEAD in the stated order) rather
+    than taken on the originating session's word alone.
+- Note (not a Fix — this entry is CLOSED): closing G53, adding real `M_e`/`M_u`
+  fixtures, and resolving the `F`-row carrier mismatch are the concrete preconditions
+  for a future `StandingPathSOC2.lean` re-run with `required = admitted` and a genuine
+  `StandingPathReceipt`; until then the crown's own file honestly documents itself as
+  open on exactly those four rows, and this entry records that state rather than
+  rounding it up to complete.
+
+### G53 — `ManufactureStep` admits tenancy-crossing children: a legal descent step can silently cross tenant boundaries (descent-soundness gap, exhibited, not fixed)
+
+- Lens: lean-procint, self-improvement-loop (cited by the originating session as audit
+  pass 16, finding PP5; independently re-verified here directly against the source file
+  rather than taken on that citation alone — `PP5` does not yet appear in
+  `PRAXIS_SELF_AUDIT.md`, whose Pass 15 findings (`PO1`-`PO11`) are the newest entries
+  committed to that file as of this ledger entry)
+- Status: OPEN
+- Evidence: `procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean` (commit
+  84ab3de, hand-authored, Playground-exempt per its own header). `ManufactureStep`'s
+  definition (`ManufactureDecrease.lean:68-70`, `∀ c ∈ children, c < a`) is a pure
+  order-descent condition with no tenancy awareness — `ObligationRank.lean`'s own
+  "Excludes" section (:34-38) and `ROADMAP_MATH_SPINE.md`'s Wave M1 status note
+  (:330-337) already record, as a scope note, that Crown II's descent machinery
+  (`CrownState`, `rank`, `ManufactureStep`) never touches `Residue.residue` /
+  `Residue.Separated` / the tenancy-purity theorems in `Residue/Tenancy.lean`. This
+  file exhibits the *consequence* of that documented disjointness as a concrete,
+  kernel-checked counterexample rather than leaving it asserted: instantiated at
+  `AuditFlow.lean`'s already-proven two-tenant closure (`Obl2`/`tag2`),
+  `gap_manufactureStep : ManufactureStep gapSource gapTarget` is a fully legal step
+  that replaces tenant B's resolved goal (`g2 = 3`, `tag2 = true`) with tenant A's
+  already-proven minimal support (`S1 = {0}`, `tag2 = false`) — `0 < 3` alone in `Fin
+  4`'s standard order makes it legal. `gap_tenant_crossing` exhibits the crossing
+  child concretely, and `manufactureStep_not_tenant_pure` proves the general
+  refutation: it is false that every `ManufactureStep` instance keeps its children
+  tenant-pure relative to the obligation it replaces. Standing: `PROVEN` (as a
+  refutation, unconditionally) — not an open goal, an exhibited gap, mirroring the
+  proof shape `Swarm11/OrientedSwap.lean`'s `not_orientedSwap_locallyConfluent` uses
+  for its own counterexample. Not a defect in `ManufactureStep`'s own contract (it was
+  never specified to enforce tenancy); the gap is for any caller who assumes Crown
+  II's termination guarantee also implies tenant isolation — it does not.
+- Fix: either (a) strengthen `ManufactureStep`'s hypothesis to require `∀ c ∈ children,
+  tag c = tag a` (or an explicit `Separated`-preservation side condition) and
+  re-verify every existing `ManufactureStep` call site still typechecks under the
+  stronger contract, or (b) leave `ManufactureStep` as pure order-descent and add an
+  explicit, separately-checked tenancy-purity obligation at every call site that
+  currently relies on it implicitly (audit `ManufactureDecrease.lean`'s callers
+  first). Either path needs its own theorem card per AGENTS.md section 4 before
+  landing — out of scope for this entry, which documents the gap and does not close
+  it.
+
 ## Refuted during verification
 
 Findings below were disproven by the adversarial pass and must not be re-reported.
