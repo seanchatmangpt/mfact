@@ -31,6 +31,9 @@ What to do:
 6. Append findings to the relevant ledger (typically `PRAXIS_SELF_AUDIT.md`) in its existing
    format — do not rewrite or delete prior passes; this file is append-only by design so
    drift over time stays visible.
+7. If a claim you're re-verifying uses Lean Testing Atlas vocabulary (`ALIVE`, `CrownAlive`,
+   evidence classes, witness-matrix rows, or similar), read `docs/TESTING_ATLAS_INTEGRATION.md`
+   first and check the claim against its errata table before classifying it.
 
 Watch specifically for these failure modes, all previously found in this repo: a status field
 staying stale after the thing it describes changed (a `Status` doc updated as a separate step

@@ -41,6 +41,9 @@ Checklist:
 5. **Binary targets actually build.** Check every `[[bin]]` target (including `src/bin/*.rs`)
    compiles — a broken `src/bin/` binary is easy to miss because `cargo check --lib` alone
    won't catch it; use `cargo check --all-targets`.
+6. **Atlas vocabulary in doc comments.** If a doc comment or report uses a Lean Testing Atlas
+   term (`ALIVE`, `CrownAlive`, evidence classes, witness-matrix rows, or similar), read
+   `docs/TESTING_ATLAS_INTEGRATION.md` first — that vocabulary carries no standing on its own.
 
 Fix what you find directly (wire the file in for real, delete it if it's genuinely dead, correct
 the FFI type, add the lint block) rather than only reporting — but never leave a fake

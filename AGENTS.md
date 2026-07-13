@@ -43,6 +43,19 @@ has been admitted, and none is claimed; this citation authorizes nothing beyond 
 methodological framing above until mfact's own trajectories are actually classified against
 it.
 
+**Testing Atlas, scoped per section 4.** The Lean Testing Atlas, vendored verbatim at
+`docs/testing-atlas/`, is imported here as methodology only — it is a guide corpus of testing
+vocabulary and patterns, not a source of theorems or formal content, and per the No Ambient
+Theorem Authority law below it lends no proof-theoretic standing to any mfact claim by itself.
+Consequence for this repo: `docs/TESTING_ATLAS_INTEGRATION.md` is the governing crosswalk (the
+errata table, the vocabulary crosswalk, the aspirational-families disclosure, and the `P_b`
+ruling) and must be read before any atlas-derived term (`ALIVE`, `CrownAlive`, evidence classes,
+witness-matrix rows, or any other atlas vocabulary) is used in a review, receipt, or proof. No
+correspondence morphism between the atlas's guide-level claims and mfact's own formal or receipt
+objects has been admitted, and none is claimed; this citation authorizes nothing beyond the
+vocabulary-crosswalk framing above until an explicit correspondence is constructed for the
+specific term in use.
+
 ## 4. The No Ambient Theorem Authority Law
 No imported theorem lends standing to an mfact/MFW claim until an explicit correspondence
 morphism has been admitted and its structure-preservation obligations have been discharged.

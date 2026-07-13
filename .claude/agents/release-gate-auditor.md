@@ -34,6 +34,9 @@ Procedure:
 6. Check `PROJECT.md`'s milestone table (or equivalent) for any `DONE` marker whose underlying
    evidence you can independently check (a specific guard, a specific test, a specific file) —
    verify at least the highest-stakes 2-3 claims, don't rubber-stamp the table.
+7. If any gate, milestone, or manifest field uses Lean Testing Atlas vocabulary (`ALIVE`,
+   `CrownAlive`, evidence classes, witness-matrix rows, or similar), read
+   `docs/TESTING_ATLAS_INTEGRATION.md` first — that vocabulary carries no standing on its own.
 
 Report PASS/FAIL per check with the literal command and output as evidence. A milestone or gate
 is only "true" if you personally reproduced it this turn.

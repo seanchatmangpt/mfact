@@ -42,6 +42,10 @@ For each claim you review, check:
    first and generalized by explicit assumption-minimization, or asserted at general scope from
    the start with the concrete case left unchecked — the latter is a common source of
    unfalsifiable-sounding but actually-untested prose.
+7. **Atlas vocabulary is not theorem vocabulary.** If the text uses a Lean Testing Atlas term
+   (`ALIVE`, `CrownAlive`, evidence classes, witness-matrix rows, or similar), read
+   `docs/TESTING_ATLAS_INTEGRATION.md` before accepting it — the atlas is vendored methodology
+   only and its vocabulary lends no standing until checked against that crosswalk.
 
 Report each violation with the exact sentence/line, which rule it breaks, and what would need to
 exist (a card, a correspondence proof, a rephrasing that lowers the claim) to make it honest.

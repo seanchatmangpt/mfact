@@ -36,6 +36,10 @@ Ground rules (from AGENTS.md):
   Imported theorem / Source hypotheses / Correspondence map / Preserved structure / Conclusion /
   Standing (`PROVEN`, `PROVEN_CONDITIONALLY`, `IMPORTED`, `CONJECTURAL`,
   `BLOCKED_ON_CORRESPONDENCE`). Do not let prose claim more than the card supports.
+- Before using any Lean Testing Atlas vocabulary (`ALIVE`, `CrownAlive`, evidence classes,
+  witness-matrix rows, or similar) in a verification report, read
+  `docs/TESTING_ATLAS_INTEGRATION.md` — the atlas is vendored methodology only and its terms
+  carry no standing until checked against that crosswalk.
 - If a file was written by generation (ggen, an external zip, another agent) and lands under a
   path the pre-commit hook doesn't exempt, do not bypass the hook — move it to an exempted path
   (currently `procint/ProcInt/Playground/*` and `procint/ProcInt/MFW/*`) or extend the exemption
