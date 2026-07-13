@@ -12,7 +12,14 @@ for b in text.split('\n\n'):
     if re.search(r'a procint:Decl\s*;', b):
         n = re.search(r'procint:declName "([^"]+)"', b)
         s = re.search(r'procint:status "([^"]+)"', b)
-        a = re.search(r'procint:auditMsg "([^"]*)"', b)
+        # SELF-IMPROVEMENT-LOOP FIX: auditMsg may be a triple-quoted Turtle
+        # long string (used when the message line-wraps); try that form first
+        # so a.group(1) reflects real content instead of matching an empty
+        # `""` pair from the delimiter's first two quote characters. See the
+        # identical fix in scripts/build_manifest.py.
+        a = re.search(r'procint:auditMsg """(.*?)"""', b, re.DOTALL)
+        if a is None:
+            a = re.search(r'procint:auditMsg "([^"]*)"', b)
         if n and s:
             if s.group(1) == 'proven' and a: ttl_proven.append(n.group(1))
             if s.group(1) == 'stated': ttl_stated.append(n.group(1))

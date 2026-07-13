@@ -28,7 +28,15 @@ for b in blocks:
         name = re.search(r'procint:declName "([^"]+)"', b)
         code = re.search(r'procint:leanCode """(.*)"""', b, re.DOTALL)
         status = re.search(r'procint:status "([^"]+)"', b)
-        audit = re.search(r'procint:auditMsg "([^"]*)"', b)
+        # SELF-IMPROVEMENT-LOOP FIX: auditMsg can be written as either a plain
+        # single-quoted Turtle string or a triple-quoted long string (used when
+        # the message itself line-wraps, e.g. the countermodel axiom lists).
+        # The old single-quote-only pattern matched the first two `"""`
+        # delimiter characters as an empty pair and silently discarded real
+        # content for every triple-quoted decl. Try triple-quoted first.
+        audit = re.search(r'procint:auditMsg """(.*?)"""', b, re.DOTALL)
+        if audit is None:
+            audit = re.search(r'procint:auditMsg "([^"]*)"', b)
         kind = re.search(r'procint:declKind "([^"]+)"', b)
         if name and code and status:
             decls.append({'name': name.group(1), 'code': code.group(1),
@@ -43,7 +51,13 @@ for b in blocks:
 artifacts, stated = [], []
 for d in sorted(decls, key=lambda x: x['name']):
     axioms = []
-    proven = d['status'] == 'proven' and d['auditMsg'] is not None
+    # SELF-IMPROVEMENT-LOOP FIX: use the same truthiness rule as the
+    # evidenceComplete gate below (bool(auditMsg), not `is not None`). Before
+    # this fix a decl with a present-but-empty auditMsg string could be
+    # marked proven=true here while evidenceComplete=false flagged the same
+    # decl as missing evidence -- a self-contradictory manifest. `proven`
+    # now means "has real, non-empty audit text", matching the gate.
+    proven = d['status'] == 'proven' and bool(d['auditMsg'])
     if d['auditMsg']:
         m = re.search(r'\[([^\]]*)\]', d['auditMsg'])
         if m and m.group(1).strip():
