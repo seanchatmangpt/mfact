@@ -19,7 +19,29 @@ Rigor is knowing exactly when you are in the Explore phase versus the Exploit ph
 Never assert a property that can be explicitly constructed. 
 - **No vacuous tautologies:** If your theorem concludes `True = True`, delete it.
 - **No redundant scaffolding:** Stubs and fake hash-map passes over tiny fixtures are instantly rejected.
-- **Strict Boundaries:** Never touch `~/praxis`. You operate securely inside `~/mfact`.
+- **Strict Boundaries:** `~/praxis` is a **read-only dependency** — mfact's ggen packs and
+  build sources live there (see `.git/hooks/pre-commit`'s `MFACT_SOURCE_CHANGED` handling,
+  which already assumes this). Read, explore, and build against it freely. Never write to,
+  edit, or commit inside `~/praxis` from an mfact session — every write this session produces
+  stays inside `~/mfact`. (Corrected 2026-07-12: this line previously read "never touch
+  `~/praxis`" in full, which was too broad and contradicted the pre-commit hook's own
+  dependency handling — clarified per explicit user correction, not silently reinterpreted.)
+
+**Empirical grounding, scoped per section 4.** arXiv:2607.09510 (Zhao et al., "Failure as a
+Process: An Anatomy of CLI Coding Agent Trajectories") is imported here as empirical
+methodology only — it is a measurement study with no theorems or formal content, and per the
+No Ambient Theorem Authority law below it lends no proof-theoretic standing to any mfact
+claim. The one thing it does support, and only this, is an empirical finding: across the
+trajectories it studied, coding-agent failures are predominantly epistemic (57.9%, mostly
+false premise and specification neglect) rather than competence- or environment-driven, and
+the decisive error (`t_err`) typically precedes the point it first becomes observable
+(`t_obs`) by a wide margin. Consequence for this repo: mfact's own autonomic loops (the fix
+loop and audit loop) must not rely on final-outcome checks alone — a receipt marked `success`
+at observation time says nothing about whether the decisive error already occurred upstream.
+No correspondence morphism between the paper's trajectory model and mfact's receipt schema
+has been admitted, and none is claimed; this citation authorizes nothing beyond the
+methodological framing above until mfact's own trajectories are actually classified against
+it.
 
 ## 4. The No Ambient Theorem Authority Law
 No imported theorem lends standing to an mfact/MFW claim until an explicit correspondence
@@ -36,10 +58,14 @@ admitted, structure-preserving correspondence, regardless of which of the three 
 the edge would transfer. mfact owns the theorem-authority instance (`Definition → Theorem →
 AssumptionClosure → FormalStanding → ClaimCeiling`); production authority
 (`Mechanism → ProductionReachability → Consequence → Receipt → Replay`) is a different
-project's chain and is out of scope here — hence `Praxis ⊥_epistemic mfact`, the formal
-reading of the existing rule below: never touch `~/praxis`. Do not import, cite as evidence,
-or infer standing from Praxis artifacts inside this repo; the orthogonality is mechanical,
-not a courtesy.
+project's chain and is out of scope here — hence `Praxis ⊥_epistemic mfact`. This is an
+*epistemic* orthogonality, not an *access* one (corrected 2026-07-12: the two were previously
+conflated in this section, alongside the read-boundary error fixed in section 3 above): mfact
+legitimately depends on `~/praxis` as a build/pack source, and consuming that dependency is
+ordinary — but building against praxis packs is a production-authority fact, not a
+theorem-authority one. Depending on a package does not let mfact's own theorem or production
+claims cite praxis's as evidence without their own admitted correspondence morphism; the
+orthogonality is about standing transfer, not about whether the file may be read.
 
 - **Theorem cards before prose.** Every claim derived from a classical result records: Object
   (exact MFW type) / Imported theorem (name, source) / Source hypotheses (all of them) /

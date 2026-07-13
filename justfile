@@ -221,6 +221,13 @@ proof-blockers:
 fixtures:
     @grep "^PROCINT_\|^WFNET_CROWN_EQUIVALENCE=" release/standing.env
 
+# Annotate self-improvement-loop receipts with t_err/t_lock/t_obs proxies
+# (arXiv:2607.09510-adapted; see scripts/trajectory_annotate.py docstring for
+# the exact per-firing narrowing and its honest limits). Read-only.
+[group('cockpit')]
+trajectory-annotate:
+    @python3 scripts/trajectory_annotate.py .mfact/receipts/
+
 # Alias: quadrature-negative-controls.
 [group('manufacture')]
 negative: quadrature-negative-controls
