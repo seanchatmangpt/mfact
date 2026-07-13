@@ -4,3 +4,4 @@
 {"timestamp": "2026-07-13T20:05:05Z", "git_head": "108bf5b", "gaps_open": 22, "gaps_closed_this_firing": 1, "lake_build_pass": true, "sorry_count": 23, "axiom_count": null}
 {"timestamp": "2026-07-13T21:16:42Z", "git_head": "5608deb", "gaps_open": 22, "gaps_closed_this_firing": 0, "lake_build_pass": true, "sorry_count": 23, "axiom_count": null}
 {"timestamp": "2026-07-13T20:56:40Z", "git_head": "0e99a2b", "gaps_open": 22, "gaps_closed_this_firing": 0, "lake_build_pass": true, "sorry_count": 23, "axiom_count": null}
+{"ts":"2026-07-13T23:34:18Z","run_id":"20260713T233418Z","gap_id":"G50","status":"no_op","receipts_on_disk":17,"open_gaps_grep":22,"closed_gaps_grep":20}

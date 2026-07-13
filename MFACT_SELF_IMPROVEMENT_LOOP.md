@@ -371,3 +371,20 @@ diff just doesn't block starting.
   intended this time. Per STEP 1's unconditional rule, touched nothing
   further. Wrote receipt `.mfact/receipts/20260713T222646Z.json` with
   `collision: true`, and stopped.
+
+- 2026-07-13 ~16:34 PDT (cron f6a6cd52, firing 16, run_id 20260713T233418Z): **no_op --
+  G50 re-verified already closed; trigger candidate list stale.** Delta
+  guard empty, git log all session-attributable (Dogfood Waves 0-5 landed
+  since firing 15: `46f81ee`..`81fbbad`, G54-G57 opened and CLOSED,
+  swarm11-verify now 59 checks 0 failures). Per STEP 3, re-ran G50's
+  original flagging check instead of trusting the candidate list:
+  `grep -n stuck justfile` finds the `stuck-item-guard` recipe at
+  justfile:238-239, the loop doc cross-references it at :90-95, and the
+  ledger entry is Status: CLOSED with a prior firing's closure evidence
+  -- the wiring the candidate list calls missing exists. G1 deliberately
+  not taken: its honest closure needs the fresh `just certify` re-run the
+  in-flight release-80/20 workflow (wv5ynj9fq) owns per Pass 19 PS4's
+  caveat. Rust candidates unreachable at oracle rank 1-3 (hook blocks
+  cargo). Receipt `.mfact/receipts/20260713T233418Z.json`, oracle_rank 3.
+  Final firing inside the window (deadline 16:49:04 PDT) -- the next cron
+  fire self-terminates the loop per STEP 0.
