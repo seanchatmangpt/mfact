@@ -61,7 +61,15 @@ for d in sorted(decls, key=lambda x: x['name']):
     if d['auditMsg']:
         m = re.search(r'\[([^\]]*)\]', d['auditMsg'])
         if m and m.group(1).strip():
-            axioms = [a.strip() for a in m.group(1).split(',')]
+            # SELF-IMPROVEMENT-LOOP FIX: one triple-quoted auditMsg
+            # (WfNet.infinite_transition_countermodel_sound_not_bounded)
+            # line-wraps in the source TTL with a literal two-character
+            # `\n` escape (not an actual newline) before the continuation
+            # indent, e.g. "[propext,\n Classical.choice,\n Quot.sound]".
+            # Strip that literal escape so axiom names are clean tokens
+            # rather than "\n Classical.choice".
+            axioms = [re.sub(r'^\\n\s*', '', a).strip()
+                      for a in m.group(1).split(',')]
     artifacts.append({'name': d['name'], 'hash': b3(d['code'].encode()),
                       'axioms': axioms, 'proven': proven})
     if d['status'] == 'stated':
