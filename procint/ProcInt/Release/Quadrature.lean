@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Standing Quadrature witness — v26.7.7 (run 6cbc680)
+/-! # Standing Quadrature witness — v26.7.7 (run ee624be)
 
 A finite, kernel-checked witness that the release's surfaces cohere:
 the TTL declaration catalog, the release manifest, and the axiom audit

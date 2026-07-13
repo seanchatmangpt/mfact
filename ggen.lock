@@ -6,8 +6,8 @@ content_hash = "blake3:c3e2ef8aeae1de9577ad2a87abb5f797b56934e8aa0f672b0b38a5628
 
 [packs.post-release-pack]
 source = "path:/Users/sac/mfact/packs/post-release-pack"
-content_hash = "blake3:7189211c46b6c99c1b78e2e0595fc17be0e0f88bf83d0b3201281c7ad43cdbb3"
+content_hash = "blake3:e421e0e4ab020f82cbc89ee844ed563ebb540e16ff84e5c20047fffa16eb11d3"
 
 [packs.quadrature-pack]
 source = "path:/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:e3c11b64c0196abd66cbf121af2fc740a52ae54afe58438d234b5516474cd804"
+content_hash = "blake3:1bda546c4dec149290c23233e2f27e0d570fb171effaed68d346cd0baff4247e"
