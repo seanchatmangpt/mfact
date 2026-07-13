@@ -25,14 +25,14 @@ no claim in prose supersedes a verdict produced by the real artifacts.
 | C2 | RDF lifecycle authority | NOT-LEAN | Graph-store runtime |
 | C3 | Recon/Explore dogfooded | NOT-LEAN | Adapter runtime |
 | C4 | Discovers unfamiliar Rust system | NOT-LEAN | Runtime discovery |
-| C5 | Bounded plan + permission before mutation | PARTIAL→W2 | Plan math real; permission math absent |
-| C6 | Governs Claude Code repair | PARTIAL | Termination geometry proven; launch is runtime |
+| C5 | Plan + permission before mutation | PARTIAL→W2 | Plan math real; permission absent |
+| C6 | Governs Claude Code repair | PARTIAL | Termination proven; launch is runtime |
 | C7 | Every CC tool event in RDF | NOT-LEAN | Adapter runtime |
-| C8 | Rust dry-run publish succeeds | NOT-LEAN | Cargo execution; correctly REFUSED for Lean |
-| C9 | Receipt & replay cover lifecycle | PARTIAL→W3 | Replay invariance proven; lifecycle model thin |
+| C8 | Rust dry-run publish succeeds | NOT-LEAN | Cargo execution; correctly REFUSED |
+| C9 | Receipt & replay cover lifecycle | PARTIAL→W3 | Replay proven; lifecycle model thin |
 | C10 | Public ontologies before private | NOT-LEAN | TTL namespace policy (findings below) |
-| C11 | Typed outcome algebra preserved | MISSING-ABLE→W1 | No unified type; the one over-claim watch |
-| C12 | Autonomous external publication | NOT-LEAN | Policy; typed refusal modeled in `PostRelease` |
+| C11 | Typed outcome algebra preserved | MISSING-ABLE→W1 | No unified type; over-claim watch |
+| C12 | Autonomous external publication | NOT-LEAN | Typed refusal modeled in `PostRelease` |
 
 C1 reconciliation note: one lens rated C1 `PROVABLE-NOW` (types elaborate; small lemmas
 pass); a second rated it GENEROUS — `Planning/Pddl.lean` carries exactly one theorem
@@ -106,12 +106,12 @@ report.
 
 | Surface | Exercises | Current state | Evidences |
 |---|---|---|---|
-| `just test` | 15 `#guard`, 9 `example`, 14 `decide` across Tests/Fixtures | PASS (standing.env) | C1, FR-6 |
+| `just test` | 15 `#guard`, 9 `example`, 14 `decide` | PASS (standing.env) | C1, FR-6 |
 | `just audit` | 203 `#print axioms` pairs, allowlist-only | `AXIOM_AUDIT=PASS` | kernel backing |
 | `AxiomAuditSOC2` | 21 pairs over the SOC2 crown | build-gated | C5/C6/FR-22 |
-| `just swarm11-verify` | 795 decls, 0 sorry/axiom/unsafe; 5 crown + 24 SOC2 checks | `admitted:true`, 0 failures | C6, C9, C11, FR-15/19/22 |
-| `just certify` | proven 203/401; 3 negative controls | `certified: v26.7.7`, uninhabited objection | FR-16, FR-22, NFR-2 |
-| `standing-quadrature` | 14 theorems incl. the two closures | PASS; 5 orphan kinds = 0 | FR-5, FR-22, NFR-1 |
+| `swarm11-verify` | 795 decls 0-sorry; 5 crown + 24 SOC2 checks | admitted, 0 fail | C6/C9/FR-15,19,22 |
+| `just certify` | proven 203/401; 3 negative controls | certified v26.7.7 | FR-16, FR-22, NFR-2 |
+| `standing-quadrature` | 14 theorems incl. both closures | PASS; orphans 0 | FR-5, FR-22, NFR-1 |
 
 ## PRD standing disagreements
 
@@ -205,7 +205,7 @@ makes the morphism definable, it does not constitute it.
 | CC mutations outside plan+permission | NOT-LEAN (consumer); W2 models the guard |
 | Lifecycle events outside RDF authority | NOT-LEAN (consumer) |
 | Native payloads without content identity | NOT-LEAN (blake3 fold, Python side) |
-| Critical tests without adversarial witness | HAVE: countermodel discipline (AuditFlowViolation etc.) |
+| Critical tests without adversarial witness | HAVE: countermodel discipline (AuditFlowViolation) |
 | Claims exceeding verifier standing | HAVE: `Standing.canClaimTheorem` gate + `Claim.authorized` |
 | Replayed receipts diverging silently | HAVE: `replay_eq_of_traceEq`, `manufacturedReceipt_valid` |
 | Private ontology terms without justification | NOT-LEAN (namespace report absent, NFR-4) |
