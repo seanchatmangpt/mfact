@@ -8,3 +8,4 @@ import ProcInt.Playground.Swarm11.Replay
 import ProcInt.Playground.Swarm11.Experiment
 import ProcInt.Playground.Swarm11.Correspondence.AtomVM
 import ProcInt.Playground.Swarm11.Crown
+import ProcInt.Playground.Swarm11.Correspondence.LedgerBridge

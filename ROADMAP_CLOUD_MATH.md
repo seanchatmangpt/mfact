@@ -217,6 +217,22 @@ Format follows `ROADMAP_MATH_SPINE.md` §4. Ceilings use its marker schema.
 
 - CL1 — No inhabited `StepCorrespondence` over non-toy state (blocks Card 2's cloud edge).
   Falsifier: exhibit a bridge whose `preservesStep` fails on a real substrate step.
+  **Narrowed, not closed, 2026-07-13**: `procint/ProcInt/Playground/Swarm11/Correspondence/
+  LedgerBridge.lean` adds `crownLedgerCorrespondence`, a real, non-identity model-to-model
+  `StepCorrespondence` inhabitant bridging Crown's `Nat × Nat` counter pair to a structurally
+  different runtime record (`Ledger`, a `Nat` total plus a signed `Int` diff), with the one-step
+  commuting square (`encodeLedger_preservesStep`) closed by genuine `Nat`/`Int` cast arithmetic
+  (`omega`), not `rfl` — stronger than the prior toy witness
+  (`Swarm11Tests/Correspondence.lean`, `Int.ofNat` with `abstractStep = runtimeStep` literally
+  the same function). Both sides remain checked Lean objects, not an external runtime; this does
+  **not** license calling it a substrate correspondence to any concrete external runtime
+  (praxis's F16/F18, or a native runtime model) — that instantiation is still open. The same
+  file adds a kernel-checked negative result, `no_log_correspondence` (and its bundled corollary
+  `no_ledgerLog_correspondence`): no `encodeState` can bridge `Crown.step` to an
+  order-preserving append-log runtime, because `Crown.step` commutes on
+  `incrementLeft`/`incrementRight` while list-append never commutes on two distinct events —
+  demonstrating `StepCorrespondence` is not trivially inhabited for arbitrary state-pair
+  choices.
 - CL2 — Commutation proofs for real event logs do not exist (blocks Card 1). Falsifier: two
   declared-independent operations whose replay orders diverge.
 - CL3 — Inherited: P22 `OrientedSwap` normal form open; symmetric `Swap` termination is
