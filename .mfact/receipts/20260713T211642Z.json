@@ -9,7 +9,7 @@
     "before": "crates/mfact-core/build.rs:44 still did cc::Build::new().file(\"src/lean_ffi_wrapper.c\") -- one of the 6 files firing 10 deleted. just clippy-core passed only because this sandbox's PATH lacks `lean`, so build.rs's Command::new(\"lean\") call fails first and the function returns early, before ever reaching the cc::Build call. Confirmed via `which lean` inside a bare `just` recipe shell: not found here either -- but ~/.bash_profile and ~/.zprofile both add ~/.elan/bin (where lean actually lives) to PATH, so the user's real login shell would reach the missing-file error.",
     "after": "Re-audited crates/mfact-core/src/{lib,receipt,validate}.rs and src/bin/turbulence.rs: zero extern \"C\" blocks, zero references to thermo_lean or any lp_* FFI symbol -- the entire Lean-FFI-linking apparatus in build.rs was orphaned by firing 10's deletion, not just the one stale path. build.rs reduced to `fn main() {}`; unused `cc = \"1\"` build-dependency removed from Cargo.toml. just clippy-core: exit 0. Full just build (Lean workspace, unaffected by this Rust-only change): 8614+8577+22 jobs, all clean."
   },
-  "commit_sha": null,
+  "commit_sha": "5608deb",
   "duration_ms": null,
   "oracle_rank": 1,
   "collision": false,
