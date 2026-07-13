@@ -858,6 +858,28 @@ Carried from `ROADMAP_MATH_SPINE.md`: P1–P13 stand as written there. New:
   traces converge" but "every `Swap`-equivalence-class has a unique `OrientedSwap`-reachable
   normal form, and normal forms replay identically to every representative" — real and useful,
   but not the originally-named result. Closes the residual half of C27 that P17 does not.
+  **Corrected 2026-07-13** — `procint/ProcInt/Playground/Swarm11/OrientedSwap.lean` constructs
+  `OrientedSwap` and works the correspondence through as far as it genuinely goes, which is
+  further than "needs re-checking" but short of the unconditional close this entry anticipated.
+  `PROVEN` unconditionally: `orientedSwap_terminating` (`Terminating (OrientedSwap step
+  priority)`, via strict `invCount` descent — repairs exactly the hypothesis refuted for raw
+  `Swap`) and `orientedSwap_disjoint_confluent` (disjoint-site local confluence, ported directly
+  from `swap_disjoint_confluent`). `REFUTED` unconditionally, not merely left unproven:
+  `not_orientedSwap_locallyConfluent` exhibits a concrete three-event, three-state countermodel
+  (two non-commuting transpositions bridged by an identity-acting event) where
+  `LocallyConfluent (OrientedSwap step priority)` genuinely fails — orientation removes the one
+  detour (`b → a → c` through the *unswapped* order) that let `swap_overlap_confluent` avoid ever
+  needing a `Commute` witness for the two outer, non-adjacent events of an overlap triple.
+  `PROVEN` as a named conditional repair: `orientedSwap_overlap_confluent_of_commute13` shows
+  that supplying the missing third `Commute` witness (a `StronglyCommutingTriple`-shaped
+  hypothesis) is exactly enough for overlapping sites to join. `Confluent (OrientedSwap step
+  priority)` and the corresponding replay-equality theorem are **not proven** — correctly not
+  attempted, since they would need the unconditional `LocallyConfluent` this file shows does not
+  hold; assembling `LocallyConfluent` from the conditional repair would require threading the
+  third-`Commute`-witness hypothesis through cslib's obligation for *every* mutually-adjacent-
+  reachable triple (not just the one three-event shape proved here), which is new scope beyond
+  this wave. Net: P22 is `PARTIAL`, not closed — a genuine refutation plus an exact conditional
+  repair, not a gap.
 
 ---
 
