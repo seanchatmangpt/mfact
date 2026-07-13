@@ -339,3 +339,19 @@ diff just doesn't block starting.
   same ordering artifact firing 13's own entry already anticipated. Receipt:
   `.mfact/receipts/20260713T205640Z.json`. The firing that actually resumes
   STEPS 2-7 should proceed normally from a clean STEP 0/1 baseline.
+
+- **2026-07-13T21:57:46Z (run `20260713T215746Z`, firing 14) -- COLLISION,
+  no action taken.** Delta-based guard found 4 new paths:
+  `PRAXIS_SELF_AUDIT.md` (a concurrent audit workflow's Pass-17 flush,
+  task `w08jbbeij`, caught mid-edit -- modified, not yet committed) and
+  `release/certify.log` / `release/gates.json` / `release/release-
+  manifest.json` (regeneration output from a second concurrent workflow,
+  task `wdwi5dj1x`, working the v26.7.13 release's 80/20 -- it had just
+  landed a second real fix, `ca3cf5c` "strip literal backslash-n escape
+  from axiom names in build_manifest.py", on top of an earlier one,
+  `0e99a2b`, and appears to be re-running certify/manifest regeneration to
+  verify). Not foreign actors -- both are workflows launched earlier this
+  session; `git log -6` showed no commit outside either of them. Per
+  STEP 1's unconditional rule, touched nothing further. Wrote receipt
+  `.mfact/receipts/20260713T215746Z.json` with `collision: true`, and
+  stopped.

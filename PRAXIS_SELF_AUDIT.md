@@ -334,6 +334,28 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   claim from the wup6bpemk survey DRIFTED (naive substring match double-counts a docstring
   mention, PP14); and the known-persistent-drift.txt "refresh" claim was REFUTED -- its
   mtime is the original write, not a later refresh (PP17).
+- **2026-07-13 (pass 17):** 16 findings across 3 lenses (multi-workflow-concurrency-safety,
+  sorry-axiom-trend, cron-loop-health), auditing two concurrently-declared background
+  workflows (wsr99yw42, wnz6xi5ce) against this session's own delta-based fix-loop collision
+  guard, re-verifying the procint/ProcInt sorry/lake-build metrics trend, and confirming
+  firing-12's absence from the fix loop's Run log. HEAD held at `5ee8573` (pass 15) through
+  this pass's check window. 13 CONFIRMED, 3 UNVERIFIABLE, 0 REFUTED, 0 DRIFTED, 0
+  FIXED-since-last-pass (5 major, 11 minor). Headline: the collision guard's `comm`-based
+  diff is structurally path-only, not content/hash-based, so it can never flag a genuine
+  edit landing on a path already present in the (~5.5h-stale) known-persistent-drift.txt
+  baseline -- demonstrated live on crates/mfact-core/src/validate.rs, which was actively
+  dirty and invisible to both comm-23 checks run this pass (PQ1, major). A follow-up check
+  after this finding was filed closed that specific instance out: validate.rs's dirtiness is
+  pre-existing baseline drift already tracked since pass 15 (PO5, PO8), not a fresh rogue
+  edit from an unattributed third writer -- the guard's blind spot is real and general, but
+  this particular occurrence was not evidence of an active collision. Also flagged: a latent
+  3-way write-path convergence on PRAXIS_SELF_AUDIT.md/GAP_LEDGER_v26.7.12.md between this
+  audit loop, the fix loop, and wsr99yw42 (PQ2, major); firing 12 of the fix loop is absent
+  from every source -- Run log, git history, and receipts directory alike -- consistent with
+  an interruption before its receipt-writing step (PQ4, PQ5, major); and the procint/ProcInt
+  `sorry_count` trend in metrics-history.jsonl (16->23) is a raw-grep artifact of new "No
+  `sorry`" doc-comments, not new proof debt -- the real kernel-level sorry-tactic count
+  stayed at 0 throughout (PQ12-PQ14).
 
 ## Quick reference
 
@@ -461,6 +483,15 @@ and 14 totals above:**
 | Major | 5 | 5 CONFIRMED |
 | Minor | 12 | 10 CONFIRMED, 1 DRIFTED, 1 REFUTED |
 | **Total** | **17** | **15 CONFIRMED, 1 DRIFTED, 1 REFUTED** |
+
+**Pass 17 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, 12, 13, 14, 15,
+and 16 totals above:**
+
+| Severity | Count (pass 17) | Verdicts (pass 17) |
+|---|---|---|
+| Major | 5 | 5 CONFIRMED |
+| Minor | 11 | 8 CONFIRMED, 3 UNVERIFIABLE |
+| **Total** | **16** | **13 CONFIRMED, 3 UNVERIFIABLE** |
 
 ## Critical
 
@@ -4804,4 +4835,339 @@ workflow mid-flight before it finished committing.
   more than PO8/PO11's 13, since validate.rs is the only mfact-core path from the original
   10-file G11 group still live). The "never refreshed" claim remains accurate as of this
   pass; no correction to the record is warranted.
+- Severity: minor
+
+## Pass 17 findings
+
+### PQ1 -- collision guard is path-only; the live validate.rs case is pre-existing drift,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: The delta-based collision guard is structurally blind to new edits landing on any
+  path already present in the (~5.5h-stale) known-persistent-drift.txt baseline, because it
+  diffs path lists via `comm`, never content or hashes -- demonstrated live on
+  crates/mfact-core/src/validate.rs, which was mid-edit and unattributed to either declared
+  workflow at check time.
+- Source: `git diff --stat HEAD -- crates/mfact-core/src/validate.rs`; `stat -f "%Sm %N"` on
+  both validate.rs and .mfact/known-persistent-drift.txt; `grep -n validate.rs` against a
+  sorted copy of the baseline
+- Verdict: CONFIRMED
+- Evidence: `git diff --stat HEAD -- crates/mfact-core/src/validate.rs` showed a live, real
+  diff (10 insertions, 10 deletions), mtime 13:17:12 PDT (53 min before this check).
+  validate.rs sits on line 11 of the sorted known-persistent-drift.txt baseline (baseline
+  mtime 08:46:30, ~5.5h stale at check time). Because `comm -23` only reports paths present
+  in `git status` but absent from the baseline, this path can never surface as a collision
+  no matter what content lands there -- confirmed directly: it did not appear in either
+  comm-23 run in PQ6 despite being actively dirty. Correction, established immediately after
+  this finding was filed: validate.rs's dirtiness traces to pre-existing drift already
+  tracked at pass 15 (PO5's stable tracked-`M` set, PO8's baseline diff), not a fresh rogue
+  edit from a live third writer -- this specific instance is not an unresolved alarm. The
+  structural gap itself (path-only diffing cannot see content changes on an already-known
+  path) is real and general, and stands independent of that correction.
+- Severity: major
+
+### PQ2 -- a latent 3-way write convergence on PRAXIS_SELF_AUDIT.md/GAP_LEDGER exists,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: wsr99yw42's and wnz6xi5ce's declared write-sets do not overlap on any single file,
+  but a real three-way convergence risk exists one level up: wsr99yw42's declared set
+  includes PRAXIS_SELF_AUDIT.md and GAP_LEDGER_v26.7.12.md, the same two files this
+  recurring audit loop and the recurring fix loop both also write, with no lock between any
+  of the three beyond git commit ordering.
+- Source: direct comparison of the two declared write-sets from this pass's own briefing
+  (TaskList returned no tasks, so no independent task-inspection was available); `git diff
+  HEAD -- PRAXIS_SELF_AUDIT.md GAP_LEDGER_v26.7.12.md AGENTS.md`; `git log -1 --format="%H
+  %ci" 5ee8573`; MFACT_SELF_IMPROVEMENT_LOOP.md's own STEP 1 description
+- Verdict: CONFIRMED
+- Evidence: the two declared sets (wsr99yw42: docs/TESTING_ATLAS_INTEGRATION.md, AGENTS.md,
+  .claude/agents/*.md, procint/ProcInt/Playground/SOC2/*.lean, GAP_LEDGER_v26.7.12.md,
+  PRAXIS_SELF_AUDIT.md; wnz6xi5ce: RELEASE_v26.7.13_ARD.md, RELEASE_v26.7.13_PRD.md) are
+  disjoint -- no direct overlap between the two named workflows. But PRAXIS_SELF_AUDIT.md
+  was byte-identical to HEAD (commit 5ee8573, 2026-07-13 13:21:37 -0700, "pass 15" --
+  confirmed via empty `git diff HEAD` output and matching line counts, 4439 both sides) at
+  check time, i.e. this audit session had to append pass 17 to the exact file wsr99yw42 was
+  mid-appending pass 16 to, in the same ~30-45 min window, and MFACT_SELF_IMPROVEMENT_LOOP.md
+  itself states the fix loop "picks one open item from GAP_LEDGER_v26.7.12.md /
+  PRAXIS_SELF_AUDIT.md ... per firing" -- a third potential writer of the same two files. No
+  corruption had occurred as of check time (both files clean), but this is a latent 3-way
+  race the 2-workflow framing does not capture.
+- Severity: major
+
+### PQ3 -- firings 7-11: 4 COLLISION, 1 SUCCESS, every firing reached a terminal state,
+
+- Lens: cron-loop-health
+- Claim: Of the last 5 fix-loop firings recorded in MFACT_SELF_IMPROVEMENT_LOOP.md's Run
+  log (firings 7-11), 4 were COLLISION (7, 8, 9, 11) and 1 was SUCCESS (firing 10, G11
+  closure). No firing in this window was a deferred/incomplete firing -- every one reached a
+  terminal COLLISION-or-SUCCESS state with a written receipt.
+- Source: MFACT_SELF_IMPROVEMENT_LOOP.md lines 217-297 (Run log entries for firings 7-11),
+  freshly read in full this pass (file is 297 lines total, ends immediately after firing
+  11's entry)
+- Verdict: CONFIRMED
+- Evidence: firing 7 (20260713T182657Z): COLLISION, Waves 6/7 mid-integration. Firing 8
+  (20260713T185704Z): COLLISION, ROADMAP_SOC2_MATH.md pending scope-correction. Firing 9
+  (20260713T192656Z): COLLISION, SOC2 flow-test workflow wfigivqnl in progress. Firing 10
+  (20260713T200505Z): SUCCESS, G11 closure, commit 108bf5b. Firing 11 (20260713T202733Z):
+  COLLISION, wup6bpemk (Lean-testing workflow) mid-flight. Cross-checked against git log:
+  `chore(loop)` commits stop cleanly at firing-11 (9f84501), one commit per firing, no gaps
+  or reordering.
+- Severity: major
+
+### PQ4 -- firing 12 of the fix loop does not exist anywhere in the live repository,
+
+- Lens: cron-loop-health
+- Claim: Firing 12 of the fix loop does not exist anywhere in the live repository -- not in
+  the Run log, not as a git commit, not as a receipt file.
+- Source: fresh reads of MFACT_SELF_IMPROVEMENT_LOOP.md (297 lines, ends at firing 11);
+  `git log --all --oneline -i --grep="firing.12|firing-12|firing12"` (empty); `git log
+  --oneline -i --grep="chore(loop)"` (13 commits, latest is firing-11's 9f84501); `ls
+  /Users/sac/mfact/.mfact/receipts/`
+- Verdict: CONFIRMED
+- Evidence: the Run log's last entry is firing 11 (run 20260713T202733Z, COLLISION). `git
+  log --all` finds zero commits mentioning firing-12 in any form. The full chronological
+  list of `chore(loop)` commits runs firing-1 through firing-11 with no gap and no entry
+  beyond. This directly corroborates the premise that firing 12 was interrupted before
+  completing.
+- Severity: major
+
+### PQ5 -- no receipt with run_id 20260713T205640Z exists; firing 12 remains open,
+
+- Lens: cron-loop-health
+- Claim: No receipt with run_id 20260713T205640Z exists in .mfact/receipts/ or anywhere in
+  the repository -- firing 12 remains an open loose end, not closed out.
+- Source: `ls -la /Users/sac/mfact/.mfact/receipts/` (13 dated receipts + latest.json, none
+  matching) and `grep -rl "20260713T205640Z" /Users/sac/mfact` run repo-wide, re-run fresh
+  immediately before filing this finding
+- Verdict: CONFIRMED
+- Evidence: the receipts directory's 13 dated files run 20260713T071516Z through
+  20260713T211642Z with no 20260713T205640Z entry; a full-repository grep for that exact
+  string returns zero matches (exit code 1) on both an initial check and a fresh re-check.
+  This is consistent with the interruption happening at STEP 1 (collision-guard check)
+  before STEP 2-7's receipt-writing step ever ran -- if the loop's own design writes the
+  receipt late in its STEP sequence, an interruption before that step leaves no artifact by
+  design, not by data loss.
+- Severity: major
+
+### PQ6 -- a live comm-23 diff caught a new path materializing mid-pass,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: Live `git status --porcelain`, diffed via `comm -23` against
+  .mfact/known-persistent-drift.txt, contains real new-since-baseline paths -- including one
+  that materialized mid-pass, proving wsr99yw42 was actively writing during this audit
+  window, not merely claimed to be.
+- Source: `git status --porcelain | sort` vs `sort -u .mfact/known-persistent-drift.txt`,
+  diffed with `comm -23`, run twice ~4 minutes apart; plus `find . -iname
+  TESTING_ATLAS_INTEGRATION*` and `stat -f %Sm` on the result
+- Verdict: CONFIRMED
+- Evidence: the first comm-23 (14:10:47 PDT) returned exactly 2 lines: release/certify.log,
+  release/certify.stderr (mtime 14:10:41-42, written 5-6s before that check). The second
+  comm-23 (14:15:xx PDT) returned 3 lines: the same two plus
+  docs/TESTING_ATLAS_INTEGRATION.md (mtime 14:15:08 -- this file did not exist at 14:10:47,
+  when `ls -la` on it returned "No such file or directory").
+  docs/TESTING_ATLAS_INTEGRATION.md is literally named in wsr99yw42's declared write-set, so
+  the comm-23 guard correctly flagged it as new -- the mechanism is not blind to this case.
+  release/certify.log's content and path suggest release-certification tooling plausibly
+  invoked by wnz6xi5ce's RELEASE_v26.7.13 work, but neither certify.log nor certify.stderr is
+  in wnz6xi5ce's literally-declared write-set -- a genuine ambiguous-ownership path, owned by
+  inference, not declaration.
+- Severity: minor
+
+### PQ7 -- the guard fired for real and correctly attributed a third, unnamed workflow,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: The delta-based collision guard was actually fired this session (not merely
+  designed) and correctly caught a real concurrent-workflow collision -- for a third,
+  unnamed-in-this-brief workflow (task wup6bpemk), whose output has since committed cleanly.
+- Source: `cat /Users/sac/mfact/.mfact/receipts/latest.json` (run_id 20260713T202733Z);
+  `git status --porcelain -- procint/ProcInt/Playground.lean
+  procint/ProcInt/Playground/Glue/OrientedSwapReplay.lean`; `git log -2 --oneline --
+  procint/ProcInt/Playground/Glue/OrientedSwapReplay.lean`
+- Verdict: CONFIRMED
+- Evidence: latest.json: status="failed", collision=true, collision_paths=
+  ["procint/ProcInt/Playground.lean",
+  "procint/ProcInt/Playground/Glue/OrientedSwapReplay.lean"], collision_note explicitly
+  attributes them to task wup6bpemk's "still-running 10-agent Lean-testing-landscape
+  workflow" and correctly self-resolves a false positive on Cargo.lock by checking it
+  against an already-committed change. Both flagged paths were clean (empty `git status
+  --porcelain`) and committed at 84ab3de. This firing's timestamp (20:27:33Z, ~46-50 min
+  before this check) means at least 3 concurrent uncommitted workflows coexisted this
+  session at various points, not merely the 2 named in this pass's brief -- the guard
+  handled that instance correctly when the touched paths were outside the baseline.
+- Severity: minor
+
+### PQ8 -- the next firing time cannot be pinned to a precise minute from evidence,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: Whether the CRON-driven fix loop's next firing lands while wsr99yw42/wnz6xi5ce are
+  still mid-flight cannot be pinned to a precise minute -- firing intervals observed this
+  session vary 22-49 minutes around the nominal 30-min cadence, and there is no live OS
+  process for the loop to inspect directly.
+- Source: `ls -la /Users/sac/mfact/.mfact/receipts/*.json` (run_id timestamps); `date`
+  (re-run twice, 14:10:47 and 14:14:59/14:15 PDT); `ps aux | grep -i
+  "mfact\|fix.loop\|stuck_item_guard"`
+- Verdict: UNVERIFIABLE
+- Evidence: recent real run_ids (UTC) show gaps of 38m09s and 22m28s around the 19:26:56,
+  20:05:05, 20:27:33 firings -- materially off a fixed 30-min cadence. The latest real
+  receipt (run_id 20260713T202733Z) was ~48-50 min old at this check with no newer receipt
+  file present, and `ps aux` showed no fix-loop/stuck_item_guard process (only unrelated
+  vite/esbuild processes) -- consistent with the loop being externally/session-triggered
+  rather than a standing local daemon, so its next firing time cannot be read off any live
+  process table. A firing landing mid-flight of the two active workflows this pass is
+  plausible but not confirmable at a specific minute from static evidence alone.
+- Severity: minor
+
+### PQ9 -- whether wsr99yw42/wnz6xi5ce are still running cannot be confirmed by any tool,
+
+- Lens: multi-workflow-concurrency-safety
+- Claim: This agent has no independent tool-level way to confirm wsr99yw42/wnz6xi5ce are
+  still actually running at check time (as opposed to already finished writing everything
+  they will write) -- their existence and write-sets are known only from this pass's own
+  briefing text, not from a live task-inspection call.
+- Source: TaskList tool call
+- Verdict: UNVERIFIABLE
+- Evidence: TaskList returned "No tasks found", so neither wsr99yw42 nor wnz6xi5ce was
+  visible through the Task tool available to this agent. Circumstantial, freshly-gathered
+  evidence partially corroborates continued activity for wsr99yw42 specifically
+  (docs/TESTING_ATLAS_INTEGRATION.md appeared on disk between two git-status checks 14:10:47
+  and 14:15:08 PDT during this very pass, matching its declared deliverable), but AGENTS.md,
+  .claude/agents/*.md, and the three procint/ProcInt/Playground/SOC2/*.lean files also in
+  its declared set were already clean/committed (via commits 4fabb1c and 84ab3de
+  respectively), so parts of wsr99yw42's declared scope had already landed while other parts
+  were still being produced live. No comparable direct evidence was found for wnz6xi5ce
+  (neither RELEASE_v26.7.13_ARD.md nor RELEASE_v26.7.13_PRD.md exists anywhere in the
+  working tree or git history yet, per `find . -iname RELEASE_v26.7.13*`).
+- Severity: minor
+
+### PQ10 -- the 80% collision rate is expected steady-state, not the old v1/v2 flaw,
+
+- Lens: cron-loop-health
+- Claim: The 80% collision rate in the last 5 firings is not evidence of a
+  broken/miscalibrated collision guard -- it is the expected steady-state behavior of the v3
+  delta-based guard while this session runs many concurrent construction workflows, not a
+  repeat of the v1/v2 false-positive design flaw the guard was already redesigned to fix.
+- Source: MFACT_SELF_IMPROVEMENT_LOOP.md, Collision guard section (lines 98-111) plus Run
+  log firings 3 and 6-11
+- Verdict: CONFIRMED
+- Evidence: each of the 5 collisions in the full log (firings 1, 2, 6, 7, 8, 9, 11) is
+  attributed to a distinct, named, concurrently-launched workflow (task IDs w3xrg1r0m,
+  wkw4npeny, w3uu76xt9, wfigivqnl, wup6bpemk) rather than to the same static uncommitted
+  pile repeatedly -- the latter was the actual v1/v2 flaw, explicitly fixed by the v3
+  delta-against-baseline redesign (firing 3 is documented as "the first clean pass" after
+  that fix). Firings 3, 4, 5, and 10 all demonstrate the guard passing cleanly when no
+  concurrent work happens to be mid-flight at check time, so the guard is discriminating,
+  not stuck. This session has at least 2 more background workflows active (wsr99yw42,
+  wnz6xi5ce per this pass's own briefing) beyond everything already named in the log, so
+  continued high collision rates are the expected consequence of workflow density, not a
+  guard defect. This verdict rests on the log's own internally-consistent, per-firing
+  attribution reasoning; historical git/task states were not independently reconstructed to
+  re-verify each attribution, since those are past states not re-checkable live.
+- Severity: minor
+
+### PQ11 -- the newest-timestamped receipt is a backfill, not firing 12; its clock lies,
+
+- Lens: cron-loop-health
+- Claim: The most-recent-by-content-timestamp receipt, 20260713T211642Z.json, is not firing
+  12 and not a numbered loop firing at all -- it is a same-session backfill receipt for
+  out-of-band audit-driven work (the G11 follow-up fix), and its embedded run_id/timestamp
+  field is internally inconsistent with when the file was actually created.
+- Source: /Users/sac/mfact/.mfact/receipts/20260713T211642Z.json, git commit 208b9dc, and
+  `stat` on the file, all checked fresh this pass
+- Verdict: CONFIRMED
+- Evidence: git commit 208b9dc that created this file is titled "chore(loop): backfill
+  commit_sha for G11 follow-up receipt (5608deb)" at 2026-07-13T13:25:09-0700 (=20:25:09Z);
+  `stat` on the file independently shows mtime 2026-07-13T13:25:05-0700 (=20:25:05Z). Both
+  agree the file was actually written around 20:25Z. But the JSON's own run_id/timestamp
+  fields say "20260713T211642Z" / "2026-07-13T21:16:42Z" -- about 51 minutes later than its
+  real creation time, and this receipt's real write-time (20:25Z) is even earlier than
+  firing 11's own receipt (20260713T202733Z.json, written 20:27:43Z), matching the Run log's
+  firing-11 narration that this G11 follow-up fix happened "outside this firing" beforehand.
+  The receipt-writer's timestamp source for backfilled receipts appears decoupled from
+  actual write time -- a minor data-hygiene gap worth a future firing's attention, separate
+  from the firing-12 question.
+- Severity: minor
+
+### PQ12 -- real kernel-level sorry count is 0 and flat; raw metric is mostly doc prose,
+
+- Lens: sorry-axiom-trend
+- Claim: Real, kernel-level sorry count in procint/ProcInt is 0 and flat for the entire
+  session (not trending up or down) -- the metrics-history.jsonl sorry_count field
+  (16,16,16,23,23) is a raw-substring-grep proxy that is almost entirely doc-comment
+  mentions of the word "sorry" (e.g. "No `sorry`."), not actual unproved tactic blocks.
+- Source: fresh grep plus a comment/string-aware parse of /Users/sac/mfact/procint/ProcInt
+  at HEAD f735022, vs /Users/sac/mfact/.mfact/metrics-history.jsonl
+- Verdict: CONFIRMED
+- Evidence: a naive `grep -rn sorry procint/ProcInt --include=*.lean` (excluding lines
+  starting with `-- ` or `/-`) returns 22 hits; manually inspecting all 22 shows every one
+  is prose inside a `/-- -/` doc block (continuation lines that don't carry a comment-marker
+  prefix themselves), e.g. "No `sorry`. The `TenancyCountermodel`...". A pass that strips
+  `/- -/` and `--` comments properly (tracking nesting, preserving line numbers) while
+  keeping string literals finds exactly 1 remaining hit:
+  procint/ProcInt/Playground/Swarm11Verifier.lean:182, `IO.println s!"sorry-bearing decls :
+  {receipt.sorryDeclarationCount}"` -- a string label, not a tactic. Real sorry-tactic count
+  = 0.
+- Severity: minor
+
+### PQ13 -- recorded sorry_count values are correct per their own raw-grep methodology,
+
+- Lens: sorry-axiom-trend
+- Claim: The recorded sorry_count values in metrics-history.jsonl are internally correct per
+  their own documented methodology (raw grep, no kernel check) -- reproducible exactly at
+  each historical commit.
+- Source: /Users/sac/mfact/.mfact/metrics-history.jsonl cross-checked against
+  MFACT_SELF_IMPROVEMENT_LOOP.md:159 and git history
+- Verdict: CONFIRMED
+- Evidence: `git grep -c sorry <rev> -- procint/ProcInt` summed per-file at
+  eabe589/c636fd3/0639081 = 16, 16, 16; at 108bf5b/5608deb = 23, 23. Matches
+  metrics-history.jsonl's sorry_count field exactly at each corresponding git_head. The doc
+  itself discloses this is "raw grep across procint/ProcInt, not a kernel-level check"
+  (MFACT_SELF_IMPROVEMENT_LOOP.md:159), so the metric is not mislabeled -- but see PQ14 for
+  the interpretation risk.
+- Severity: minor
+
+### PQ14 -- the 16-to-23 sorry_count jump is new "No sorry" prose, not new proof debt,
+
+- Lens: sorry-axiom-trend
+- Claim: The apparent sorry_count regression from 16 to 23 between commits 0639081 and
+  108bf5b is entirely an artifact of new "No sorry" documentation being added for
+  newly-proven theorems, not new proof debt -- a reader trusting the raw trend number alone
+  (without the loop's prose disclaimer) would misread this as things getting worse.
+- Source: `git diff 0639081 108bf5b -- procint/ProcInt`
+- Verdict: CONFIRMED
+- Evidence: all 7 added "sorry"-matching lines in that diff are prose: "No `sorry`. The
+  `TenancyCountermodel`..." (Tenancy.lean:53), "No `sorry`. This is..."
+  (CrownWellFounded.lean:295), "No `sorry`." (MultisetDescent.lean:447), "no
+  `sorry`/`admit`." (RankOrder.lean:619), "no `sorry`/fake" and "no `sorry`, no"
+  (AuditFlowViolation.lean:1583,1587), "`sorry`):**" (OrientedSwap.lean:2377). None are
+  actual sorry tactics; the independently-verified real count stayed at 0 across this range.
+- Severity: minor
+
+### PQ15 -- lake_build_pass:true for 5608deb is backed by a real full-workspace build,
+
+- Lens: sorry-axiom-trend
+- Claim: lake_build_pass:true for the metrics-history line at git_head 5608deb (receipt
+  20260713T211642Z) is substantiated by a fresh, explicit full-workspace Lean build in that
+  firing's own record.
+- Source: /Users/sac/mfact/.mfact/receipts/20260713T211642Z.json
+- Verdict: CONFIRMED
+- Evidence: verify_delta.after states: "Full just build (Lean workspace, unaffected by this
+  Rust-only change): 8614+8577+22 jobs, all clean." This directly backs the
+  lake_build_pass:true claim recorded for this timestamp/commit in metrics-history.jsonl.
+- Severity: minor
+
+### PQ16 -- lake_build_pass:true for two earlier git_heads is not substantiated in-receipt,
+
+- Lens: sorry-axiom-trend
+- Claim: lake_build_pass:true for the metrics-history lines at git_head eabe589 (receipt
+  20260713T163130Z, G49) and git_head 0639081 (receipt 20260713T173045Z, G51) is not
+  independently substantiated by those firings' own receipts -- neither verify_delta
+  contains any Lean/lake build evidence, only Rust-side cargo/clippy checks.
+- Source: /Users/sac/mfact/.mfact/receipts/20260713T163130Z.json and
+  /Users/sac/mfact/.mfact/receipts/20260713T173045Z.json
+- Verdict: UNVERIFIABLE
+- Evidence: 20260713T163130Z verify_delta: "cargo check --bin turbulence... cargo run --bin
+  turbulence..." (no lake/lean mention). 20260713T173045Z verify_delta: "just clippy-core:
+  exit 0 clean... injected dbg!..." (no lake/lean mention). No script in the repo (scripts/,
+  .claude/) was found that programmatically computes and appends lake_build_pass to
+  metrics-history.jsonl, so for these two firings the true/false value appears to be
+  self-reported rather than freshly re-derived; plausible given neither firing touched Lean
+  files, but not evidenced in the record itself.
 - Severity: minor

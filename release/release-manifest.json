@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "6cbc680fbd907d290dc3b6b0a980fa0ab94a41cd",
+  "runIdentifier": "a334ff5e364727cf33669b64706a01aa6484e249",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -2013,7 +2013,11 @@
     {
       "name": "ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded",
       "hash": "719ef96073aab09ca6792c3fd6817bc8c8df79ac88d050bcae04870e074bed22",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
@@ -2437,25 +2441,41 @@
     {
       "name": "ProcInt.crownCounter_not_bounded",
       "hash": "6028d05b79afa5cda979a72553deba2e92a0d4a3a3e251269a6205c5a4110555",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
       "name": "ProcInt.crownCounter_reaches_final",
       "hash": "27390d2e61c507a9f013f259a05e288abd8d3e969059dc944b478649c630145f",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
       "name": "ProcInt.crownCounter_reaches_mid",
       "hash": "cc125fe4dff0dcb1678270c91678e9fb5b169f86c366a15802c2abb16e46cd22",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
       "name": "ProcInt.crownCounter_sound",
       "hash": "194cd96449f3b7cd1a25489a580348c53276bfaa73bfa69270f2381c711d2948",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
@@ -2825,7 +2845,11 @@
     {
       "name": "ProcInt.reachable_is_one_of",
       "hash": "422d5a4c4ae232eaf60c75af24c8878e12deda886464142e6b00527f91617d86",
-      "axioms": [],
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
       "proven": true
     },
     {
