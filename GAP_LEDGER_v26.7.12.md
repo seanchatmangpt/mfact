@@ -1417,7 +1417,7 @@ Findings below were disproven by the adversarial pass and must not be re-reporte
   `procint/test_expand.lean` (outside every Lake target); no module imported both
   `Models/Powl` and `MFW/Termination/*`.
 - Evidence (closure, commit 40a35df): `Playground/Dogfood/PowlBounds.lean` —
-  `expandLayer`/`Bounded`/`Bounded.mono`/`expandLayer_bounds_strictly` rescued and
+  `expandLayer`, `Bounded`, `Bounded.mono`, `expandLayer_bounds_strictly` rescued and
   re-elaborated at HEAD, instantiated at the PDDL8 depth bound
   (`demo_expansion_bounded_at_depth`, `MAX_PLAN_DEPTH = 64`); the island bridge
   `atomLayers`/`bounded_atomLayers_lt`/`powl_refinement_manufactureStep` (one strict
@@ -1433,3 +1433,34 @@ All four closures are axiom-audited (49 `#guard_msgs` pairs,
 `[propext, Classical.choice, Quot.sound]`, zero `sorryAx`) and folded into
 `swarm11-verify`: 5 crown + 24 SOC2 + 30 dogfood = 59 checks, 0 failures,
 `admitted: true` (Wave 5 wiring commit).
+
+### G58 — ggen receipt chain: fork points, zero time-binding, and no operative gate
+
+- Lens: praxis-self-audit Pass 20 (PT2/PT3), workflow wf_7d2a9c65-db9
+- Status: OPEN
+- Evidence: (a) the committed .ggen-v2/receipt-log.jsonl is not a linear chain — at
+  0-based indices 186, 192, 206 an entry's prev_chain_hash equals the chain_hash of
+  entry N-2 (two concurrent ggen-sync writers extended one tip; the lost-update append
+  kept both); (b) ts_ns=0 in all 216 records — the chain binds no wall-clock time;
+  (c) ggen's own fail-closed lock check (FM-PACK-008) never fires in any scripted flow
+  because every justfile sync path runs `rm -f ggen.lock` first; (d) regen-check's
+  ledgered-path diff excludes ggen.lock and .ggen-v2/*, so the receipt chain is gated
+  by commit hygiene alone — the stale post-release-pack hash sat unnoticed until
+  Pass 20 recomputed it (self-healed by the 263406d/b7bc3e9 regen sweep, but the gate
+  absence remains). Fix direction (not prescribed here): either ledger the receipt
+  files, or stop deleting the lock before sync, or serialize sync writers; each is an
+  orchestration design decision, not a mechanical patch.
+
+### G59 — pair_correlation's "Core Theorem" is a vacuous tautology in committed code
+
+- Lens: praxis-self-audit Pass 20 (PT5)
+- Status: OPEN
+- Evidence: research-papers/pair_correlation/PairCorrelation.lean:24-29 (committed in
+  c7413cb): `mixing_orbits_asymptotic_iid` concludes
+  `∃ stat, stat = OrbitStatistic.AsymptoticIID` via `exact ⟨_, rfl⟩` with all three
+  hypotheses (is_mixing / is_multifractal / ¬is_slowly_mixing — unconstrained Prop
+  struct fields) unused. Provable for any system whatsoever; AGENTS.md §1/§3 forbid
+  exactly this shape ("if your theorem concludes True = True, delete it" — this is the
+  existential-of-a-constant variant). Remedy: delete it or replace with a theorem whose
+  hypotheses are load-bearing; the research-papers surface is otherwise out of the
+  release's provable core.

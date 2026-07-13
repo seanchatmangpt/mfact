@@ -5510,3 +5510,116 @@ material findings are transcribed below, batch confirmations compressed into PS1
   diff is unexamined and sits in the receipt-verification crate other findings rely on
   transitively. All three are queued for Pass 20.
 - Severity: major
+
+## Pass 20 findings
+
+Pass 20 ran as a 4-agent read-only workflow (wf_7d2a9c65-db9) against the three surfaces
+Pass 19 queued (PS6) plus a fresh-eyes recheck of the Dogfood waves. Totals: 14 findings,
+6 VERIFIED, 2 REFUTED, 6 PARTIAL. Full evidence in the workflow journal; material findings
+below, batch confirmations compressed into PT1.
+
+### PT1 -- Batch confirmations: Dogfood waves independently verified,
+
+- Lens: dogfood-recheck + method notes
+- Claim: batch of clean re-verifications.
+- Source: Pass 20 workflow journal (DW2-DW5, GG1, VR3)
+- Verdict: CONFIRMED
+- Evidence: the 59-check arithmetic is exact and computed, not hardcoded (9+7+9+5 dogfood,
+  12+5+7 SOC2, 5 crown, each counted in source); all 49 axiom-audit pairs' target names
+  resolve (one message line-wrapped, making naive one-line greps undercount to 48);
+  coverage-report post-construction citations spot-verified to file:line; zero sorry/admit
+  tactics across the five Dogfood files (every `admit` hit is the `Approval.admit`
+  function or prose); receipt-chain characterization (GG1): lock format carries no
+  timestamps, receipt-log is append-only with 4 idempotent re-sync entries pending at
+  audit time.
+- Severity: minor
+
+### PT2 -- Receipt chain recomputes 216/216 but carries 3 committed fork points,
+
+- Lens: ggen-chain (GG2)
+- Claim: the .ggen-v2 receipt chain is internally consistent under its fold rule.
+- Source: python blake3 recomputation against praxis-core law.rs + bcinr causal_receipt.rs
+  layouts
+- Verdict: PARTIAL (consistency verified; linearity refuted)
+- Evidence: payload_hash and chain_hash recompute exactly for all 216 entries, and the 4
+  then-pending entries chained correctly off the committed tip. But the committed log is
+  NOT one linear chain: at 0-based indices 186, 192, 206, entry N's prev_chain_hash equals
+  entry N-2's chain_hash -- two concurrent ggen-sync writers extended the same tip and the
+  log kept both (lost-update append race, present in HEAD). Also ts_ns=0 in all 216
+  records (no wall-clock binding anywhere), and scripts/build_manifest.py's comment
+  "exactly matching praxis src/chain.rs" describes the release fold, not this chain's
+  frame fold. Consequence: new gap G58.
+- Severity: major
+
+### PT3 -- ggen lock check never fires; receipt files gated by commit hygiene only,
+
+- Lens: ggen-chain (GG3)
+- Claim: ggen.lock drift is gated.
+- Source: praxis ggen pack.rs read-only; justfile paths; blake3 recomputation
+- Verdict: PARTIAL
+- Evidence: the two drifted lock hashes DID correspond to current pack content (recomputed
+  exactly, model validated five ways). But the third entry (post-release-pack) matched
+  neither disk nor HEAD -- it was a stale hash of a pre-merge template read during a
+  worktree race; the current tree's pack state had never appeared in any of the 216
+  receipts. Self-healed this session: the regen sweep (263406d/b7bc3e9) re-synced, and the
+  committed lock now carries the correct e421e0e4... hash. Structural findings stand:
+  ggen's fail-closed lock check (FM-PACK-008) never fires because every justfile sync path
+  runs `rm -f ggen.lock` first, and regen-check's ledgered-path diff EXCLUDES ggen.lock and
+  .ggen-v2/* -- the receipt chain itself is gated by nothing but commit hygiene.
+  Consequence: new gap G58; receipt tip committed promptly this session (1daa7d4).
+- Severity: major
+
+### PT4 -- Pass 19 CR-2's research-papers attribution REFUTED; incident was truncation,
+
+- Lens: research-papers (RP1, RP2)
+- Claim (Pass 19 CR-2 briefing): ~15 research-papers .lean files were dirty from a
+  "mechanically" applied countermodel-proof fix (ac647a9) and needed a sorry/tautology
+  sweep of the modified content.
+- Source: git diff/log forensics per file
+- Verdict: REFUTED (two axes)
+- Evidence: (1) ac647a9 touches zero research-papers paths (packs/, procint/, gates.json
+  only) -- no mechanical fix ever touched these files. (2) The dirty state was uniform
+  0-byte TRUNCATION (documented contemporaneously in e248101's commit message), restored
+  in a single batch at 2026-07-12 23:31:49, and all 16 briefed files are byte-clean vs
+  HEAD at audit time. The Pass 19 briefing propagated a wrong attribution; corrected here.
+  Residual dirt is untracked-only (9 zero-byte lakefile.lean, 8+ zero-byte Thermo.lean).
+- Severity: major
+
+### PT5 -- Committed vacuous "Core Theorem" in pair_correlation (AGENTS.md section 3),
+
+- Lens: research-papers (RP3)
+- Claim: no fake content in the swept surface.
+- Source: research-papers/pair_correlation/PairCorrelation.lean:24-29 at HEAD
+- Verdict: REFUTED for the committed baseline (the swept diff itself introduced nothing)
+- Evidence: `mixing_orbits_asymptotic_iid` concludes
+  `∃ stat, stat = OrbitStatistic.AsymptoticIID`, proven `exact ⟨_, rfl⟩`; all three
+  hypotheses are unused bare Prop fields, so the "theorem" holds for ANY system -- a
+  vacuous tautology labeled Core Theorem in committed code (c7413cb). Consequence: new
+  gap G59.
+- Severity: major
+
+### PT6 -- validate.rs diff is a cosmetic test rename; production checks intact,
+
+- Lens: validate-rs (VR1, VR2)
+- Claim (Pass 19 CR-3): the uncommitted validate.rs diff might silently weaken receipt
+  verification.
+- Source: full-file read + git diff; grep for callers
+- Verdict: REFUTED (the weakening hypothesis); G31 reconfirmed
+- Evidence: the diff is 10/10 lines inside #[cfg(test)] renaming dummy_manifest ->
+  fixture_manifest; every production check (schema, prefix, hash format, duplicates,
+  evidence, trusted_base) is byte-identical to HEAD. Reconfirmed context: the validate
+  engine remains reachable only from tests (G31 accurate); the dead broker/thermo/
+  transport/lean.rs files no longer exist on disk.
+- Severity: minor
+
+### PT7 -- One cosmetic Dogfood ledger citation named a nonexistent theorem,
+
+- Lens: dogfood-recheck (DW1)
+- Claim: every G54-G57 citation resolves.
+- Source: grep over Playground/Dogfood sources
+- Verdict: CONFIRMED with one imprecision, fixed
+- Evidence: all commits and theorem names resolve except G54's shorthand
+  "searchGo_exhausted_all_failed (+_length_le)", which implied a concatenated name that
+  exists nowhere (actual: searchGo_exhausted_length_le, Outcome.lean:149). Fixed in
+  d9f3c63 alongside the R4 truth-fixes.
+- Severity: minor
