@@ -73,6 +73,7 @@ ledger text alone.
 | Release-blocking | 3     | G1-G3    |
 | Major            | 30    | G4-G33   |
 | Minor            | 18    | G34-G51  |
+| Post-v26.7.12    | 6     | G52-G57 (all CLOSED as of 2026-07-13) |
 | Refuted          | 3     | appendix |
 
 ## Release-blocking
@@ -612,6 +613,10 @@ ledger text alone.
 
 - Lens: web-ui
 - Status: OPEN
+- Update (2026-07-13): a `.gitmodules` entry mapping the `web/mfact-ui` path to its URL
+  landed in `032abc3`, fixing the registration mechanism this gap names. Kept OPEN because
+  the pinned-commit/dirty-tree reconciliation (G26, reconfirmed dirty) is the remaining
+  substance; see RELEASE_v26.7.13_PRD.md §3.1's matching annotation.
 - Verdict: CONFIRMED (downgraded release-blocking -> major) — the mechanism is genuine
   (checkout@v4 defaults submodules:false; no .gitmodules means no URL to fetch even if
   enabled), but the Pages deploy is not a claimed release marker in any governing doc;
@@ -1355,7 +1360,7 @@ Findings below were disproven by the adversarial pass and must not be re-reporte
   provably-infeasible one at the type level.
 - Evidence (closure, commit b6dcfb3): `Playground/Dogfood/Outcome.lean` —
   `SearchOutcome (P F)` with `bounded (frontier : F)`;
-  `bound_hit_bounded`, `searchGo_exhausted_all_failed` (+`_length_le`),
+  `bound_hit_bounded`, `searchGo_exhausted_all_failed` and `searchGo_exhausted_length_le`,
   `searchGo_bounded_frontier`, `full_fuel_not_bounded`, `exhausted_stable`,
   `resume_eq_combined`; countermodel `naive_projection_conflates`/`_lossy`; planner
   wrapper `pddlSearchOutcome` with `found_valid`/`exhausted_infeasible`/

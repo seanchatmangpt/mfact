@@ -77,9 +77,9 @@ gaps, and non-goals.
   templates) landed in the final commit of this branch (`f735022`). Its own `README.md`
   self-labels `Status: BUILD_NOT_RUN` — "teaching and design artifacts... No Lean or Lake
   build was invoked while manufacturing this directory" (re-read live, confirmed verbatim).
-  `docs/TESTING_ATLAS_INTEGRATION.md` — the doc that would connect this atlas to mfact's own
-  gates/CI — does not exist anywhere in the tree; this is in-progress/not-yet-landed, not
-  absent by omission.
+  `docs/TESTING_ATLAS_INTEGRATION.md` landed after this section was written (commit
+  `0afed7f`): it is now the governing crosswalk AGENTS.md cites for all atlas vocabulary.
+  (Corrected 2026-07-13; the original text here claimed the doc did not exist.)
 
 **Bottom line:** the mathematical/formal-verification core genuinely grew this branch (401 vs
 318 declarations — see `RELEASE_v26.7.13_ARD.md` §2 for what specifically), but the
@@ -182,7 +182,7 @@ correction of this document's own stale certify-failure claims.
 
 Source: `GAP_LEDGER_v26.7.12.md`, freshly re-grepped against live HEAD (`f735022`).
 
-### 3.1 Literal `Status: OPEN` — 22 of 51 entries (live count, re-verified)
+### 3.1 Literal `Status: OPEN` — 22 of 57 entries (live count, re-verified 2026-07-13)
 
 - **G1** — Fresh `just certify` FAILS while `standing.env`/`final_status` assert CERTIFIED
   PASS — **corrected 2026-07-13: the failure no longer reproduces.** Fixed by
@@ -222,7 +222,8 @@ Source: `GAP_LEDGER_v26.7.12.md`, freshly re-grepped against live HEAD (`f735022
 - **G24** — Documented `just prose-lint` 8-rule gate is unimplemented; doc cites a forbidden
   `~/praxis` path.
 - **G25** — `web/mfact-ui` is an unregistered gitlink (no `.gitmodules`); CI/Pages checkout
-  gets an empty dir.
+  gets an empty dir. *Addressed in part 2026-07-13:* a `.gitmodules` entry landed (`032abc3`);
+  the pinned-commit/dirty-tree reconciliation (G26) stays open, so G25 is not CLOSED.
 - **G26** — The UI code that actually builds is uncommitted inside that gitlink —
   **reconfirmed live**: 40dc87a-dirty (see §1).
 - **G31** — mfact-core's receipt/validate engine is reachable only from tests;
