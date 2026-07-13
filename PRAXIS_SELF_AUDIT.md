@@ -315,6 +315,25 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   login shell would hit a real build failure the closure never disclosed (PO1, major
   DRIFTED). Pass 14's PN1 docstring-drift finding was independently confirmed FIXED by
   commit bb25faf (diff read directly, not trusted from its message).
+- **2026-07-13 (pass 16):** 17 findings across 4 lenses (verify-newman-confluence-commit,
+  cslib-survey-gap-check, spotcheck-testing-landscape-claims, ledger-and-baseline-health),
+  independently re-verifying commit 84ab3de (OrientedSwapReplay.lean/
+  ManufactureTenancyGap.lean: build job counts, sorry/admit-cleanliness, axiom-cleanliness,
+  citation resolution) and auditing the wup6bpemk workflow's
+  `survey:cslib-test-conventions` failure. HEAD held at `84ab3de` through this pass's check
+  window. 15 CONFIRMED, 1 DRIFTED, 1 REFUTED, 0 UNVERIFIABLE, 0 FIXED-since-last-pass (5
+  major, 12 minor). Headline: the cslib-survey agent (a18efebc30633f5ff) crashed
+  mid-tool-use with an unretried API connection error -- unlike two sibling crashes in the
+  same wave that WERE retried to completion -- and the gap then dropped silently through
+  the whole pipeline: the Synthesize phase's own input prompt falsely claimed "10-lens"
+  coverage while actually supplying only 9 lenses with no disclosure of the gap, none of
+  Synthesize/Build-spec/Build/Verify ever discussed cslib's testing conventions, and commit
+  84ab3de's own detailed self-audit -- which does self-flag an unrelated citation error --
+  never mentions the failure (PP1-PP4). Also flagged: ManufactureTenancyGap.lean's
+  soundness gap had no GAP_LEDGER_v26.7.12.md entry at audit time (PP5); a #guard-count
+  claim from the wup6bpemk survey DRIFTED (naive substring match double-counts a docstring
+  mention, PP14); and the known-persistent-drift.txt "refresh" claim was REFUTED -- its
+  mtime is the original write, not a later refresh (PP17).
 
 ## Quick reference
 
@@ -433,6 +452,15 @@ and 14 totals above:**
 | Major | 1 | 1 DRIFTED |
 | Minor | 10 | 8 CONFIRMED, 1 REFUTED, 1 FIXED-since-last-pass |
 | **Total** | **11** | **8 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 FIXED-since-last-pass** |
+
+**Pass 16 (2026-07-13) totals -- alongside, not replacing, the pass-1..9, 11, 12, 13, 14, and
+15 totals above:**
+
+| Severity | Count (pass 16) | Verdicts (pass 16) |
+|---|---|---|
+| Major | 5 | 5 CONFIRMED |
+| Minor | 12 | 10 CONFIRMED, 1 DRIFTED, 1 REFUTED |
+| **Total** | **17** | **15 CONFIRMED, 1 DRIFTED, 1 REFUTED** |
 
 ## Critical
 
@@ -4437,3 +4465,343 @@ workflow mid-flight before it finished committing.
   are audited by the roadmap-marker-schema and agents-md-self-compliance
   findings above.
 
+## Pass 16 findings
+
+### PP1 -- the cslib-survey-agent crashed mid-tool-use and was never retried, unlike two sibling crashes,
+
+- Lens: cslib-survey-gap-check
+- Claim: The 'survey:cslib-test-conventions' agent (a18efebc30633f5ff) crashed
+  mid-tool-use with an unretried API connection error and never produced a
+  result/StructuredOutput; unlike two other agents in the same wave that hit the same kind
+  of failure and WERE retried to completion.
+- Source: wf_868df87a-eaa/journal.jsonl (line 2, "started" key e486712d..., no matching
+  result line anywhere in the 27-line file); wf_868df87a-eaa/agent-a18efebc30633f5ff.jsonl
+  line 48 (isApiErrorMessage:true, "API Error: Connection closed mid-response...")
+- Verdict: CONFIRMED
+- Evidence: grep of journal.jsonl for started-vs-result agentId pairs shows exactly 3
+  'started' entries with no result: keys e486712d... (line2, a18efebc30633f5ff),
+  acf268fd...(line4, retried at line13), eef898bf...(line8, retried at line12). Only
+  e486712d... (the cslib survey) was never retried anywhere in the 27-line journal.
+- Severity: major
+
+### PP2 -- the Synthesize phase's input falsely claims "10-lens" coverage while only 9 lenses arrived,
+
+- Lens: cslib-survey-gap-check
+- Claim: The Synthesize-phase agent's input prompt asserts 'All survey findings from a
+  10-lens parallel exploration' but the actual concatenated findings blob contains exactly
+  9 distinct lens tags -- no 'cslib-test-conventions' lens is present, and there is no
+  text anywhere in the ~108KB input disclosing that a lens failed or is missing.
+- Source: wf_868df87a-eaa/agent-a0cc32b12d7c5d914.jsonl (first user message)
+- Verdict: CONFIRMED
+- Evidence: Regex extraction of all `"lens": "..."` values from the Synthesize agent's
+  input yields exactly 9 distinct lenses (lean4-core-testing-mechanisms,
+  plausible-property-testing, existing-mfact-test-inventory,
+  witness-pattern-methodology-gaps, gap-residue-tenancy-descent,
+  gap-replay-orientedswap-runtime, gap-multifractal-thermo-cost,
+  gap-powl-correspondence-composition, gap-thermo-py-and-external-fake-ffi-parallel)
+  across 84 tagged findings. Searches for 'failed', 'connection', '9-lens', 'did not
+  complete', 'could not be surveyed' inside that input all return no match; the only
+  'cslib' hit (offset 17971) is an unrelated require-list observation from the plausible
+  lens, not a disclosure of the cslib survey's absence. The prompt's own claimed count
+  ('10-lens') does not match the 9 lenses actually supplied, and this mismatch is never
+  called out anywhere in the input.
+- Severity: major
+
+### PP3 -- Synthesize/Build-spec/Build/Verify never discuss cslib's own testing conventions, dropped entirely,
+
+- Lens: cslib-survey-gap-check
+- Claim: None of the downstream Synthesize output, Build-spec, Build, or Verify-phase
+  results (the four post-survey stages of the workflow) ever discuss cslib's own testing
+  conventions or CslibTests methodology; the topic is dropped entirely rather than being
+  either falsely claimed as covered or honestly flagged as an open gap.
+- Source: journal.jsonl lines 20 (Synthesize, 25 findings), 23 (Build-spec), 25 (Build),
+  27 (Verify) in the same wf_868df87a-eaa journal
+- Verdict: CONFIRMED
+- Evidence: Case-insensitive grep for 'cslib' across dumps of all four result payloads
+  returns only 2 hits total, both in the Build-spec (line23) and Verify (line27) outputs,
+  and both are incidental citations of `Cslib/Foundations/Relation/Confluence.lean:269`
+  (the `Terminating_toConfluent` lemma) used as a proof dependency for the OrientedSwap
+  confluence theorem -- not any statement about surveying, reusing, or being unable to
+  check cslib's test-authoring conventions. The Synthesize output (line20, 25 findings)
+  has zero 'cslib' hits at all.
+- Severity: major
+
+### PP4 -- commit 84ab3de's self-audit self-flags one citation error but never discloses the cslib survey failure,
+
+- Lens: cslib-survey-gap-check
+- Claim: Commit 84ab3de and its ROADMAP_MATH_SPINE.md diff contain a detailed self-audit
+  ('Verification performed this session') that lists exact files re-checked and even
+  self-flags one citation line-range error, but nowhere discloses that the planned
+  cslib-test-conventions survey failed or that the underlying question ('does cslib have a
+  reusable rewriting-system witness/confluence-counterexample pattern analogous to what
+  mfact needs') was never actually answered.
+- Source: git show 84ab3de (commit message + ROADMAP_MATH_SPINE.md diff) in
+  /Users/sac/mfact
+- Verdict: CONFIRMED
+- Evidence: Commit message's 'Verification performed this session' section enumerates
+  re-checked files (RuntimeReplay.lean, NewmanCorrespondence.lean, OrientedSwap.lean,
+  cslib's Confluence.lean, ManufactureDecrease.lean, ObligationRank.lean, AuditFlow.lean,
+  ROADMAP_MATH_SPINE.md) and self-flags a citation off-by-range error, demonstrating the
+  session does disclose known gaps elsewhere -- yet contains no mention of the failed
+  cslib survey or the unanswered question about cslib's own test conventions. The new
+  ROADMAP_MATH_SPINE.md prose (Tenancy-crossing gap note, Glue section update) likewise
+  makes no mention of it.
+- Severity: major
+
+### PP5 -- ManufactureTenancyGap.lean's soundness gap has no GAP_LEDGER_v26.7.12.md entry, only commit-message prose,
+
+- Lens: ledger-and-baseline-health
+- Claim: wup6bpemk's commit 84ab3de "exhibit ManufactureStep tenancy-crossing gap" has no
+  corresponding entry in GAP_LEDGER_v26.7.12.md -- the finding exists only in the commit
+  message (and a ROADMAP_MATH_SPINE.md prose note), with no tracked G-number disposition.
+- Source: git show --stat 84ab3de (files touched: ROADMAP_MATH_SPINE.md,
+  procint/ProcInt/Playground.lean, Playground/Glue/OrientedSwapReplay.lean,
+  Playground/SOC2/ManufactureTenancyGap.lean -- GAP_LEDGER_v26.7.12.md absent); git log
+  --oneline -10 -- GAP_LEDGER_v26.7.12.md (most recent touch is 5608deb, 4 commits before
+  84ab3de/HEAD); grep -ni "manufacture\|tenancy" GAP_LEDGER_v26.7.12.md; git grep -n
+  "ManufactureTenancyGap|tenancy-crossing" across the whole tracked tree; grep -n "^### G"
+  GAP_LEDGER_v26.7.12.md (highest entry is G51, no G52)
+- Verdict: CONFIRMED
+- Evidence: 84ab3de's diff never touches GAP_LEDGER_v26.7.12.md, and no commit after it
+  does either -- the ledger's last modification (5608deb, a G11 follow-up) predates
+  84ab3de entirely. Grepping the ledger for "manufacture" or "tenancy" returns only one
+  unrelated substring hit (line 702, "manufactured/admitted", part of an unrelated
+  sentence). A repo-wide git grep for "ManufactureTenancyGap" or "tenancy-crossing" finds
+  only the Lean import line in Playground.lean and the prose note in ROADMAP_MATH_SPINE.md
+  (added by 84ab3de itself, stating "Standing: PROVEN (as a refutation)" but using no
+  G-number or Status field from the ledger's OPEN/PARTIAL/IN_PROGRESS/BLOCKED/CLOSED
+  vocabulary). The ledger's own highest-numbered entry remains G51 -- no new gap entry
+  (e.g. a would-be G52) was created. This is exactly the "exhibited problem with no
+  tracked disposition" scenario the task flagged: a real, exhibited soundness gap in
+  ManufactureStep (concrete Lean witness, verified, non-trivial) that lives entirely in
+  commit-message/roadmap prose and is invisible to anything that consumes
+  GAP_LEDGER_v26.7.12.md (e.g. the v26.7.12 gap-closing cron loop described in that
+  ledger's own header).
+- Severity: major
+
+### PP6 -- OrientedSwapReplay.lean/ManufactureTenancyGap.lean re-build clean at the exact job counts 84ab3de reports,
+
+- Lens: verify-newman-confluence-commit
+- Claim: OrientedSwapReplay.lean and ManufactureTenancyGap.lean build clean with exactly
+  the job counts the commit message reports (544 and 726).
+- Source: commit 84ab3de message vs fresh `just _lake "cd procint && lake build
+  ProcInt.Playground.Glue.OrientedSwapReplay"` / `...ManufactureTenancyGap`
+- Verdict: CONFIRMED
+- Evidence: Re-ran both builds independently this pass: `Build completed successfully (544
+  jobs)` for OrientedSwapReplay and `(726 jobs)` for ManufactureTenancyGap, exit 0 both
+  times, exact match to the commit message's claimed counts.
+- Severity: minor
+
+### PP7 -- both new files are sorry/admit-clean; the only "admit" hits are prose false positives,
+
+- Lens: verify-newman-confluence-commit
+- Claim: grep for sorry/admit (tactic position) across both new files is empty; the only
+  'admit' hits are prose false positives inside the word 'admit'.
+- Source: commit 84ab3de message
+- Verdict: CONFIRMED
+- Evidence: Fresh `grep -n "sorry\|admit"` on both files: zero hits in
+  OrientedSwapReplay.lean; in ManufactureTenancyGap.lean the only hits are lines 30/62 ('a
+  carrier can admit more than one such order') -- prose, not tactic-position `admit`.
+- Severity: minor
+
+### PP8 -- all 7 new top-level theorems are axiom-clean, each a subset of [propext, Classical.choice, Quot.sound],
+
+- Lens: verify-newman-confluence-commit
+- Claim: All 7 new top-level theorems (4 in OrientedSwapReplay, 3 in
+  ManufactureTenancyGap) are axiom-clean: subset of [propext, Classical.choice,
+  Quot.sound], no sorryAx.
+- Source: commit 84ab3de message ('Scratch #print axioms ... file created, checked, then
+  deleted before commit')
+- Verdict: CONFIRMED
+- Evidence: The commit's own scratch check was deleted, so this pass re-created the
+  evidence independently: `lake env lean --stdin` with `#print axioms` on all 7 named
+  theorems (completeStep_commute_all, orientedSwap_locallyConfluent_completeStep,
+  orientedSwap_confluent_completeStep, orientedSwap_replay_eq_completeStep,
+  gap_manufactureStep, gap_tenant_crossing, manufactureStep_not_tenant_pure) returned
+  axiom sets that are each a subset of {propext, Classical.choice, Quot.sound}; no sorryAx
+  anywhere.
+- Severity: minor
+
+### PP9 -- concurrent_commute's proof body never consumes its own Concurrent hypothesis, compiler-corroborated,
+
+- Lens: verify-newman-confluence-commit
+- Claim: concurrent_commute's proof body (RuntimeReplay.lean:96-105) never consumes its
+  own Concurrent p i j hypothesis -- the mechanism the 'unconditional' claim rests on.
+- Source: OrientedSwapReplay.lean module docstring and commit message, citing
+  RuntimeReplay.lean:96-105
+- Verdict: CONFIRMED
+- Evidence: Read the proof directly: the tactic block only destructs `s`/`k`, never
+  touches `h : Concurrent p i j`. Independently corroborated by the compiler itself in
+  this pass's fresh build output: `warning: RuntimeReplay.lean:96:62: Variable name 'h' is
+  not explicitly referenced` -- an automated, non-narrative confirmation of the exact
+  claim.
+- Severity: minor
+
+### PP10 -- every file:line citation in both new files resolves exactly, including the commit's self-flagged error,
+
+- Lens: verify-newman-confluence-commit
+- Claim: Every file:line citation in both new files resolves exactly
+  (RuntimeReplay.lean:96-105, OrientedSwap.lean:226-232/250-269/390-414/436-472,
+  ManufactureDecrease.lean:68-70, cslib Confluence.lean:269, AuditFlow.lean's
+  Obl2/tag2/g2/S1/separated_C2), and the commit's own self-flagged citation error
+  (ObligationRank.lean:34-38 cited as 'Excludes' when the real Excludes section is 46-54)
+  is itself accurate.
+- Source: commit 84ab3de message's verification section
+- Verdict: CONFIRMED
+- Evidence: Read each cited range directly: all match exactly except the one the commit
+  itself flags. Independently confirmed ObligationRank.lean lines 34-38 are the tail of
+  the 'Preserves' paragraph, and 'Excludes:' actually starts at line 46 and runs to line
+  54 (before 'Standing:' at line 56) -- byte-for-byte matching the commit's
+  self-correction.
+- Severity: minor
+
+### PP11 -- the "unconditional" confluence sidestep is real but explicitly and prominently disclosed, not implicit,
+
+- Lens: verify-newman-confluence-commit
+- Claim: The 'unconditional' Newman confluence for OrientedSwap(completeStep) is real but
+  is obtained because completeStep's concrete structure makes it commute at *every* pair
+  (not just concurrent ones) -- i.e. it discharges Wave 7's hard 'third Commute witness'
+  case by making it vacuous for this step function, rather than solving the general
+  problem OrientedSwap.lean §6 left open. The audit asks whether this is stated or left
+  implicit.
+- Source: OrientedSwapReplay.lean module docstring + §1 comment; RuntimeReplay.lean
+  (predates this commit by ~2h, commit 250fcc7, unrelated wave)
+- Verdict: CONFIRMED
+- Evidence: The sidestep mechanism is real (verified above) but it is explicitly and
+  prominently disclosed, not implicit: the file's opening docstring states it directly
+  ('completeStep p commutes at every pair, unconditionally... exactly the third witness...
+  available here for every triple rather than assumed'), and §1 repeats it ('Reported
+  honestly as what it is -- a strictly stronger fact about this concrete representation,
+  not a new proof technique'). Additionally, completeStep/concurrent_commute were authored
+  in an earlier, unrelated commit (250fcc7, 11:21) for a different purpose (BRCE runtime
+  bridge), so the triviality was discovered via composition, not manufactured post hoc to
+  dodge the hard case. This does not match pass 10's earlier pattern of a
+  silent/undisclosed gap.
+- Severity: minor
+
+### PP12 -- independent ground truth: CslibTests does not test cslib's own confluence/termination machinery,
+
+- Lens: cslib-survey-gap-check
+- Claim: Independent ground truth: cslib's own CslibTests suite does not actually test its
+  confluence/termination machinery (Terminating_toConfluent/LocallyConfluent) at all --
+  confluence proofs live in the main Cslib/ library as substantive theorems about real
+  calculi (untyped lambda calculus, combinatory logic), not as toy witness/counterexample
+  tests in CslibTests. The failed survey's premise (that CslibTests would contain a
+  reusable rewriting-system witness or confluence-counterexample pattern) is not
+  straightforwardly supported by the actual repo layout, independent of the agent's crash.
+- Source: /Users/sac/mfact/procint/.lake/packages/cslib/CslibTests/*.lean and
+  /Users/sac/mfact/procint/.lake/packages/cslib/Cslib/Languages/**/*Confluence*.lean
+- Verdict: CONFIRMED
+- Evidence: grep -rin 'confluen|rewrit|newman|terminat|diamond' across CslibTests/*.lean
+  returns exactly one hit, an unrelated `#grind_lint skip
+  Cslib.Logic.HML.Satisfies.diamond` annotation in GrindLint.lean:73 -- nothing about
+  confluence/termination testing. The real confluence content lives in
+  Cslib/Languages/LambdaCalculus/LocallyNameless/Untyped/{FullBetaConfluence,FullEtaConfluence,FullBetaEtaConfluence}.lean
+  and Cslib/Languages/CombinatoryLogic/Confluence.lean, i.e. production theorems on real
+  calculi, not CslibTests-style example/witness files. CslibTests' actual convention (seen
+  in LTS.lean, Bisimulation.lean) is: define a small concrete inductive relation, then
+  prove an `example : <property>` directly by tactic construction -- unrelated to
+  confluence and not property-based (Plausible) testing.
+- Severity: minor
+
+### PP13 -- the missing cslib survey's impact on this round's Lean work was low; no cslib test-pattern was used,
+
+- Lens: cslib-survey-gap-check
+- Claim: The impact of the missing cslib survey on the shipped Lean work was low in this
+  round: the two new files built and committed (OrientedSwapReplay.lean,
+  ManufactureTenancyGap.lean) use cslib only as the source of the Terminating_toConfluent
+  lemma (a proof dependency already known from earlier waves), not for any cslib-derived
+  test-methodology pattern -- so the gap, while undisclosed, did not silently corrupt the
+  build/verify results this round.
+- Source: /Users/sac/mfact/procint/ProcInt/Playground/Glue/OrientedSwapReplay.lean and
+  /Users/sac/mfact/procint/ProcInt/Playground/SOC2/ManufactureTenancyGap.lean
+- Verdict: CONFIRMED
+- Evidence: grep -n 'cslib|Cslib' on both new files shows only references to
+  `Cslib.Foundations.Relation.Confluence` /
+  `Cslib/Foundations/Relation/Confluence.lean:269` (the Terminating_toConfluent lemma),
+  matching the same pre-existing dependency already used by
+  OrientedSwap.lean/NewmanCorrespondence.lean in earlier waves; there is no use of any
+  cslib test-witness pattern in either new file.
+- Severity: minor
+
+### PP14 -- the survey's #guard count of 12 in ProcInt/Tests double-counts a docstring mention; true count is 11,
+
+- Lens: spotcheck-testing-landscape-claims
+- Claim: #guard is used 12 times across ProcInt/Tests/{Conformance,Logs,Models,Ocel}.lean,
+  none in Petri.lean because markings are noncomputable Finsupp
+- Source: wup6bpemk survey phase (Lean-testing-landscape survey)
+- Verdict: DRIFTED
+- Evidence: Fresh `grep -c '#guard'` on the live tree gives Conformance.lean=6,
+  Logs.lean=1, Models.lean=2, Ocel.lean=3, Petri.lean=0 (sum=12), matching the claimed
+  count on its face. But reading Conformance.lean line-by-line (cat -n) shows line 11 --
+  'all checked by #guard at elaboration time. -/' -- is prose inside the file's `/-! ...
+  -/` module doc comment (lines 9-11), not an executed `#guard` command. The 5 actual
+  `#guard` commands in Conformance.lean are on lines 17, 19, 21, 25, 27. So the true
+  number of executed #guard oracle-checks across the 4 files is 11 (5+1+2+3), not 12; the
+  claimed '12' is a naive substring-match count that double-counts a docstring's
+  self-referential mention of the word '#guard'. The Petri.lean=0 / noncomputable-Finsupp
+  part of the claim is independently confirmed: `noncomputable def seqNet : PetriNet (Fin
+  2) (Fin 1) := { pre := fun _ => Finsupp.single 0 1, post := ... }` at
+  ProcInt/Tests/Petri.lean:17-18, with the file's docstring at line 10 explicitly citing
+  'markings are Finsupp and hence noncomputable'.
+- Severity: minor
+
+### PP15 -- AxiomAudit.lean contains exactly 203 matched #guard_msgs in #print axioms pairs,
+
+- Lens: spotcheck-testing-landscape-claims
+- Claim: AxiomAudit.lean contains 203 `#guard_msgs in #print axioms` pairs
+- Source: wup6bpemk survey phase (Lean-testing-landscape survey)
+- Verdict: CONFIRMED
+- Evidence: File is at /Users/sac/mfact/procint/AxiomAudit.lean (top-level of procint/,
+  not under ProcInt/Tests/), 623 lines. `grep -c '#guard_msgs in #print axioms'
+  procint/AxiomAudit.lean` returns exactly 203, and `grep -c '#print axioms'` / `grep -c
+  '#guard_msgs'` both also return exactly 203, confirming they occur strictly in matched
+  pairs with no orphans. Sample lines 13-70 show the expected pattern, e.g. line 13:
+  '#guard_msgs in #print axioms ProcInt.CardBound.admits_max'.
+- Severity: minor
+
+### PP16 -- native_decide appears zero times as an actual tactic in ProcInt, only in a docstring disclaimer,
+
+- Lens: spotcheck-testing-landscape-claims
+- Claim: native_decide appears zero times as an actual tactic anywhere in ProcInt, only
+  once in a docstring disclaimer
+- Source: wup6bpemk survey phase (Lean-testing-landscape survey)
+- Verdict: CONFIRMED
+- Evidence: `grep -rn 'native_decide' procint/ --include='*.lean'` excluding .lake/
+  dependency packages returns exactly one hit outside .lake:
+  ProcInt/Playground/SOC2/AuditFlowViolation.lean:45, reading '`admit`, no `native_decide`
+  standing in for a gap.' Confirmed via cat -n that this line sits inside the file's
+  module doc comment block (`/-!` opens at line 5, `-/` closes at line 49), i.e. it is
+  prose disclaiming the tactic's use, not an invocation. No other occurrence of the token
+  `native_decide` exists anywhere in the ProcInt source tree (all remaining matches are in
+  .lake/packages/{vcv,mathlib}, which are external dependencies, not ProcInt code).
+- Severity: minor
+
+### PP17 -- known-persistent-drift.txt's mtime is its original write, not a refresh; "never refreshed" still holds,
+
+- Lens: ledger-and-baseline-health
+- Claim: known-persistent-drift.txt's mtime (2026-07-13 08:46:30) reflects a genuine
+  refresh of the baseline, making prior passes' repeated "never refreshed"
+  characterization now stale/wrong and in need of correction.
+- Source: stat -f "%Sm %N" .mfact/known-persistent-drift.txt (mtime: Jul 13 08:46:30
+  2026); git log --follow -p --all -- .mfact/known-persistent-drift.txt (exactly one
+  commit, 1e47b878, author date Mon Jul 13 08:46:41 2026 -0700, "new file mode 100644");
+  git merge-base --is-ancestor 1e47b878 HEAD (ancestor); git diff HEAD --
+  .mfact/known-persistent-drift.txt (empty, working tree byte-identical to that commit's
+  blob)
+- Verdict: REFUTED
+- Evidence: The 08:46:30 mtime is not a second, later refresh event distinct from creation
+  -- it IS the original (and only) write, 11s before the commit's author timestamp
+  (08:46:41), which is the normal git write-then-commit sequencing gap, not a new edit.
+  git log shows exactly one commit ever touching this path, and the working tree currently
+  matches that commit's content exactly (zero diff). Pass 15's PO11 finding already
+  recorded this same fact ("last written 2026-07-13 08:46:41 -0700 and never refreshed
+  since") using the identical timestamp. Re-running the same checks this pass reproduces
+  the identical result: still one commit, still zero diff, still the same 8+ stale
+  mfact-core/build-artifact paths and 5 stale roadmap-doc paths present in the 76-line
+  baseline (re-verified live: comm -23 between current git status and the baseline is
+  empty -- no unexplained new drift; comm -13 now shows 14 stale baseline entries, one
+  more than PO8/PO11's 13, since validate.rs is the only mfact-core path from the original
+  10-file G11 group still live). The "never refreshed" claim remains accurate as of this
+  pass; no correction to the record is warranted.
+- Severity: minor
