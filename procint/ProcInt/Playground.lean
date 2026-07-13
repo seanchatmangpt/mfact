@@ -31,6 +31,7 @@ import ProcInt.Playground.Trajectory.RootCause
 import ProcInt.Playground.Trajectory.RecoveryBehavior
 import ProcInt.Playground.Glue.RankOrder
 import ProcInt.Playground.Glue.RuntimeReplay
+import ProcInt.MFW.Residue.Tenancy
 
 /-! # ProcInt.Playground
 

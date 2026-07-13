@@ -30,7 +30,7 @@ the binding's current honest type.
 | Governance / evidence ceilings | `Standing`, `canClaimTheorem` (`Swarm11/Standing.lean:25,47`) | PROVEN | ANALOGY |
 | Capacity cost ceiling | `work_bounds` (`Thermo.lean:30`) | PROVEN | ANALOGY (see card 5) |
 | Workload heterogeneity spectra | `Playground/Multifractal/*` (`Z(q,n)`, `τ(q)`, `f(α)` defs); `UniformWitness.lean`'s `hasMassExponent_uniform`, `lowerGeneralizedDimension_uniform` (uniform/monofractal instance only) | DEFINITIONAL (general); PROVEN (uniform-partition instance, not a genuine multifractal) | MISSING (see §3) |
-| Tenancy isolation | none — closest: residue independence + boundary cuts | — | MISSING (Wave CM2) |
+| Tenancy isolation | `crossTenant_residue_disjoint` (`Residue/Tenancy.lean:111`, residue independence only, no boundary-cut composition) | PROVEN (residue independence); boundary-cut composition MISSING | ANALOGY |
 | Quota / rate limits | none (G32 shows an *unenforced* internal bound) | — | MISSING (Wave CM0) |
 | Trust-boundary ingress | Wave S0 admission `a_i : O_i → O_i* ∪ Refusal` (`ROADMAP_SWARM_SUPPLY_CHAIN.md`, unbuilt) | TARGET | MISSING (Wave CM0) |
 
@@ -187,8 +187,22 @@ Format follows `ROADMAP_MATH_SPINE.md` §4. Ceilings use its marker schema.
   theorems (`edge_to_in_boundary`) so cross-tenant influence is forced through explicit
   cuts. Builds directly on `eq_of_subset_of_sufficient_of_isMinimalSupport`
   (`Residue/MinimalSupport.lean:97`) and `residue_purity`.
-- Ceiling: `TARGET_THEOREM` until the tagged carrier exists; then `PROVEN` is realistic —
-  the component lemmas are already kernel-checked.
+- Ceiling: **`PROVEN` for the residue-independence core (2026-07-13)**, conditional only on a
+  new hypothesis `Separated C tag` (membership of a fixed-tenant goal in the closure of `X`
+  depends only on the same-tenant slice of `X` — deliberately weaker than full closure
+  factorization `C(S ∪ T) = C S ∪ C T`). `procint/ProcInt/MFW/Residue/Tenancy.lean`:
+  `minimalSupport_tenant_pure` (every member of a minimal support for a tenant-pure-context
+  goal is tagged for that goal's own tenant) and `crossTenant_residue_disjoint` (minimal
+  supports for goals of two distinct, individually tenant-pure-context tenants are `Disjoint`
+  `Finset`s) are both kernel-checked, axioms ⊆ `[propext, Classical.choice, Quot.sound]`, no
+  `sorry`. A mandatory non-vacuity countermodel (`TenancyCountermodel`) exhibits a concrete
+  closure operator for which `Separated` genuinely fails and `minimalSupport_tenant_pure`'s
+  conclusion fails right along with it, showing the hypothesis is load-bearing, not decorative.
+  **Still `MISSING`, not attempted**: the "composed with the boundary-cut theorems" half of
+  this wave's original deliverable — no correspondence morphism between `Residue.residue` and
+  `Workflow.Multifractal`'s DAG/boundary-cut theorems is admitted (`AGENTS.md` §4), so nothing
+  here forces cross-tenant influence through explicit cuts. That composition remains
+  `TARGET_THEOREM`.
 
 ### Wave CM3 — The cascade-measure multifractal wave
 
