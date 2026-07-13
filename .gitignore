@@ -33,5 +33,9 @@ procint/ProcInt/Playground/_scratch_*.lean
 
 
 # Added by cargo
+# Unanchored so it covers every workspace member's target/, not just the
+# repo root's — crates/mfact-core/target/ was previously untracked-but-
+# unignored and got committed by accident (~100+ MB of build artifacts).
 
 /target
+target/
