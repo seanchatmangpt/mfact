@@ -3288,6 +3288,202 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   axiom" finding for this package.
 - Severity: minor
 
+## Pass 10 findings
+
+Independent final-verification pass over the completed 8-wave construction workflow
+(waves 0-7, commits `d2e6d01`..`ae5c2a5`, `5dc2f5c..ae5c2a5` in `git log` range notation).
+Re-derived from a fresh rebuild and live `git`/`grep` inspection, not from the workflow's own
+wave reports or the (separately-numbered) Pass 11 section above, which audited the same
+workflow mid-flight before it finished committing.
+
+### PJ1 -- All 10 new .lean files across waves 1-7 exist, rebuild clean, zero sorry/admit,
+
+- Lens: fresh-rebuild-reverify
+- Claim: `Glue/RankOrder.lean`, `Glue/RuntimeReplay.lean`, `Multifractal/UniformWitness.lean`,
+  `Residue/Tenancy.lean`, `Swarm11/Correspondence/LedgerBridge.lean`, `MFW/Termination/
+  {ObligationRank,ManufactureDecrease,MultisetDescent,CrownWellFounded}.lean`, and
+  `Swarm11/OrientedSwap.lean` all exist, each rebuilds to exit 0 via `just _lake "cd procint
+  && lake build <module>"`, and none contains an actual `sorry`/`admit` tactic use.
+- Source: live `just _lake` build of all 10 modules individually; live
+  `grep -rn '\bsorry\b\|\badmit\b'` across all 10 files
+- Verdict: CONFIRMED
+- Evidence: All 10 builds returned "Build completed successfully" (job counts: 587, 7, 8562,
+  628, 8566, 628 combined for the 4 Termination files, 538) -- matching the individual wave
+  commits' own claimed job counts exactly. `RuntimeReplay.lean` reproduces the two documented
+  benign unused-variable warnings (`p` at :58, `h` at :96), not errors. The combined
+  `sorry`/`admit` grep across all 10 files returns exactly 6 hits, every one inside a doc
+  comment or closing-summary prose block ("no `sorry`/`admit`", "No `sorry`.", "this file
+  exists to admit." -- English "admit" as "grant", not the tactic, confirmed by reading the
+  surrounding sentence at `RuntimeReplay.lean:107-113`), zero bare tactic-position matches.
+- Severity: minor
+
+### PJ2 -- Full umbrella `ProcInt.Playground` build still succeeds fresh, 8709 jobs,
+
+- Lens: fresh-rebuild-reverify
+- Claim: `lake build ProcInt.Playground` exits 0 with all 7 new waves' modules transitively
+  imported.
+- Source: live `just _lake "cd procint && lake build Playground"`
+- Verdict: CONFIRMED
+- Evidence: `Build completed successfully (8709 jobs)` -- one job higher than wave7's own
+  claimed 8708, consistent with ordinary build-graph/cache count drift between two runs
+  minutes apart, not a defect (no error/warning lines, exit 0).
+- Severity: minor
+
+### PJ3 -- 5 theorems across 4 different waves independently `#print axioms`-checked clean,
+
+- Lens: axiom-reverify
+- Claim: `dag_rank_enabledFrontier_isAntichain` (wave1), `crossTenant_residue_disjoint`
+  (wave4), `no_infinite_productive_mfw_chain` (wave6), `orientedSwap_terminating` and
+  `not_orientedSwap_locallyConfluent` (wave7) all kernel-check within
+  `[propext, Classical.choice, Quot.sound]`.
+- Source: throwaway `procint/ProcInt/Playground/_ScratchAxiomCheck10.lean` (written, run via
+  `lake env lean`, then deleted this pass -- not left in the tree)
+- Verdict: CONFIRMED
+- Evidence: literal output --
+  `'ProcInt.Playground.Glue.RankOrder.dag_rank_enabledFrontier_isAntichain' does not depend on
+  any axioms`; `'ProcInt.MFW.Residue.crossTenant_residue_disjoint' depends on axioms:
+  [propext, Classical.choice, Quot.sound]`; `'ProcInt.MFW.Termination.
+  no_infinite_productive_mfw_chain' depends on axioms: [propext, Classical.choice,
+  Quot.sound]`; `'ProcInt.Playground.Swarm11.Replay.orientedSwap_terminating' depends on
+  axioms: [propext, Quot.sound]`; `'ProcInt.Playground.Swarm11.Replay.
+  not_orientedSwap_locallyConfluent' depends on axioms: [propext, Classical.choice,
+  Quot.sound]`. All 5 are subsets of the allowed set; none depends on `sorryAx` or any
+  workflow-introduced axiom.
+- Severity: minor
+
+### PJ4 -- Zero unexplained new drift; git status delta reconciles exactly to a 3rd-pass-stale baseline,
+
+- Lens: collision-guard-delta-reverify
+- Claim: live `git status --porcelain` (71 lines) contains no path absent from the 76-entry
+  `.mfact/known-persistent-drift.txt` baseline, and the entire workflow's own output
+  (ontology file, `Tenancy.lean`, `Termination/`, `Glue/`, `UniformWitness.lean`,
+  `LedgerBridge.lean`, `OrientedSwap.lean`, `PRAXIS_SELF_AUDIT.md`) has been fully committed
+  and no longer appears in the untracked/modified listing.
+- Source: live `git status --porcelain` vs `.mfact/known-persistent-drift.txt`, `comm -23`/
+  `comm -13`
+- Verdict: CONFIRMED
+- Evidence: `comm -23` (paths in live status but not baseline) returns empty -- zero
+  unexplained new drift. `comm -13` (stale baseline entries) returns the identical 5 paths
+  pass 9's PI6 and pass 11's PK11 already flagged (`MFW_WORKFLOW_CATALOG.md`,
+  `ROADMAP_GAP_AUTONOMIC.md`, `ROADMAP_GAP_SEMANTIC.md`, `ROADMAP_GAP_THERMO.md`,
+  `ROADMAP.md`, all committed in `5dc2f5c`) -- a 3rd consecutive pass confirming the
+  baseline refresh still has not happened. 76 - 5 = 71 matches the live count exactly.
+- Severity: minor
+
+### PJ5 -- ROADMAP_CLOUD_MATH.md's wave0/CM2/CM3/CL1 additions hold up against the rebuilt code,
+
+- Lens: roadmap-overclaim-check
+- Claim: the document's new text for the ontology carrier note, Wave CM2 (tenancy), §3
+  (multifractal gap), and CL1 (StepCorrespondence) states exactly what PJ1-PJ3 independently
+  reconfirm, no more.
+- Source: `git log -p 5dc2f5c..ae5c2a5 -- ROADMAP_CLOUD_MATH.md`; live file citations
+  cross-checked against `Residue/Tenancy.lean:111`, `Multifractal/UniformWitness.lean`,
+  `Swarm11/Correspondence/LedgerBridge.lean`
+- Verdict: CONFIRMED
+- Evidence: the ontology note is marked `CARRIER-ONLY` with an explicit "no correspondence
+  morphism ... admitted" disclaimer, matching AGENTS.md §4 -- no theorem card's standing was
+  raised by it. Wave CM2's "Tenancy isolation" table row is marked `PROVEN
+  (residue-independence core)` with "boundary-cut composition MISSING" stated in the same
+  cell, matching that only `minimalSupport_tenant_pure`/`crossTenant_residue_disjoint` were
+  built and the boundary-cut composition genuinely was not attempted. §3's multifractal
+  gap text says "deliberately the unweighted (monofractal) case, not yet a genuine
+  multifractal" -- matches PJ1's confirmation that `UniformWitness.lean` computes `D_q = 1`
+  (monofractal) and does not compute any non-degenerate `f(α)`. CL1's text says "narrowed,
+  not closed" and explicitly denies licensing a "substrate correspondence to any concrete
+  external runtime" -- matches `LedgerBridge.lean`'s own docstring, which bridges two Lean
+  models (Crown, Ledger), not an external runtime.
+- Severity: minor
+
+### PJ6 -- ROADMAP_MATH_SPINE.md's Wave M1 status and Glue subsection hold up,
+
+- Lens: roadmap-overclaim-check
+- Claim: the Wave M1 status block and Claim Status Table row state `PROVEN` only for "the
+  abstract `CrownState`/`ManufactureStep` carrier", explicitly note "no concrete workflow
+  engine's transitions yet correspond to `ManufactureStep`", and the new Glue subsection
+  marks both bridge files `PROVEN` with their axiom sets stated per-theorem.
+- Source: `git log -p 5dc2f5c..ae5c2a5 -- ROADMAP_MATH_SPINE.md`; live
+  `Residue/EntailmentOrder.lean:53`, `Playground/Swarm11/Replay.lean:105`
+- Verdict: CONFIRMED
+- Evidence: line-53 of `EntailmentOrder.lean` is exactly `class AdmittedObligationOrder
+  (Obligation : Type*) extends Preorder Obligation`, matching the corrected citation (the
+  pre-correction text had cited line 46). `Replay.lean:105` is exactly `theorem
+  replay_eq_of_traceEq`, matching the Glue subsection's citation. The claim ceiling language
+  ("does not yet discharge Crown II for any real MFW instantiation") is no stronger than
+  what PJ3 independently reconfirms (the theorem is proven for the abstract carrier only).
+- Severity: minor
+
+### PJ7 -- MFW_WORKFLOW_CATALOG.md's S1.1 self-correction is independently reproducible by grep,
+
+- Lens: roadmap-overclaim-check
+- Claim: the corrected §1.1 bullet states `procint/ProcInt/MFW/Termination/*.lean` "neither
+  imports nor references `Residue.residue`, `residue_isAntichain`, or `residue_purity`".
+- Source: live `grep -rn "Residue\.residue\|residue_isAntichain\|residue_purity"
+  procint/ProcInt/MFW/Termination/*.lean`
+- Verdict: CONFIRMED
+- Evidence: the only 2 hits are inside `ObligationRank.lean`'s own doc comment explaining the
+  correction itself ("are *not* imported"); zero hits are an actual `import` line or a live
+  reference to those three names. The correction is accurate, not merely asserted.
+- Severity: minor
+
+### PJ8 -- ROADMAP_SWARM_SUPPLY_CHAIN.md's P22 correction is precisely scoped, not oversold,
+
+- Lens: roadmap-overclaim-check
+- Claim: the P22 correction states `orientedSwap_terminating` and
+  `orientedSwap_disjoint_confluent` `PROVEN` unconditionally, `not_orientedSwap_
+  locallyConfluent` `REFUTED` unconditionally, `orientedSwap_overlap_confluent_of_commute13`
+  proven as a named conditional repair, and `Confluent`/replay-equality explicitly "not
+  proven -- correctly not attempted"; net verdict `PARTIAL, not closed`.
+- Source: `git log -p 5dc2f5c..ae5c2a5 -- ROADMAP_SWARM_SUPPLY_CHAIN.md`; live
+  `OrientedSwap.lean` declaration list (PJ1)
+- Verdict: CONFIRMED
+- Evidence: all 4 named theorems are present in the live file as PJ1's build confirms; a
+  `grep` for `Confluent (OrientedSwap` (the unconditional close this entry says was
+  correctly not attempted) returns no `theorem`/`lemma` declaration of that shape in the
+  file -- the absence is real, not a hidden `sorry`. `PJ3` independently confirmed
+  `orientedSwap_terminating` and `not_orientedSwap_locallyConfluent` are both axiom-clean.
+  `PARTIAL, not closed` is the accurate summary of a genuine refutation plus a conditional
+  repair, matching AGENTS.md §2's "never attach marketing scale to unbenchmarked code" spirit
+  by not calling this a close.
+- Severity: minor
+
+### PJ9 -- MFACT_SELF_IMPROVEMENT_LOOP.md's firing-6/firing-7 collision entries match their receipts exactly,
+
+- Lens: loop-honesty-reverify
+- Claim: both new log entries describe a collision, no action taken, and match the literal
+  content of `.mfact/receipts/20260713T175700Z.json` and `.mfact/receipts/20260713T182657Z.json`.
+- Source: live `cat` of both receipt files; `MFACT_SELF_IMPROVEMENT_LOOP.md` diff (`git log -p`)
+- Verdict: CONFIRMED
+- Evidence: both receipts have `"status": "failed"`, `"commit_sha": null`, `"collision":
+  true`, `"duration_ms": 0` -- no state-changing action was taken by either firing, matching
+  the log's own "no action taken" language. Firing 7's receipt's `verify_delta.before` text
+  names the exact same 7 remaining paths and the exact same 5 already-landed wave commit
+  hashes (`69df262`, `250fcc7`, `d6fc2a3`, `782bf6c`, `6270a44`) the log entry quotes.
+- Severity: minor
+
+### PJ10 -- Wave 4's commit message undercounts Tenancy.lean's declarations (10 claimed, 16 actual),
+
+- Lens: commit-message-accuracy-reverify
+- Claim: commit `782bf6c`'s message states "Scratch `#print axioms` on all 10 declarations (2
+  core theorems + 8 countermodel lemmas)" for `Residue/Tenancy.lean`.
+- Source: live `grep -cE '^\s*(theorem|lemma)\s' procint/ProcInt/MFW/Residue/Tenancy.lean`
+  and `grep -n` listing every match
+- Verdict: REFUTED (as a count; the underlying math is unaffected)
+- Evidence: the file has exactly 16 `theorem`/`lemma` declarations, not 10 -- 2 in the
+  `TenancyCore` section (`minimalSupport_tenant_pure`, `crossTenant_residue_disjoint`,
+  matching the "2 core theorems" half) plus 14 in `TenancyCountermodel`
+  (`tag_zero`, `tag_one`, `f_apply_pos`, `f_apply_neg`, `f_monotone`, `f_extensive`,
+  `f_idempotent`, `C_apply`, `C_zero`, `C_empty`, `not_separated`, `singleton_mem_residue`,
+  `empty_context_tenant_pure`, `tenant_purity_conclusion_fails`), not 8. This is a
+  documentation-accuracy defect in the commit message only, not in the ledger docs (neither
+  `ROADMAP_CLOUD_MATH.md` nor this file's own PJ5 above repeats the "10" figure) and not in
+  the math: PJ1 and PJ3 independently confirm the file builds clean and its two core
+  theorems are axiom-clean regardless of how many countermodel lemmas were tallied. Whether
+  the commit's own `#print axioms` scratch check actually covered all 16 (vs. only 10) could
+  not be re-derived after the fact -- the scratch file was deleted per the wave's own
+  discipline -- so this pass independently re-checked only the 2 core theorems (PJ3), not
+  the 14 countermodel lemmas.
+- Severity: minor
+
 ## References
 
 - `AGENTS.md` -- the construction discipline (explore vs. exploit, no vacuous
