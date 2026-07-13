@@ -236,6 +236,15 @@ trajectory-annotate:
 stuck-item-guard:
     @python3 scripts/stuck_item_guard.py --receipts .mfact/receipts/
 
+# Clippy over mfact-core's real compiled targets, enforcing the Cargo.toml
+# [lints] gate (G51). Scoped to --lib --bin turbulence: src/main.rs and
+# tests/sse_transport_test.rs are part of the untracked dead-file pile
+# (G2/G11 -- missing mods and missing tokio/reqwest deps) and fail to
+# compile independent of lints; widen this recipe when G2/G11 closes.
+[group('cockpit')]
+clippy-core:
+    cd crates/mfact-core && cargo clippy --lib --bin turbulence
+
 # Alias: quadrature-negative-controls.
 [group('manufacture')]
 negative: quadrature-negative-controls

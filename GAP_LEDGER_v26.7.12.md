@@ -72,7 +72,7 @@ ledger text alone.
 |------------------|-------|----------|
 | Release-blocking | 3     | G1-G3    |
 | Major            | 30    | G4-G33   |
-| Minor            | 17    | G34-G50  |
+| Minor            | 18    | G34-G51  |
 | Refuted          | 3     | appendix |
 
 ## Release-blocking
@@ -1012,6 +1012,26 @@ ledger text alone.
   with `unrecognized arguments` on the first attempt. Corrected to `--receipts
   .mfact/receipts/`; re-ran and confirmed exit 0 with correct output ("3
   receipt(s) considered ... Nothing flagged").
+
+### G51 — mfact-core has no `[lints]` gate despite live unwrap/todo/dbg risk
+
+- Lens: self-improvement-loop (fix loop, firing 5), from
+  `PRAXIS_DOGFOODING_EXPLORATION.md` CROSS_REPO_INCONSISTENCY #9
+- Status: CLOSED
+- Closure evidence (2026-07-13, cron job f6a6cd52): `grep -n "\[lints"
+  crates/mfact-core/Cargo.toml` returned nothing. Added `[lints.clippy]`
+  (todo/unimplemented/dbg_macro = deny; unwrap_used/expect_used = warn) plus a
+  `just clippy-core` recipe scoped to the crate's two real compiled targets
+  (`--lib --bin turbulence`); `src/main.rs` and `tests/sse_transport_test.rs`
+  are untracked dead-pile files (G2/G11) that fail to compile independent of
+  lints — recipe comment says to widen when G2/G11 closes. All 5 pre-existing
+  `.unwrap()` occurrences are inside `#[cfg(test)]` code, exempt per house
+  style, and surface only as warns. Verified with a negative control: an
+  injected `dbg!("negative-control")` failed the gate with `-D
+  clippy::dbg-macro`; after revert, `just clippy-core` → exit 0. Note: this
+  firing was itself blocked once by `.claude/hooks/require-just.sh` when it
+  tried a bare `cargo clippy` — the hook worked as designed and forced the
+  recipe to exist.
 
 ## Refuted during verification
 

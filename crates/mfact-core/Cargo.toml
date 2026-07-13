@@ -15,3 +15,14 @@ cc = "1"
 
 [dev-dependencies]
 proptest = "1.5.0"
+
+# SELF-IMPROVEMENT-LOOP FIX: G51 -- lint gate per praxis house style
+# (PRAXIS_DOGFOODING_EXPLORATION.md CROSS_REPO_INCONSISTENCY #9): loud-failure
+# macros denied outright; silent-panic methods warn (tests carry explicit
+# allows per ~/.claude/rules/no-overclaiming-rust.md, which exempts tests).
+[lints.clippy]
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+unwrap_used = "warn"
+expect_used = "warn"
