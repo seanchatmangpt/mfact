@@ -146,6 +146,38 @@ entries / 398 files changed, +76,622/-748 lines — `git diff --stat`, re-verifi
 occurrences across 15 touched-or-added files (live count). "Kernel-checked" claims in this
 release are scoped file-by-file, never tree-wide.
 
+### Addendum (2026-07-13, post-f735022)
+
+The inventory above is pinned to HEAD `f735022` (the "78 commits" figure in this section's
+opening line). Live HEAD has since moved 29 commits past `f735022` (`git log --oneline
+f735022..HEAD | wc -l`, measured at HEAD `5e7c94b` while writing this addendum). The
+substantive post-`f735022` clusters, none of which appear in workstreams 1-9 above:
+
+- **Operation Dogfood Waves 0-5** (`46f81ee` Wave 0 coverage report, `b6dcfb3` Wave 1
+  outcome algebra, `8f7c032` Wave 2 pre-actuation guard, `8a7ceca` Wave 3 lifecycle,
+  `40a35df` Wave 4 POWL boundedness rescue, `81fbbad` Wave 5 axiom audit + verifier fold).
+  `GAP_LEDGER_v26.7.12.md` entries G54-G57 are all `Status: CLOSED` (re-verified live);
+  `swarm11-verify` now reports 5 crown + 24 SOC2 + 30 dogfood = 59 checks, 0 failures,
+  `admitted: true`; all 49 new theorems are axiom-audited in
+  `procint/ProcInt/Playground/Dogfood/AxiomAuditDogfood.lean` (49 `#guard_msgs` pairs,
+  re-counted live).
+- **SOC2 audit-flow crowns** (`e590d1b` two-tenant audit-flow axiom-audit crown, `c481ecd`
+  `StandingPathSOC2.lean` witness + Swarm11Verifier SOC2 fold).
+- **G53 closure** (`11b03d2` compose `ManufactureStep` with tenant residue, `050d067` wire
+  `ManufactureTenancyGap.checks` into swarm11-verify).
+- **The `evidenceComplete` certify-fix chain** (`0e99a2b`, `ca3cf5c`, regen committed in
+  `b2f5b0e`) — already reflected in §1's and §4's dated corrections above.
+- **`.gitmodules` fix** (`032abc3`) — registers the `web/mfact-ui` gitlink whose absence G25
+  flagged (§3.1); G25's ledger entry still reads `Status: OPEN` and is not re-scoped here.
+
+Claim-row deltas earned by the Dogfood waves (C11 MISSING-ABLE→PARTIAL, C5/FR-9
+MISSING-ABLE→PARTIAL, FR-22's by-construction crutch lifted, and eight further strengthened
+rows) are recorded once, in `OPERATION_DOGFOOD_LEAN_COVERAGE_v26.7.13.md`'s
+"Post-construction verdicts" table — deliberately not duplicated here; that table is the
+authoritative row-level record. The remaining post-`f735022` commits are self-audit passes
+16-19 (`PRAXIS_SELF_AUDIT.md`), loop receipts, and doc corrections, including `5e7c94b`'s
+correction of this document's own stale certify-failure claims.
+
 ## 3. Open gap list
 
 Source: `GAP_LEDGER_v26.7.12.md`, freshly re-grepped against live HEAD (`f735022`).

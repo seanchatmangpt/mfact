@@ -206,6 +206,13 @@ Two enforcement gaps remain open, disclosed rather than papered over:
   claims currently stand only on their own commit messages and this document's fresh spot
   checks (§7), not on a completed self-audit pass.
 
+Addendum (2026-07-13): the "7 commits ahead" figure in the bullet above is itself stale —
+live HEAD is now 29 commits past `f735022` (measured at `5e7c94b`), and `PRAXIS_SELF_AUDIT.md`
+now runs through Pass 19. The post-`f735022` work (Dogfood Waves 0-5, the SOC2 audit-flow
+crowns, the G53 closure, and the `evidenceComplete` certify fix) is inventoried with commit
+hashes in `RELEASE_v26.7.13_PRD.md` §2's addendum; the claim-row deltas live solely in
+`OPERATION_DOGFOOD_LEAN_COVERAGE_v26.7.13.md`'s "Post-construction verdicts" table.
+
 ## 5. Standing open architecture decisions
 
 - **CLAUDE_ROADMAP.md Phases 1/5-7 vs. praxis's `multifractal-workflow` crate — explicitly
