@@ -251,3 +251,23 @@ diff just doesn't block starting.
   stalled). No foreign commits. Wrote receipt
   `.mfact/receipts/20260713T192656Z.json` with `collision: true`, and
   stopped.
+
+- **2026-07-13T20:05:05Z (run `20260713T200505Z`, firing 10) -- SUCCESS,
+  third real gap closed.** First clean pass since firing 5 (5 consecutive
+  collisions in between, all correctly diagnosed as legitimate concurrent
+  work per pass 13). Picked G11 (mfact-core dead/fake FFI subsystem).
+  Re-verified still open: none of the 4 named files (`broker.rs`,
+  `thermo.rs`, `transport.rs`, `lean.rs`) referenced from `lib.rs`. Applied
+  the ledger's own "Fix (b), Abandon it" path fully -- deleted those 4 plus
+  `lean_ffi_wrapper.c` (PA24's fake stand-ins), `main.rs` (broken caller of
+  the deleted `transport` module, independently missing `tokio`), and the
+  two orphaned integration tests that imported the deleted modules. All 8
+  were untracked, so deletion produced no git diff of its own -- only the
+  ledger update is a real commit. `just clippy-core` exit 0 before and after,
+  confirming zero build impact (genuinely dead code). Delete-not-wire-in
+  follows this session's scope clarification: a real FFI binding would
+  itself be "implement the code," out of mfact's scope. One residual
+  explicitly left open, not silently dropped: `web/mfact-ui`'s dead
+  `EventSource` reference (TypeScript, different domain, noted in G11's
+  closure evidence for a future pass). `oracle_rank: 1`. Commit `108bf5b`;
+  receipt `.mfact/receipts/20260713T200505Z.json`.
