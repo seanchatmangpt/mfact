@@ -233,6 +233,29 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
   `.mfact/known-persistent-drift.txt` -- the 76-entry baseline file itself
   is now stale by those same 5 entries and worth refreshing in a future
   firing, a bookkeeping note rather than a defect.
+- **2026-07-13 (pass 12):** 13 findings across 2 lenses (fix-loop-postconstruction-firing,
+  baseline-and-drift-check), continuing pass-10/11's independent re-verification into the
+  post-construction-workflow window. HEAD held at `98263a9` throughout (pass 10's own
+  append commit); no new commit landed during this pass's checking window, confirmed by
+  repeated `git log`/`ls -la .mfact/receipts/` checks at 11:42:51, 11:43:56, 11:44:32, and
+  11:45:39 PDT plus a ~9-minute background poll (task `bjopyb0kw`) watching for new
+  receipt files. 10 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE,
+  0 FIXED-since-last-pass. Headline: fix loop `f6a6cd52`'s firing-7 collision receipt
+  (commit `aa203ec`) is a genuine, accurately attributed collision-guard stop, and the
+  working tree now matches `known-persistent-drift.txt` byte-for-byte (`comm -23` empty,
+  re-run twice) -- the 7 paths that triggered firing 7's collision are gone from `git
+  status` because they are now committed as `d4ed2f3` and `ae5c2a5`, so the fix loop's
+  next firing should genuinely be able to pick a real item. This pass also caught and
+  fixed a citation error in its own pre-commit draft (PL13, REFUTED): the draft had
+  mis-cited `20260713T165952Z.json` as firing 6's collision receipt when
+  `git show --stat d2e6d01` proves the correct file is `20260713T175700Z.json` --
+  `20260713T165952Z.json` is actually firing 4's unrelated G50 success receipt. The one
+  DRIFTED finding: this pass's own task framing estimated the next firing at ~11:42 PDT,
+  but the observed real cadence across all 7 receipts today is a consistent 27-31 minute
+  gap, putting the next firing closer to ~11:54-11:58 PDT -- corrected here for the next
+  pass's polling. `known-persistent-drift.txt` is flagged (again) as stale by the same 5
+  already-committed paths pass 10/11 already named, not yet refreshed per this audit's
+  own read-only discipline.
 
 ## Quick reference
 
@@ -316,6 +339,15 @@ not duplicate (gap-ledger-staleness findings below name specific G-numbers there
 |---|---|---|
 | Minor | 14 | 11 CONFIRMED, 1 REFUTED, 2 DRIFTED |
 | **Total** | **14** | **11 CONFIRMED, 1 REFUTED, 2 DRIFTED** |
+
+**Pass 12 (2026-07-13) totals -- alongside, not replacing, the pass-1..9 and pass-11
+totals above (pass 10's findings are PJ1-PJ10 in the Pass 10 findings section; no
+quick-reference row was ever added for it, a pre-existing gap this pass does not fix):**
+
+| Severity | Count (pass 12) | Verdicts (pass 12) |
+|---|---|---|
+| Minor | 13 | 10 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE |
+| **Total** | **13** | **10 CONFIRMED, 1 REFUTED, 1 DRIFTED, 1 UNVERIFIABLE** |
 
 ## Critical
 
@@ -3482,6 +3514,233 @@ workflow mid-flight before it finished committing.
   not be re-derived after the fact -- the scratch file was deleted per the wave's own
   discipline -- so this pass independently re-checked only the 2 core theorems (PJ3), not
   the 14 countermodel lemmas.
+- Severity: minor
+
+## Pass 12 findings
+
+### PL1 -- Task's ~11:42 PDT next-firing estimate drifted from the loop's real ~30min cadence,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: this pass's task framing estimated fix loop `f6a6cd52`'s next firing at ~11:42 PDT.
+- Source: `python3`-parsed `run_id` timestamps from all 7 receipt files in
+  `.mfact/receipts/`, converted to PDT: firings 3-7 at 09:31:30, 09:59:52, 10:30:45,
+  10:57:00, 11:26:57.
+- Verdict: DRIFTED
+- Evidence: consecutive real-firing gaps are 28, 31, 27, 30 minutes -- consistently ~30
+  min, not tied to firing-6/7's collision timing. Extrapolating from the last firing
+  (11:26:57 PDT) puts the next firing around 11:54-11:58 PDT, roughly 12-16 minutes later
+  than the ~11:42 PDT figure this pass's task framing supplied. Not a repo defect, just a
+  timing estimate corrected here for the next pass's polling.
+- Severity: minor
+
+### PL2 -- Whether the post-collision firing already landed was not yet confirmable,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: fix loop `f6a6cd52`'s next firing after the firing-7 collision (task-estimated
+  ~11:42 PDT) had already run and picked a real item.
+- Source: `ls -la /Users/sac/mfact/.mfact/receipts/` (`latest.json` mtime/content) plus
+  `git log -15` on the live tree, checked at 11:43 PDT.
+- Verdict: UNVERIFIABLE
+- Evidence: as of 11:43 PDT, `latest.json` still pointed at `20260713T182657Z` (firing 7,
+  11:26:57 PDT, `collision: true`) -- no newer receipt existed yet, and HEAD was still
+  `98263a9` with no new commits. The observed cadence across all 7 receipts today
+  (27-31 minutes apart) puts a firing from 18:26:57Z closer to ~18:53-18:57Z
+  (11:53-11:57 PDT) than the ~11:42 PDT this pass's setup estimated. Not confirmable
+  either way at this single check time; PL3 below extends the watch further.
+- Severity: minor
+
+### PL3 -- Confirmed over a ~9-minute poll: the next firing genuinely had not landed,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: fix loop `f6a6cd52`'s next firing had not landed by the end of this pass's
+  active checking window (extends PL2's single 11:43 PDT snapshot with a sustained watch).
+- Source: `git -C /Users/sac/mfact log --oneline -5` checked at 11:42:51, 11:43:56,
+  11:44:32, and 11:45:39 PDT, plus `ls -la .mfact/receipts/*.json` and a ~9-minute
+  background poll loop (task `bjopyb0kw`) watching for new receipt files.
+- Verdict: CONFIRMED
+- Evidence: HEAD stayed at `98263a9` throughout; the receipts dir stayed at 7 files with
+  `latest.json` still pointing at `20260713T182657Z.json` (mtime 11:27 PDT, i.e. firing
+  7). No new file appeared in any of the checks. Reporting plainly per the lens
+  instructions -- nothing new to audit yet this pass.
+- Severity: minor
+
+### PL4 -- Both firing-6 and firing-7 collisions are genuine, receipt-backed stops,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: fix loop (cron `f6a6cd52`) collided twice against the construction workflow's
+  in-progress files, at firings 6 and 7.
+- Source: `ls -t /Users/sac/mfact/.mfact/receipts/*.json` plus per-file JSON contents
+  (`run_id`, `status`, `collision` fields), cross-checked against `git show --stat` on
+  both collision commits.
+- Verdict: CONFIRMED
+- Evidence: receipt `20260713T175700Z.json` (firing 6, commit `d2e6d01` "record firing-6
+  collision receipt", 10:58 PDT) and receipt `20260713T182657Z.json` (firing 7, commit
+  `aa203ec` "record firing-7 collision receipt", 11:27 PDT) both show `status: failed`,
+  `collision: true`, `gap_id: null`. Firing 7's `verify_delta.before` explicitly names
+  Waves 6/7 (`Termination/*.lean`, `OrientedSwap.lean`, `ROADMAP_MATH_SPINE.md`) as the
+  still-mid-integration cause, matching prior passes' description exactly. (This pass's
+  own initial draft mis-cited `20260713T165952Z.json` for firing 6 -- that file is
+  actually the G50 success receipt; caught and fixed here, see PL13 below.)
+- Severity: minor
+
+### PL5 -- Firing 7's receipt content is accurate down to the byte, not just its status,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: firing 7's collision receipt (commit `aa203ec`) is a genuine collision-guard
+  stop, not a real fix, and its attribution is accurate.
+- Source: `git show --stat aa203ec`; `git log -1 --format=%B aa203ec`; `python3`-parsed
+  `.mfact/receipts/20260713T182657Z.json`.
+- Verdict: CONFIRMED
+- Evidence: the commit touches only `.mfact/receipts/20260713T182657Z.json` (16 lines),
+  `.mfact/receipts/latest.json` (6 lines), and `MFACT_SELF_IMPROVEMENT_LOOP.md` (14
+  lines) -- no fix files. The receipt has `status: failed`, `collision: true`,
+  `commit_sha: null`, `oracle_rank: 1`, and its `verify_delta.before` cites `git log`
+  precisely for Waves 1-5 (`69df262`, `250fcc7`, `d6fc2a3`, `782bf6c`, `6270a44`) versus
+  the still-pending Wave 6/7 paths, and explicitly states it is correcting pass 11's PK9
+  imprecision from firing 6 -- matching pass 10/11's account exactly.
+- Severity: minor
+
+### PL6 -- known-persistent-drift.txt is stale again by the same 5 already-closed paths,
+
+- Lens: baseline-and-drift-check
+- Claim: `known-persistent-drift.txt` still lists 5 now-committed paths
+  (`MFW_WORKFLOW_CATALOG.md` and the four `ROADMAP_GAP*`/`ROADMAP.md` files) as
+  expected drift, even though they no longer show as modified/untracked.
+- Source: `cat /Users/sac/mfact/.mfact/known-persistent-drift.txt`, cross-referenced
+  against PL7's clean `git status` for the same 5 paths.
+- Verdict: CONFIRMED
+- Evidence: the baseline file (mtime Jul 13 08:46, predating the 10:32:39 and 11:26:55
+  commits) still contains `MFW_WORKFLOW_CATALOG.md`, `ROADMAP.md`,
+  `ROADMAP_GAP_AUTONOMIC.md`, `ROADMAP_GAP_SEMANTIC.md`, `ROADMAP_GAP_THERMO.md` at
+  lines 15, 70-73. Since these paths are confirmed clean/committed, they no longer need
+  the tolerated-drift allowlist. This is the same staleness pass 11's PK11 already
+  named, recurring; flagged only as a refresh candidate, not refreshed by this
+  read-only pass.
+- Severity: minor
+
+### PL7 -- The 5 baseline-stale paths flagged in passes 9/11 are now clean and tracked,
+
+- Lens: baseline-and-drift-check
+- Claim: the 5 baseline entries flagged stale in passes 9/11
+  (`MFW_WORKFLOW_CATALOG.md`, `ROADMAP_GAP_AUTONOMIC.md`, `ROADMAP_GAP_SEMANTIC.md`,
+  `ROADMAP_GAP_THERMO.md`, `ROADMAP.md`) are now all committed/clean, confirming pass
+  10's PJ4 resolution.
+- Source: `git status --porcelain -- <5 files>` (empty), `git ls-files -- <5 files>`
+  (all 5 returned), `git log -1 -- <each file>`.
+- Verdict: CONFIRMED
+- Evidence: `git status --porcelain` for all 5 paths returns nothing. `git ls-files`
+  confirms all 5 are tracked. `ROADMAP.md`/`ROADMAP_GAP_AUTONOMIC.md`/
+  `ROADMAP_GAP_SEMANTIC.md`/`ROADMAP_GAP_THERMO.md` all landed in `5dc2f5c` (10:32:39
+  PDT); `MFW_WORKFLOW_CATALOG.md` was further updated in `d4ed2f3` (11:26:55 PDT,
+  wave6/M1 commit) and remains clean.
+- Severity: minor
+
+### PL8 -- Working tree now matches the drift baseline exactly; Waves 6/7 fully landed,
+
+- Lens: baseline-and-drift-check
+- Claim: the working tree matches `known-persistent-drift.txt` exactly (Waves 6/7 fully
+  landed, no residual drift), so the fix loop's next firing should be able to pick a
+  real item.
+- Source: fresh `git status --porcelain` diffed against
+  `.mfact/known-persistent-drift.txt` via `comm -23` (re-run twice this pass).
+- Verdict: CONFIRMED
+- Evidence: `comm -23` between the sorted current dirty/untracked paths and the sorted
+  baseline returned zero lines both times -- every dirty/untracked path is already
+  tolerated. The 7 paths that triggered firing 7's collision (`Termination/*.lean` x4,
+  `Playground.lean` edit, `OrientedSwap.lean`, `ROADMAP_MATH_SPINE.md`) are gone from
+  `git status` because they are now committed as `d4ed2f3` and `ae5c2a5`. This is fresh
+  evidence gathered this pass, not a restatement of pass 10/11.
+- Severity: minor
+
+### PL9 -- No new unexplained drift since the 10-agent construction workflow finished,
+
+- Lens: baseline-and-drift-check
+- Claim: no new unexplained drift has appeared since the 10-agent construction workflow
+  finished.
+- Source: `git -C /Users/sac/mfact status --porcelain | sed -E 's/^.{3}//' | sort |
+  comm -23 - .mfact/known-persistent-drift.txt`.
+- Verdict: CONFIRMED
+- Evidence: `comm -23` (paths in current status but not in baseline) returned 0 lines.
+  Live porcelain count was 71 lines at re-check time (7 modified tracked files + ~64
+  untracked paths, e.g. `crates/mfact-core/src/{broker,lean,main,thermo,transport}.rs`,
+  `research-papers/*`, `procint/artifacts/`, `procint/ProcInt/Graph/`); every one
+  matches an entry already present in `.mfact/known-persistent-drift.txt`. Note: this
+  differs from the "65 lines" figure in this pass's task framing -- the untracked-file
+  count fluctuates slightly while the construction workflow's scratch/build artifacts
+  are mid-flight, but the substantive conclusion (zero unexplained lines) reproduces
+  identically regardless of exact count.
+- Severity: minor
+
+### PL10 -- No sorry/admit tactics in Wave 6/7's new files, but only a grep-level check,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: Wave 6/7's new Lean files contain no `sorry`/`admit`-tactic shortcuts, a proxy
+  re-check of the construction workflow's build/no-sorry claim.
+- Source: `grep -no 'admit[a-zA-Z]*|sorry'` across
+  `procint/ProcInt/MFW/Termination/{CrownWellFounded,ManufactureDecrease,
+  MultisetDescent,ObligationRank}.lean` and
+  `procint/ProcInt/Playground/Swarm11/OrientedSwap.lean`; attempted `which lake lean`
+  in `procint/`.
+- Verdict: CONFIRMED
+- Evidence: the only match was the substring "admitted" inside comment prose
+  referencing `AdmittedObligationOrder` (not an admit/sorry tactic). No `lake`/`lean`
+  toolchain exists in this environment (`lake` not found, `lean` not found), so full
+  compilation could not be independently re-run here -- this is a rank-3 (grep-only)
+  proxy check, weaker than a rank-1 build re-run prior passes may have used for other
+  waves.
+- Severity: minor
+
+### PL11 -- Ledger same-commit discipline holds for the last two real fix-loop firings,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: ledger same-commit discipline holds for the last two real (non-collision)
+  fix-loop firings, G51 and G50.
+- Source: `git show --stat 0639081` and `c636fd3` (the fix commits for G51 and G50);
+  `grep -n "G50\|G51" GAP_LEDGER_v26.7.12.md`; `python3`-parsed
+  `20260713T173045Z.json` (`gap_id: G51`) and `20260713T165952Z.json` (`gap_id: G50`).
+- Verdict: CONFIRMED
+- Evidence: `0639081` ("feat(mfact-core): add [lints] clippy gate ... closing G51")
+  touches `GAP_LEDGER_v26.7.12.md` + `Cargo.toml` + `justfile` together, body stating
+  "GAP_LEDGER_v26.7.12.md: G51 added CLOSED in this same commit." `c636fd3` similarly
+  wires `stuck_item_guard.py` and closes G50 in one commit, body describing a genuine
+  bug caught and fixed before commit (`--receipts DIR` argparse mismatch). Both G50 and
+  G51 are present in `GAP_LEDGER_v26.7.12.md` (lines 997, 1016) with closure text
+  matching the commit bodies. The separate "chore(loop): record firing-N success
+  receipt" commits are receipt/metrics bookkeeping only -- a distinct, expected
+  artifact per the loop's own two-commit-per-firing design, not a ledger-discipline gap.
+- Severity: minor
+
+### PL12 -- HEAD is unchanged at 98263a9, consistent with the pass-10/11 handoff state,
+
+- Lens: baseline-and-drift-check
+- Claim: HEAD is unchanged at `98263a9` as this pass begins, consistent with the
+  pass-11/pass-10 handoff state.
+- Source: `git -C /Users/sac/mfact rev-parse HEAD`; `git log -1 --format='%h %ci %s'`.
+- Verdict: CONFIRMED
+- Evidence: `git rev-parse HEAD` returns
+  `98263a93a84293e1225edc656d9c96c6f7c3ec63`; `git log -1` shows "98263a9 2026-07-13
+  11:37:40 -0700 docs(audit): append pass 10 -- final independent verification of
+  waves 0-7", matching the stated starting point exactly.
+- Severity: minor
+
+### PL13 -- This pass's own draft misattributed firing 6's collision receipt filename,
+
+- Lens: fix-loop-postconstruction-firing
+- Claim: this pass's task-supplied finding text cited `20260713T165952Z.json` as
+  firing 6's collision receipt (paired with commit `d2e6d01`).
+- Source: `git show --stat d2e6d01` (lists the files it actually touches) and
+  `python3`-parsed JSON contents of `20260713T165952Z.json` vs `20260713T175700Z.json`.
+- Verdict: REFUTED (as drafted; corrected in-line before commit, see PL4)
+- Evidence: `git show --stat d2e6d01` touches only `.mfact/receipts/20260713T175700Z.json`,
+  `.mfact/receipts/latest.json`, and `MFACT_SELF_IMPROVEMENT_LOOP.md` -- never
+  `20260713T165952Z.json`. The latter independently parses as `status: success`,
+  `collision: false`, `gap_id: G50`, `commit_sha: c636fd3` -- it is firing 4's G50
+  closure receipt, not a collision receipt at all. The correct firing-6 collision file
+  is `20260713T175700Z.json` (`status: failed`, `collision: true`, `gap_id: null`),
+  used in PL4 above. Caught and fixed before this section was written to the ledger, in
+  the same spirit as pass 10's PJ10 and pass 11's PK9 catches of prior passes' own
+  citation errors -- this time the citation being corrected belongs to this pass's own
+  pre-commit draft, not a prior published pass.
 - Severity: minor
 
 ## References
