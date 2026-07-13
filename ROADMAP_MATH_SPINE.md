@@ -344,6 +344,41 @@ corpora. Pressure objects, spine calculus (with the marked offspring kernel of C
 spectra, and the freezing test (Correction 8) come after empirical model admission, not before.
 Perron–Frobenius and CKA remain Mathlib gaps to scope before any promise.
 
+### Cross-layer glue (Playground) — rank-order and runtime-replay bridges
+
+Two small bridge files under `procint/ProcInt/Playground/Glue/`, added 2026-07-13, connecting
+previously-unconnected layers of this spine to each other and to `Playground`'s runtime/replay
+machinery. Neither is itself a numbered Wave M0-M5 deliverable; both are cheap instantiations of
+vocabulary those waves already declared.
+
+- `Glue/RankOrder.lean` — `DAG.admittedOrder` (`def`, `@[reducible]`, not `instance`: a type `V`
+  can carry many distinct `DAG` structures, so the witness is non-inferable data, matching
+  Mathlib's own "reducible non-instance" convention for `Preorder.lift`) gives Wave M0's
+  `AdmittedObligationOrder` (`Residue/EntailmentOrder.lean:53`) its first instantiation, by
+  lifting any `Workflow.Multifractal.DAG`'s rank function via `Preorder.lift`.
+  `DAG.edge_lt` restates the pre-existing `DAG.rank_lt` field under that admitted-order
+  vocabulary (bridge A×D). `StrictOrder.ofRank` and `dag_rank_enabledFrontier_isAntichain`
+  connect the same DAG rank function to `Playground.MFW.Order`'s antichain machinery, by direct
+  instantiation of the already-proven `enabled_frontier_isAntichain` (bridge B×D; no new
+  antichain argument). Both theorems: `PROVEN`, axiom-free (`#print axioms` shows no axioms at
+  all, a strict subset of `[propext, Classical.choice, Quot.sound]`).
+- `Glue/RuntimeReplay.lean` — bridges the BRCE runtime layer (`Playground/MFW/Runtime.lean`,
+  `ExecutionState`/`zero_unreceipted_completion`) to the causal-replay layer
+  (`Playground/Swarm11/Replay.lean`, `Commute`/`TraceEq`/`replay_eq_of_traceEq`). `completeStep`
+  is a concrete, BRCE-preserving completion-recording step (the `completionReceipted` field
+  obligation is discharged inline). `concurrent_commute` shows `completeStep` commutes at any
+  two nodes (this holds unconditionally for this concrete representation via `Or`
+  commutativity/associativity, strictly more than the `Concurrent` hypothesis in its signature
+  requires — reported honestly as stronger than needed, not narrowed to match). This is
+  *replay commutativity* only; it does not enforce `Enabled`/`MayStart` scheduling legality
+  (`MFW.Order`'s separate job). `frontier_interleaving_replay_eq` transports
+  `Replay.replay_eq_of_traceEq` onto `completeStep` by direct instantiation. Standing: `PROVEN`,
+  axioms ⊆ `[propext, Classical.choice, Quot.sound]` for every declaration.
+
+Neither file connects to `MFW.Termination` (Wave M1, below): they bridge `Workflow.Multifractal`/
+`Playground.MFW`/`Playground.Swarm11.Replay` to each other and to Wave M0's obligation-order
+vocabulary, not to Crown II's descent argument.
+
 ---
 
 ## 5. Problem Ledger Additions

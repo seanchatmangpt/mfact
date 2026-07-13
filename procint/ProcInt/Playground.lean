@@ -29,6 +29,7 @@ import ProcInt.Playground.Swarm11
 import ProcInt.Playground.Swarm11Tests
 import ProcInt.Playground.Trajectory.RootCause
 import ProcInt.Playground.Trajectory.RecoveryBehavior
+import ProcInt.Playground.Glue.RankOrder
 
 /-! # ProcInt.Playground
 
