@@ -859,15 +859,19 @@ A noisy timing test must not fail-fast before correctness tests execute.
 
 ## Rigor-linter lesson
 
-Tripwire for:
+`scripts/rigor_linter.py` (verified live 2026-07-13) implements exactly these tripwires:
 
 - zero-field marker types
 - PhantomData-only types
 - empty trait implementations
 - discarded-input constructor paths
 - strong enforcement/proof doc comments above bodies with no checking mechanism
-- orphaned modules
-- public functions referenced only by tests
+- hedge comments or mock/dummy language in place of a real implementation
+
+Orphaned-module detection and test-only-referenced-function detection are NOT
+implemented (audit self-audit Pass 1 finding PA29 caught this list overclaiming both;
+corrected here rather than left standing 26+ passes) — if either check is wanted, it
+needs to be built, not just documented.
 
 The linter is not semantic proof. It makes suspicious mechanism gaps cheap to find.
 
