@@ -1,4 +1,4 @@
-/--
+/-
 Multifractality at the Integer Quantum Hall Transition
 Paper: https://arxiv.org/abs/2606.21679
 -/
