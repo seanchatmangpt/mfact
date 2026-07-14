@@ -42,9 +42,16 @@ this ledger in a single pass.
   cap parameter arrived as a broken template ("undefined"), so no numeric ceiling could be
   honored; all frontier-closed, mechanically fixable OPEN gaps were attempted instead of
   an arbitrary truncation.
-- **Left OPEN, blocked by an above dependency (not touched):** G1, G6, G7 (blocked by G4);
-  G8 (blocked by G5); G12 (blocked by G11); G26 (blocked by G25); G30, G42 (blocked by
-  G41); G44 (blocked by G24).
+- **Left OPEN, blocked by an above dependency (not touched):** G1, G7 (blocked by G4);
+  G12 (blocked by G11); G26 (blocked by G25); G30, G42 (blocked by G41); G44 (blocked by
+  G24). Correction (2026-07-13, later same day): G4/G5/G6 have since CLOSED (see their
+  own entries) — G6 removed from this list (it is closed, not left open); G1 and G7's
+  stated blocker (G4) is resolved, but both remain independently OPEN for their own
+  reasons (see their entries; audit Pass 26 / the final v26.7.13 readiness check found
+  G1's status needs human re-verification and G7 is an orphaned, un-reconciled artifact,
+  neither a mechanical fix). G8's stated blocker (G5) is resolved; G8 itself remains OPEN
+  pending `just independent-replay` against the new tag (external-actuation-pending, not
+  a dependency block).
 
 ## Selection law
 
