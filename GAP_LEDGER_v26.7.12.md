@@ -165,6 +165,12 @@ ledger text alone.
 
 - Lenses: release-artifacts, tickets-truth, paper (merged)
 - Status: OPEN
+- Update (2026-07-13): full reconciliation in `TAG_DECISION_BRIEF_v26.7.13.md` §G4 — the
+  "guard" is three distinct artifacts plus one live consumer (`build_post_release.py:111`
+  `gates_pass=all(gates.values())`, which the false field forces BLOCKED); the promotion
+  itself is kernel-evidenced (`ac647a9` -> TTL auditMsg -> AxiomAudit.lean:372-375).
+  Options and a retire-as-fulfilled recommendation are in the brief. Kept OPEN: the
+  disposition is a human call.
 - Evidence: release-manifest.json:2014 marks
   `ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded` proven=True
   (introduced by ac647a9 "chore: fix countermodel proofs mechanically").
@@ -183,6 +189,13 @@ ledger text alone.
 
 - Lenses: release-artifacts, paper, verifier-report, tickets-truth (merged)
 - Status: OPEN
+- Update (2026-07-13): the three lineages are one measurement basis at three epochs —
+  `e25724e8`/318/145 (hand snapshot) -> `942facf3`/397/197/stated-7 (frozen tag) ->
+  `b1edfbeb`/401/203/stated-2 (live) — so "stated=7 vs 2 cannot both hold" dissolves; see
+  `TAG_DECISION_BRIEF_v26.7.13.md` §G5 for the per-surface forensics, the
+  release_macros.tex mixed-identity instance, and the STANDING.md no-generator finding.
+  Fix class is regeneration under the new tag identity, never annotation of different
+  bases. Kept OPEN pending the G4 -> G6 -> G5 sequencing in the brief.
 - Verdict: two CONFIRMED (both downgraded release-blocking -> major). The frozen tag
   v26.7.7-procint-certified is internally self-consistent (`git show 184e3a3:...` matches
   942facf3 in both manifest and final_status); the defect is a stale/false status surface
@@ -207,6 +220,13 @@ ledger text alone.
 
 - Lenses: release-artifacts, tickets-truth, standing-claims, research-papers (merged)
 - Status: OPEN
+- Update (2026-07-13): the blocking mechanism stated in this entry's Fix is stale —
+  certify passes today (`certify.log:2394` exits 0; the 4-field GatesJson ignores the
+  extra gates.json key). The G4 dependency survives via a different edge:
+  `build_post_release.py:111` `gates_pass=all(gates.values())` renders the github_release
+  packet BLOCKED while the field is false. Full version-site inventory, the v26.7.13
+  touch list, and the sequencing recommendation are in `TAG_DECISION_BRIEF_v26.7.13.md`
+  §G6. Kept OPEN: bump and tag are post-G4, post-Pass-22 human calls.
 - Verdict: CONFIRMED (downgraded release-blocking -> major) — v26.7.12 equals today's
   date and appears nowhere in the repo (roadmap self-identifies as v26.7.11); the release/
   surface is internally consistent at v26.7.7, so this is staleness, not a false gate.
