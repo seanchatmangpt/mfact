@@ -5899,3 +5899,63 @@ that are logically independent but may share files (here, `justfile`) should eit
 serialized (not run through `pipeline()`'s per-item concurrency) or the collision guard
 instructions should explicitly whitelist known sibling-item output paths passed in via the
 prompt, not just self-created paths.
+
+## Pass 24 findings
+
+Pass 24 ran as a 3-agent read-only workflow (wf_6c84d798-46f) with two foci: independently
+re-verify this session's manual G59/G60/G61 recovery work, and spot-check six load-bearing
+forensic claims from w6uanoh22's Preflight before any future tag-cutting workflow trusts
+them. Totals: 12 findings, 10 VERIFIED, 0 REFUTED, 2 PARTIAL.
+
+### PX1 -- Recovery work and all six tag-forensics claims independently confirmed,
+
+- Lens: recovery-verify (A1-A4), tag-forensics-verify (B1-B6)
+- Claim: batch confirmation.
+- Source: Pass 24 workflow journal
+- Verdict: CONFIRMED
+- Evidence: commit 2ba9941 touches exactly its four claimed files; `receipts_consistency.py`
+  re-run live still exits 0; the hook is genuinely INSTALLED (`.git/hooks/pre-commit` and
+  `scripts/pre-commit-hook.sh` byte-identical), not just tracked. Commit 7d79c25's
+  pre-existing-defect claim holds against the commit's own parent (lines 1-4 identical
+  before 252063e). G59/G60/G61's ledger closures all cite commits that check out; G61
+  confirmed genuinely new (no prior "### G61" heading anywhere in history). The
+  pipeline()-bug diagnosis was corroborated at the source level -- the auditor read the
+  actual workflow script and journal.jsonl off disk and confirmed the exact indexing
+  mismatch (`results[i]?.[0]`/`[1]` against plain objects with no numeric keys) reproduces
+  the recorded `{"results":[],"ledger":null}` output verbatim. All six w6uanoh22 forensic
+  claims (lakefile.toml as a genuine seventh hardcode site never in the brief's touch
+  list; `just manifest` called by nothing else; `just release`'s literal body has no tag
+  step between certify and manufacture-post-release; G7's "standing guard" is an
+  unwired FastMCP stdio server with no CLI; `independent_replay.sh`'s `${MFACT_STANDIN:?}`
+  hard-aborts before its own graceful fallback; `mine_commit.py` still exists with its
+  `git tag -f` force-retag intact) all verified exactly as stated.
+- Severity: minor
+
+### PX2 -- w6uanoh22's "wrote nothing" claim and the dirty-tree resolution both re-confirmed,
+
+- Lens: completeness critic (CR-1), independently re-checked directly (not via a sub-agent)
+- Claim: w6uanoh22 genuinely halted before any write, and the dirty-tree risk it flagged
+  is now resolved.
+- Source: `git log --oneline 9bd489f..7d79c25 -- scripts/build_manifest.py
+  mfact/Mfact/Cli.lean release/gates.json release/release-manifest.json` (empty); fresh
+  collision-guard run
+- Verdict: CONFIRMED
+- Evidence: zero commits touch any release-identity file in that range, confirming
+  w6uanoh22's Preflight wrote nothing. The collision guard now returns completely empty
+  (zero delta against the tolerated baseline) -- the four paths that blocked it
+  (justfile, MFACT_SELF_IMPROVEMENT_LOOP.md, scripts/pre-commit-hook.sh,
+  scripts/receipts_consistency.py) are all committed as of 2ba9941.
+- Severity: minor
+
+### PX3 -- Minor line-range imprecision in the G59 commit message/ledger citation,
+
+- Lens: A2 (critic FLAG-A2)
+- Claim: the deletion "touches only lines 16-30."
+- Source: `git diff 252063e~1 252063e`
+- Verdict: PARTIAL (does not affect the substantive conclusion)
+- Evidence: the actual hunk is old-file lines 15-29 (deletions at 18-28) -- a few-line
+  citation inaccuracy in both the commit message and the ledger's closure bullet. Lines
+  1-4 remain untouched under either the stated or the actual bound, so the pre-existing-
+  defect finding it supports is unaffected. Left uncorrected in the ledger text itself
+  (not worth a dedicated commit for a citation off-by-a-few-lines); recorded here for the
+  record.
