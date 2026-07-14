@@ -146,9 +146,15 @@ def main() -> None:
         rf"\g<1>{total_decls}\g<2>",
         text,
     )
+    # The seed string embeds the release version (mirroring build_manifest.py's
+    # `f'mfact-{RELEASE}-genesis'`, exactly) and must be re-derived from the
+    # manifest on every regen, not just the trailing hash — otherwise the
+    # paper misstates the actual construction formula used to fold the hash.
     text = re.sub(
-        r"(BLAKE3, folded over all \d+ artifact hashes\s*\n?in name order, seed \\texttt\{\"mfact-v26\.7\.\d+-genesis\"\}\) is\s*\n?\\texttt\{)[0-9a-f.]+(\})",
-        rf"\g<1>{fold_prefix_short}...{fold_hash[-6:]}\g<2>",
+        r"(BLAKE3, folded over all \d+ artifact hashes\s*\n?in name order, seed \\texttt\{\")"
+        r"mfact-v[\d.]+-genesis"
+        r"(\"\}\) is\s*\n?\\texttt\{)[0-9a-f.]+(\})",
+        rf"\g<1>mfact-{manifest['release']}-genesis\g<2>{fold_prefix_short}...{fold_hash[-6:]}\g<3>",
         text,
     )
 
