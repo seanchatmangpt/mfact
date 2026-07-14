@@ -5816,3 +5816,43 @@ renderer-reproduction half, and a critic. Totals: 14 findings, 8 VERIFIED, 0 REF
   receipts-hygiene gap entry (latest.json mirror + future-dated receipt + stitched
   metrics line) is queued behind the concurrent GAP_LEDGER writer.
 - Severity: minor
+
+## Pass 23 findings
+
+Pass 23 ran strictly read-only (2-agent workflow wf_f4efba93-96e) while two large
+workflows actively mutated the release surface and mechanical residuals — scope was
+fenced to exactly the two isolated, complete commits at that moment (252063e G59
+deletion, 9bd489f AGENTS.md vocabulary addition). Totals: 8 findings, 7 VERIFIED,
+0 REFUTED, 1 PARTIAL. The PARTIAL was fixed fix-forward immediately after this pass
+(commit 90a1e10, before the flush below).
+
+### PW1 -- G59 deletion and AGENTS.md vocabulary both verify clean,
+
+- Lens: g59-verify (G1, G2, G4), agents-vocab-verify (A1-A4)
+- Claim: batch confirmation.
+- Source: Pass 23 workflow journal
+- Verdict: CONFIRMED
+- Evidence: 252063e touches only PairCorrelation.lean (no ledger scope creep), the
+  deleted theorem was genuinely vacuous (h1/h2/h3 introduced via intro, never used; the
+  existential witness type-checks independent of every hypothesis), and the post-deletion
+  file remains syntactically complete. 9bd489f is purely additive to AGENTS.md (0
+  deletions), its ~/praxis/.agents/handoff.md "VICTORY CONFIRMED" citation independently
+  re-verified false (paper/generated/ contains only .gitkeep, zero chapter files, exactly
+  as the new text and PRAXIS_DOGFOODING_EXPLORATION.md's cross-repo finding #6 describe),
+  the new six-word work-status vocabulary shares zero tokens with the existing formal
+  Standing enum, and markdown hygiene is clean (max 97 chars).
+- Severity: minor
+
+### PW2 -- G59's deletion left a dangling ontology assertion, fixed fix-forward,
+
+- Lens: g59-verify (G3)
+- Claim: nothing else in the repo depended on the deleted theorem.
+- Source: repo-wide grep, ontology.ttl read
+- Verdict: PARTIAL at finding time, CONFIRMED closed by 90a1e10
+- Evidence: the Lean-level claim held (no importer), but
+  research-papers/pair_correlation/ontology.ttl:9-13 still declared the deleted theorem
+  ggen:isMathematicallyAdmitted "true" as wf:MixingOrbitsIID, chaining two downstream
+  consequences (STOCHASTIC_LOAD_PREDICTION, IID_CACHE_PREDICTOR) off a claim that was
+  never honest — the theorem was vacuous from the start, not a real result invalidated
+  later. Removed in 90a1e10 (not marked false: it was never legitimately admitted).
+- Severity: major
