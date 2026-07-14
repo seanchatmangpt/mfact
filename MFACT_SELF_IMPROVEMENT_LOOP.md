@@ -32,7 +32,7 @@ last-run lookup):
   "gap_id": "G11",
   "input_hash": "sha256 of the gap-ledger item text as read at pick time",
   "output_hash": "sha256 of the resulting diff (git show --stat <sha>)",
-  "status": "success | partial | failed | no_op",
+  "status": "success | partial | failed | no_op | deferred",
   "timestamp": "2026-07-13T00:12:00Z",
   "verify_delta": {
     "before": "literal output of the failing/target check, pre-fix",
@@ -73,6 +73,14 @@ rewritten:
 
 ```json
 {"timestamp": "...", "git_head": "abc1234", "gaps_open": 41, "gaps_closed_this_firing": 1, "lake_build_pass": true, "sorry_count": 0, "axiom_count": 3}
+```
+
+A `no_op`/deferred-adjacent firing has instead been observed appending a compact
+status-ping variant with a different field set rather than the full-metrics shape
+above (e.g. `.mfact/metrics-history.jsonl`'s real last line as of this writing):
+
+```json
+{"ts": "2026-07-13T23:34:18Z", "run_id": "20260713T233418Z", "gap_id": "G50", "status": "no_op", "receipts_on_disk": 17, "open_gaps_grep": 22, "closed_gaps_grep": 20}
 ```
 
 `convergence_ratio` (computed at read time, not stored): mean `gaps_closed` over the

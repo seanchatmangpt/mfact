@@ -4,6 +4,16 @@
 default:
     @just status
 
+# Install the tracked pre-commit hook (scripts/pre-commit-hook.sh) into
+# .git/hooks/pre-commit. .git/hooks/pre-commit itself is untracked (git does
+# not version hook installations), so this recipe is how the tracked source
+# reaches the live hook location. Safe to rerun.
+[group('internal')]
+install-hooks:
+    @cp scripts/pre-commit-hook.sh .git/hooks/pre-commit
+    @chmod +x .git/hooks/pre-commit
+    @echo "installed scripts/pre-commit-hook.sh -> .git/hooks/pre-commit"
+
 # Serialize all `lake build`/`lake test` invocations across recipes so two
 # overlapping `just` runs (e.g. `release` + `tactic-search` in another shell)
 # never race the same .lake/build directory and spawn duplicate lean procs.
@@ -237,6 +247,14 @@ trajectory-annotate:
 [group('cockpit')]
 stuck-item-guard:
     @python3 scripts/stuck_item_guard.py --receipts .mfact/receipts/
+
+# Static check that .mfact/receipts/latest.json's run_id matches the max
+# run_id among .mfact/receipts/*Z.json (MFACT_SELF_IMPROVEMENT_LOOP.md
+# "Receipt schema"; see scripts/receipts_consistency.py docstring for exact
+# scope -- content diff is out of scope, run_id equality only). Read-only.
+[group('internal')]
+receipts-consistency:
+    @python3 scripts/receipts_consistency.py
 
 # Clippy over mfact-core's real compiled targets, enforcing the Cargo.toml
 # [lints] gate (G51). Scoped to --lib --bin turbulence: src/main.rs and
