@@ -6086,3 +6086,67 @@ tag-cutting sequence. Totals: 42 findings across four verify agents plus a criti
   it was read-only, but should have been flagged inline as a scope-fence risk rather than
   silently treated as equivalent to the explicitly-whitelisted GAP_LEDGER.
 - Severity: minor
+
+## Pass 26 findings
+
+Pass 26 (4-agent workflow, wf_51b60d60-6d3) put last turn's unsupervised direct work
+under the same adversarial scrutiny every sub-workflow's output gets: the
+build_quadrature.py tag-derivation fix, the G5/G6 ledger closures, the
+MFACT_SOURCE_CHANGED=1 use, and a sweep for further instances of the doc-comment/
+namespace bug across research-papers/. Totals: 12 findings, 11 VERIFIED, 0 REFUTED,
+1 PARTIAL.
+
+### PZ1 -- All of last turn's direct work independently confirmed, one check going further,
+
+- Lens: tag-fix-verify (A1-A4), ledger-verify (B1-B2)
+- Claim: batch confirmation.
+- Source: Pass 26 workflow journal
+- Verdict: CONFIRMED
+- Evidence: build_quadrature.py's fix verified at the source (manifest-field derivation,
+  subprocess import genuinely removed, py_compile clean); all nine generated release
+  surfaces independently re-swept (not trusting the "zero hits" claim) with zero
+  divergence found. A4 went beyond the ask: ran `git ls-remote --tags origin` live to
+  rule out a silent network failure masking a false "never pushed" claim -- confirmed
+  origin's newest tag is still v26.7.7. B1 spot-checked 7 of 9 cited commits (more than
+  the requested 5). B2's MFACT_SOURCE_CHANGED=1 judgment went further than asked too:
+  noticed the substantive value change in that commit was REPLAY_PASS -> REPLAY_NOT_RUN,
+  a downgrade -- the opposite of what a self-serving hand edit would produce -- and
+  independently found packs/post-release-pack/ontology.ttl (the actual ggen source)
+  separately modified in the working tree, corroborating legitimate regeneration.
+- Severity: minor
+
+### PZ2 -- Third doc-comment/namespace bug found and fixed; sweep refused to guess,
+
+- Lens: research-papers-sweep
+- Claim: research-papers/smfdcca/Smfdcca.lean has the same defect as the two already-fixed
+  files.
+- Verdict: VERIFIED, and fixed (fix-forward, after the sweep's own correct refusal)
+- Evidence: the sweep phase's own task prompt contained a genuine contradiction --
+  built from a `.replace()` call meant to lift the read-only restriction that left
+  stale "STRICTLY READ-ONLY" language in place elsewhere in the string. The sweep agent
+  found the bug, confirmed it via the wrapped build attempt, and CORRECTLY DECLINED to
+  fix or commit it, reporting the conflict instead of resolving the ambiguity itself --
+  exactly the right behavior when instructions genuinely disagree. Fixed directly this
+  session (commit e4c1e6f) after independently re-confirming the defect. Honest scope
+  note carried into the commit message: this package also has the separate,
+  already-documented (Pass 20/21 RP1/PT4) zero-byte-lakefile.lean-shadows-lakefile.toml
+  defect, confirmed live ("configuration file is missing a package declaration") --
+  the doc-comment fix cannot be build-verified end-to-end until that separate, batch
+  issue (affecting multiple research-papers packages) is addressed in its own pass.
+- Severity: major
+
+### PZ3 -- G8 never re-examined after its blocker closed; ledger summary self-contradicted,
+
+- Lens: ledger-verify (B3), completeness critic (MISSED-SURFACE-1, MISSED-SURFACE-2)
+- Claim: no other ledger entry needed re-examination after G5/G6 closed.
+- Verdict: REFUTED (two real findings), both fixed
+- Evidence: (1) G8 ("Replay lane frozen at v26.7.7... after G5/G6 re-tag, run
+  just independent-replay") was never touched even though its blocker (G5) closed the
+  same session, same day; release/replay_report.json still pins REPLAY_PASS to the old
+  tag and commit. Not force-closed here (independent-replay needs MFACT_STANDIN, unset,
+  per Pass 24 finding B5) -- left as an honestly-described external-actuation-pending
+  residual, captured in the final readiness update instead. (2) GAP_LEDGER's own
+  top-of-file run-log summary still listed G6 as "left open, blocked by G4" after G6's
+  own section showed CLOSED -- a live self-contradiction inside one file. Corrected in
+  ef55fba.
+- Severity: major
