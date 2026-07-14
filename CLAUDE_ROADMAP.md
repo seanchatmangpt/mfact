@@ -859,19 +859,33 @@ A noisy timing test must not fail-fast before correctness tests execute.
 
 ## Rigor-linter lesson
 
-`scripts/rigor_linter.py` (verified live 2026-07-13) implements exactly these tripwires:
+`scripts/rigor_linter.py` (verified live 2026-07-13, Pass 30) implements 13 distinct
+tripwires. Enumerated in full here so this section can't silently undercount again:
 
-- zero-field marker types
-- PhantomData-only types
-- empty trait implementations
-- discarded-input constructor paths
-- strong enforcement/proof doc comments above bodies with no checking mechanism
-- hedge comments or mock/dummy language in place of a real implementation
+- fake Lean 4 syntax (`def hello := "world"`) [rigor_linter.py:16-17]
+- unproved theorem / `sorry` in `.lean` files [rigor_linter.py:25-26]
+- empty trait definitions (`pub trait X {}`) [rigor_linter.py:31-32]
+- zero-field marker structs (`pub struct X;`) [rigor_linter.py:35-36]
+- PhantomData-only structs [rigor_linter.py:44-51]
+- empty trait implementations (`impl X for Y {}`) [rigor_linter.py:58-64]
+- `unimplemented!()` / `todo!()` [rigor_linter.py:67-68]
+- dead alternative functions (`_v2`, `_alt`, `_correct`, `_fixed`, `_working`)
+  [rigor_linter.py:71-72]
+- discarded-input + unconditional `Ok(())` [rigor_linter.py:75-76]
+- discarded-input + any unconditional constructor, broader form
+  [rigor_linter.py:83-88]
+- forbidden sci-fi vocabulary (Warp Drive, Bekenstein bound, Heat Death,
+  SubKolmogorov, Quantum Blocker) [rigor_linter.py:91-94]
+- claim-without-mechanism doc comments -- enforcement language above a body with
+  no branching or comparison [rigor_linter.py:96-129]
+- hedge comments or mock/dummy language (`for now`, `TODO: implement`, `mock`,
+  `dummy`) [rigor_linter.py:132-135]
 
 Orphaned-module detection and test-only-referenced-function detection are NOT
-implemented (audit self-audit Pass 1 finding PA29 caught this list overclaiming both;
-corrected here rather than left standing 26+ passes) — if either check is wanted, it
-needs to be built, not just documented.
+implemented (self-audit Pass 1 finding PA29 caught an earlier version of this list
+overclaiming both). Pass 30 then caught the *replacement* text undercounting to 6 of
+the 13 real checks -- same overclaim pattern in both directions: don't round this list
+to whatever's quick to type in either direction, enumerate it against the live file.
 
 The linter is not semantic proof. It makes suspicious mechanism gaps cheap to find.
 
