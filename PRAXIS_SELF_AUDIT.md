@@ -5985,3 +5985,104 @@ instruction ("delete unused code, no stub needed") is real — it is this sessio
 system-prompt guidance (Doing tasks: "Avoid backwards-compatibility hacks... If you are
 certain that something is unused, you can delete it completely"), not an AGENTS.md quote,
 and should have been cited as such.
+
+## Pass 25 findings
+
+Pass 25 (6-agent read-only workflow, wf_679e9da3-208) opened the first genuinely new
+ground in six passes: MFW_WORKFLOW_CATALOG.md (2587 lines, 96 workflow proposals, flagged
+since this session's first fix-loop trigger as "not yet read by anyone... treat every
+claim as unverified until you personally check it against the real ledger item it
+cites"), plus PRAXIS_DOGFOODING_EXPLORATION.md section 4 and WASM4PM_AUTONOMIC_EXPLORATION.md
+sections 2.1/2.2 — both named as candidate fuel in every fix-loop firing this session, never
+independently explored. Deliberately fenced off the concurrently-running v26.7.13
+tag-cutting sequence. Totals: 42 findings across four verify agents plus a critic.
+
+### PY1 -- Batch: most catalog/exploration claims independently confirmed,
+
+- Lens: catalog-verify-1/2, dogfooding-verify (PD5-PD7), wasm4pm-verify (WA1,2,4,5,8-20,22-27,30)
+- Claim: batch of clean re-verifications spanning both MFW_WORKFLOW_CATALOG.md proposals
+  1.1 (wave-m1-crown-descent), 1.5 (p13-planner-field-tropical-bridge), 2.3
+  (swarm-wave-s0-actor-admission-typing) and ~25 WASM4PM_AUTONOMIC_EXPLORATION.md claims.
+- Verdict: CONFIRMED
+- Evidence: file:line citations resolve exactly across both mfact and the sibling
+  ~/wasm4pm repo (read-only cross-repo verification, no writes there). Notably 1.1's own
+  catalog entry discloses a same-day self-correction retracting an earlier overstated
+  dependency, and independently checking that self-correction against
+  ObligationRank.lean:47,49 confirmed it accurate. PD7 independently re-confirmed the
+  praxis handoff.md "VICTORY CONFIRMED" false claim a third time (after AGENTS.md's own
+  citation and this session's earlier direct check) — now checked three separate ways,
+  same result each time.
+- Severity: minor
+
+### PY2 -- QuantumHall.lean had PairCorrelation.lean's exact doc-comment bug, fixed,
+
+- Lens: catalog-verify-2 (4.26 quantum-hall-correspondence-audit)
+- Claim: catalog proposal 4.26 accurately characterizes QuantumHall.lean as failing to
+  build on a syntax defect.
+- Verdict: VERIFIED, and fixed
+- Evidence: reproduced live -- `just _lake` build failed with the exact same
+  `unexpected token 'namespace'` parse error as the PairCorrelation.lean defect fixed
+  earlier this session (7d79c25): a `/--` doc-comment illegally preceding `namespace`.
+  Same fix applied (commit 09a0866): `/--` -> `/-`. Build now succeeds. This is the
+  second instance of this exact defect class found in research-papers/ this session --
+  worth a targeted sweep of the remaining research-papers/ packages for the same pattern
+  in a future pass (queued, not done this pass -- out of the two named-document scope).
+- Severity: major
+
+### PY3 -- Two catalog proposals are already contradicted by same-day on-disk results,
+
+- Lens: catalog-verify-1/2 (2.6 oriented-swap-newman-closure, 5.4 pddl-validcheck-admission-gate)
+- Claim: both proposals describe still-open, still-actionable work.
+- Verdict: REFUTED (both)
+- Evidence: 2.6's central deliverable ("reproves LocallyConfluent") is directly
+  contradicted by `OrientedSwap.lean:390`'s kernel-checked
+  `not_orientedSwap_locallyConfluent` -- a refutation, not a proof, of exactly what the
+  proposal wants reproven, landed the same day. 5.4 cites `CrownLoopBroker`/
+  `sequence_cycle` in a Rust `broker.rs` that no longer exists anywhere in the repo
+  (deleted as part of G11's closure) -- the historical claim (PA25/PB23) was accurate
+  when written, is stale now. Neither proposal should be picked up as-is by a future
+  firing without re-scoping.
+- Severity: major
+
+### PY4 -- Two count-citation errors and one file/line misattribution (WA doc),
+
+- Lens: wasm4pm-verify (WA21, WA28, WA29)
+- Claim: three specific count/location claims.
+- Verdict: REFUTED (all three)
+- Evidence: WA21 claims 4 distinct cited findings, actual is 3 distinct findings across 7
+  `exit 2` instances (not 4). WA28 claims 13 grep hits for a pattern, actual is 16.
+  WA29 cites `PetriRefusal` as defined in `law.rs`; it is actually in `petri.rs` (wrong
+  file), with 9 enum variants not the 5 listed (citation omits 4). All three are in the
+  sibling ~/wasm4pm repo, out of mfact's fix scope, but recorded so anyone consuming this
+  document doesn't inherit the wrong counts.
+- Severity: minor
+
+### PY5 -- Path-prefix inconsistency and a stale tool-version citation, both explained,
+
+- Lens: wasm4pm-verify (WA3, WA6, WA7, WA31)
+- Claim: batch of citation-hygiene findings.
+- Verdict: PARTIAL (all, substance unaffected)
+- Evidence: F3/F7/WA3 cite paths with a doubled `wasm4pm/wasm4pm/...` prefix while
+  F1/F2/F4/F5/F6/F8 use the established single-prefix convention -- both styles resolve
+  to real content once you know which, but a reader following the document's own
+  convention would fail to resolve F3/F7. WA6's claimed `ggen --version` (26.7.4) no
+  longer matches live (26.7.13) -- explained: the binary was rebuilt during this
+  session's own concurrent v26.7.13 release cut, not a document defect.
+- Severity: minor
+
+### PY6 -- Two scope-fence/completeness gaps queued for a future pass,
+
+- Lens: completeness critic (MISS-1, MISS-2, FLAG-3.1)
+- Claim: coverage gaps.
+- Verdict: CONFIRMED (queued)
+- Evidence: (1) no finding checked whether the same Lean asset or gap ID is
+  characterized consistently across more than one of the three catalogs -- a
+  cross-document consistency check AGENTS.md's own terminology discipline would call
+  for. (2) none of the 40+ findings checked whether any of the three catalogs uses
+  atlas-derived vocabulary (from docs/testing-atlas/) without the required
+  TESTING_ATLAS_INTEGRATION.md correspondence -- a specific, named, in-scope AGENTS.md
+  obligation, untouched. (3) minor: finding 3.1 cited TAG_DECISION_BRIEF_v26.7.13.md
+  (not on the pass's enumerated safe-scope list) for cross-referencing -- harmless since
+  it was read-only, but should have been flagged inline as a scope-fence risk rather than
+  silently treated as equivalent to the explicitly-whitelisted GAP_LEDGER.
+- Severity: minor
