@@ -23,7 +23,7 @@ quad:Result a quad:Results ;
   quad:claimCount 5 ;
   quad:evalCount 6 ;
   quad:eventCount 10 ;
-  quad:releaseTag "v26.7.7-procint-certified" ;
+  quad:releaseTag "v26.7.13-procint-certified" ;
   quad:foldHash "74900dc3fc5aa2e6ad46224655f65ecd2e49636c91ac2204614e16cbe1521f32" ;
   quad:sorryCount 0 ;
   quad:admitCount 0 ;
