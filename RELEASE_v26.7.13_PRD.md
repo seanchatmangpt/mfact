@@ -442,3 +442,108 @@ Net: this is closer to a certified v26.7.13 release than the "Release readiness"
 above, but §4's "Not a certified v26.7.13 release" non-goal is not fully retired by this
 update — it should be re-read as "the tag now exists and G4 is closed; G5/G6's remaining
 self-consistency residual is the last item before that non-goal can itself be revisited."
+
+## Release readiness — FINAL — 2026-07-13
+
+`v26.7.13-procint-certified` is cut, locally, at commit
+`650b3885bd8d9c0b2b552a53ba47b5b669894c26` (independently re-verified for this section:
+`git cat-file -t` returns `tag`, a real annotated object, not a lightweight ref;
+`git rev-list -n1` resolves to that same commit; and `git merge-base --is-ancestor` confirms
+it is an ancestor of live HEAD `4dd24096b81ea96d51592642e6713eeea4649394`). The tag has never
+been pushed: `git ls-remote --tags origin` shows only the pre-existing
+`v26.7.6`/`v26.7.7-procint-certified` refs, zero `v26.7.13` hits; `git branch -r --contains
+650b388` is empty; and `git branch -vv` shows only ahead-of-origin counts on every local
+branch, no `v26.7.13` ref on any remote. G4, G5, and G6 — the PRD's own named tag
+blockers (§ "Post-tag update" above) — are now all CLOSED, explicitly not as a single group
+but each on independently re-checked evidence: **G4** by `e1142ec` (retires the dead
+`countermodel_not_promoted` guard as fulfilled, restoring `release/gates.json` to the exact
+4-field schema `mfact/Mfact/Cli.lean`'s `GatesJson` reads); **G5** by `54d2087`/`7f1ad64`
+(root-caused and fixed the `git describe`-before-tag-exists bug in
+`scripts/build_quadrature.py`, re-rendered, zero stale `v26.7.7`/`v26.7.6` strings left
+across nine generated release surfaces); and **G6** by the full chain
+`e1142ec`/`1bfbe9f`/`b26e1db`/`6ebe108`/`a4eaf35`/`650b388`/`9fd1f22`/`54d2087`/`7f1ad64`
+(three-site version bump, tag cut, plus the G5 fix G6's own closure depended on).
+
+### DoD checklist — green, with citations
+
+- **Tag object type** — `git cat-file -t v26.7.13-procint-certified` = `tag`; `git rev-list
+  -n1` resolves to `650b3885bd8d9c0b2b552a53ba47b5b669894c26`, a real commit and a confirmed
+  ancestor of current HEAD.
+- **Tag never pushed** — `git ls-remote --tags origin` has zero `v26.7.13` hits (only 3
+  pre-existing `v26.7.6`/`v26.7.7` procint-certified refs); `git branch -r --contains
+  650b388` is empty.
+- **G4 CLOSED** — `GAP_LEDGER_v26.7.12.md` line 167, `Status: CLOSED`. Closure commit
+  `e1142ec` (verified `git cat-file -t e1142ec` = `commit`) deletes the dead
+  `countermodel_not_promoted` field, restoring `gates.json` to the 4-field schema
+  `Cli.lean` reads.
+- **G5 CLOSED** — `GAP_LEDGER_v26.7.12.md` line 207, `Status: CLOSED`. Root-caused in
+  `scripts/build_quadrature.py` (the `git describe`-before-tag-exists bug), fixed in
+  `54d2087`, re-rendered in `7f1ad64` (both re-verified as real commit objects);
+  independently re-swept nine release surfaces for stale `v26.7.x` strings this session.
+- **G6 CLOSED** — `GAP_LEDGER_v26.7.12.md` line 279, `Status: CLOSED`. Full commit chain
+  `e1142ec`/`1bfbe9f`/`b26e1db`/`6ebe108`/`a4eaf35`/`650b388`/`9fd1f22`/`54d2087`/`7f1ad64`
+  all re-verified as real commit objects; version bumped at three sites
+  (`build_manifest.py`, `Cli.lean`, `lakefile.toml`).
+- **`certify.log` freshest tail** — ends `certified: v26.7.13 (proven 203/401, objection
+  type uninhabited)`, followed only by three deliberate negative-control refusals (bad
+  `sorryFree`, malformed manifest JSON, countermodel-promotion guard) — no unexplained
+  failures.
+- **`gates.json` — exactly 4 fields** — `sorryFree`, `axiomsClean`, `fixturesPass`,
+  `evidenceComplete`, all `true`; matches G4's closure claim that the dead field was
+  removed, not merely ignored.
+- **Nine generated release surfaces — spot-checked, all consistent** —
+  `release-manifest.json` (`release v26.7.13`, runIdentifier `b26e1db`, foldHash
+  `74900dc3...521f32`), `release/quadrature.json` (`release_id v26.7.13`),
+  `release/final_status.json` (`release v26.7.13`, tag `v26.7.13-procint-certified`),
+  `release/standing.env` (header "release v26.7.13"), `paper/release_macros.tex`
+  (`\ReleaseTag` = `v26.7.13-procint-certified`),
+  `packs/quadrature-pack/ontology.ttl` (`releaseId`/`releaseTag` both `v26.7.13`, no longer
+  self-contradictory), `dist/github-release/title.txt` ("mfact v26.7.13 — procint
+  certified"). Zero stale `v26.7.7`/`v26.7.6` strings found across all seven re-read live.
+- **External actuation status honestly recorded, not overclaimed** —
+  `final_status.json`'s `publicationActuation=PENDING_EXTERNAL_ACTUATION`,
+  `arxivPacket=PENDING`, and all three sub-packets (`arxiv_upload`, `github_push`,
+  `github_release`) show `PENDING_EXTERNAL_ACTUATION`; the tag commit is confirmed absent
+  from every remote-tracking branch.
+
+### Residuals
+
+- **Push, arXiv upload, GitHub release** — external actuation pending explicit permission.
+  The tag exists locally only; `final_status.json` records all three publication packets
+  as `PENDING_EXTERNAL_ACTUATION`. This document makes no push/upload/release decision.
+- **G1** — human design decision. Marked OPEN, but its own 2026-07-13 update says the
+  cited `EXIT=1` no longer reproduces, and the residual it deferred to
+  (`countermodel_not_promoted` in `gates.json`) was itself deleted by G4's later closure
+  (`e1142ec`). The status label needs a human re-verify/close, not a mechanical patch.
+- **G7** — human design decision. `release/standing_guard_receipt.json` still holds 58
+  REFUSED/BLOCKER entries (last modified 2026-07-11), unregistered in
+  `.mfact/artifacts.toml` and unreferenced by `standing.env`/`final_status.json` — an
+  orphaned artifact in `release/`. Not gating anything today; a human must reconcile,
+  waive, or delete it.
+- **G8** — human design decision, largely moot. `release/replay_report.json` is still
+  pinned to `v26.7.7-procint-certified`, but `standing.env`/`final_status.json` both
+  honestly read `REPLAY_NOT_RUN` rather than inheriting the stale PASS, and
+  `replay_plan.json` has been correctly re-derived for v26.7.13. What remains is running
+  `just independent-replay` against the new tag and retiring the stale report file — a
+  human scheduling call; no false claim is currently live.
+- **G19** — human design decision. Four procint Lean modules (`Workflow.Multifractal`,
+  `Graph.Semantic`, `Planning.SemanticBridge`, `Thermo`) sit inside the certified corpus
+  but are imported by nothing and unbuilt by the full `lake build` target. A human must
+  wire them in or delete them; no gate currently catches a break in any of the four.
+- **G25/G26** — human design decision. `.gitmodules` now registers `web/mfact-ui`
+  (`032abc3`), fixing the fetch mechanism, but the gitlink itself is still dirty
+  (uninitialized per `git submodule status`, pointer moved vs HEAD) and three unpushed
+  embedded-repo fixes remain uncommitted in the UI repo. A human must commit+push the
+  embedded tree or vendor the UI directly; not a release-gate blocker (Lean gates
+  unaffected), but Pages/CI deploy stays broken until this lands.
+- **G42** — human design decision. `release/standing.env` line 2 still reads the
+  placeholder `# Regenerate via: python3 <scratchpad>/build_manifest.py ...` instead of
+  the real `just manifest && just certify` invocation — cosmetic, non-blocking, awaiting a
+  doc edit.
+- **G58** — human design decision, per the ledger's own note. The ggen receipt chain
+  (`.ggen-v2/receipt-log.jsonl`) still has non-linear fork points at indices 186/192/206
+  and `ts_ns=0` in all 216 records, with no operative gate reading it — an explicit
+  orchestration-design decision, not a mechanical patch.
+
+**Closing.** mfact's controllable, local, mechanical release work is complete; tagging is
+done; pushing and external publication are user decisions this document does not make.
