@@ -4,13 +4,21 @@ This roadmap defines the core engineering trajectory for `mfact`. Previously, th
 
 They were purged. The new mandate is to systematically rebuild all 16 domains as **mechanically verified Lean 4 formalizations**, bridging advanced mathematics strictly to zero-cost Rust typestates in the execution engine.
 
-## Phase 1: The Core Five (Constructed & Verified)
-These bridges have been successfully formally verified (0 `sorry`s) and bonded to the `safe-toolbox` / `mo-mae` typestates.
+## Phase 1: The Core Five (Source Written, Not Yet Build-Verified)
+These bridges' Lean sources contain 0 `sorry`s in text, but are not yet bonded to any Rust
+typestate -- `safe-toolbox` and `mo-mae` are not real crates in this repo (the sole crate is
+`mfact-core`, which contains zero `PhantomData`/`type Proof` typestate bindings). The zero-cost
+Rust bonding mandated below (Execution Rules) has not been built for any of the five.
 1. **Random Walk / Galton-Watson Trees**: Proves the mathematical bijection between branching stochastic population processes and Agile Release Train story point decomposition. 
 2. **RevOps Turbulence / Phase Changes**: Formally bounds turbulent phase shifts to exact thread-pool scheduling density and execution overhead.
 3. **Star Graph Topologies**: Computes exact Betti numbers ($b_1 = 0$) and Euler characteristics to mathematically enforce hub-and-spoke execution bottlenecks for independent traffic flows.
 4. **Stochastic Pair Correlation**: Formally bounds the variance of the execution engine, proving it asymptotically models an i.i.d. sequence under safe conditions.
 5. **Scalar Dissipation / Metric Spaces**: Maps physical dissipation rates to concrete state-transition friction (e.g., funding cuts, market pivots).
+
+Caveat: `star_graphs` has no `.lake` build directory in this tree
+(`ls research-papers/star_graphs/.lake` fails) -- its Lean source has never been successfully
+compiled here, so "0 `sorry`s in text" is not the same as "formally verified." Re-run
+`lake build` for each of the five before re-labeling this phase "Constructed & Verified."
 
 ## Phase 2: The Next Horizon (In Progress / Scheduled)
 These domains must be subjected to the same rigorous 80/20 formalization. No claims are permitted without a corresponding `.lean` proof and a zero-cost Rust `PhantomData` invariant.
