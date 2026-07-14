@@ -33,6 +33,11 @@ conjecture generation, scale-selection experiments, workflow mass profiling.
 
 namespace ProcInt.Playground.Experimental
 
+/-- Parallel map for multithreaded List processing. -/
+def parMap {α β : Type} (f : α → β) (xs : List α) : List β :=
+  let tasks := xs.map (fun x => Task.spawn (fun _ => f x))
+  tasks.map Task.get
+
 /-- Finite mass cells at one experimental scale. -/
 abbrev MassProfile := List Nat
 
@@ -51,12 +56,12 @@ def massMoment (q : Nat) (masses : MassProfile) : Nat :=
 
 /-- Moment signature over an explicit q-grid. -/
 def momentSignature (qs : List Nat) (masses : MassProfile) : List Nat :=
-  qs.map (fun q => massMoment q masses)
+  parMap (fun q => massMoment q masses) qs
 
 /-- Multiscale moment field over explicit finite scale profiles. -/
 def multiscaleSignature
     (qs : List Nat) (scales : List MassProfile) : List (List Nat) :=
-  scales.map (momentSignature qs)
+  parMap (momentSignature qs) scales
 
 /-- Number of distinct moment signatures across scales. -/
 def signatureDistinctness

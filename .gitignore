@@ -1,5 +1,12 @@
-.lake/
+**/.lake*/
+.agents/
 *.olean
+test.js
+test.wasm
+test_collect*.lean
+computable.o
+batteries/
+**/.lake_bad*/
 paper/*.aux
 paper/*.log
 paper/*.out

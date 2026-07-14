@@ -2,6 +2,7 @@
 -- Candidate Lean: admitted only by `lake build`. ggen renders; Lean admits.
 -- Do not edit by hand: candidates enter through the ontology, never here.
 import Mathlib
+import Aesop
 
 /-! # ProcInt.Petri.Net
 
@@ -20,6 +21,8 @@ structure PetriNet (P : Type) (T : Type) where
 /-- A marking assigns finitely many tokens to each place (Murata 1989):
 a finitely supported function P →₀ ℕ. -/
 abbrev Marking (P : Type) := P →₀ ℕ
+
+declare_aesop_rule_sets [petri]
 
 
 end ProcInt

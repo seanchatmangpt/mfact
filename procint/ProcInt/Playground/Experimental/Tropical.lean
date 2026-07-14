@@ -60,6 +60,11 @@ def maxList : List Trop → Trop :=
 
 end Trop
 
+/-- Parallel map for multithreaded List processing. -/
+def parMap {α β : Type} (f : α → β) (xs : List α) : List β :=
+  let tasks := xs.map (fun x => Task.spawn (fun _ => f x))
+  tasks.map Task.get
+
 /-- Finite max-plus matrix represented as rows. -/
 abbrev TropicalMatrix := List (List Trop)
 
@@ -92,9 +97,10 @@ Claim ceiling: finite executable matrix probe.
 -/
 def tropicalMul
     (left right : TropicalMatrix) : TropicalMatrix :=
-  left.map fun row =>
+  parMap (fun row =>
     (List.range (matrixWidth right)).map fun j =>
       tropicalDot row (column right j)
+  ) left
 
 /-- Tropical identity matrix of dimension `n`. -/
 def tropicalIdentity (n : Nat) : TropicalMatrix :=
@@ -118,6 +124,6 @@ def diagonalCycleScore
 /-- Finite sequence of diagonal cycle scores across a step horizon. -/
 def frozenPhaseTrace
     (matrix : TropicalMatrix) (horizon : Nat) : List Trop :=
-  (List.range (horizon + 1)).map (diagonalCycleScore matrix)
+  parMap (diagonalCycleScore matrix) (List.range (horizon + 1))
 
 end ProcInt.Playground.Experimental

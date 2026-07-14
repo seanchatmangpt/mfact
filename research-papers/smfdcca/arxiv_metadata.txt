@@ -1,0 +1,3 @@
+Title: Multifractal detrended cross-correlation analysis for two nonstationary signals
+URL: https://arxiv.org/pdf/0803.2773v1
+Query: multifractal detrended cross-correlation analysis

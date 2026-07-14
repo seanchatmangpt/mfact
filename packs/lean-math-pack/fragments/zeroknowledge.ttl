@@ -1,0 +1,148 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+procint:Mod_Petri_ZeroKnowledge a procint:Module ;
+  procint:moduleId "Petri.ZeroKnowledge" ;
+  procint:modPath "Petri/ZeroKnowledge" ;
+  procint:order 60 ;
+  procint:moduleDoc "Zero-knowledge trace verification for Petri nets" ;
+  procint:importsBlock """import Mathlib
+import ProcInt.Petri.Net
+import ProcInt.Petri.Firing""" .
+
+procint:Decl_ZeroKnowledge_all a procint:Decl ;
+  procint:inModule "Petri.ZeroKnowledge" ;
+  procint:declOrder 1 ;
+  procint:declName "ProcInt.ZeroKnowledge.all" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """
+open Multiset
+
+set_option linter.unusedSectionVars false
+
+variable {P T V R C : Type} [DecidableEq P] [DecidableEq V] [DecidableEq R] [Inhabited R]
+
+/-- A payload-carrying marking maps each place to a multiset of (value, blinding factor) pairs. -/
+abbrev PMarking (P V R : Type) := P → Multiset (V × R)
+
+/-- A relation specifying valid data-carrying transitions (e.g. value conservation). -/
+def PetriRelation (P T V : Type) := T → (P → Multiset V) → (P → Multiset V) → Prop
+
+/-- A single-step firing under the payload-carrying model. -/
+def PayloadStep (N : PetriNet P T) (rel : PetriRelation P T V)
+    (M : PMarking P V R) (t : T) (M' : PMarking P V R) : Prop :=
+  ∃ (in_p out_p : P → Multiset (V × R)),
+    (∀ p, (in_p p).card = (N.pre t) p) ∧
+    (∀ p, (out_p p).card = (N.post t) p) ∧
+    (∀ p, in_p p ≤ M p) ∧
+    (rel t (fun p => (in_p p).map Prod.fst) (fun p => (out_p p).map Prod.fst)) ∧
+    (M' = fun p => M p - in_p p + out_p p)
+
+/-! ## Homomorphic Multiset Commitments -/
+
+/-- Computable multiset commitment function mapping a multiset of (value, randomness) pairs
+    to an additive commutative monoid (representing a cryptographic group). -/
+def commitMultiset [AddCommMonoid C] (commit : V → R → C) (S : Multiset (V × R)) : C :=
+  (S.map (fun (v, r) => commit v r)).sum
+
+/-- Additive homomorphism: commit(S1 + S2) = commit(S1) + commit(S2) -/
+theorem commitMultiset_add [AddCommMonoid C] (commit : V → R → C) (S1 S2 : Multiset (V × R)) :
+    commitMultiset commit (S1 + S2) = commitMultiset commit S1 + commitMultiset commit S2 := by
+  dsimp [commitMultiset]
+  rw [Multiset.map_add, Multiset.sum_add]
+
+/-- Subtraction homomorphism: commit(S2 - S1) = commit(S2) - decline commit S1 for S1 ≤ S2 -/
+theorem commitMultiset_sub [AddCommGroup C] (commit : V → R → C) {S1 S2 : Multiset (V × R)} (h : S1 ≤ S2) :
+    commitMultiset commit (S2 - S1) = commitMultiset commit S2 - commitMultiset commit S1 := by
+  have h_add := commitMultiset_add commit (S2 - S1) S1
+  rw [Multiset.sub_add_cancel h] at h_add
+  rw [h_add, add_sub_cancel_right]
+
+/-! ## Witness and Public Input representation -/
+
+/-- Public inputs visible to the verifier (committed states and transition metadata). -/
+structure PublicInput (P T C : Type) where
+  t : T
+  C_M : P → C
+  C_M' : P → C
+  C_in : P → C
+  C_out : P → C
+
+/-- Secret witnesses held by the prover (actual markings and randomness). -/
+structure Witness (P V R : Type) where
+  W : PMarking P V R
+  W' : PMarking P V R
+  W_in : PMarking P V R
+  W_out : PMarking P V R
+
+/-- The NP-relation verified by the zk-SNARK. -/
+def Relation [AddCommMonoid C] (commit : V → R → C) (N : PetriNet P T) (rel : PetriRelation P T V)
+    (x : PublicInput P T C) (w : Witness P V R) : Prop :=
+  (∀ p, x.C_M p = commitMultiset commit (w.W p)) ∧
+  (∀ p, x.C_M' p = commitMultiset commit (w.W' p)) ∧
+  (∀ p, x.C_in p = commitMultiset commit (w.W_in p)) ∧
+  (∀ p, x.C_out p = commitMultiset commit (w.W_out p)) ∧
+  (∀ p, w.W_in p ≤ w.W p) ∧
+  (∀ p, w.W' p = w.W p - w.W_in p + w.W_out p) ∧
+  (∀ p, (w.W_in p).card = (N.pre x.t) p) ∧
+  (∀ p, (w.W_out p).card = (N.post x.t) p) ∧
+  (rel x.t (fun p => (w.W_in p).map Prod.fst) (fun p => (w.W_out p).map Prod.fst))
+
+/-- The verifier's public verification check. -/
+def VerifierCheck [AddCommGroup C] (x : PublicInput P T C) : Prop :=
+  ∀ p, x.C_M' p = x.C_M p - x.C_in p + x.C_out p
+
+/-- Verification completeness: if a prover possesses a valid witness, the public inputs
+    satisfy the verifier's linear constraint equation. -/
+theorem relation_implies_verifierCheck [AddCommGroup C] (commit : V → R → C)
+    (N : PetriNet P T) (rel : PetriRelation P T V) (x : PublicInput P T C) (w : Witness P V R)
+    (h : Relation commit N rel x w) : VerifierCheck x := by
+  intro p
+  unfold Relation at h
+  obtain ⟨h_M, h_M', h_in, h_out, h_sub, h_eq, _⟩ := h
+  rw [h_M' p, h_eq p]
+  rw [commitMultiset_add, commitMultiset_sub commit (h_sub p)]
+  rw [← h_M p, ← h_in p, ← h_out p]
+
+theorem step_soundness [AddCommGroup C] (commit : V → R → C)
+    (N : PetriNet P T) (rel : PetriRelation P T V) (x : PublicInput P T C) (w : Witness P V R)
+    (h : Relation commit N rel x w) :
+    PayloadStep N rel w.W x.t w.W' := by
+  unfold Relation at h
+  use w.W_in, w.W_out
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · intro p; exact h.2.2.2.2.2.2.1 p
+  · intro p; exact h.2.2.2.2.2.2.2.1 p
+  · intro p; exact h.2.2.2.2.1 p
+  · exact h.2.2.2.2.2.2.2.2
+  · funext p
+    exact h.2.2.2.2.2.1 p
+
+theorem step_completeness [AddCommGroup C] (commit : V → R → C)
+    (N : PetriNet P T) (rel : PetriRelation P T V) (M : PMarking P V R) (t : T) (M' : PMarking P V R)
+    (h : PayloadStep N rel M t M') :
+    ∃ (w : Witness P V R) (x : PublicInput P T C), Relation commit N rel x w := by
+  obtain ⟨in_p, out_p, h_in_card, h_out_card, h_sub, h_rel, h_eq⟩ := h
+  let w : Witness P V R := {
+    W := M
+    W' := M'
+    W_in := in_p
+    W_out := out_p
+  }
+  let x : PublicInput P T C := {
+    t := t
+    C_M := fun p => commitMultiset commit (w.W p)
+    C_M' := fun p => commitMultiset commit (w.W' p)
+    C_in := fun p => commitMultiset commit (w.W_in p)
+    C_out := fun p => commitMultiset commit (w.W_out p)
+  }
+  use w, x
+  unfold Relation
+  refine ⟨fun _ => rfl, fun _ => rfl, fun _ => rfl, fun _ => rfl, ?_, ?_, ?_, ?_, ?_⟩
+  · intro p; exact h_sub p
+  · intro p; change M' p = M p - in_p p + out_p p; rw [h_eq]
+  · intro p; exact h_in_card p
+  · intro p; exact h_out_card p
+  · exact h_rel
+""" .

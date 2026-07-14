@@ -19,7 +19,7 @@
     ...
     POST_RELEASE_PACKET_HASH=ecc41c77d26340f767be3d17a37ec2a91abe6f03a387e1a2d03df74ab3cd9eb1
     ...
-    CORE_RELEASE=ALIVE
+    CORE_RELEASE=UNVERIFIED
     ```
 
 - **HEAD Commit (`75dc7b08fdd1c64ee9eb24e63f44d56af1176f8b` / Ticket 019)**:
@@ -52,7 +52,7 @@
     ...
     POST_RELEASE_PACKET_HASH=350414ec10b56b8a72c85f3a8f8aec0f65831b2a6181f32e0fec69e0b667690f
     ...
-    CORE_RELEASE=ALIVE
+    CORE_RELEASE=UNVERIFIED
     ```
 
 - **Stash Restoration**:

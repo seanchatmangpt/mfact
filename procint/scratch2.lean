@@ -1,6 +1,13 @@
-import Mathlib
+import Lean
 
-def test {α : Type} (r : α → α → Prop) (a b : α) (h : Relation.ReflTransGen r a b) : True := by
-  induction h with
-  | refl => exact True.intro
-  | tail b hReach hStep ih => exact True.intro
+open Lean
+
+def testJsonParse (s : String) : String :=
+  match Json.parse s with
+  | Except.ok j =>
+    match j.getObjVal? "marking" with
+    | Except.ok (Json.obj m) => "success"
+    | _ => "no marking object"
+  | Except.error e => "error: " ++ e
+
+#eval testJsonParse "{\"marking\": {}}"

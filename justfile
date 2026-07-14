@@ -78,6 +78,7 @@ render:
 # Full build: procint package, then the mfact package (AxiomAudit + mfact lib).
 [group('manufacture')]
 build:
+    just _lake "cd procint && /Users/sac/.elan/bin/lake exe cache get || true"
     just _lake "cd procint && /Users/sac/.elan/bin/lake build"
     just _lake "cd procint && /Users/sac/.elan/bin/lake build Tests"
     just _lake "cd mfact && /Users/sac/.elan/bin/lake build AxiomAudit mfact"
@@ -118,6 +119,20 @@ standing-quadrature:
 [group('demo')]
 playground:
     just _lake "cd procint && /Users/sac/.elan/bin/lake build Playground"
+
+# Compile computable Petri net simulator to WASM
+[group('demo')]
+compile-wasm:
+    cd procint && /Users/sac/.elan/bin/lake build ProcInt.Petri.Computable
+    bash scripts/compile_wasm.sh
+
+# Watch TTL and ontology files to trigger render and rebuild on changes
+[group('demo')]
+watch:
+    pylab/.venv/bin/python scripts/ggen_watch.py
+
+
+
 
 # Hand-authored Python research surface — never feeds standing, gates, or the manifest.
 [group('demo')]

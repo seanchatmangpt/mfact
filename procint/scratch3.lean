@@ -1,6 +1,14 @@
-import Mathlib
+import Lean
 
-def test {α : Type} (r : α → α → Prop) (a b : α) (h : Relation.ReflTransGen r a b) : True := by
-  induction h with
-  | refl => exact True.intro
-  | tail _ _ _ => exact True.intro
+open Lean
+
+structure FiringInput where
+  marking : List (String × Nat)
+  transitions : List String
+  deriving FromJson, ToJson, Repr
+
+def testJsonSerial : String :=
+  let input : FiringInput := { marking := [("p1", 2), ("p2", 3)], transitions := ["t1"] }
+  (ToJson.toJson input).pretty
+
+#eval testJsonSerial

@@ -1,0 +1,246 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+procint:Mod_Tests_QuantumSnn a procint:Module ;
+  procint:moduleId "Tests.QuantumSnn" ;
+  procint:modPath "Tests/QuantumSnn" ;
+  procint:order 100 ;
+  procint:moduleDoc "E2E verification tests for Qasm 3.0 compilation and SNN neuromorphic exporter" ;
+  procint:importsBlock """import Mathlib
+import ProcInt.Petri.Net
+import ProcInt.Petri.Firing
+import ProcInt.Petri.Qasm
+import ProcInt.Petri.Snn""" .
+
+procint:Decl_test_quantum_snn_all a procint:Decl ;
+  procint:inModule "Tests.QuantumSnn" ;
+  procint:declOrder 1 ;
+  procint:declName "ProcInt.Tests.QuantumSnn.all" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """
+namespace ProcInt
+
+-- ----------------------------------------------------
+-- 1. TOPOLOGIES AND CONCRETE FIXTURES
+-- ----------------------------------------------------
+
+inductive Place3
+  | pA | pB | pC
+  deriving DecidableEq, Fintype, Repr
+
+inductive Trans2
+  | t1 | t2
+  deriving DecidableEq, Fintype, Repr
+
+open Place3 Trans2
+
+-- A basic sequence net: pA -> t1 -> pB -> t2 -> pC
+noncomputable def petriSeq : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => Finsupp.single pB 1
+  post := fun
+    | t1 => Finsupp.single pB 1
+    | t2 => Finsupp.single pC 1
+
+-- A choice net: pA is input to both t1 and t2 (conflict)
+noncomputable def petriChoice : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => Finsupp.single pA 1
+  post := fun
+    | t1 => Finsupp.single pB 1
+    | t2 => Finsupp.single pC 1
+
+-- A fork net: t1 produces into both pB and pC
+noncomputable def petriFork : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => Finsupp.single pB 1
+  post := fun
+    | t1 => Finsupp.single pB 1 + Finsupp.single pC 1
+    | t2 => Finsupp.single pC 1
+
+-- A join net: t1 requires both pA and pB to fire
+noncomputable def petriJoin : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1 + Finsupp.single pB 1
+    | t2 => Finsupp.single pC 1
+  post := fun
+    | t1 => Finsupp.single pC 1
+    | t2 => Finsupp.single pA 1
+
+-- A self-loop net: t1 consumes from pA and produces into pA
+noncomputable def petriLoop : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => Finsupp.single pB 1
+  post := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => Finsupp.single pC 1
+
+-- Empty net
+inductive PlaceEmpty deriving DecidableEq, Fintype, Repr
+inductive TransEmpty deriving DecidableEq, Fintype, Repr
+noncomputable def petriEmpty : PetriNet PlaceEmpty TransEmpty where
+  pre := fun t => match t with.
+  post := fun t => match t with.
+
+-- Places-only net
+inductive TransEmpty2 deriving DecidableEq, Fintype, Repr
+noncomputable def petriPlacesOnly : PetriNet Place3 TransEmpty2 where
+  pre := fun t => match t with.
+  post := fun t => match t with.
+
+-- Transitions-only net
+inductive PlaceEmpty2 deriving DecidableEq, Fintype, Repr
+noncomputable def petriTransOnly : PetriNet PlaceEmpty2 Trans2 where
+  pre := fun _ => 0
+  post := fun _ => 0
+
+-- Isolated transition
+noncomputable def petriIsolated : PetriNet Place3 Trans2 where
+  pre := fun _ => 0
+  post := fun _ => 0
+
+-- Source transition (no inputs, 1 output)
+noncomputable def petriSource : PetriNet Place3 Trans2 where
+  pre := fun _ => 0
+  post := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => 0
+
+-- Sink transition (1 input, no outputs)
+noncomputable def petriSink : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 1
+    | t2 => 0
+  post := fun _ => 0
+
+-- Multi-arc weight net (weight > 1)
+noncomputable def petriMultiWeight : PetriNet Place3 Trans2 where
+  pre := fun
+    | t1 => Finsupp.single pA 2
+    | t2 => Finsupp.single pB 1
+  post := fun
+    | t1 => Finsupp.single pB 3
+    | t2 => Finsupp.single pC 1
+
+-- String helpers
+def p3_str : Place3 → String
+  | pA => "pA"
+  | pB => "pB"
+  | pC => "pC"
+
+def t2_str : Trans2 → String
+  | t1 => "t1"
+  | t2 => "t2"
+
+-- ----------------------------------------------------
+-- 2. TIER 1: FEATURE COVERAGE TESTS
+-- ----------------------------------------------------
+
+def seqQasmProg : QasmProgram := compileToQasm petriSeq p3_str t2_str
+
+def test_qasm_compile_seq : Bool :=
+  seqQasmProg.version == "3.0" &&
+  seqQasmProg.stmts.contains (QasmStmt.decl (QasmRegister.qreg "q_pA" 1)) &&
+  seqQasmProg.stmts.contains (QasmStmt.decl (QasmRegister.qreg "q_pB" 1)) &&
+  seqQasmProg.stmts.contains (QasmStmt.decl (QasmRegister.qreg "q_pC" 1)) &&
+  seqQasmProg.stmts.contains (QasmStmt.decl (QasmRegister.qreg "ancilla_t1" 1)) &&
+  seqQasmProg.stmts.contains (QasmStmt.decl (QasmRegister.qreg "ancilla_t2" 1))
+
+#guard test_qasm_compile_seq == true
+
+def seqSnnNet : SnnNetwork := compileToSnn petriSeq p3_str t2_str
+
+def test_snn_compile_seq : Bool :=
+  (seqSnnNet.neurons.find? (fun n => n.id == "n_pA") |>.map (·.threshold) == some 1) &&
+  (seqSnnNet.neurons.find? (fun n => n.id == "n_pA_t1") |>.map (·.threshold) == some 1) &&
+  (seqSnnNet.neurons.find? (fun n => n.id == "n_t1") |>.map (·.threshold) == some 1) &&
+  (seqSnnNet.synapses.contains (SnnSynapse.mk "n_pA" "n_pA_t1" 1)) &&
+  (seqSnnNet.synapses.contains (SnnSynapse.mk "n_pA_t1" "n_t1" 1)) &&
+  (seqSnnNet.synapses.contains (SnnSynapse.mk "n_t1" "n_pA" (-1))) &&
+  (seqSnnNet.synapses.contains (SnnSynapse.mk "n_t1" "n_pB" 1))
+
+#guard test_snn_compile_seq == true
+
+-- ----------------------------------------------------
+-- 3. TIER 2: BOUNDARY & CORNER CASES
+-- ----------------------------------------------------
+
+#guard (compileToQasm petriEmpty (fun (p : PlaceEmpty) => match p with.) (fun (t : TransEmpty) => match t with.)).stmts.length == 0
+
+def placesOnlyQasm := compileToQasm petriPlacesOnly p3_str (fun (t : TransEmpty2) => match t with.)
+#guard placesOnlyQasm.stmts.length == 3
+
+def transOnlyQasm := compileToQasm petriTransOnly (fun (p : PlaceEmpty2) => match p with.) t2_str
+#guard transOnlyQasm.stmts.length == 2
+
+def isolatedQasm := compileToQasm petriIsolated p3_str t2_str
+#guard (isolatedQasm.stmts.filter (fun | QasmStmt.mcx ctrls _ => ctrls.isEmpty | _ => false)).length == 4
+
+def sourceQasm := compileToQasm petriSource p3_str t2_str
+#guard (sourceQasm.stmts.filter (fun | QasmStmt.cx ctrl _ => ctrl == "ancilla_t1" | _ => false)).length == 1
+
+def sinkQasm := compileToQasm petriSink p3_str t2_str
+#guard (sinkQasm.stmts.filter (fun | QasmStmt.cx ctrl _ => ctrl == "ancilla_t1" | _ => false)).length == 1
+
+def loopQasm := compileToQasm petriLoop p3_str t2_str
+#guard (loopQasm.stmts.filter (fun | QasmStmt.cx ctrl target => ctrl == "ancilla_t1" && target == "q_pA" | _ => false)).length == 2
+
+def multiWeightSnn := compileToSnn petriMultiWeight p3_str t2_str
+#guard (multiWeightSnn.neurons.find? (fun n => n.id == "n_pA_t1") |>.map (·.threshold) == some 2)
+
+-- ----------------------------------------------------
+-- 4. TIER 3: CROSS-FEATURE COMBINATIONS
+-- ----------------------------------------------------
+
+def test_cross_mapping : Bool :=
+  let qasmRegs := (compileToQasm petriSeq p3_str t2_str).stmts.filterMap (fun | QasmStmt.decl (QasmRegister.qreg name _) => some name | _ => none)
+  let snnPlaceNeurons := (compileToSnn petriSeq p3_str t2_str).neurons.filterMap (fun n => if n.id.startsWith "n_" && ¬n.id.contains "_" then some n.id else none)
+  qasmRegs.map (fun name => "n_" ++ name.drop 2) == snnPlaceNeurons
+
+#guard test_cross_mapping == true
+
+-- ----------------------------------------------------
+-- 5. TIER 4: REAL-WORLD SCENARIOS
+-- ----------------------------------------------------
+
+inductive MutexPlace | pShared | pArm1 | pArm2 deriving DecidableEq, Fintype, Repr
+inductive MutexTrans | tAcquire1 | tRelease1 | tAcquire2 | tRelease2 deriving DecidableEq, Fintype, Repr
+
+open MutexPlace MutexTrans
+
+noncomputable def petriMutex : PetriNet MutexPlace MutexTrans where
+  pre := fun
+    | tAcquire1 => Finsupp.single pShared 1
+    | tRelease1 => Finsupp.single pArm1 1
+    | tAcquire2 => Finsupp.single pShared 1
+    | tRelease2 => Finsupp.single pArm2 1
+  post := fun
+    | tAcquire1 => Finsupp.single pArm1 1
+    | tRelease1 => Finsupp.single pShared 1
+    | tAcquire2 => Finsupp.single pArm2 1
+    | tRelease2 => Finsupp.single pShared 1
+
+def mutex_p_str : MutexPlace → String
+  | pShared => "shared"
+  | pArm1 => "arm1"
+  | pArm2 => "arm2"
+
+def mutex_t_str : MutexTrans → String
+  | tAcquire1 => "acquire1"
+  | tRelease1 => "release1"
+  | tAcquire2 => "acquire2"
+  | tRelease2 => "release2"
+
+def mutexQasm := compileToQasm petriMutex mutex_p_str mutex_t_str
+def mutexSnn := compileToSnn petriMutex mutex_p_str mutex_t_str
+
+#guard mutexQasm.stmts.length > 0
+#guard mutexSnn.neurons.length > 0
+
+end ProcInt
+""" .

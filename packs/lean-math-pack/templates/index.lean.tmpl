@@ -8,6 +8,7 @@ sparql:
       ?m a procint:Module ;
          procint:moduleId ?moduleId ;
          procint:order ?order .
+      FILTER (!strstarts(?moduleId, "Tests"))
     }
     ORDER BY ?order ?moduleId
 force: true

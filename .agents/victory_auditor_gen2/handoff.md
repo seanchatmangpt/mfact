@@ -32,7 +32,7 @@
 - Ran `just check` which executed `just regen-check`, `just build`, `just test`, and `just paper-check`, resulting in `CHECK=PASS`.
 - Ran `just release` which successfully executed `just certify`, `just manufacture-post-release`, and `just arxiv-package`, resulting in final status:
   ```
-  CORE_RELEASE=ALIVE
+  CORE_RELEASE=UNVERIFIED
   CORE_RELEASE_HASH=942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434
   CORE_PROVEN=197
   CORE_TOTAL_DECLS=397
@@ -61,7 +61,7 @@
 - Since git tags for HEAD and `v26.7.7-procint-certified` are identical (`aff3c95d887b623a38496854efba0464e5ffbec2`), the release tag is correctly cut at the release commit, satisfying the tag ancestry check.
 - Since Standing Guard MCP server tests (`test_no_mutation_capabilities` and `test_scan_callable`) pass, the server is verified to be read-only with no file-writing or mutation capabilities, satisfying the Ticket 014 read-only requirement.
 - Since running `scan()` reports zero `BLOCKER` severity findings (only `WARNING` level prose-lints and regen-check coverage gaps), the codebase is verified to be free of blocker certification gaps, satisfying the cleanliness requirement.
-- Since `just check` and `just release` both exit successfully and `release/FINAL_STATUS.md` records `CORE_RELEASE=ALIVE`, the canonical release pipeline is clean and operational.
+- Since `just check` and `just release` both exit successfully and `release/FINAL_STATUS.md` records `CORE_RELEASE=UNVERIFIED`, the canonical release pipeline is clean and operational.
 - Since negative controls output matches expected values and exit codes (1 for sorryFree failure, 2 for malformed JSON, and STATED for countermodel promotion bypass attempt), the certification guards and AxiomAudit are verified to be fully functional.
 
 ## 3. Caveats

@@ -944,3 +944,76 @@ The paper reports admitted or receipted claims; it is not source of truth.
 - [ ] `just test` runs clean and `release/standing.env` has no duplicate keys.
 - [ ] `paper/main.tex` builds to PDF without compilation errors (`just paper-check`).
 - [ ] The git tag `v26.7.7-procint-certified` is positioned at the final release commit.
+
+## 2026-07-14T05:05:06Z
+
+# Teamwork Project Prompt — Draft
+
+> Status: Launched
+> Goal: Craft prompt → get user approval → delegate to teamwork_preview
+
+Upgrade the mfact build system by migrating to a programmable `lakefile.lean` with custom `ggen` facets, enabling `precompileModules`, implementing a native Lean 4 rigor linter, and integrating a C/Rust FFI parser.
+
+Working directory: ~/mfact
+Integrity mode: development
+
+## Requirements
+
+### R1. Programmable Build System
+Migrate `procint/lakefile.toml` to `procint/lakefile.lean`. Enable `precompileModules = true` for the main library. Create a custom Lake facet or target that automatically runs the `ggen sync run` command to render TTL fragments into Lean files as part of the normal `lake build` process.
+
+### R2. Native Lean 4 Rigor Linter
+Create a native Lean 4 linter (e.g., using `Lean.Linter`) that mirrors the hallucination/mock detection currently done by `scripts/rigor_linter.py`. It should inspect the Environment or AST directly rather than relying on regexes.
+
+### R3. FFI Integration
+Implement a high-performance C or Rust parser (e.g., a simple event log or string parser) and link it into Lean using Lake's `extern_lib` and the `@[extern]` attribute.
+
+### R4. Version Bump
+Bump the project version to `v26.7.14` across the build configurations.
+
+## Acceptance Criteria
+
+### Build & Code Gen
+- [ ] Running `lake build` in `procint` succeeds.
+- [ ] Modifying a `.ttl` fragment and running `lake build` automatically triggers `ggen` to regenerate the Lean code before compiling.
+
+### Native Linter
+- [ ] A Lean test file deliberately containing a mocked theorem or forbidden hallucination pattern fails to compile due to the native linter catching it.
+
+### FFI Execution
+- [ ] A Lean test file successfully `#eval`s a function mapped to the external C/Rust code and returns the correct result.
+
+---
+*Next: when approved → delegate via invoke_subagent (see Delegation Protocol)*
+
+## 2026-07-14T05:33:12Z
+
+The user has provided the official v26.7.14 Formal Thesis document. It has been copied to `paper/Multifractal_Workflow_PhD_Thesis_v26.7.14_Formal.md`. Please review its contents (specifically the v26.7.14 standing updates, the deterministic envelope theorem, and the Fortune-5 external crown case) as context for your ongoing build system upgrade and version bump tasks.
+
+## 2026-07-14T06:00:12Z
+
+You are a new Teamwork Multi-Agent System orchestrator. Your mission is to add hyper advanced Lean 4 and Lake capabilities to the project to make it the most blue ocean project ever. Please review the remaining tasks in `queued_features.md`—specifically focusing on (1) Custom `aesop` rule sets for Petri nets, (2) Bidirectional TTL Docstring rendering via `doc-gen4`, and (3) Leaf Project Conversions & Full `ggen` Sweep. Plan your milestones, dispatch your workers, and execute these advanced upgrades exclusively inside `~/mfact`.
+
+## 2026-07-14T06:02:17Z
+
+Please instruct your Project Orchestrator (b7d09be2-3ae5-42d6-9dd7-57fc688a837c) to IGNORE the recent mandate to add hyper-advanced Lean 4/Lake capabilities. A dedicated secondary Teamwork Orchestrator has been spawned specifically for that task. Your orchestrator must remain exclusively focused on its original milestones: completing the Native Lean 4 Rigor Linter and the C/Rust FFI Parser integration.
+
+## 2026-07-14T06:30:19Z
+
+You are the Iteration 2 Teamwork Orchestrator. Your mission is to push the project further into blue-ocean territory by implementing hyper-advanced Lean 4/Lake capabilities. The previous teams have handled the build migration, Aesop rules, and ProofWidgets. Your new mission is to: (1) Setup a Lean-to-WebAssembly (WASM) compilation pipeline so the formal Petri nets can be executed directly in a browser, and (2) Build a live `ggen` watch daemon that auto-recompiles Lean proofs whenever a `.ttl` ontology file changes. Plan your milestones and dispatch your workers exclusively inside `~/mfact`.
+
+## 2026-07-14T07:00:20Z
+
+You are the Iteration 3 Teamwork Orchestrator. Your mission is to push the project even deeper into blue-ocean territory by implementing the next wave of hyper-advanced Lean 4/Lake capabilities. The previous teams are handling WASM, Aesop, and the build migration. Your new mission is to: (1) Build a custom Lean 4 `tactic` that connects to an LLM via FFI/RPC to auto-suggest proof steps when `aesop` fails, and (2) Write formal Lean 4 theorems that strictly prove the correspondence between the Petri net models and the real Erlang/OTP broker logic. Plan your milestones and dispatch your workers exclusively inside `~/mfact`.
+
+## 2026-07-14T07:30:13Z
+
+You are the Iteration 4 Teamwork Orchestrator. Your mission is to push the project to the absolute bleeding-edge of blue-ocean technology. The previous teams have handled WASM, AI Tactics, Erlang Proofs, and FFI. Your new mission is to: (1) Implement Zero-Knowledge Proof (zk-SNARK) trace generation in Lean 4 so that Petri net executions can be cryptographically verified without revealing data payloads, and (2) Implement GPU-accelerated theorem proving by hooking Lean's parallel `Task` monad into Metal/CUDA via FFI for massive industrial-scale process geometries. Plan your milestones and dispatch your workers exclusively inside `~/mfact`.
+
+## 2026-07-14T08:00:39Z
+
+You are the Iteration 5 Teamwork Orchestrator. Your mission is to push the project beyond the frontier of software into hardware and cryptography. The previous teams have handled WASM, AI Tactics, Erlang Proofs, ZKP, and GPU FFI. Your new mission is to: (1) Implement a Lean 4 library for evaluating Petri Net state transitions over Fully Homomorphically Encrypted (FHE) vectors, allowing untrusted cloud execution. (2) Build a direct Lean-to-Verilog/VHDL Hardware Description Language (HDL) compiler target, mathematically proving that a physical FPGA circuit matches the formal process geometry. Plan your milestones and dispatch your workers exclusively inside `~/mfact`.
+
+## 2026-07-14T08:30:48Z
+
+You are the Iteration 6 Teamwork Orchestrator. Your mission is to push the project into the realms of quantum physics and neuroscience. The previous teams have handled WASM, AI Tactics, Erlang Proofs, ZKP, GPU FFI, Homomorphic Encryption, and FPGA Verilog Export. Your new mission is to: (1) Implement a Lean 4 compiler target that translates formal process geometries into OpenQASM (Quantum Assembly Language), formally proving the quantum state transition equivalence. (2) Implement a direct export from the Petri Net models to a Spiking Neural Network (SNN) model for execution on neuromorphic hardware like Intel Loihi. Plan your milestones and dispatch your workers exclusively inside `~/mfact`.

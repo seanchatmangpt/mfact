@@ -6,6 +6,12 @@ import ProcInt.Tests.Logs
 import ProcInt.Tests.Conformance
 import ProcInt.Tests.Ocel
 import ProcInt.Tests.Models
+import ProcInt.Tests.ZeroKnowledge
+import ProcInt.Tests.GPU
+import ProcInt.Tests.FheHdl
+import ProcInt.Tests.Qasm
+import ProcInt.Tests.Snn
+import ProcInt.Tests.QuantumSnn
 import ProcInt.Fixtures.Positive
 import ProcInt.Fixtures.Negative
 

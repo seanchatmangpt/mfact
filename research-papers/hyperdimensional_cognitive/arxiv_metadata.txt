@@ -1,0 +1,3 @@
+Title: HyperGraphX: Graph Transductive Learning with Hyperdimensional Computing and Message Passing
+URL: https://arxiv.org/pdf/2510.23980v1
+Query: hyperdimensional computing orthogonal vectors

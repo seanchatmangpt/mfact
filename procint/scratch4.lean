@@ -1,6 +1,13 @@
-import Mathlib
+import Lean
 
-def test {α : Type} (r : α → α → Prop) (a b : α) (h : Relation.ReflTransGen r a b) : True := by
-  induction h
-  case refl => exact True.intro
-  case tail b h_reach h_step ih => exact True.intro
+open Lean
+
+-- Let's check some properties of Json object
+def test (j : Json) : IO Unit := do
+  match j with
+  | Json.obj o =>
+    -- Let's see if we can convert it to list or map it
+    -- #check o.toList
+    -- #check o.fold
+    pure ()
+  | _ => pure ()

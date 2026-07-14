@@ -1,0 +1,3 @@
+Title: Monte Carlo study of the phase transitions in the classical XY ferromagnets with random anisotropy
+URL: https://arxiv.org/pdf/2208.10109v8
+Query: turbulence phase transitions statistical mechanics

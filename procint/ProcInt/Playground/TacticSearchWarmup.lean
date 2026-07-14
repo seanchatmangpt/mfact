@@ -38,4 +38,12 @@ theorem warmup_reach_refl :
     ReflTransGen net.FlowEdge (Sum.inl Place.requested) (Sum.inl Place.requested) := by
   by exact trivial
 
+-- SEARCH_TARGET: petri_aesop_test
+noncomputable def seqNet : PetriNet (Fin 2) (Fin 1) :=
+  { pre := fun _ => Finsupp.single 0 1, post := fun _ => Finsupp.single 1 1 }
+
+theorem warmup_petri_aesop_step :
+    seqNet.Step (Finsupp.single 0 1) 0 (seqNet.fire (Finsupp.single 0 1) 0) := by
+  aesop (rule_sets := [petri])
+
 end ProcInt.Playground.TacticSearchWarmup

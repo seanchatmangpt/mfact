@@ -12,7 +12,7 @@
   certified: v26.7.7 (proven 197/397, objection type uninhabited)
   ...
   release/FINAL_STATUS.md
-  CORE_RELEASE=ALIVE
+  CORE_RELEASE=UNVERIFIED
   ```
 - **Commit Details**:
   Commit `edb7a33` successfully committed all changes (including finalizer agent files) with message:
@@ -84,4 +84,4 @@
 - **Build/certification result**: SUCCESS (all gates PASS, `certified: v26.7.7`)
 - **Direct hand-edits to generated files**: None.
 
-Status: ALIVE
+Status: UNVERIFIED

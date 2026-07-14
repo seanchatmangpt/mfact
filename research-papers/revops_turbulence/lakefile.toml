@@ -1,0 +1,5 @@
+name = "revops_turbulence"
+defaultTargets = ["RevopsTurbulence"]
+
+[[lean_lib]]
+name = "RevopsTurbulence"

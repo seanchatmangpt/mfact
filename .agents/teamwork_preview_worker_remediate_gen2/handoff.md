@@ -17,7 +17,7 @@
 - Running `just check` finished with:
   `CHECK=PASS`
 - Running `just release` finished with:
-  `release/FINAL_STATUS.md` and `CORE_RELEASE=ALIVE`
+  `release/FINAL_STATUS.md` and `CORE_RELEASE=UNVERIFIED`
 - Committing with `git add` and `git commit --amend --no-edit` created commit `e523d74`.
 - Re-cutting the release tag via `just recut-tag v26.7.7-procint-certified` succeeded.
 - Running `just status` output showed:
@@ -52,4 +52,4 @@
 - **Build/certification result**: PASS (certified: v26.7.7)
 - **Direct edits to generated files**: None (only edited sources/receipts, then regenerated via recipes)
 
-**Status**: ALIVE
+**Status**: UNVERIFIED

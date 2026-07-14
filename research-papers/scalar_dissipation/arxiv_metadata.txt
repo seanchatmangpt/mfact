@@ -1,0 +1,3 @@
+Title: Conjectures on Convergence and Scalar Curvature
+URL: https://arxiv.org/pdf/2103.10093v1
+Query: scalar dissipation rate metric spaces

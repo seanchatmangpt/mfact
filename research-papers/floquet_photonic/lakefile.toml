@@ -1,0 +1,10 @@
+name = "FloquetPhotonic"
+version = "0.1.0"
+defaultTargets = ["floquetphotonic"]
+
+[[lean_lib]]
+name = "FloquetPhotonic"
+
+[[lean_exe]]
+name = "floquetphotonic"
+root = "Main"

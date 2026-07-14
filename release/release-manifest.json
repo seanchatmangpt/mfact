@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "b26e1db27df59df11613dc67cbc858a1509148d1",
+  "runIdentifier": "9917114c562334e5c6561522a37b44002faa6738",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
@@ -2620,6 +2620,12 @@
       "proven": true
     },
     {
+      "name": "ProcInt.fhe_firing_equivalence",
+      "hash": "b5b68af4e46a52f55e2eeece967f0869539437206671329e238fe1478a4d0669",
+      "axioms": [],
+      "proven": true
+    },
+    {
       "name": "ProcInt.fitness",
       "hash": "9bc36a34f132984091b767b22639c92b0a653d83fb6d9b8172b5e022ccf7fb74",
       "axioms": [],
@@ -3171,8 +3177,23 @@
     },
     {
       "kind": "kernelCheck",
+      "subject": "Petri.Fhe",
+      "hash": "69d2c0182c6d8e78b155429062bcc41ddaa91aa3b97b9aea69b8c19acbab644f"
+    },
+    {
+      "kind": "kernelCheck",
       "subject": "Petri.Firing",
       "hash": "b2805b8528ba897e85941d61b4accf88f11dd3ef7564c60bf32913b467fcb27d"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Petri.GPU",
+      "hash": "df22aca5239e1383ae4bb226e0b659f485a1ba0139ef8452afb2ef50a9a2cac7"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Petri.Hdl",
+      "hash": "d7373c07c5cc73001936950be915e5e9743db0e98cc76973d2b0423ca2f4d32d"
     },
     {
       "kind": "kernelCheck",
@@ -3211,6 +3232,11 @@
     },
     {
       "kind": "kernelCheck",
+      "subject": "Petri.ZeroKnowledge",
+      "hash": "ca05369e394d12af7195a1ae9a76ea3e884b2ed300f96f87db4bf04a9fabf281"
+    },
+    {
+      "kind": "kernelCheck",
       "subject": "Planning.Pddl",
       "hash": "dd0164cf6fdbfbfdef7ed6fc2832bd57cf1b2cf7d2c59b1fcd91e0c72dd4f690"
     },
@@ -3223,6 +3249,16 @@
       "kind": "kernelCheck",
       "subject": "Tests.Conformance",
       "hash": "056e5f90061f443fd339699bd8193975c8214736314c6c4e359c1926d1e0d0f0"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.FheHdl",
+      "hash": "b0b5aece1fcf3b3d90279a4871336e0766285ab10dc8c088448886fb4154a42c"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.GPU",
+      "hash": "ee390a6aa1e61cd5bbbf273de95e06fbfdad99e205ecff506ceca80a5264f046"
     },
     {
       "kind": "kernelCheck",
@@ -3243,6 +3279,16 @@
       "kind": "kernelCheck",
       "subject": "Tests.Petri",
       "hash": "352372bb26a08247963914d4499aa0d8faf9b85edacdb32b4838b8ee6efd8866"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.QuantumSnn",
+      "hash": "9b5f2d9405d82f383f94a8c8c7309be54f876e8d01a2790d067dbc2cfc1be3b6"
+    },
+    {
+      "kind": "kernelCheck",
+      "subject": "Tests.ZeroKnowledge",
+      "hash": "1464f18c38de0016a1601d1b7f76c917a8c55d422baade44bb5346297593cd3a"
     },
     {
       "kind": "kernelCheck",
@@ -4136,6 +4182,11 @@
     },
     {
       "kind": "axiomAudit",
+      "subject": "ProcInt.fhe_firing_equivalence",
+      "hash": "b5b68af4e46a52f55e2eeece967f0869539437206671329e238fe1478a4d0669"
+    },
+    {
+      "kind": "axiomAudit",
       "subject": "ProcInt.fitness_le_one",
       "hash": "01c12dfd07cca4ffdcb357ca4ee0f3f33166291da9e8d4b353f38a26da7ccdfe"
     },
@@ -4309,5 +4360,5 @@
     "ProcInt.BranchingProcess.isUnfoldingOf_statement",
     "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded_statement"
   ],
-  "foldHash": "74900dc3fc5aa2e6ad46224655f65ecd2e49636c91ac2204614e16cbe1521f32"
+  "foldHash": "d80d24cd5ac1dc8def3af0009d8614770d6bba93dfbbca763805ae393caec537"
 }

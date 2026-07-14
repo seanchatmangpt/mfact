@@ -1,0 +1,347 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ═══ Modules ═══════════════════════════════════════════════════════════
+
+procint:Mod_Petri_Fhe a procint:Module ;
+  procint:moduleId "Petri.Fhe" ;
+  procint:modPath "Petri/Fhe" ;
+  procint:order 62 ;
+  procint:moduleDoc "Fully Homomorphic Encryption (FHE) evaluation of Petri Net transitions and plaintext equivalence proof." ;
+  procint:importsBlock """import Mathlib
+import ProcInt.Petri.Net
+import ProcInt.Petri.Firing
+open Classical""" .
+
+procint:Mod_Petri_Hdl a procint:Module ;
+  procint:moduleId "Petri.Hdl" ;
+  procint:modPath "Petri/Hdl" ;
+  procint:order 63 ;
+  procint:moduleDoc "Target HDL (Hardware Description Language) AST and Petri-to-HDL compiler." ;
+  procint:importsBlock """import Mathlib
+import ProcInt.Petri.Net
+import ProcInt.Petri.Firing""" .
+
+procint:Mod_Tests_FheHdl a procint:Module ;
+  procint:moduleId "Tests.FheHdl" ;
+  procint:modPath "Tests/FheHdl" ;
+  procint:order 97 ;
+  procint:moduleDoc "Correctness-ladder tests for Petri FHE and HDL compiler." ;
+  procint:importsBlock """import Mathlib
+import ProcInt.Petri.Net
+import ProcInt.Petri.Firing
+import ProcInt.Petri.Fhe
+import ProcInt.Petri.Hdl""" .
+
+# ═══ Decls: Petri.Fhe ══════════════════════════════════════════════════
+
+procint:Decl_Fhe_definitions a procint:Decl ;
+  procint:inModule "Petri.Fhe" ;
+  procint:declOrder 1 ;
+  procint:declName "ProcInt.Fhe_definitions" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """/-- An abstract model of a Fully Homomorphic Encryption (FHE) scheme.
+    This provides decryption homomorphisms for additions, multiplications, and comparisons. -/
+structure FheScheme (Ciphertext SecretKey : Type) where
+  decrypt : SecretKey → Ciphertext → ℤ
+  add : Ciphertext → Ciphertext → Ciphertext
+  sub : Ciphertext → Ciphertext → Ciphertext
+  mul : Ciphertext → Ciphertext → Ciphertext
+  mul_const : Ciphertext → ℤ → Ciphertext
+  add_const : Ciphertext → ℤ → Ciphertext
+  geq_const : Ciphertext → ℤ → Ciphertext
+  encrypt_one : Ciphertext
+
+  -- Decryption Homomorphisms
+  decrypt_add : ∀ sk c1 c2, decrypt sk (add c1 c2) = decrypt sk c1 + decrypt sk c2
+  decrypt_sub : ∀ sk c1 c2, decrypt sk (sub c1 c2) = decrypt sk c1 - decrypt sk c2
+  decrypt_mul : ∀ sk c1 c2, decrypt sk (mul c1 c2) = decrypt sk c1 * decrypt sk c2
+  decrypt_mul_const : ∀ sk c k, decrypt sk (mul_const c k) = decrypt sk c * k
+  decrypt_add_const : ∀ sk c k, decrypt sk (add_const c k) = decrypt sk c + k
+  decrypt_geq_const : ∀ sk c k, decrypt sk (geq_const c k) = if decrypt sk c ≥ k then 1 else 0
+  decrypt_one : ∀ sk, decrypt sk encrypt_one = 1
+
+/-- An encrypted FHE marking maps each place to a ciphertext. -/
+def FheMarking (P Ciphertext : Type) := P → Ciphertext
+
+/-- Decryption of an FHE marking yields an integer-valued marking. -/
+def FheMarking.decrypt {Ciphertext SecretKey : Type} (scheme : FheScheme Ciphertext SecretKey)
+    (sk : SecretKey) {P : Type} (M : FheMarking P Ciphertext) : P → ℤ :=
+  fun p => scheme.decrypt sk (M p)
+
+/-- An FHE marking matches a plaintext marking if their decryptions agree. -/
+def FheMarking.Matches {Ciphertext SecretKey : Type} (scheme : FheScheme Ciphertext SecretKey)
+    (sk : SecretKey) {P : Type} (M : FheMarking P Ciphertext) (m : Marking P) : Prop :=
+  ∀ p, scheme.decrypt sk (M p) = (m p : ℤ)
+
+/-- Homomorphic transition enablement: returns an encrypted 0/1 boolean (as a ciphertext)
+    signifying whether the transition is enabled. -/
+noncomputable def homomorphicEnabled {P T Ciphertext SecretKey : Type} [DecidableEq P]
+    (scheme : FheScheme Ciphertext SecretKey) (N : PetriNet P T) (M : FheMarking P Ciphertext) (t : T) : Ciphertext :=
+  let support := (N.pre t).support.toList
+  support.foldr (fun p acc => scheme.mul (scheme.geq_const (M p) (N.pre t p)) acc) scheme.encrypt_one
+
+/-- Auxiliary lemma: decryption of the product of encrypted geq statements. -/
+theorem decrypt_foldr_geq {P Ciphertext SecretKey : Type} [DecidableEq P]
+    (scheme : FheScheme Ciphertext SecretKey) (sk : SecretKey) (N : PetriNet P T) (M : FheMarking P Ciphertext) (t : T) (l : List P) :
+    scheme.decrypt sk (l.foldr (fun p acc => scheme.mul (scheme.geq_const (M p) (N.pre t p)) acc) scheme.encrypt_one) =
+      (l.map (fun p => if scheme.decrypt sk (M p) ≥ (N.pre t p : ℤ) then (1 : ℤ) else 0)).prod := by
+  induction l with
+  | nil =>
+    simp [scheme.decrypt_one]
+  | cons p ps ih =>
+    simp [scheme.decrypt_mul, scheme.decrypt_geq_const, ih]
+
+/-- Homomorphic transition firing: computes the next marking without decrypting,
+    using a homomorphic multiplexer. -/
+noncomputable def homomorphicFire {P T Ciphertext SecretKey : Type} [DecidableEq P]
+    (scheme : FheScheme Ciphertext SecretKey) (N : PetriNet P T) (M : FheMarking P Ciphertext) (t : T) : FheMarking P Ciphertext :=
+  let enabled := homomorphicEnabled scheme N M t
+  fun p =>
+    let diff : ℤ := (N.post t p : ℤ) - (N.pre t p : ℤ)
+    scheme.add (M p) (scheme.mul_const enabled diff)""" .
+
+procint:Decl_fhe_firing_equivalence a procint:Decl ;
+  procint:inModule "Petri.Fhe" ;
+  procint:declOrder 2 ;
+  procint:declName "ProcInt.fhe_firing_equivalence" ;
+  procint:declKind "theorem" ;
+  procint:status "proven" ;
+  procint:auditMsg "fhe firing equivalence" ;
+  procint:leanCode """/-- Plaintext equivalence theorem: homomorphic firing is equivalent to plaintext Petri net transition firing. -/
+theorem fhe_firing_equivalence {P T Ciphertext SecretKey : Type} [DecidableEq P]
+    (scheme : FheScheme Ciphertext SecretKey) (sk : SecretKey) (N : PetriNet P T)
+    (M : FheMarking P Ciphertext) (t : T) (m : Marking P)
+    (h_match : FheMarking.Matches scheme sk M m)
+    (h_nonneg : ∀ p, scheme.decrypt sk (M p) ≥ 0)
+    (h_enabled_dec : scheme.decrypt sk (homomorphicEnabled scheme N M t) = if N.Enabled m t then 1 else 0) :
+    FheMarking.Matches scheme sk (homomorphicFire scheme N M t)
+      (if N.Enabled m t then N.fire m t else m) := by
+  intro p
+  dsimp [homomorphicFire]
+  rw [scheme.decrypt_add, scheme.decrypt_mul_const]
+  rw [h_enabled_dec]
+  split_ifs with h_enabled
+  · simp only [Int.ofNat_eq_natCast]
+    have h_m_eq : scheme.decrypt sk (M p) = m p := h_match p
+    rw [h_m_eq]
+    dsimp [PetriNet.fire]
+    simp only [Finsupp.add_apply, Finsupp.sub_apply, Finsupp.tsub_apply]
+    have h_le : N.pre t p ≤ m p := h_enabled p
+    omega
+  · simp only [Int.ofNat_eq_natCast]
+    have h_m_eq : scheme.decrypt sk (M p) = m p := h_match p
+    rw [h_m_eq]
+    simp""" .
+
+# ═══ Decls: Petri.Hdl ══════════════════════════════════════════════════
+
+procint:Decl_Hdl_ast_compiler a procint:Decl ;
+  procint:inModule "Petri.Hdl" ;
+  procint:declOrder 1 ;
+  procint:declName "ProcInt.Hdl_ast_compiler" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """/-- Signal widths supported by the compiler target. -/
+inductive HdlWidth where
+  | single                  -- 1-bit signal
+  | vector (n : Nat)        -- n-bit bus: [n-1:0]
+  deriving DecidableEq, Repr
+
+/-- Expressions in the target HDL AST. -/
+inductive HdlExpr where
+  | const (w : HdlWidth) (val : Nat)
+  | var (name : String)
+  | add (e1 e2 : HdlExpr)
+  | sub (e1 e2 : HdlExpr)
+  | mul (e1 e2 : HdlExpr)
+  | eq (e1 e2 : HdlExpr)
+  | geq (e1 e2 : HdlExpr)
+  | mux (cond e_then e_else : HdlExpr)
+  | and (e1 e2 : HdlExpr)
+  deriving Repr
+
+/-- Statements in the target HDL AST. -/
+inductive HdlStmt where
+  | assign (lhs : String) (rhs : HdlExpr)
+  | seqAssign (lhs : String) (rhs : HdlExpr)
+  | alwaysPosedge (clk : String) (rst : String) (body : List HdlStmt)
+  | block (stmts : List HdlStmt)
+  deriving Repr
+
+/-- An HDL module containing inputs, outputs, registers, wires, and statements. -/
+structure HdlModule where
+  name : String
+  inputs : List (String × HdlWidth)
+  outputs : List (String × HdlWidth)
+  wires : List (String × HdlWidth)
+  regs : List (String × HdlWidth)
+  stmts : List HdlStmt
+  deriving Repr
+
+def getTransitionFireActualName (idx : Nat) : String :=
+  s!"fire_actual_{idx}"
+
+/-- Code generator helper: accumulates transitions' token contributions for place `p`. -/
+def compileNextStateExpr {P T : Type} [DecidableEq P] (N : PetriNet P T) (t_list : List T)
+    (p : P) (w : Nat) (p_str : P → String) : HdlExpr :=
+  let rec loop (idx : Nat) (expr : HdlExpr) : List T → HdlExpr
+    | [] => expr
+    | t :: ts =>
+      let pre_val := N.pre t p
+      let post_val := N.post t p
+      let cond := HdlExpr.var (getTransitionFireActualName idx)
+      let next_expr :=
+        if post_val >= pre_val then
+          HdlExpr.add expr (HdlExpr.mux cond (HdlExpr.const (HdlWidth.vector w) (post_val - pre_val)) (HdlExpr.const (HdlWidth.vector w) 0))
+        else
+          HdlExpr.sub expr (HdlExpr.mux cond (HdlExpr.const (HdlWidth.vector w) (pre_val - post_val)) (HdlExpr.const (HdlWidth.vector w) 0))
+      loop (idx + 1) next_expr ts
+  loop 0 (HdlExpr.var s!"M_{p_str p}_reg") t_list
+
+/-- Compiler from a Petri net to an HDL module.
+    Automatically designs the hardware registers, priority encoder for conflict resolution,
+    next-state update logic, and reset circuitry. -/
+def compileToHdl {P T : Type} [DecidableEq P] [DecidableEq T] [Fintype P] [Fintype T]
+    (N : PetriNet P T) (w : Nat) (p_str : P → String) (t_str : T → String) : HdlModule :=
+  let p_list := Finset.univ.toList (α := P)
+  let t_list := Finset.univ.toList (α := T)
+  
+  -- Inputs: clk, rst, and t_fire for each transition
+  let inputs := [("clk", HdlWidth.single), ("rst", HdlWidth.single)] ++
+    t_list.map (fun t => (s!"t_fire_{t_str t}", HdlWidth.single))
+  
+  -- Outputs: marking of each place
+  let outputs := p_list.map (fun p => (s!"M_{p_str p}", HdlWidth.vector w))
+  
+  -- Wires for enablement and firing
+  let rec makeWires (idx : Nat) : List T → List (String × HdlWidth)
+    | [] => []
+    | t :: ts =>
+      [ (s!"enabled_{t_str t}", HdlWidth.single),
+        (s!"fire_req_{t_str t}", HdlWidth.single),
+        (getTransitionFireActualName idx, HdlWidth.single) ] ++ makeWires (idx + 1) ts
+  let wires := makeWires 0 t_list
+  
+  -- Registers: state registers for the marking of each place
+  let regs := p_list.map (fun p => (s!"M_{p_str p}_reg", HdlWidth.vector w))
+  
+  -- 1. Continuous assignments for enabledness and firing request
+  let rec makeStmts1 : List T → List HdlStmt
+    | [] => []
+    | t :: ts =>
+      let pre_places := p_list.filter (fun p => N.pre t p > 0)
+      let enabled_expr := pre_places.foldr (fun p acc =>
+        HdlExpr.and (HdlExpr.geq (HdlExpr.var s!"M_{p_str p}_reg") (HdlExpr.const (HdlWidth.vector w) (N.pre t p))) acc
+      ) (HdlExpr.const HdlWidth.single 1)
+      [ HdlStmt.assign s!"enabled_{t_str t}" enabled_expr,
+        HdlStmt.assign s!"fire_req_{t_str t}" (HdlExpr.and (HdlExpr.var s!"enabled_{t_str t}") (HdlExpr.var s!"t_fire_{t_str t}")) ] ++ makeStmts1 ts
+  let stmts1 := makeStmts1 t_list
+  
+  -- 2. Priority encoder for actual firing
+  let rec makeStmts2 (idx : Nat) : List T → List HdlStmt
+    | [] => []
+    | t :: ts =>
+      let prior_items := t_list.take idx
+      let inhibit := prior_items.foldl (fun acc pt =>
+        HdlExpr.and acc (HdlExpr.eq (HdlExpr.var s!"fire_req_{t_str pt}") (HdlExpr.const HdlWidth.single 0))
+      ) (HdlExpr.const HdlWidth.single 1)
+      let actual_expr := HdlExpr.and (HdlExpr.var s!"fire_req_{t_str t}") inhibit
+      HdlStmt.assign (getTransitionFireActualName idx) actual_expr :: makeStmts2 (idx + 1) ts
+  let stmts2 := makeStmts2 0 t_list
+  
+  -- 3. Register reset and next-state assignments
+  let seq_stmts : List HdlStmt := p_list.map (fun p =>
+    let next_expr := compileNextStateExpr N t_list p w p_str
+    let rst_mux := HdlExpr.mux (HdlExpr.var "rst") (HdlExpr.const (HdlWidth.vector w) 0) next_expr
+    HdlStmt.seqAssign s!"M_{p_str p}_reg" rst_mux
+  )
+  let stmts3 := [HdlStmt.alwaysPosedge "clk" "rst" seq_stmts]
+  
+  -- 4. Output assignments: M_p = M_p_reg
+  let stmts4 : List HdlStmt := p_list.map (fun p =>
+    HdlStmt.assign s!"M_{p_str p}" (HdlExpr.var s!"M_{p_str p}_reg")
+  )
+  
+  let stmts := stmts1 ++ stmts2 ++ stmts3 ++ stmts4
+  
+  { name := "petri_controller",
+    inputs := inputs,
+    outputs := outputs,
+    wires := wires,
+    regs := regs,
+    stmts := stmts }""" .
+
+procint:Decl_Hdl_refinement a procint:Decl ;
+  procint:inModule "Petri.Hdl" ;
+  procint:declOrder 2 ;
+  procint:declName "ProcInt.Hdl_refinement" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """/-- State valuation of hardware registers for places. -/
+def RegisterState (P : Type) (w : Nat) := P → BitVec w
+
+/-- Refinement abstraction relation: maps hardware BitVec register state to formal Petri net marking. -/
+def Refinement {P : Type} (M : Marking P) (regVal : RegisterState P w) : Prop :=
+  ∀ p, (M p : ℤ) = (regVal p).toNat""" .
+
+# ═══ Decls: Tests.FheHdl ═══════════════════════════════════════════════
+
+procint:Decl_test_fhe_hdl a procint:Decl ;
+  procint:inModule "Tests.FheHdl" ;
+  procint:declOrder 1 ;
+  procint:declName "ProcInt.test_fhe_hdl" ;
+  procint:declKind "def" ;
+  procint:status "definition" ;
+  procint:leanCode """inductive TestPlace
+  | p0
+  deriving DecidableEq, Fintype
+
+inductive TestTrans
+  | t0
+  deriving DecidableEq, Fintype
+
+open TestPlace TestTrans
+
+noncomputable def testNet : PetriNet TestPlace TestTrans where
+  pre _ := Finsupp.single p0 1
+  post _ := Finsupp.single p0 2
+
+/-- Test that compileToHdl compiles the Petri net successfully. -/
+def testCompiledModule : HdlModule :=
+  compileToHdl testNet 8 (fun | p0 => "p0") (fun | t0 => "t0")
+
+/-- Trivial FHE scheme for testing. -/
+def trivialFheScheme : FheScheme ℤ Unit where
+  decrypt _ c := c
+  add c1 c2 := c1 + c2
+  sub c1 c2 := c1 - c2
+  mul c1 c2 := c1 * c2
+  mul_const c k := c * k
+  add_const c k := c + k
+  geq_const c k := if c ≥ k then 1 else 0
+  encrypt_one := 1
+  decrypt_add _ _ _ := rfl
+  decrypt_sub _ _ _ := rfl
+  decrypt_mul _ _ _ := rfl
+  decrypt_mul_const _ _ _ := rfl
+  decrypt_add_const _ _ _ := rfl
+  decrypt_geq_const _ _ _ := rfl
+  decrypt_one _ := rfl
+
+def testFheMarking : FheMarking TestPlace ℤ :=
+  fun | p0 => 1
+
+def testMarking : Marking TestPlace :=
+  Finsupp.single p0 1
+
+theorem testFheMatching : FheMarking.Matches trivialFheScheme () testFheMarking testMarking := by
+  intro p
+  cases p
+  · simp [testFheMarking, testMarking]
+
+/-- A simple test declaration. -/
+def test_fhe_hdl : Bool :=
+  decide (testCompiledModule.name = "petri_controller")
+""" .
