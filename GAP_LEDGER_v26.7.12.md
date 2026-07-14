@@ -615,6 +615,14 @@ ledger text alone.
 
 - Lenses: lean-procint, tickets-truth (merged: orphan modules + untracked Semantic.lean)
 - Status: OPEN
+- Update (2026-07-13, audit Pass 27): the "zero importers" evidence is PARTIALLY FALSE.
+  `ProcInt.Workflow.Multifractal` IS imported — `Playground/Glue/RankOrder.lean:4` carries
+  a real import, and RankOrder is reached by the built `Playground` lib target — so that
+  module is in the built tree, not orphaned. The other three (Graph/Semantic,
+  Planning/SemanticBridge, Thermo) re-confirmed genuinely importer-free, but all four are
+  recent (2026-07-11/12), intentional scaffolding from this session's own construction
+  work, not stale orphans — wire-in vs delete remains the human fork this entry already
+  states. Kept OPEN; scope reduced to three modules.
 - Evidence: procint/ProcInt.lean imports none of ProcInt.Workflow.Multifractal,
   ProcInt.Graph.Semantic, ProcInt.Planning.SemanticBridge, ProcInt.Thermo; no file imports
   them (grep = nothing). The full `lake build AxiomAudit Quadrature PostRelease Playground

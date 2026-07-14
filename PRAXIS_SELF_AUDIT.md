@@ -6150,3 +6150,48 @@ namespace bug across research-papers/. Totals: 12 findings, 11 VERIFIED, 0 REFUT
   own section showed CLOSED -- a live self-contradiction inside one file. Corrected in
   ef55fba.
 - Severity: major
+
+## Pass 27 findings
+
+Pass 27 (4-agent workflow, wf_eaf55537-f1d) investigated the three post-release
+human-call candidates. Totals: highly conservative — 1 actionable item scoped, 0
+executed by the workflow itself (its collision guard stopped on the known three-path
+drift trio), everything else correctly excluded.
+
+### QA1 -- G7's 58 findings are still materially live; archival correctly refused,
+
+- Verdict: CONFIRMED (excluded from action, flagged for human review)
+- Evidence: no reader of release/standing_guard_receipt.json exists anywhere (orphaned as
+  a consumed artifact), but the REGEN_CHECK_COVERAGE_GAP findings' captured recipe body is
+  byte-identical to today's justfile and the ORPHAN_ARTIFACT_REFUSED self-finding is still
+  true — most entries hold. Also traced: the file has NO deterministic producer (ad-hoc
+  python -c MCP scan, commit 184e3a3); registering it in artifacts.toml would require
+  designing a real producer first. Human call, correctly not made autonomously.
+- Severity: major
+
+### QA2 -- G19's ledger evidence partially refuted; all four modules are recent scaffolding,
+
+- Verdict: REFUTED (the zero-importers claim, for one of four), corrected in ledger
+- Evidence: ProcInt.Workflow.Multifractal is imported via Playground/Glue/RankOrder.lean:4
+  and reached by the built Playground target — contradicting G19's own evidence line.
+  The other three are genuinely importer-free but all four date from 2026-07-11/12 and are
+  intentional scaffolding (SemanticBridge/Thermo net-new in ac647a9; Graph/Semantic
+  untracked, hours old at entry time). Wire-in vs delete stays a human fork; G19's scope
+  corrected to three modules in this commit.
+- Severity: major
+
+### QA3 -- lakefile.lean shadowing: 7 confirmed, deleted, one package now builds clean,
+
+- Verdict: CONFIRMED, executed post-workflow (the workflow itself correctly blocked on
+  the known drift trio; re-verified and executed directly)
+- Evidence: exactly 7 packages had an untracked 0-byte lakefile.lean shadowing a valid
+  lakefile.toml (bio_signals, floquet_photonic, hyperdimensional_cognitive, ortac_plus,
+  revops_turbulence, scalar_dissipation, smfdcca); 6 of 7 corroborated by their own CI
+  workflows' first-hand comments. aeneas_rust_verification and sound_borrow_checking
+  excluded — they have NO lakefile.toml at all (different defect). All 7 strays deleted
+  (untracked, nothing to commit). Post-deletion: hyperdimensional_cognitive builds clean;
+  smfdcca now gets past the shadowing AND past the fixed doc-comment bug but exposes a
+  third pre-existing defect (Smfdcca.lean:8 `Unknown identifier Real` — uses Real with no
+  Mathlib dependency) — reported, not fixed, out of this narrow scope. Remaining packages
+  not individually build-tested this pass.
+- Severity: minor
