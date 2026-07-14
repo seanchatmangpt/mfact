@@ -1464,3 +1464,18 @@ All four closures are axiom-audited (49 `#guard_msgs` pairs,
   existential-of-a-constant variant). Remedy: delete it or replace with a theorem whose
   hypotheses are load-bearing; the research-papers surface is otherwise out of the
   release's provable core.
+
+### G60 — pre-commit generated-output hook: any staged .ttl whitens the whole commit
+
+- Lens: praxis-self-audit Pass 21 (PU3), workflow wf_659820fe-356
+- Status: OPEN
+- Evidence: .git/hooks/pre-commit (lines 7-21) types staged paths into source
+  (`scripts/* | ontology/* | ggen.toml | *.ttl`) and generated arms and refuses only when
+  a generated path is staged with zero source paths. The check is path-typed and
+  content-blind: staging any .ttl file — related or not — whitens arbitrary hand edits to
+  generated files in the same commit. Nothing exploited this (Pass 21 A2 reconstructed
+  every hunk of the one hatch-assisted commit as machine churn), but the gate's intent
+  (no hand-coded generated output) is not what it enforces. Fix direction: require the
+  source arm to actually generate the staged generated paths (dependency-aware check), or
+  at minimum log hatch/whitening uses to an auditable file. Design decision; not patched
+  mechanically here.

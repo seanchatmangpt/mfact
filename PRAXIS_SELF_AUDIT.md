@@ -5623,3 +5623,100 @@ below, batch confirmations compressed into PT1.
   exists nowhere (actual: searchGo_exhausted_length_le, Outcome.lean:149). Fixed in
   d9f3c63 alongside the R4 truth-fixes.
 - Severity: minor
+
+## Pass 21 findings
+
+Pass 21 ran as a 4-agent read-only workflow (wf_659820fe-356) against the nine commits
+since Pass 20 (ee624be..73d9fc6) — the regen-convergence chain, the escape-hatch use, the
+release-doc edits, and the fix loop's closing arithmetic. Totals: 16 findings, 11 VERIFIED,
+0 REFUTED, 5 PARTIAL (one verdict downgraded by the critic). Material findings below;
+clean confirmations compressed into PU1.
+
+### PU1 -- Batch confirmations: regen chain and release docs survive adversarial reconstruction,
+
+- Lens: regen-chain (A1, A2), release-docs (B1, B2, B3), loop-close (C2, C3, C4)
+- Claim: batch of clean re-verifications.
+- Source: Pass 21 workflow journal
+- Verdict: CONFIRMED
+- Evidence: eval-tex numbers independently recomputed from the manifest (axiom distribution
+  {0:37, 1:28, 2:26, 3:112}; the six 0->3-axiom movers are exactly the ac647a9-promoted
+  WfNet countermodel family, confirming causal attribution); EVERY hunk of the
+  MFACT_SOURCE_CHANGED=1 commit b7bc3e9 reconstructed as either the 6cbc680->ee624be swap
+  or b3sum-verified machine churn (receipt catch-ups included) -- the hatch justification
+  holds; all 15 addendum hashes resolve and the 29-commit count is exact; all four R4
+  fixes present and cross-consistent; all 5 success-receipt SHAs are HEAD ancestors with
+  matching gap closures; stuck-item recomputation clean (max gap_id multiplicity 2, both
+  successes); exactly one LOOP COMPLETE line with nothing appended after it.
+- Severity: minor
+
+### PU2 -- LOOP COMPLETE tally conflated an out-of-band receipt with firing successes,
+
+- Lens: loop-close (C1)
+- Claim (73d9fc6): "16 firings ... 5 success".
+- Source: python3 parse of all 17 receipts mapped to run-log firing numbers
+- Verdict: CONFIRMED defect (mine), corrected fix-forward this pass
+- Evidence: 16 receipts map 1:1 to firings 1-16; the 17th
+  (20260713T211642Z, G11, commit 5608deb) documents the out-of-band PO1 build.rs fix that
+  firing 11's own entry attributes to "outside this firing, same session" -- it is a
+  non-firing action. Correct per-firing arithmetic: 4 firing successes (firings 3, 4, 5,
+  10) + 1 out-of-band success receipt; total receipts 17 = 16 firings + 1. The Run-log
+  correction note is appended in this same commit.
+- Severity: minor
+
+### PU3 -- Pre-commit hook is path-typed and content-blind: .ttl whitening surface,
+
+- Lens: regen-chain (A3)
+- Claim: characterize why 263406d passed hatch-free while b7bc3e9 refused.
+- Source: .git/hooks/pre-commit lines 7-21, read directly
+- Verdict: CONFIRMED (mechanism), new gap opened
+- Evidence: refusal fires iff a generated-arm path is staged with no source-arm path;
+  263406d's staged quadrature ontology.ttl matched the *.ttl source arm and whitened the
+  whole commit; b7bc3e9 staged three generated-arm paths and zero source-arm paths.
+  Intelligence: (a) single-commit sweeps that include the driving .ttl hunk pass
+  hatch-free; splitting propagation into a follow-up commit strands it; (b) the hook has
+  no cross-commit memory and release-manifest.json is itself typed GENERATED, so even
+  same-commit inclusion of the driving manifest change would not count as source;
+  (c) ANY staged .ttl whitens arbitrary generated-file edits in the same commit -- a
+  laundering surface no commit exercised, opened as G60.
+- Severity: major
+
+### PU4 -- Convergence verified ledger<->tree byte-for-byte; renderer half honestly open,
+
+- Lens: regen-chain (A4, downgraded by critic FLAG-A4)
+- Claim: committed ledgered artifacts match what the renderers would produce.
+- Source: BLAKE3 recomputation of all 96 artifacts.toml entries, 83 receipt outputs,
+  35 closure hashes against HEAD blobs; run-identifier and quadrature-witness fields
+- Verdict: PARTIAL
+- Evidence: zero hash mismatches anywhere; receipt.json equals the receipt-log tip; the
+  six post-81fbbad receipt entries chain cleanly (the 3 fork points pre-exist, per G58).
+  The unverified half, per the critic: that the renderers would REPRODUCE these bytes
+  rests on the regen-check-green run recorded in the commits, which a read-only pass
+  cannot re-execute. No static surface contradicts it; the next writable pass may re-run
+  regen-check to close this (accepting its receipt-log append).
+- Severity: minor
+
+### PU5 -- Two stale counts survive in the PRD; correction pending a concurrent writer,
+
+- Lens: release-docs (B4)
+- Claim: no stale gap-count survives f45d53f's G58/G59.
+- Source: live greps: 59 '^### G' entries, 24 '^- Status: OPEN'
+- Verdict: CONFIRMED defect
+- Evidence: RELEASE_v26.7.13_PRD.md:185 still reads "22 of 57" (accurate when d9f3c63
+  landed; falsified within the hour by f45d53f), and the section pins the f735022
+  snapshot. Not corrected in this commit because the release-readiness workflow
+  (wf_840ce9fe-836) is concurrently writing that file; queued as the first post-landing
+  edit. No global "all gaps closed" overclaim exists anywhere.
+- Severity: minor
+
+### PU6 -- Working tree has drifted past HEAD on a certified surface; latest.json unaudited,
+
+- Lens: completeness critic (CR-1, CR-2)
+- Claim: audit coverage gaps this pass.
+- Source: git status at audit time
+- Verdict: CONFIRMED (queued)
+- Evidence: (1) crates/mfact-core/src/validate.rs carries the uncommitted cosmetic
+  test-helper rename (characterized byte-level by Pass 20 VR1) -- the live crate no
+  longer equals the certified closure state; committed this pass to re-align disk with
+  HEAD. (2) .mfact/receipts/latest.json and metrics-history.jsonl have never been
+  directly audited against the timestamped receipts; queued for Pass 22.
+- Severity: minor

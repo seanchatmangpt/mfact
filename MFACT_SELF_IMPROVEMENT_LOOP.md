@@ -406,3 +406,9 @@ diff just doesn't block starting.
   rule caught all three). The loop leaves no stuck items: no gap_id appears in more
   than 7 of the last 10 receipts. Companion loops (audit 9bab36de, release 76f42877)
   remain active and are not governed by this deadline.
+
+- 2026-07-13 ~17:20 PDT (audit Pass 21 correction, PU2): the LOOP COMPLETE tally above
+  conflated receipts with firings. Correct arithmetic: 17 receipts = 16 firings + 1
+  out-of-band receipt (20260713T211642Z, the PO1 build.rs fix firing 11 attributed to
+  "outside this firing"); per-firing successes are 4 (firings 3, 4, 5, 10), not 5 -- the
+  fifth success receipt was the out-of-band action. Totals otherwise stand.
