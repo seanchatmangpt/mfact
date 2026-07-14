@@ -13,14 +13,26 @@ newline-joined, path-sorted list of "<path> <git-blob-sha1>" pairs for every
 hashes via `git ls-tree`, not working-tree content — the source repo may be
 dirty locally, but its git history at the pinned commit is immutable).
 
+Also upserts release/standing.env's line-1 header comment (G6 hygiene prep,
+TAG_DECISION_BRIEF_v26.7.13.md): the header used to hand-carry a release
+string ("v26.7.6") that drifted from the actual release the moment
+build_manifest.py's RELEASE constant moved on without it. The header is now
+derived from release/release-manifest.json's own "release" field — the same
+manifest build_manifest.py writes immediately before invoking this generator
+(see build_manifest.py's call site) — so there is exactly one place a release
+identifier is asserted from, and standing.env's header can only ever agree
+with it or fail loudly.
+
 Usage:
     python3 scripts/gen_type_inventory_hash.py
 
 Writes release/type_inventory_provenance.txt and upserts TYPE_INVENTORY_HASH=
-in release/standing.env. Invoked from scripts/build_manifest.py so `just
-regen-check` / `just build-manifest` keep both files in lockstep with the
-pinned source commit. Never hand-edit either output file.
+and the line-1 header in release/standing.env. Invoked from
+scripts/build_manifest.py so `just regen-check` / `just build-manifest` keep
+all three in lockstep with the pinned source commit and the current release.
+Never hand-edit any output file.
 """
+import json
 import os
 import subprocess
 import sys
@@ -35,6 +47,7 @@ SOURCE_COMMIT = '6aead3c'
 
 STANDING_ENV = os.path.join(ROOT, 'release/standing.env')
 PROVENANCE = os.path.join(ROOT, 'release/type_inventory_provenance.txt')
+RELEASE_MANIFEST = os.path.join(ROOT, 'release/release-manifest.json')
 
 
 def b3(data: bytes) -> str:
@@ -89,6 +102,43 @@ def write_provenance(digest: str, count: int) -> None:
             'always agree; disagreement is GAP G9.\n')
 
 
+def read_release() -> str:
+    """The single source of truth for the release identifier: release/release-manifest.json's
+    own "release" field. build_manifest.py writes that manifest, then invokes this generator
+    (see build_manifest.py's call site) — so by the time this runs, the manifest already
+    carries the current release. Never hand-carry a version string here or anywhere else that
+    can independently drift."""
+    if not os.path.exists(RELEASE_MANIFEST):
+        raise SystemExit(
+            f'REFUSED: {RELEASE_MANIFEST} does not exist — run scripts/build_manifest.py '
+            'first (it writes release-manifest.json before invoking this generator).')
+    with open(RELEASE_MANIFEST) as f:
+        manifest = json.load(f)
+    release = manifest.get('release')
+    if not release:
+        raise SystemExit(f'REFUSED: {RELEASE_MANIFEST} has no "release" field')
+    return release
+
+
+def upsert_header(release: str) -> None:
+    """Upsert release/standing.env's line-1 header comment so it always names the manifest's
+    own release identifier, never a hand-carried string that can drift (G6 hygiene prep,
+    TAG_DECISION_BRIEF_v26.7.13.md: the header previously said "v26.7.6" while the manifest
+    had already moved to v26.7.7, with nothing regenerating the comment)."""
+    header = (f'# mfact/procint release {release} — standing report '
+              '(machine-checkable, computed not asserted)\n')
+    if not os.path.exists(STANDING_ENV):
+        raise SystemExit(f'REFUSED: {STANDING_ENV} does not exist')
+    with open(STANDING_ENV) as f:
+        lines = f.readlines()
+    if lines and lines[0].startswith('# mfact/procint release '):
+        lines[0] = header
+    else:
+        lines.insert(0, header)
+    with open(STANDING_ENV, 'w') as f:
+        f.writelines(lines)
+
+
 def upsert_standing_env(digest: str) -> None:
     key = 'TYPE_INVENTORY_HASH='
     if not os.path.exists(STANDING_ENV):
@@ -108,11 +158,13 @@ def upsert_standing_env(digest: str) -> None:
 
 
 def main() -> int:
+    release = read_release()
+    upsert_header(release)
     digest, count, _manifest = compute()
     write_provenance(digest, count)
     upsert_standing_env(digest)
     print(f'TYPE_INVENTORY_HASH={digest} SOURCE_FILE_COUNT={count} '
-          f'(src={SOURCE_REPO}@{SOURCE_COMMIT})')
+          f'(src={SOURCE_REPO}@{SOURCE_COMMIT}) release={release}')
     return 0
 
 

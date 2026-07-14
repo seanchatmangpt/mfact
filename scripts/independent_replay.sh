@@ -6,7 +6,17 @@
 # statuses are REPLAY_PASS / REPLAY_FAIL / REPLAY_NOT_RUN, never asserted.
 set -u
 REAL=/Users/sac/mfact
-TAG=v26.7.7-procint-certified
+# TAG is derived from release/release-manifest.json's own "release" field, not
+# hand-carried here — a hardcoded TAG=v26.7.7-procint-certified silently
+# stopped tracking the actual release the moment the manifest moved on
+# (G6 hygiene prep, TAG_DECISION_BRIEF_v26.7.13.md). If the manifest is
+# missing or malformed this fails loudly rather than replaying a stale tag.
+RELEASE=$(python3 -c "
+import json
+with open('$REAL/release/release-manifest.json') as f:
+    print(json.load(f)['release'])
+")
+TAG="${RELEASE}-procint-certified"
 STANDIN="${MFACT_STANDIN:?set MFACT_STANDIN to the bare stand-in path}"
 BUDGET="${REPLAY_BUDGET_SECS:-5400}"
 REPORT="$REAL/release/replay_report.json"
