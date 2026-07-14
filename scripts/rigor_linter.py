@@ -18,7 +18,11 @@ def scan_file(filepath):
             
         # Strip Lean comments to avoid false positives in docstrings
         no_comments = re.sub(r'/-.*?-/|--.*?\n', '', content, flags=re.DOTALL)
-        if re.search(r'\bsorry\b', no_comments):
+        # Strip string literals too: a `sorry` inside a string (e.g.
+        # s!"sorry-bearing decls: {n}") is not an actual `sorry` tactic use,
+        # and the comment-only strip above misses it.
+        no_strings = re.sub(r'"(?:\\.|[^"\\])*"', '', no_comments)
+        if re.search(r'\bsorry\b', no_strings):
             errors.append("Unproved theorem detected ('sorry'). Proofs must be mechanically verified.")
 
     # 2. Rust Fake Mechanics
