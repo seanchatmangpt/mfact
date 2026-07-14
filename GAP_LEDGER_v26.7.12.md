@@ -204,7 +204,7 @@ ledger text alone.
 ### G5 — Status surfaces diverge: three count/hash lineages, none annotated with drift
 
 - Lenses: release-artifacts, paper, verifier-report, tickets-truth (merged)
-- Status: OPEN
+- Status: CLOSED
 - Update (2026-07-13): the three lineages are one measurement basis at three epochs —
   `e25724e8`/318/145 (hand snapshot) -> `942facf3`/397/197/stated-7 (frozen tag) ->
   `b1edfbeb`/401/203/stated-2 (live) — so "stated=7 vs 2 cannot both hold" dissolves; see
@@ -233,6 +233,26 @@ ledger text alone.
   stale string. Kept OPEN. Fix: re-run the regen step that produces these two files now
   that the tag exists, confirm both flip to v26.7.13-procint-certified, and check for any
   other git-describe-derived surface.
+- Closure (2026-07-13, later same day): root-caused and fixed permanently, not just
+  re-rendered. `scripts/build_quadrature.py`'s `tag` derivation used `git describe --tags
+  --abbrev=0`, which structurally cannot resolve a tag before it exists — and this
+  repo's own release sequence always regenerates the manifest/quadrature *before* cutting
+  the tag (the tag must point at the STEP-6 regen commit, per `TAG_DECISION_BRIEF_v26.7.13.md`'s
+  `tagCutPoint` finding), so `git describe` would recur this defect on every future
+  release, not just this one. Fixed in `54d2087` to derive the tag string from the
+  manifest's own `release` field instead, matching `build_post_release.py`'s already-correct
+  `CORE_TAG` pattern. Re-ran `just standing-quadrature`; `packs/quadrature-pack/ontology.ttl`
+  and `paper/release_macros.tex` both now read `v26.7.13-procint-certified` (committed in
+  `7f1ad64`). Independently re-swept all nine generated release surfaces
+  (release-manifest.json, quadrature.json, gates.json, final_status.json, standing.env,
+  release_macros.tex, quadrature-pack ontology.ttl, github-release title.txt, certify.log)
+  for any lingering `v26.7.[0-9]+` string not equal to `v26.7.13` — zero hits. Honest
+  caveat: the *tagged* commit `650b388` itself still literally contains the old strings
+  (tags are immutable snapshots, correctly never moved); the fix and the re-render both
+  landed in later, unrelated-to-the-tag commits. This is expected and does not reopen the
+  tag's own validity — `git cat-file -t v26.7.13-procint-certified` still reads `tag`,
+  pointing at `650b388`, per `build_post_release.py`'s independent `release-manifest.json`-derived
+  `CORE_TAG` gate (unaffected by this cosmetic-string class of defect).
 - Verdict: two CONFIRMED (both downgraded release-blocking -> major). The frozen tag
   v26.7.7-procint-certified is internally self-consistent (`git show 184e3a3:...` matches
   942facf3 in both manifest and final_status); the defect is a stale/false status surface
@@ -256,7 +276,7 @@ ledger text alone.
 ### G6 — Release identity stale: no v26.7.12 anywhere; header v26.7.6; generator pins v26.7.7
 
 - Lenses: release-artifacts, tickets-truth, standing-claims, research-papers (merged)
-- Status: OPEN
+- Status: CLOSED
 - Update (2026-07-13): the blocking mechanism stated in this entry's Fix is stale —
   certify passes today (`certify.log:2394` exits 0; the 4-field GatesJson ignores the
   extra gates.json key). The G4 dependency survives via a different edge:
@@ -283,6 +303,18 @@ ledger text alone.
   from the manifest instead of two drifting copies; derives independent_replay.sh's TAG
   from the manifest) are independently confirmed correct and unaffected by the message
   error; the fabricated quote is not repeated here.
+- Closure (2026-07-13, later same day): the G5 self-consistency gap this entry's prior
+  update deferred to is closed (see G5's own closure bullet — `build_quadrature.py` fixed
+  in `54d2087`, re-rendered in `7f1ad64`, zero stale `v26.7.7` strings across all nine
+  generated release surfaces at HEAD). "A single, honestly-identified v26.7.13 release
+  surface" now holds. Post-tag ledgered artifacts (manufacture-post-release/arxiv-package/
+  report.py outputs) committed in `9fd1f22`. Full commit chain for this gap:
+  `e1142ec` (G4 retirement, prerequisite), `1bfbe9f` (version-derivation hygiene prep),
+  `b26e1db` (three-site version bump), `6ebe108`+`a4eaf35`+`650b388` (manifest/certify
+  regen + a real foldHash-seed bug fix found by the mandated self-consistency check),
+  `650b388` is the tag target, `9fd1f22` (post-tag outputs), `54d2087`+`7f1ad64` (G5's
+  tag-derivation fix + re-render). Tag: `v26.7.13-procint-certified`, local only, never
+  pushed (branch is ahead of origin by 90+ commits) — pushing remains a user decision.
 - Verdict: CONFIRMED (downgraded release-blocking -> major) — v26.7.12 equals today's
   date and appears nowhere in the repo (roadmap self-identifies as v26.7.11); the release/
   surface is internally consistent at v26.7.7, so this is staleness, not a false gate.
