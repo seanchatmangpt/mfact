@@ -184,7 +184,7 @@ existing code with gaps between them.
 | Edge | Lean artifact | Rust target | Standing |
 |---|---|---|---|
 | 1 | `SearchOutcome` | none exists | MISSING |
-| 2 | `Approval.covers` | none exists (broker credential-check exists, diff. shape) | MISSING / ANALOGY |
+| 2 | `Approval.covers` | none (broker credential-check exists, diff. shape) | MISSING / ANALOGY |
 | 3 | `receiptCheck`/idempotence | `Broker::claim_idempotency`, `ReceiptValidator` | ANALOGY |
 | 4 | POWL boundedness | none in praxis (redirect: `~/wasm4pm-compat`, unexamined) | MISSING |
 
