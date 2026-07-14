@@ -6,8 +6,9 @@ They were purged. The new mandate is to systematically rebuild all 16 domains as
 
 ## Phase 1: The Core Five (Source Written, Not Yet Build-Verified)
 These bridges' Lean sources contain 0 `sorry`s in text, but are not yet bonded to any Rust
-typestate -- `safe-toolbox` and `mo-mae` are not real crates in this repo (the sole crate is
-`mfact-core`, which contains zero `PhantomData`/`type Proof` typestate bindings). The zero-cost
+typestate -- `safe-toolbox` and `mo-mae` are not real crates in this repo (the two real
+crates are the root `mfact` package and `crates/mfact-core`, neither workspaced together;
+neither contains any `PhantomData`/`type Proof` typestate bindings). The zero-cost
 Rust bonding mandated below (Execution Rules) has not been built for any of the five.
 1. **Random Walk / Galton-Watson Trees**: Proves the mathematical bijection between branching stochastic population processes and Agile Release Train story point decomposition. 
 2. **RevOps Turbulence / Phase Changes**: Formally bounds turbulent phase shifts to exact thread-pool scheduling density and execution overhead.
