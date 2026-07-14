@@ -6389,3 +6389,142 @@ their target files (PA29, PY3-a, PY3-b).
   `CrownLoopBroker::sequence_cycle` as live and unedited. Drift guard reproduced the same
   two unexplained paths as PY3-a.
 - Severity: major (same reasoning as PY3-a)
+
+## Pass 30 findings
+
+Pass 30 adversarially re-verified three recent-fix claims (V1-V3), independently
+reproduced a hash-mismatch investigation into `.mfact/artifacts.toml` drift for
+`paper/release_macros.tex` and `release/standing.env`, and attempted the recommended
+fix. Every claim below was re-derived from the live tree/git history in this pass rather
+than trusted from the input verdicts, per the "actively try to refute" mandate.
+
+### V1 -- hook-events.jsonl added to drift allowlist, resolves its false positive,
+
+- Claim: 4ec54a0 adds `.mfact/hook-events.jsonl` to
+  `.mfact/known-persistent-drift.txt`, resolving the collision-guard false positive it
+  names.
+- Verdict: VERIFIED
+- Evidence: `git show 4ec54a0 -- .mfact/known-persistent-drift.txt` is a single-line
+  diff inserting `.mfact/hook-events.jsonl` after `.mfact/artifacts.toml`.
+  `git status --porcelain | grep hook-events` -> `?? .mfact/hook-events.jsonl` (genuine
+  live drift, not a vacuous entry). Re-ran the guard command verbatim; the path is
+  absent from the unexplained-delta output, confirming the fix works as claimed. New
+  observation this pass: the live guard now surfaces THREE unexplained paths, not the
+  one (`paper/arxiv-submission.tar.gz`) recorded at investigation time --
+  `PRAXIS_CORRESPONDENCE_AUDIT_v1.md` and `SOC2_REPORT.md` have since appeared
+  (mtimes 21:19:45 and 21:10:59, both inside this pass's window). This does not
+  refute V1's narrow claim (hook-events.jsonl is still absent from the delta either
+  way) but confirms the guard as a whole remains, and is actively getting harder to
+  clear, tripped by a concurrently-running session (see FIX RESULT below).
+
+### V2 -- rewritten rigor-linter section in CLAUDE_ROADMAP.md accurate,
+
+- Claim: 427d4c0's CLAUDE_ROADMAP.md:860-874 "implements exactly these tripwires" list
+  now accurately describes `scripts/rigor_linter.py`.
+- Verdict: REFUTED
+- Evidence: read `scripts/rigor_linter.py` fresh (137 lines of logic) and enumerated
+  all 13 `errors.append(...)` call sites by line: fake Lean syntax (17), sorry
+  detection (26), empty trait definition (32), zero-field marker struct (36),
+  PhantomData-only struct (47), empty trait impl (59), unimplemented!/todo!() (68),
+  dead alternative function (72), discarded-input+Ok(()) (76), discarded-input broad
+  form (84), sci-fi vocabulary (94), claim-without-mechanism doc comment (125), hedge
+  comment/mock (135). CLAUDE_ROADMAP.md:862-868 (read fresh) lists only 6 bullets --
+  zero-field marker types, PhantomData-only types, empty trait implementations,
+  discarded-input constructor paths, claim-without-mechanism doc comments, and
+  hedge/mock comments -- covering checks at lines 36, 47, 59, 76+84, 125, 135. It
+  omits six distinct, independently-triggerable checks: fake Lean syntax (17), sorry
+  detection (26), empty trait *definitions* (32, textually distinct from the impl
+  check at 59 -- confirmed by re-reading the code comment at lines 53-57, which the
+  script itself calls out as "Distinct from the empty-trait-definition check above"),
+  unimplemented!/todo!() (68), dead alternative functions (72), and sci-fi vocabulary
+  (94). The section's own "implements exactly these tripwires" framing is a
+  completeness claim; 6 of 13 checks is a proper subset, not an exact description.
+  The commit did genuinely close PA29's original defect (the false "orphaned modules"
+  / "referenced only by tests" claims are gone -- confirmed zero `orphan` hits in the
+  script and the corrected text now says these are "NOT implemented"), so this is the
+  same debt-closed/new-inaccuracy-introduced pattern Pass 29 already found in
+  PB4_PB12 for a different file.
+- Severity: minor (a completeness overclaim in a lesson doc, not a build/release
+  surface; six real, mechanically-verified checks go undocumented rather than
+  overclaimed)
+
+### V3 -- ROADMAP.md's two-crate correction accurate,
+
+- Claim: c9d3535's ROADMAP.md correction ("the two real crates are the root `mfact`
+  package and `crates/mfact-core`, neither workspaced together; neither contains any
+  PhantomData/type Proof typestate bindings") is accurate.
+- Verdict: VERIFIED
+- Evidence: `/Users/sac/mfact/Cargo.toml` has `[package] name = "mfact"` with no
+  `[workspace]` table; `crates/mfact-core/Cargo.toml` has `[package] name =
+  "mfact-core"`. Repo-wide `grep -rln '\[workspace\]' --include=Cargo.toml` (excluding
+  target/, `.claude/worktrees`) returns zero matches, and no parent `Cargo.toml` exists
+  at `/Users/sac` to workspace them externally. `ls src/` confirms `ledger.rs`,
+  `lib.rs`, `main.rs` matching the commit's `src/{lib,main,ledger}.rs` claim exactly.
+  `grep -rn 'PhantomData\|type Proof' src/*.rs` returns zero hits (exit 1). ROADMAP.md
+  lines 8-10 read verbatim as quoted in the claim. Every clause independently
+  reproduced true against the live tree.
+
+### Hash-mismatch investigation -- outcome
+
+- Investigation (input to this pass): `.mfact/artifacts.toml` recorded stale blake3
+  hashes for `paper/release_macros.tex` and `release/standing.env`; diagnosed as
+  ordinary ledger staleness (both files legitimately re-rendered by later commits
+  7f1ad64 and 54eaef8 after the ledger was last built), not corruption, and judged
+  safe to fix by rerunning `scripts/build_ledger.py` (74 lines, only subprocess call
+  is `b3sum --no-names <path>`, only file written is `.mfact/artifacts.toml`).
+- Outcome: LEFT AS DOCUMENTED DRIFT -- fix correctly not applied this pass.
+  Independently re-verified the staleness diagnosis is still sound:
+  `scripts/build_ledger.py` re-read in full (74 lines) confirms the only
+  `subprocess.run` call is `b3sum --no-names` (line 31) and the only write is
+  `open(out, 'w').write(...)` to `.mfact/artifacts.toml` (line 72) -- no `just`,
+  `git`, `certify`, `release`, `regen-check`, or `standing-quadrature` invocation
+  anywhere. But re-running the fix right now would not close the drift cleanly: this
+  pass observed `release/standing.env` move to a THIRD hash
+  (`ca8b18971ebb1437ad86e457f071a1af49280f0071e6690e15b01346103cebb5`) since the
+  investigation was written, while `.mfact/artifacts.toml:524`'s recorded value
+  (`22d3eb934664c7711c13759ba30f6783d2fa061e4d677310544e265fb8504d8f`) is exactly the
+  investigation's own "fresh" hash from one step earlier -- confirming a live,
+  concurrently-running session has since re-touched the file (mtime 21:19:55, inside
+  this pass's own window; `git status --porcelain` shows it `M` again right now).
+  `paper/release_macros.tex`'s ledger entry (line 79/80,
+  `35062eefc467cda63d542f220b92c2cd03763549e0e13f457f7ee5f70bee2f47`) does already
+  match the live file's b3sum and matches `.ggen-v2/receipt.json`'s own
+  `outputs["paper/release_macros.tex"]` value, confirming that one path is already
+  self-resolved by a prior partial run and needs no further action.
+
+### FIX RESULT -- blocked, independently corroborated,
+
+- Claim (input to this pass): fix blocked because a separate live session (PID 25241,
+  `agy --dangerously-skip-permissions`, ttys007) is actively mutating the target
+  files inside `/Users/sac/mfact` right now.
+- Verdict: VERIFIED (the blocking condition, independently re-observed)
+- Evidence: `ps -p 25241 -o pid,etime,command` shows the process still running,
+  elapsed 58:04, matching the reported "55+ min" at a later point in the same window.
+  `git log --oneline -8` shows a new commit, `e56a3d7` ("docs: mfact <-> praxis
+  correspondence audit v1"), landed at 21:20:15 -0700 -- after the FIX RESULT input
+  was authored and inside this pass's own verification window -- and its target file
+  `PRAXIS_CORRESPONDENCE_AUDIT_v1.md` is already dirty (`M`) again on disk, meaning
+  the foreign session committed and then kept editing during this audit. `git status
+  --porcelain` right now additionally shows `paper/arxiv-submission.tar.gz` and
+  `web/mfact-ui` dirty, and `SOC2_REPORT.md` freshly untracked (mtime 21:10:59) --
+  none of these are outputs of `scripts/build_ledger.py`, confirming the mutation
+  source is external to any action this pass took. Given a foreign process is
+  actively writing to the exact ledger targets, this pass independently reached the
+  same conclusion: do not run `scripts/build_ledger.py` or commit ledger changes
+  this pass. No writes were made by this pass other than the final append to this
+  file. `v26.7.13-procint-certified` was not queried in any mutating way (only `git
+  log`, `git show`, `git status`, `grep`, `b3sum`, `stat`, `ps`, `wc`, `sed`, `cat`,
+  `find` were run, all read-only).
+
+### Net result
+
+- 2 of 3 recent-fix claims (V1, V3) independently re-verified as VERIFIED; 1 (V2)
+  independently re-verified as REFUTED on the specific "exactly" completeness claim,
+  while confirming the fix closed its own originally-cited defect.
+- The hash-mismatch drift is left open, correctly, for a second consecutive
+  observation: the underlying diagnosis (ordinary post-tag-cut staleness, not
+  corruption) holds, but a live concurrent session (PID 25241) keeps moving the
+  target files during the exact window available to fix them, so no ledger write was
+  attempted.
+- Fix phase did not run (blocked by the same concurrency finding as the input FIX
+  RESULT, independently re-derived rather than assumed).
