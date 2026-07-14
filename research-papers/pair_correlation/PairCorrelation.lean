@@ -1,4 +1,4 @@
-/--
+/-
 Pair correlation statistics for dynamical systems
 Paper: https://arxiv.org/abs/2606.17880
 -/
