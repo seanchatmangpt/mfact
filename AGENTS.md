@@ -103,3 +103,23 @@ orthogonality is about standing transfer, not about whether the file may be read
   reviewer transcript.
 
 If you cannot hand over the artifact, the rate function, or the chart to be independently compiled and verified, you have not done the work.
+
+## 5. Non-Theorem Work-Status Vocabulary and Standing-Gate Precedence
+
+AGENTS.md section 4's Standing enum (PROVEN/IMPORTED/CONJECTURAL/...) is scoped to theorem
+claims only. For everything else — scripts, tooling, file deliveries, task completion reports —
+use an orthogonal six-word vocabulary, adapted from `~/praxis/.claude/rules/no-overclaiming.md`
+(read-only reference; mfact does not import its authority, only its vocabulary): `ALIVE`
+(verified this session, cite the command run), `PARTIAL` (name the specific gaps), `BLOCKED`
+(cite file:line), `MOCKED` (a fake or stub stands in for the real thing — say so every time, not
+once), `REFUSED`/`UNSUPPORTED` (a correct-by-design refusal, not a gap), `UNVERIFIED` (the
+default — never inflate to a stronger word without a command+output in the same breath). A prior
+agent's own summary or handoff report is hearsay until independently re-verified this session:
+`~/praxis/.agents/handoff.md` (2026-07-10T20:03:12Z) records an independent "Victory Auditor"
+role returning verdict `VICTORY CONFIRMED` for a cross-repo delivery that
+PRAXIS_DOGFOODING_EXPLORATION.md's own independent check found to be false — a live example of
+trusting a self-reported verdict over a literal re-check. Standing-gate precedence: before any
+readiness or completion claim about this repo, `STANDING.md` / `just standing` (computed from a
+build, an audit, or a git commit — see STANDING.md's own "Scope" section) outranks any prior
+agent's summary, README claim, or handoff report; regenerate it if stale rather than trusting a
+cached copy.
