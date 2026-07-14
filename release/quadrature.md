@@ -1,6 +1,6 @@
-# Standing Quadrature — v26.7.7
+# Standing Quadrature — v26.7.13
 
-`PASS` (run `ee624be`). ggen renders. Lean admits. mfact certifies.
+`PASS` (run `b26e1db`). ggen renders. Lean admits. mfact certifies.
 
 The release is not evaluated only by whether Lean builds. It is evaluated
 by whether the declaration catalog, admitted Lean corpus, process
