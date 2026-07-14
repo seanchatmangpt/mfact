@@ -3,7 +3,7 @@ import Lean.Data.Json
 
 open Lean Mfact
 
-def mfactVersion : String := "26.7.7"
+def mfactVersion : String := "26.7.13"
 
 def usage : String := String.intercalate "\n" [
   "mfact — Lean 4 mathematical manufacturing CLI",

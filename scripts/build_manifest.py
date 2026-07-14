@@ -91,7 +91,7 @@ for kind, subj, seed in [
 
 # genesis fold, exactly matching praxis src/chain.rs:
 # genesis = blake3(seed); fold(prev, event) = blake3(prev_hex_bytes || event_bytes)
-RELEASE = 'v26.7.7'
+RELEASE = 'v26.7.13'
 acc = b3(f'mfact-{RELEASE}-genesis'.encode())
 for a in artifacts:
     acc = b3(acc.encode('ascii') + a['hash'].encode('ascii'))
