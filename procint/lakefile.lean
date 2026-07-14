@@ -37,7 +37,7 @@ target ggenSync pkg : FilePath := do
 
 @[default_target]
 lean_lib ProcInt where
-  -- precompileModules := true
+  precompileModules := true
   extraDepTargets := #[`ggenSync]
 
 -- Platform-conditional Metal FFI static library build target compiling ffi/gpu_proving.m
