@@ -125,7 +125,7 @@ mod tests {
     use super::*;
     use crate::{Artifact, Evidence, Manifest};
 
-    fn dummy_manifest() -> Manifest {
+    fn fixture_manifest() -> Manifest {
         Manifest {
             schema: "mfact/1.0".to_string(),
             release: "v1".to_string(),
@@ -163,13 +163,13 @@ mod tests {
 
     #[test]
     fn test_manifest_valid() {
-        let m = dummy_manifest();
+        let m = fixture_manifest();
         assert!(validate_manifest_concurrently(&m).is_ok());
     }
 
     #[test]
     fn test_manifest_invalid_schema() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.schema = "".to_string();
         assert!(matches!(
             validate_manifest_concurrently(&m),
@@ -185,7 +185,7 @@ mod tests {
 
     #[test]
     fn test_manifest_invalid_release() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.release = "".to_string();
         assert!(matches!(
             validate_manifest_concurrently(&m),
@@ -195,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_manifest_invalid_artifact_name() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.artifacts.push(Artifact {
             name: "".to_string(),
             hash: "a".repeat(64),
@@ -210,7 +210,7 @@ mod tests {
 
     #[test]
     fn test_manifest_duplicate_artifact_name() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         let art = Artifact {
             name: "test".to_string(),
             hash: "a".repeat(64),
@@ -227,7 +227,7 @@ mod tests {
 
     #[test]
     fn test_manifest_invalid_evidence_subject() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.evidence.push(Evidence {
             subject: "".to_string(),
             kind: "test".to_string(),
@@ -241,7 +241,7 @@ mod tests {
 
     #[test]
     fn test_manifest_invalid_evidence_kind() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.evidence.push(Evidence {
             subject: "test".to_string(),
             kind: "".to_string(),
@@ -255,7 +255,7 @@ mod tests {
 
     #[test]
     fn test_manifest_duplicate_trusted_base() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.trusted_base = vec!["base1".to_string(), "base1".to_string()];
         assert!(matches!(
             validate_manifest_concurrently(&m),
@@ -265,7 +265,7 @@ mod tests {
 
     #[test]
     fn test_manifest_empty_trusted_base_item() {
-        let mut m = dummy_manifest();
+        let mut m = fixture_manifest();
         m.trusted_base = vec!["".to_string()];
         assert!(matches!(
             validate_manifest_concurrently(&m),
