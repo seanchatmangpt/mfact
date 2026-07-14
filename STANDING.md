@@ -1,6 +1,6 @@
 # mfact/procint — Standing Report
 
-Release `v26.7.7`. Every field below is computed from a build, an audit, or
+Release `v26.7.14`. Every field below is computed from a build, an audit, or
 a git commit — nothing here is asserted in prose. Machine-checkable form:
 `release/standing.env`. Full manifest: `release/release-manifest.json`.
 
