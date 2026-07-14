@@ -155,7 +155,7 @@ before citing one as evidence for the other.
    `REAL_EDGE(A, B) ⟺ ∃ f_prod : B(A(x))` (`CLAUDE_ROADMAP.md:815`) is a genuine formal
    predicate, but has no mechanization (no lint flagging zero-non-test-caller `pub fn`s) and
    zero source files of its own to check it against (`find /Users/sac/mfact -iname
-   '*arazzo*'` returns only 2 `.md` files). Action: mechanize the predicate (a lint) or
+   '*arazzo*'` returns 0 files). Action: mechanize the predicate (a lint) or
    accept it remains, like praxis's version, an audit-by-reading practice — decide which,
    explicitly, rather than leaving the gap implicit.
 
