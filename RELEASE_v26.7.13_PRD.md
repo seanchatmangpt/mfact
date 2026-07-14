@@ -318,3 +318,78 @@ resolve it either; see `RELEASE_v26.7.13_ARD.md` §5.
 - `STANDING.md` — the (currently stale) certified-release status document referenced in §1.
 - `PRAXIS_SELF_AUDIT.md` — the 14-pass self-verification ledger referenced in §3.3.
 - `justfile` — the `check`/`certify`/`release`/`regen-check` recipe chain referenced in §1.
+
+## Release readiness — 2026-07-13 end of session
+
+Anchor: the verification below is pinned to HEAD `73d9fc605fc9b0822787911ae79da532944195ab`.
+Live HEAD has since advanced two commits — `c307780` (self-audit Pass 21; opens G60 in the
+ledger) and `5f2a117` (cosmetic `validate.rs` test-helper rename) — neither touching any
+release-surface path.
+
+**Bottom line.** The mechanical DoD is green at HEAD `73d9fc6`: (1) the
+`just manifest && just certify` re-run is green — committed `release/certify.log` (last
+touched `b2f5b0e`) ends `certified: v26.7.7 (proven 203/401, objection type uninhabited)`
+plus three passing negative controls, `release/gates.json` records all four gates true
+(sorryFree / axiomsClean / fixturesPass / evidenceComplete), counts match the live manifest
+(401 artifacts / 203 proven, runIdentifier `ee624be`, an ancestor of HEAD), and `release/` is
+clean vs HEAD; (2) `just regen-check` shows no drift via the converged committed chain
+`263406d` / `b7bc3e9` / `1daa7d4`, with zero working-tree drift in any ledgered release/regen
+path — caveat: no regen-check log artifact is committed, so greenness rests on commit-message
+attestation plus the converged artifacts, and G58 notes `.ggen-v2/*` sits outside
+regen-check's ledgered-path gate; (3) the quadrature witness is consistent at HEAD —
+`packs/quadrature-pack/ontology.ttl` (`standingQuadrature "PASS"`,
+`unsupportedEvaluationNumbers 0`, `runId "ee624be"`) agrees with `release/quadrature.json`
+(all 6 edges PASS), `release/quadrature.env`, `release/standing.env`, and the rendered
+`procint/ProcInt/Release/Quadrature.lean` (`provenSurface_count = 203` by `rfl`, stamped
+`v26.7.7 (run ee624be)`); (4) the Swarm11 verifier fold
+`procint/artifacts/swarm11-verifier.json` (last touched `81fbbad`) reports 795 declarations /
+222 theorems, axioms 0, unsafe 0, partial 0, sorry 0, and 5 crown + 24 SOC2 + 30 dogfood =
+59 checks with 0 failures, `admitted: true`; and (5) all §4 non-goals are honored as
+written — no SOC2 compliance claim (`ROADMAP_SOC2_MATH.md:5`), no v26.7.13 tag cut and no
+v26.7.13 `CERTIFIED_RELEASE` claim made (git tags stop at `v26.7.7-procint-certified`), the
+UI is not represented as a ship (gitlink pinned `1ba3a9b` vs working tree `40dc87a`,
+mechanism `032abc3`, code uncommitted per G26), and the §3.4 fork, multifractal scope, and
+BLOCKED/OPEN gap inventory are carried forward unresolved (14 BLOCKED plus 24 literal
+`Status: OPEN` entries at audit time).
+
+### Residuals a tag decision must weigh
+
+- **G4** — Countermodel now promoted STATED->PROVEN end-to-end (`ac647a9`; standing.env
+  `WFNET_INFINITE_TRANSITION_COUNTERMODEL=PROVEN`) while gates.json records
+  `countermodel_not_promoted=false` and Cli.lean's GatesJson still reads only 4 fields — the
+  guard is computed, tripped, and ignored; ledger OPEN, named by the PRD as the explicit tag
+  blocker.
+- **G5** — Three count/hash lineages still coexist unannotated at HEAD — manifest 401/203
+  (`ee624be`), STANDING.md 318/145, title.txt + final_status.json 197/397/stated-7 pinned to
+  the v26.7.7 tag — so any tag inherits a status surface that disagrees with itself three
+  ways; ledger OPEN.
+- **G6** — No v26.7.13 identity exists to tag: standing.env header says v26.7.6,
+  build_manifest.py hardcodes v26.7.7, certify.log certifies v26.7.7, and git tags stop at
+  v26.7.7-procint-certified; blocked in practice behind G4 per the ledger's own dependency
+  note.
+- **G25/G26** — The .gitmodules registration mechanism landed (`032abc3`) but the substance
+  is unchanged: the web/mfact-ui gitlink at HEAD pins 1ba3a9b while the working tree sits at
+  40dc87a-dirty right now (`' M web/mfact-ui'` in porcelain) — a clean checkout still cannot
+  build the UI that produced the live Pages site; both entries OPEN.
+- **G58** — The ggen receipt chain has three lost-update fork points, ts_ns=0 in all 216
+  records, every sync path deletes ggen.lock first, and regen-check's ledgered-path gate
+  excludes `.ggen-v2/*` — so commit hygiene (e.g. `1daa7d4`) is the receipt chain's only
+  drift control; OPEN, opened by `f45d53f` (Pass 20).
+- **G59** — pair_correlation's "Core Theorem" mixing_orbits_asymptotic_iid proves an
+  existential-of-a-constant via `exact ⟨_, rfl⟩` with all three hypotheses unused — the
+  exact vacuous shape AGENTS.md 1/3 forbids, sitting in committed code (`c7413cb`) outside
+  the certified core; OPEN, opened by `f45d53f`.
+- **Worktree dirt** — Zero unexplained dirt at the audit anchor: all 56 then-dirty paths
+  (2 modified — crates/mfact-core/src/validate.rs and the web/mfact-ui gitlink — plus 54
+  untracked research-papers/pylab/scripts/procint items) pass the collision guard, i.e.
+  every one is inside the committed 76-line `.mfact/known-persistent-drift.txt` baseline
+  (`comm -23` output empty); note the tolerated baseline itself contains the G26 gitlink
+  dirt, so "tolerated" is not "benign" for a tag decision. (Post-anchor note, 2026-07-13:
+  `5f2a117` has since committed the validate.rs change — that path is now clean; the
+  gitlink dirt remains live.)
+
+**Closing statement.** Tagging and pushing are user decisions; nothing in this session tags,
+pushes, or claims the release SHIPPED. Per the Working-Backwards Status Fence, this section
+records readiness, not completion: the mechanical DoD above is green as cited, and the
+residuals above are what a v26.7.13 tag decision must weigh — in particular G4, which §4 of
+this PRD names as the explicit tag blocker.
