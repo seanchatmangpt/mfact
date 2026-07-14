@@ -6,7 +6,7 @@ to packs/quadrature-pack/ontology.ttl for ggen to render.
 
 ggen renders. Lean admits. mfact certifies. This script computes; it never
 asserts. Any orphan => typed refusal (exit 2)."""
-import re, json, subprocess, os, sys, glob
+import re, json, os, sys, glob
 
 # Env overrides exist so negative controls can poison COPIES of single
 # surfaces without touching the release.
@@ -129,8 +129,13 @@ senv = dict(l.split('=', 1) for l in
 crown = ('proven' if 'def crownJewel_status : String := "proven"' in text
          else 'stated' if 'def crownJewel_status : String := "stated"' in text
          else 'unknown')
-tag = subprocess.run(['git', '-C', ROOT, 'describe', '--tags', '--abbrev=0'],
-                     capture_output=True).stdout.decode().strip() or man['release']
+# Derived from the manifest's own `release` field, matching build_post_release.py's
+# CORE_TAG pattern -- not `git describe --tags --abbrev=0`, which structurally cannot
+# resolve a tag that doesn't exist yet at regen time (this repo's own release sequence
+# regenerates the manifest/quadrature BEFORE cutting the tag, so `git describe` always
+# names the PREVIOUS tag here, never the one this release is about to cut; found live as
+# a G5 self-consistency defect during the v26.7.13 cut, session commit v26.7.13-procint-certified).
+tag = f"{man['release']}-procint-certified"
 
 # ---- results ----
 closed = all([ok1, ok2, ok3, ok4, ok5, ok6])
