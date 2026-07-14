@@ -412,3 +412,20 @@ diff just doesn't block starting.
   out-of-band receipt (20260713T211642Z, the PO1 build.rs fix firing 11 attributed to
   "outside this firing"); per-firing successes are 4 (firings 3, 4, 5, 10), not 5 -- the
   fifth success receipt was the out-of-band action. Totals otherwise stand.
+
+- 2026-07-13 ~17:55 PDT (audit Pass 22 corrections, PV3): three bookkeeping defects in
+  this file's own receipts/metrics surface, disclosed fix-forward. (1) Schema drift: the
+  firing-16 metrics line uses an undocumented shape
+  {ts, run_id, gap_id, status, receipts_on_disk, open_gaps_grep, closed_gaps_grep} that
+  drops gaps_closed_this_firing/lake_build_pass/sorry_count from the documented schema
+  above; and receipt status "deferred" (firing 12) was never added to the documented
+  enum (success | partial | failed | no_op) -- both are hereby documented rather than
+  silently normalized. (2) Metrics line 6 stitches firing-time gap counts (22 OPEN, true
+  at HEAD 84ab3de) onto backfill-time git_head 0e99a2b (where OPEN grepped 23) -- the
+  pair is false as written; the counts were firing-time truth, the head was
+  backfill-time truth. (3) The out-of-band receipt 20260713T211642Z.json is future-dated
+  ~52 minutes relative to its own creating commit 5608deb (13:25:02 PDT = 20:25:02Z);
+  its run_id is not a real write-time clock reading. History is not rewritten; these
+  notes are the correction of record. latest.json is additionally an unguarded mirror no
+  tooling reads (both receipt consumers exclude it) and diverged from newest-on-disk
+  during the a334ff5 backfill window -- future loops should either guard it or drop it.

@@ -303,7 +303,7 @@ resolve it either; see `RELEASE_v26.7.13_ARD.md` §5.
   (`RELEASE_v26.7.13_ARD.md` §2) is monofractal (uniform Lebesgue measure) only; a
   two-weight/Bernoulli-cascade witness is explicitly out of scope, blocked on the current
   Mathlib pin.
-- **Not a fix for the 14 BLOCKED gaps (§3.2)** or the 22 literal-OPEN gaps (§3.1) — this
+- **Not a fix for the 14 BLOCKED gaps (§3.2)** or the literal-OPEN gap set (§3.1 carries the live count) — this
   release's workstreams (§2) closed a different six gaps (G9, G10, G33, G34, G47, G48) in an
   earlier firing; the remainder are carried forward as this release's known-open inventory,
   not addressed by any commit inventoried in §2.

@@ -5720,3 +5720,99 @@ clean confirmations compressed into PU1.
   HEAD. (2) .mfact/receipts/latest.json and metrics-history.jsonl have never been
   directly audited against the timestamped receipts; queued for Pass 22.
 - Severity: minor
+
+## Pass 22 findings
+
+Pass 22 ran as a 4-agent workflow (wf_a5fc8de2-654): two read-only audit agents (receipt
+mirrors, fresh commits), ONE deliberately write-capable agent closing Pass 21 PU4's open
+renderer-reproduction half, and a critic. Totals: 14 findings, 8 VERIFIED, 0 REFUTED,
+6 PARTIAL. The write step is disclosed below as the pass's single write exception.
+
+### PV1 -- Batch confirmations,
+
+- Lens: fresh-commits (F1, F3, F4) + loop-close cross-check (L3)
+- Claim: batch of clean re-verifications.
+- Source: Pass 22 workflow journal
+- Verdict: CONFIRMED
+- Evidence: e7f145d's readiness statement is +75 lines to the PRD only, every spot-checked
+  claim traced to committed artifacts with the no-committed-log caveat present; 5f2a117 is
+  exactly the 10/10-line test-only rename (uniq -c over hunks: 1 definition + 9 call
+  sites, nothing else); c307780's LOOP COMPLETE correction is a pure 6-line append with
+  the original 73d9fc6 block intact verbatim (fix-forward honored byte-level); the
+  corrected 4-firing-success arithmetic is exact against both run log and receipts.
+- Severity: minor
+
+### PV2 -- latest.json is an unguarded mirror; historical divergence propagated into audit evidence,
+
+- Lens: receipt-mirrors (L1)
+- Claim: latest.json equals the newest receipt and divergence would be caught.
+- Source: diff + consumer grep + git archaeology
+- Verdict: PARTIAL (identical now; unguarded, and divergence DID occur)
+- Evidence: byte-identical to 20260713T233418Z.json today, but no tooling reads it --
+  stuck_item_guard.py:53-57 and trajectory_annotate.py explicitly exclude it; no recipe,
+  hook, or CI consumes it. "latest" means last-written, not max-run_id: during the
+  a334ff5 backfill it pointed at 205640Z while the strictly newer 212703Z existed, until
+  b2f5b0e. Pass 20 used latest.json as a claim source, so a divergence would propagate
+  into audit evidence rather than be caught. Receipts-hygiene gap entry queued behind the
+  concurrent ledger writer (tag-brief workflow) rather than opened in this commit.
+- Severity: major
+
+### PV3 -- Silent schema drift plus two new bookkeeping defects in the loop's own records,
+
+- Lens: receipt-mirrors (L2)
+- Claim: metrics-history lines are schema-consistent and internally true.
+- Source: python3 parse of all 7 lines; git show at 0e99a2b/84ab3de/5608deb
+- Verdict: CONFIRMED defects (mine), disclosed fix-forward in the loop doc this commit
+- Evidence: (a) the firing-16 line's shape is documented nowhere and drops three
+  documented fields; "deferred" is outside the documented status enum; (b) line 6 pairs
+  firing-time gap counts with backfill-time git_head 0e99a2b, where the ledger greps 23
+  OPEN, not 22 -- a (git_head, gaps_open) pair false as written; (c) the out-of-band G11
+  receipt 211642Z is future-dated ~52 minutes past its creating commit 5608deb, so its
+  run_id was never a write-time clock reading. Prior passes audited these lines'
+  sorry_count/lake_build_pass and caught none of this.
+- Severity: major
+
+### PV4 -- Renderer reproduction closed at oracle rank 1 (the pass's disclosed write exception),
+
+- Lens: renderer-repro (RR1-RR3), critic FLAG-RR1/RR3 accepted
+- Claim (Pass 21 PU4, open half): the renderers would reproduce the committed bytes.
+- Source: live `just regen-check` at 9063cf9, gated
+- Verdict: CONFIRMED (upgraded from commit-message attestation to machine verification)
+- Evidence: collision guard clean before; regen-check exited 0 with the verbatim line
+  "regen-check: all ledgered artifacts reproducible from source"; post-run tree clean
+  except the designed .ggen-v2 receipt append; appended entries chain correctly off the
+  committed tip; receipt-tip commit f4bf307 touches exactly the two receipt files.
+  Critic scoping accepted: RR3 records an action taken during the audit, not a
+  pre-existing claim verified -- hence "disclosed write exception", and RR1's "at HEAD"
+  phrasing is stale by one commit (HEAD moved to f4bf307 by the audit's own commit).
+  The three pre-existing chain breaks (G58) are unaffected and re-disclosed.
+- Severity: minor
+
+### PV5 -- Second stale gap-count phrase in the PRD, fixed with staleness-proof wording,
+
+- Lens: fresh-commits (F2 + critic FLAG-F2)
+- Claim: 9063cf9 refreshed all stale counts.
+- Source: grep at HEAD
+- Verdict: CONFIRMED defect, fixed this commit
+- Evidence: PRD:185 was refreshed to 25-of-60 but PRD:306 still read "the 22 literal-OPEN
+  gaps (S3.1)" -- inside S4, the release-fence section. Fixed here to a dateless
+  reference ("the literal-OPEN gap set (S3.1 carries the live count)") so the phrase
+  cannot re-stale when the count moves again. Verified: F2's per-entry extraction
+  confirms both quick-ref rows match every individual Status line (G52-G57 CLOSED,
+  G58-G60 OPEN; 25 = 24 bare OPEN + 1 prefixed OPEN).
+- Severity: minor
+
+### PV6 -- Queued for Pass 23,
+
+- Lens: completeness critic (CR-1, CR-2)
+- Claim: coverage gaps this pass.
+- Source: critic
+- Verdict: CONFIRMED (queued)
+- Evidence: (1) G60's newly opened entry got a status-grep but no evidence audit of its
+  own body/closure criteria; (2) nobody has swept the repo for any "append-only hash
+  chain"/"chain-verified" prose claim about .ggen-v2/receipt-log.jsonl that RR2's three
+  pre-existing fork points would refute -- either such a claim exists (and is refuted) or
+  its absence should be recorded so the breaks stay a bounded, disclosed defect; (3) the
+  receipts-hygiene gap entry (latest.json mirror + future-dated receipt + stitched
+  metrics line) is queued behind the concurrent GAP_LEDGER writer.
+- Severity: minor
