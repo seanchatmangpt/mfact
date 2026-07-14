@@ -5856,3 +5856,46 @@ deletion, 9bd489f AGENTS.md vocabulary addition). Totals: 8 findings, 7 VERIFIED
   never honest — the theorem was vacuous from the start, not a real result invalidated
   later. Removed in 90a1e10 (not marked false: it was never legitimately admitted).
 - Severity: major
+
+## Session note: pipeline() return-shape bug in the mechanical-residuals workflow
+
+The workflow launched to close G59/G60/receipts-hygiene (wf_9507cb9f-f9a, task
+whqksn2jm) completed with a hollow summary: `{"scoped":4,"results":[],"ledger":null}`.
+Root cause: `pipeline(items, constructFn, verifyFn)` returns one value per item — the
+LAST stage's result — not a `[construct, verify]` tuple per item. The summary-construction
+line read `results[i]?.[0]` / `results[i]?.[1]`, silently indexing into the single verify
+object with numeric keys that don't exist, producing `undefined` for `construct` on every
+item and filtering the whole summary to empty. Because `summary.length > 0` gated the
+workflow's own Ledger-Close phase, that phase never ran — no false ledger writes resulted,
+but the four items' real, valid work (2 already-committed, 2 fully constructed but
+uncommitted) went unrecorded by the workflow itself.
+
+Real outcomes recovered directly from the workflow's journal.jsonl (not the buggy
+summary): G59 (delete, done, 252063e) and the AGENTS.md vocabulary addition (done,
+9bd489f) had already committed themselves independently and were separately verified by
+Pass 23. G60 and receipts-hygiene were both fully constructed and independently verified
+CONFIRMED by their own verify stages, but neither committed — each item's collision guard
+correctly detected the OTHER item's uncommitted working-tree files as "unexplained" (since
+`pipeline()` runs different items' stages concurrently, not serialized, and the script
+gave items no way to recognize a sibling item's legitimate in-flight files) and correctly
+refused to commit rather than plow through. This is the guard working as designed against
+a real race condition of my own script's making, not a defect in the guard.
+
+Manually reconciled this session: recovered the two stranded, verified-correct fixes from
+the working tree, confirmed both still hold under direct re-test, committed them
+(2ba9941), installed the hook locally, closed G59/G60/G61 in the ledger with full
+citation of the recovery. One genuinely new defect surfaced by G59's own rank-1 build
+check and fixed separately (7d79c25): PairCorrelation.lean's file header had an
+illegal doc-comment before `namespace`, pre-existing and unrelated to the theorem
+deletion, confirmed via diff isolation before attribution.
+
+Lesson for future workflow scripts: `pipeline()`'s per-item result is the final stage's
+return value only; a multi-stage per-item report requires either returning a composite
+object FROM the verify stage itself (e.g. `{construct, verify}` bundled by the verify
+agent's own return, or by wrapping the verify call to merge in the construct result before
+returning) or restructuring to collect each stage's results into a separate array keyed by
+index rather than relying on pipeline()'s return shape to carry both. Separately: items
+that are logically independent but may share files (here, `justfile`) should either be
+serialized (not run through `pipeline()`'s per-item concurrency) or the collision guard
+instructions should explicitly whitelist known sibling-item output paths passed in via the
+prompt, not just self-created paths.

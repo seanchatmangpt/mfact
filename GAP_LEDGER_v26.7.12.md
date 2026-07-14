@@ -1475,7 +1475,7 @@ All four closures are axiom-audited (49 `#guard_msgs` pairs,
 ### G59 — pair_correlation's "Core Theorem" is a vacuous tautology in committed code
 
 - Lens: praxis-self-audit Pass 20 (PT5)
-- Status: OPEN
+- Status: CLOSED
 - Evidence: research-papers/pair_correlation/PairCorrelation.lean:24-29 (committed in
   c7413cb): `mixing_orbits_asymptotic_iid` concludes
   `∃ stat, stat = OrbitStatistic.AsymptoticIID` via `exact ⟨_, rfl⟩` with all three
@@ -1485,11 +1485,21 @@ All four closures are axiom-audited (49 `#guard_msgs` pairs,
   existential-of-a-constant variant). Remedy: delete it or replace with a theorem whose
   hypotheses are load-bearing; the research-papers surface is otherwise out of the
   release's provable core.
+- Closure evidence (2026-07-13): theorem deleted in 252063e, independently re-verified
+  by Pass 23 (PW1) — hypotheses genuinely unused, deletion left the file syntactically
+  complete. Pass 23's own G3 finding (dangling `wf:MixingOrbitsIID` ontology assertion
+  still claiming the deleted theorem `isMathematicallyAdmitted "true"`) closed in
+  90a1e10. A separate, pre-existing defect the deletion's own rank-1 build check
+  surfaced — a doc-comment (`/-- ... -/`) illegally placed before `namespace` at
+  PairCorrelation.lean:1-4, present since before this session and unrelated to the
+  theorem deletion (confirmed via `git diff 252063e~1 252063e`, which touches only
+  lines 16-30) — fixed separately in 7d79c25. The wrapped `just _lake` build of
+  `PairCorrelation` now exits 0 (was exit 1).
 
 ### G60 — pre-commit generated-output hook: any staged .ttl whitens the whole commit
 
 - Lens: praxis-self-audit Pass 21 (PU3), workflow wf_659820fe-356
-- Status: OPEN
+- Status: CLOSED
 - Evidence: .git/hooks/pre-commit (lines 7-21) types staged paths into source
   (`scripts/* | ontology/* | ggen.toml | *.ttl`) and generated arms and refuses only when
   a generated path is staged with zero source paths. The check is path-typed and
@@ -1500,3 +1510,34 @@ All four closures are axiom-audited (49 `#guard_msgs` pairs,
   source arm to actually generate the staged generated paths (dependency-aware check), or
   at minimum log hatch/whitening uses to an auditable file. Design decision; not patched
   mechanically here.
+- Closure evidence (2026-07-13, commit 2ba9941): `.git/hooks/pre-commit` was
+  confirmed genuinely untracked by git with no install path anywhere in the repo, so a
+  direct edit would vanish for any other clone — the real fix was making the logic
+  reproducible. `scripts/pre-commit-hook.sh` is now the tracked source (identical
+  pass/fail admission law, unconditionally unchanged) plus a best-effort append to
+  `.mfact/hook-events.jsonl` on every `MFACT_SOURCE_CHANGED=1` hatch use and every
+  ttl-staged-with-generated-change case — the exact laundering scenario this gap named.
+  A new `just install-hooks` recipe copies it to `.git/hooks/pre-commit`; installed
+  locally this session. Verified via three scenarios replayed in an isolated scratch
+  git repo (baseline refusal, hatch logged, ttl-whitening logged) — nothing in the live
+  repo was touched by that verification. The dependency-aware option (a) from the
+  original fix direction remains undone; logging (option b) is what shipped, matching
+  the gap's own "at minimum" framing.
+
+### G61 — receipts hygiene: unguarded `latest.json` mirror + undocumented metrics schema
+
+- Lens: praxis-self-audit Pass 22 (PV2/PV3), workflow wf_a5fc8de2-654
+- Status: CLOSED
+- Evidence: `.mfact/receipts/latest.json` was an unguarded mirror nothing read (both
+  `scripts/stuck_item_guard.py` and `scripts/trajectory_annotate.py` explicitly exclude
+  it) and it diverged from the true newest receipt during the `a334ff5` backfill window,
+  undetected until Pass 22. Separately, `MFACT_SELF_IMPROVEMENT_LOOP.md`'s documented
+  receipt/metrics schema did not cover the firing-16 metrics line's compact shape or the
+  `deferred` receipt status.
+- Closure evidence (2026-07-13): `scripts/receipts_consistency.py` (new, executable)
+  checks `latest.json`'s `run_id` against the max run_id among `.mfact/receipts/*Z.json`
+  — rank-1, hand-tested: `OK: latest.json run_id (20260713T233418Z) matches max dated
+  receipt (20260713T233418Z.json)`, exit 0. Wired as `just receipts-consistency`.
+  `MFACT_SELF_IMPROVEMENT_LOOP.md`'s documented status enum now includes `deferred`
+  (line 35) and the compact metrics-line shape is now shown as a real example alongside
+  the full-metrics shape. Existing receipt `*.json` files were not touched.
