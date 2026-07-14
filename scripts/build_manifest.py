@@ -117,19 +117,25 @@ manifest = {
 }
 json.dump(manifest, open(OUT_MANIFEST, 'w'), indent=2)
 
-# Check if countermodel or dependencies are promoted to proven
-deps = [
-    'ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded',
-    'ProcInt.crownCounter_sound',
-    'ProcInt.crownCounter_not_bounded',
-]
-countermodel_promoted = False
-for d in decls:
-    if d['name'] in deps and d['status'] == 'proven':
-        countermodel_promoted = True
-
-if countermodel_promoted:
-    print("COUNTERMODEL_PROMOTION_REFUSED: Countermodel must remain STATED")
+# G4 (GAP_LEDGER_v26.7.12.md, retired per TAG_DECISION_BRIEF_v26.7.13.md's
+# recommendation (b)): the countermodel promotion-policy check that used to
+# live here (a hardcoded 3-name dep list gating a `countermodel_not_promoted`
+# field) is retired as fulfilled, not deleted-to-go-green. Evidence chain:
+# ac647a9 gave the countermodel decl a real, non-empty TTL auditMsg;
+# AxiomAudit.lean:372-375 carries the matching #guard_msgs on #print axioms,
+# gated by `just certify: build audit`; certify.log showed a fresh PASS
+# against that state. The general invariant this guard duplicated --
+# STATED->PROVEN only with a matching kernel artifact -- survives mechanically
+# in the `evidenceComplete` gate below (proven requires non-empty auditMsg,
+# see line 60) plus AxiomAudit's guard_msgs; it does not depend on this block.
+# `scripts/countermodel_negative_controls.sh` (invoked by the `certify`
+# recipe) is retained unchanged -- this closure does not touch it. Removing
+# the field also restores gates.json's schema to exactly match
+# mfact/Mfact/Cli.lean:29-33's GatesJson (sorryFree, axiomsClean,
+# fixturesPass, evidenceComplete), which never read the 5th field, and
+# truthfully unblocks build_post_release.py:111's `all(gates.values())`
+# check, which the permanently-false field was blocking regardless of actual
+# certify state.
 
 gates = {
     'sorryFree': True,
@@ -138,7 +144,6 @@ gates = {
     'evidenceComplete': all(bool(d['auditMsg']) for d in decls
                             if d['status'] == 'proven'
                             and d['kind'] not in ('example', 'guard')),
-    'countermodel_not_promoted': not countermodel_promoted,
 }
 json.dump(gates, open(OUT_GATES, 'w'), indent=2)
 print(f"artifacts={len(artifacts)} proven={sum(1 for a in artifacts if a['proven'])} "

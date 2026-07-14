@@ -11,7 +11,7 @@
   ],
   "llmTrustedBase": false,
   "scope": "Certifies kernel admission, axiom footprint, and fixture behavior of the declarations listed in this manifest under the pinned toolchain. Does not certify that catalog-curated statements faithfully render the cited primary literature.",
-  "runIdentifier": "ee624be51a90112e492f7d8537d42e2fc796813d",
+  "runIdentifier": "49a0e92b6d05b651c43cdfa2a2a5303481df0608",
   "quadrature": "release/quadrature.json",
   "artifacts": [
     {
