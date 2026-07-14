@@ -1,4 +1,4 @@
-/--
+/-
 Signed Multifractal Detrended Cross-Correlation Coefficient (SMFDCCA)
 Paper: https://arxiv.org/abs/2607.06324
 -/
