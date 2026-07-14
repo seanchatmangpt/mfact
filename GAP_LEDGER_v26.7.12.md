@@ -260,6 +260,19 @@ ledger text alone.
   tag's own validity — `git cat-file -t v26.7.13-procint-certified` still reads `tag`,
   pointing at `650b388`, per `build_post_release.py`'s independent `release-manifest.json`-derived
   `CORE_TAG` gate (unaffected by this cosmetic-string class of defect).
+- Correction (2026-07-13, later same day): the "zero hits" resweep above checked disk
+  state, not commit history — a real gap this closure missed. A comprehensive
+  status-verification workflow found `release/standing.env` and
+  `packs/post-release-pack/ontology.ttl` had their v26.7.13 regeneration sitting as
+  uncommitted, dirty working-tree edits the whole time (never staged into any of the
+  6ebe108/a4eaf35/650b388/9fd1f22 regen commits) — the *committed* history through HEAD
+  still read v26.7.7 for both. A `git stash`/`checkout --` at any point would have
+  silently reverted them with no commit-level trace. Fixed in `54eaef8`: both diffs
+  verified as genuine, complete regenerations (not partial/regressive — standing.env's
+  7 post-release keys now match `final_status.json` exactly; the ontology's
+  tag/hash/commit/replay fields are fully internally consistent). This is the concrete
+  lesson: "checked the working tree" and "checked what's durable" are different claims,
+  and a closure bullet should say which one it means.
 - Verdict: two CONFIRMED (both downgraded release-blocking -> major). The frozen tag
   v26.7.7-procint-certified is internally self-consistent (`git show 184e3a3:...` matches
   942facf3 in both manifest and final_status); the defect is a stale/false status surface
