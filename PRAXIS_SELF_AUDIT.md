@@ -6256,3 +6256,136 @@ verdict's own evidence, not just in the underlying repo state.
   scope (a direct status-question response, not a construction task) -- flagged for a
   dedicated future pass rather than fixed here.
 - Severity: major (longevity), minor (individual impact)
+
+## Pass 29 findings
+
+Pass 29 was a fix-forward closure sweep dispatched directly against Pass 28's QB3 finding
+(four old REFUTED verdicts from Passes 1-2 -- PA29, PA41, PB4, PB12, PB6 -- left
+uncorrected for 26+ passes) plus Pass 25's PY3 finding that two `MFW_WORKFLOW_CATALOG.md`
+proposals (2.6, 5.4) were already contradicted by same-day on-disk results. The sweep
+enumerated 6 candidates -- PA29, PA41, PB4_PB12 (merged, since both share ROADMAP.md's
+Phase 1 header), PB6, PY3-a (catalog 2.6), PY3-b (catalog 5.4) -- and pursued all 6 to a
+verdict; none were dropped by a cap (SWEEP CANDIDATES NOT PURSUED: none). Methodology per
+candidate: read the live target file fresh, re-run the exact cited reproduction command or
+grep against the current tree, and -- for the three candidates where a fix had already
+landed via a concurrent item -- independently re-derive the same result from the committed
+diff and the live file rather than trust the applying item's own report. Net result: 2 of
+6 candidates close their original debt outright (PA41, PB6), 1 closes its original debt but
+introduces one new, smaller inaccuracy (PB4_PB12), and 3 remain open, correctly blocked by
+the mandatory pre-write drift guard tripping on two genuinely unexplained, non-allowlisted
+paths (`.mfact/hook-events.jsonl`, `paper/arxiv-submission.tar.gz`) unrelated to any of
+their target files (PA29, PY3-a, PY3-b).
+
+### PA29 -- rigor_linter.py debt still open; fix correctly blocked by drift guard,
+
+- Lens: agents-md-self-compliance (Pass 1 follow-up)
+- Claim: CLAUDE_ROADMAP.md:860-872 still claims the linter tripwires for "orphaned
+  modules" and "public functions referenced only by tests" alongside the five checks
+  scripts/rigor_linter.py actually implements.
+- Verdict: STILL OPEN -- not closed this pass; the block is legitimate, not a dodge
+- Evidence: independently re-read CLAUDE_ROADMAP.md:860-872 -- unchanged, byte-for-byte,
+  since the original PA29 finding. scripts/rigor_linter.py (168 lines) implements exactly
+  5 of the 7 listed checks; `grep -c orphan` and a full read of all 3 copies of the file
+  in the tree (canonical + 2 worktree copies) confirm zero orphan-module or
+  test-only-function detection anywhere. A fix attempt this pass ran the mandated
+  pre-write guard (`git status --porcelain | sed -E 's/^.{3}//' | sort | comm -23 -
+  <(sort .mfact/known-persistent-drift.txt)`) and hit two genuinely unexplained paths
+  neither self-created this item nor present in the allowlist. Per the hard rule as
+  stated ("any other unexplained path => stop that item, report blocked"), stopping was
+  correct. No write occurred; CLAUDE_ROADMAP.md is unmodified on disk.
+- Severity: major (longevity -- oldest item in the QB3 debt list, still uncorrected)
+
+### PA41 -- rigor_linter.py sorry-in-string false positive fixed, closes Pass 2 debt,
+
+- Lens: gap-ledger-staleness (Pass 2 follow-up)
+- Claim: (fix landed by commit 38aeab8) strips double-quoted string literals before the
+  `\bsorry\b` search, so a diagnostic string like `"sorry-bearing decls: {n}"` no longer
+  false-positives as an unproved theorem.
+- Verdict: CONFIRMED -- closes PA41's REFUTED debt with commit 38aeab8
+- Evidence: `git show --stat 38aeab8` touches only scripts/rigor_linter.py (1 file,
+  +5/-1), inserting `no_strings = re.sub(r'"(?:\\.|[^"\\])*"', '', no_comments)` before
+  the sorry search, matching PA41's fix instructions exactly. Independently re-ran a
+  two-sided test against the live module: the pre-fix regex genuinely matches `\bsorry\b`
+  in `procint/ProcInt/Playground/Swarm11Verifier.lean:261`'s
+  `s!"sorry-bearing decls : {receipt.sorryDeclarationCount}"` (confirms the original
+  false positive was real); the patched `scan_file()` returns `[]` on that same real
+  file and on a constructed string-literal-only case, while still correctly flagging a
+  constructed `by sorry` and a `have h := by sorry` (no regression). rigor_linter.py's
+  only caller (scripts/report.py:244) only checks the exit code, so no hidden dependency
+  on the old behavior was broken.
+- Severity: none remaining (was major; closed)
+
+### PB4_PB12 -- fabricated typestate/verification claims fixed, but fix adds a new one,
+
+- Lens: roadmap-and-loop-ledger-sanity (Pass 2 follow-up)
+- Claim: (fix landed by commit bba5a1a) removes ROADMAP.md's fabricated "bonded to
+  safe-toolbox/mo-mae typestates" claim and the false Star Graph Topologies
+  "Constructed & Verified" status.
+- Verdict: PARTIAL -- closes PB4 and PB12's REFUTED debt with commit bba5a1a, but
+  introduces one new, smaller overclaim of its own
+- Evidence: independently re-verified against the live tree: `ls crates/` shows only
+  `mfact-core` (no safe-toolbox/mo-mae directories exist anywhere); `grep -rn
+  "PhantomData|type Proof" crates/mfact-core/src/*.rs` (all 4 tracked plus 6 untracked
+  files) is empty; `research-papers/star_graphs/.lake` is absent and
+  `StarGraphs/Basic.lean` has 0 sorrys. ROADMAP.md's Phase 1 header now reads "Source
+  Written, Not Yet Build-Verified" with an explicit `.lake`-absence caveat, and the
+  "bonded to... typestates" clause is replaced with an accurate non-existence statement.
+  New finding: ROADMAP.md:9's replacement text itself claims "the sole crate is
+  `mfact-core`" -- false. The repo root has an independent, non-workspaced Cargo package
+  (`Cargo.toml` name = "mfact", with `src/lib.rs`, `src/main.rs`, `src/ledger.rs`), and
+  neither Cargo.toml has a `[workspace]` section (confirmed via grep), so there are two
+  crates, not one. The substantive point (zero PhantomData/type-Proof typestate bonding
+  exists anywhere) still holds, since the root crate also has none -- but the "sole
+  crate" quantifier is a new, distinct, smaller overclaim than the one it replaced.
+- Severity: minor (the new defect only; the two original criticals are genuinely closed)
+
+### PB6 -- arazzo find-count claim corrected, closes Pass 2 debt,
+
+- Lens: dogfooding-report-spotcheck (Pass 2 follow-up)
+- Claim: (fix landed by commit b540370) corrects
+  PRAXIS_DOGFOODING_EXPLORATION.md:158's "returns only 2 `.md` files" to "returns 0
+  files."
+- Verdict: CONFIRMED -- closes PB6's REFUTED debt with commit b540370
+- Evidence: re-ran the cited command live: `find /Users/sac/mfact -iname '*arazzo*'`
+  returns 0 results (control test `*ROADMAP*` -> 5 hits confirms `find` itself works).
+  `git show --stat b540370` is a single-file, 1-line diff scoped exactly to the target
+  sentence; the surrounding "zero source files of its own to check it against" argument
+  is byte-identical, untouched. Drift guard reproduced clean of new writes (only the two
+  known-drift paths present). Tag/release surface confirmed untouched
+  (`v26.7.13-procint-certified` still resolves to 650b388).
+- Severity: none remaining (was major; closed)
+
+### PY3-a -- catalog 2.6 correction blocked by drift guard, not applied,
+
+- Lens: catalog-verify-1 (Pass 25's PY3 follow-up)
+- Claim: attempted to append a dated correction to `MFW_WORKFLOW_CATALOG.md` section 2.6
+  noting `OrientedSwap.lean` (commit ae5c2a5) already ran and refuted, rather than
+  reproved, `LocallyConfluent`.
+- Verdict: CONFIRMED (the block itself is legitimate) -- still open, not closed
+- Evidence: reproduced the exact drift guard command live: the same two unexplained
+  paths (`.mfact/hook-events.jsonl`, `paper/arxiv-submission.tar.gz`), neither in the
+  allowlist. `MFW_WORKFLOW_CATALOG.md:330-362` confirmed unchanged -- section 2.6 still
+  ends at its original "Falsifiable artifact" bullet, no correction paragraph inserted,
+  and no commit touches the file for this item. Re-confirmed the substance behind the
+  intended correction still holds: `OrientedSwap.lean:390-414` proves
+  `not_orientedSwap_locallyConfluent`, a countermodel-backed refutation.
+- Severity: major (longevity -- same staleness Pass 25's PY3 already named, still
+  uncorrected on disk)
+
+### PY3-b -- catalog 5.4 correction blocked by drift guard, not applied,
+
+- Lens: catalog-verify-2 (Pass 25's PY3 follow-up)
+- Claim: attempted to append a dated correction to `MFW_WORKFLOW_CATALOG.md` section 5.4
+  noting its target file, `crates/mfact-core/src/broker.rs`, was deleted by G11's
+  closure.
+- Verdict: CONFIRMED (the block itself is legitimate) -- still open, not closed
+- Evidence: independently confirmed `broker.rs` is genuinely absent from disk and from
+  HEAD's tree (`git cat-file -e HEAD:crates/mfact-core/src/broker.rs` fails).
+  `GAP_LEDGER_v26.7.12.md`'s G11 entry (line 427) reads "Status: CLOSED (Rust side)" with
+  closure evidence dated 2026-07-13 20:37:32 naming `broker.rs`'s deletion explicitly --
+  the file's own top-of-file 2026-07-12 run-log summary (line 38) is stale and still
+  lists G11 among "Left OPEN"; the per-entry Status line postdates it and is
+  authoritative. `MFW_WORKFLOW_CATALOG.md` section 5.4 (line 2122) still frames
+  `CrownLoopBroker::sequence_cycle` as live and unedited. Drift guard reproduced the same
+  two unexplained paths as PY3-a.
+- Severity: major (same reasoning as PY3-a)
