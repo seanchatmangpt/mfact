@@ -6195,3 +6195,64 @@ drift trio), everything else correctly excluded.
   Mathlib dependency) — reported, not fixed, out of this narrow scope. Remaining packages
   not individually build-tested this pass.
 - Severity: minor
+
+## Pass 28 findings
+
+Pass 28 was a comprehensive status-verification workflow (5-agent, wf_9564a506-e2a),
+triggered by a direct user question ("what is the status of v26.7.13?") rather than the
+usual audit-loop cron. Four parallel independent sweeps (tag/release surfaces, ledger,
+audit trail, live drift) plus a synthesis stage instructed to surface disagreements
+rather than smooth them. This is the first pass to find a genuine gap in a prior CLOSED
+verdict's own evidence, not just in the underlying repo state.
+
+### QB1 -- G5's closure checked disk state, not commit history; two files uncommitted,
+
+- Lens: tag-verify, synthesis (Internal Disagreement #1)
+- Claim: G5's closure swept "all nine generated release surfaces... zero hits."
+- Verdict: REFUTED (the closure's own evidentiary scope), fixed
+- Evidence: release/standing.env and packs/post-release-pack/ontology.ttl had their
+  v26.7.13 regeneration sitting as uncommitted working-tree edits since the tag-cutting
+  sequence -- never staged into 6ebe108/a4eaf35/650b388/9fd1f22. The committed history
+  through HEAD (pre-fix) genuinely read v26.7.7 for both; a stash or checkout -- would
+  have silently reverted them with zero commit-level trace. The G5 sweep that declared
+  "zero hits" was checking disk, and disk already had the (uncommitted) fix applied at
+  sweep time -- a true statement about the filesystem that was silently read as a claim
+  about durable state. Fixed (54eaef8): both diffs verified as complete, non-regressive
+  regenerations before committing (standing.env's 7 post-release keys now match
+  final_status.json exactly). G5's ledger entry corrected with a dated note (b4f7f31)
+  distinguishing "checked the working tree" from "checked what's durable" as the
+  reusable lesson.
+- Severity: major
+
+### QB2 -- The tag commit was internally self-inconsistent at cut time, partly undisclosed,
+
+- Lens: tag-verify
+- Claim: n/a (new finding, not a re-check).
+- Verdict: CONFIRMED, historical record only, no action needed
+- Evidence: at the moment 650b388 was tagged, release/final_status.json and
+  dist/github-release/title.txt both still read v26.7.7/197/397 -- title.txt's
+  staleness was never named in the tag's own "Known, judged non-gating" disclosure list
+  (only release_macros.tex and quadrature-pack ontology.ttl were named). Both were fixed
+  one commit later (9fd1f22). Tags are immutable; nothing to fix. Recorded for
+  completeness -- the tag's own message slightly under-disclosed its known staleness.
+- Severity: minor
+
+### QB3 -- Ledger arithmetic resolved; four old REFUTED findings unresolved 26+ passes,
+
+- Lens: ledger-verify, audit-verify
+- Claim: 20 open + 26 closed = 46 vs a stated 61 total gaps -- an apparent gap.
+- Verdict: RESOLVED (not a real defect -- 14 BLOCKED + 1 PARTIAL account for the
+  remainder, exactly 61). Separately, audit-verify's REFUTED sweep found four findings
+  from Pass 1-2 (26+ passes ago) never followed by a fix-forward correction: PA29
+  (CLAUDE_ROADMAP.md still falsely claims rigor_linter.py checks for orphaned modules
+  and test-only public functions -- it implements neither), PA41 (rigor_linter.py's
+  \bsorry\b regex still false-positives on string literals containing the word "sorry",
+  reproduced live against Swarm11Verifier.lean), PB4/PB12 (ROADMAP.md's fabricated
+  "safe-toolbox/mo-mae typestates" and "Star Graph Topologies... Constructed & Verified"
+  claims -- those crates still don't exist; a same-day commit 5dc2f5c touched the file
+  for version control only, false prose untouched), PB6 (PRAXIS_DOGFOODING_EXPLORATION.md's
+  false `find '*arazzo*'` claim, unchanged since creation). None are release-blocking;
+  all are longstanding, cheap-to-fix documentation-accuracy defects outside this pass's
+  scope (a direct status-question response, not a construction task) -- flagged for a
+  dedicated future pass rather than fixed here.
+- Severity: major (longevity), minor (individual impact)
