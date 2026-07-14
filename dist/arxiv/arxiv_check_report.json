@@ -1,11 +1,11 @@
 {
   "schema": "mfact.arxiv_check.v1",
-  "release": "v26.7.7",
+  "release": "v26.7.13",
   "status": "PENDING",
   "detail": "first pass (--plan): fragments not yet rendered",
   "declaredFileCount": 13,
-  "tarballBlake3": "d3631ee81cf916bf0e5f6e36712ea4e985930b38f9be16092e37f7e630c832b9",
-  "pdfBlake3": "97d2f1db73ddc57bbe6e9a7a9a2d74ea7aafb47b132c6a63e83e9e38271f5c70",
+  "tarballBlake3": "0b969f3522b938c1c7d4fe465b99b0adb7f1e34655d85585adf965d3d9f3ed71",
+  "pdfBlake3": "463676a46db6f78d17143f155a26fbfe013034a7e4ccce36ee286a9e4e8721a9",
   "gates": ["declared==packed", "no absolute local paths", "cold latexmk build from untarred package"],
   "actuation": "PENDING_EXTERNAL_ACTUATION"
 }

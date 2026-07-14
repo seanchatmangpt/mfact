@@ -4,7 +4,7 @@
 import Mathlib
 import ProcInt
 
-/-! # Post-release witness — v26.7.7
+/-! # Post-release witness — v26.7.13
 
 A finite, kernel-checked witness over the publication packet: no actuation
 packet self-actuates (publication is pending external actuation in every
@@ -23,7 +23,7 @@ namespace ProcInt.Release
 
 /-- Packet identity of the post-release graph this witness was rendered from. -/
 def postReleasePacketHash : String :=
-  "7668066273cdb51ef00e037e3ca1dda844fce44de3683e1bf31def1cd4ac07ec"
+  "7fc3abfb7ee9778b2ae6dcb6a35135f6593549e7312da29941211df844107474"
 
 /-- Actuation packets: (packet id, packet status, publication field). -/
 def actuationPackets : List (String × String × String) := [

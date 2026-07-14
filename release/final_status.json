@@ -2,18 +2,18 @@
   "schema": "mfact.final_status.v1",
   "core": {
     "status": "ALIVE",
-    "release": "v26.7.7",
-    "coreReleaseHash": "942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434",
-    "coreProven": 197,
-    "coreTotalDecls": 397,
-    "stated": 7,
-    "renderedCommit": "945bfca",
-    "tag": "v26.7.7-procint-certified",
-    "tagCommit": "184e3a3",
+    "release": "v26.7.13",
+    "coreReleaseHash": "74900dc3fc5aa2e6ad46224655f65ecd2e49636c91ac2204614e16cbe1521f32",
+    "coreProven": 203,
+    "coreTotalDecls": 401,
+    "stated": 2,
+    "renderedCommit": "b26e1db",
+    "tag": "v26.7.13-procint-certified",
+    "tagCommit": "650b388",
     "renderedCommitIsAncestorOfTag": "PASS"
   },
   "publicationPacket": {
-    "packetHash": "7668066273cdb51ef00e037e3ca1dda844fce44de3683e1bf31def1cd4ac07ec",
+    "packetHash": "7fc3abfb7ee9778b2ae6dcb6a35135f6593549e7312da29941211df844107474",
     "publicationActuation": "PENDING_EXTERNAL_ACTUATION",
     "arxivPacket": "PENDING",
     "packets": [
@@ -23,7 +23,7 @@
     ]
   },
   "auxiliaryLanes": {
-    "replay": "REPLAY_PASS",
+    "replay": "REPLAY_NOT_RUN",
     "docsLane": "PASS",
     "wfnetCrownTheorem": "PROVEN",
     "nextDomainFoundry": "PLANNED"

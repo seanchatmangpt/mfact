@@ -1,4 +1,4 @@
-# FINAL STATUS — v26.7.7
+# FINAL STATUS — v26.7.13
 
 Rendered view over standing (post-release-pack). Nothing here is asserted
 in prose: every value is projected from receipts. Layered standing — the
@@ -9,20 +9,20 @@ different identities and must not be flattened into one verdict.
 
 ```
 CORE_RELEASE=ALIVE
-CORE_RELEASE_HASH=942facf32d48cd1a26c0f06b9396c6c150ab4d95d601bd090a8e1b9e7ef2d434
-CORE_PROVEN=197
-CORE_TOTAL_DECLS=397
-CORE_STATED=7
-RENDERED_COMMIT=945bfca
-TAG_EXPECTED=v26.7.7-procint-certified
-TAG_COMMIT=184e3a3
+CORE_RELEASE_HASH=74900dc3fc5aa2e6ad46224655f65ecd2e49636c91ac2204614e16cbe1521f32
+CORE_PROVEN=203
+CORE_TOTAL_DECLS=401
+CORE_STATED=2
+RENDERED_COMMIT=b26e1db
+TAG_EXPECTED=v26.7.13-procint-certified
+TAG_COMMIT=650b388
 RENDERED_COMMIT_IS_ANCESTOR_OF_TAG=PASS
 ```
 
 ## Publication packet (separate identity; never self-actuated)
 
 ```
-POST_RELEASE_PACKET_HASH=7668066273cdb51ef00e037e3ca1dda844fce44de3683e1bf31def1cd4ac07ec
+POST_RELEASE_PACKET_HASH=7fc3abfb7ee9778b2ae6dcb6a35135f6593549e7312da29941211df844107474
 PUBLICATION_ACTUATION=PENDING_EXTERNAL_ACTUATION
 ARXIV_PACKET=PENDING
 ARXIV_UPLOAD_PACKET=BLOCKED
@@ -37,7 +37,7 @@ itself remains the user's action in every case.
 ## Auxiliary lanes
 
 ```
-REPLAY=REPLAY_PASS
+REPLAY=REPLAY_NOT_RUN
 DOCS_LANE=PASS
 WFNET_CROWN_THEOREM=PROVEN
 NEXT_DOMAIN_FOUNDRY=PLANNED

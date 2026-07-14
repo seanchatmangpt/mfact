@@ -5,7 +5,7 @@
 # (ProcInt.Release.crown_status_promoted is kernel-admitted over this list).
 
 [crown]
-release = "v26.7.7"
+release = "v26.7.13"
 status = "PROVEN"
 
 [[obligation]]
