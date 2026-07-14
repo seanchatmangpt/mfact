@@ -74,6 +74,7 @@ ledger text alone.
 | Major            | 30    | G4-G33   |
 | Minor            | 18    | G34-G51  |
 | Post-v26.7.12    | 6     | G52-G57 (all CLOSED as of 2026-07-13) |
+| Audit-opened     | 3     | G58-G60 (all OPEN, Passes 20-21) |
 | Refuted          | 3     | appendix |
 
 ## Release-blocking

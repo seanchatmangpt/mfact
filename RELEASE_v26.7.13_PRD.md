@@ -182,7 +182,7 @@ correction of this document's own stale certify-failure claims.
 
 Source: `GAP_LEDGER_v26.7.12.md`, freshly re-grepped against live HEAD (`f735022`).
 
-### 3.1 Literal `Status: OPEN` — 22 of 57 entries (live count, re-verified 2026-07-13)
+### 3.1 Literal `Status: OPEN` — 25 of 60 entries (live count, re-verified 2026-07-13 ~17:30)
 
 - **G1** — Fresh `just certify` FAILS while `standing.env`/`final_status` assert CERTIFIED
   PASS — **corrected 2026-07-13: the failure no longer reproduces.** Fixed by
