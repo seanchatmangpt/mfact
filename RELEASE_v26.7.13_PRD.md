@@ -393,3 +393,52 @@ pushes, or claims the release SHIPPED. Per the Working-Backwards Status Fence, t
 records readiness, not completion: the mechanical DoD above is green as cited, and the
 residuals above are what a v26.7.13 tag decision must weigh — in particular G4, which §4 of
 this PRD names as the explicit tag blocker.
+
+### Post-tag update (2026-07-13, later same day)
+
+A local annotated tag `v26.7.13-procint-certified` now exists, cut at commit
+`650b3885bd8d9c0b2b552a53ba47b5b669894c26`. Independently re-verified for this update:
+`git cat-file -t v26.7.13-procint-certified` returns `tag` (a real annotated tag object, not
+a lightweight ref), and `git rev-list -n1 v26.7.13-procint-certified` resolves to that same
+commit. **It has not been pushed to any remote, and no push was attempted this session —
+pushing remains a user decision**, consistent with the closing statement above.
+
+Sequence that produced the tag: version identity bumped across three sites in `b26e1db`
+(`scripts/build_manifest.py:94`, `mfact/Mfact/Cli.lean:6`, and `mfact/lakefile.toml:2` — the
+third site is an extension beyond `TAG_DECISION_BRIEF_v26.7.13.md`'s original two-site touch
+list, flagged because leaving Lake's own version field un-bumped while the CLI/manifest moved
+would manufacture a new mixed-identity defect of the same shape G5 diagnosed); manifest,
+certify, and post-release artifacts regenerated for v26.7.13 (`6ebe108`, `a4eaf35`,
+`650b388` — the last of which also fixed a real bug where `evaluation.tex`'s foldHash-seed
+prose was frozen at the prior version).
+
+Gap disposition after this update — **G4/G5/G6 are explicitly not closed as a single group**:
+
+- **G4 CLOSED** (`e1142ec`, independently re-confirmed this update by reading the commit
+  diff directly): the countermodel promotion-policy guard was retired as fulfilled, not
+  deleted-to-go-green — `release/gates.json`'s schema now matches
+  `mfact/Mfact/Cli.lean:29-33`'s `GatesJson` exactly, and the invariant it duplicated
+  survives via `evidenceComplete` plus `AxiomAudit.lean:372-375`'s `#guard_msgs`. This
+  closure stands independent of G5/G6's status.
+- **G5 and G6 remain OPEN.** A self-consistency re-verification run this update found the
+  core numeric/hash/runIdentifier lineage now genuinely unified under v26.7.13 (manifest,
+  quadrature.json, github-release title, final_status.json all agree), but two files still
+  assert the prior tag string `v26.7.7-procint-certified`: `paper/release_macros.tex`'s
+  `\ReleaseTag` macro, and `packs/quadrature-pack/ontology.ttl`'s `quad:releaseTag` (the
+  latter internally self-contradictory against its own `quad:releaseId "v26.7.13"` nine
+  lines away). Both are rendered via `git describe --tags --abbrev=0`, which could not
+  resolve the tag before it existed — non-gating for `build_post_release.py:44-56`'s
+  CORE_TAG derivation (which reads the manifest directly), but `release_macros.tex` does
+  ship inside `paper/arxiv-submission.tar.gz` (arxiv upload itself is still
+  PENDING_EXTERNAL_ACTUATION per `final_status.json`, so no external party has seen it).
+  Full detail in `GAP_LEDGER_v26.7.12.md`'s G4/G5/G6 entries, updated alongside this PRD.
+- Separately, `1bfbe9f` (G6-prep, landed earlier in this sequence) has a fabricated
+  AGENTS.md citation in its own commit message, corrected in `PRAXIS_SELF_AUDIT.md`
+  ("Session note: fabricated AGENTS.md citation in commit 1bfbe9f") — the commit's three
+  functional changes are independently confirmed correct and unaffected; the fabricated
+  quote is not repeated here.
+
+Net: this is closer to a certified v26.7.13 release than the "Release readiness" snapshot
+above, but §4's "Not a certified v26.7.13 release" non-goal is not fully retired by this
+update — it should be re-read as "the tag now exists and G4 is closed; G5/G6's remaining
+self-consistency residual is the last item before that non-goal can itself be revisited."

@@ -164,13 +164,29 @@ ledger text alone.
 ### G4 — Countermodel promoted STATED->PROVEN; countermodel_not_promoted guard is a dead path
 
 - Lenses: release-artifacts, tickets-truth, paper (merged)
-- Status: OPEN
+- Status: CLOSED
 - Update (2026-07-13): full reconciliation in `TAG_DECISION_BRIEF_v26.7.13.md` §G4 — the
   "guard" is three distinct artifacts plus one live consumer (`build_post_release.py:111`
   `gates_pass=all(gates.values())`, which the false field forces BLOCKED); the promotion
   itself is kernel-evidenced (`ac647a9` -> TTL auditMsg -> AxiomAudit.lean:372-375).
   Options and a retire-as-fulfilled recommendation are in the brief. Kept OPEN: the
   disposition is a human call.
+- Closure (2026-07-13, later same day): CLOSED via `e1142ec`, executing the brief's
+  retire-as-fulfilled option (b). The commit deletes `build_manifest.py`'s
+  countermodel-guard block and the dead `countermodel_not_promoted` field, restoring
+  `release/gates.json` to exactly the 4-field schema `mfact/Mfact/Cli.lean:29-33`'s
+  `GatesJson` already reads. Independently re-verified here by reading `git show e1142ec`
+  directly: the diff removes only the dead-field computation, promotes nothing new, and
+  documents its own evidence chain inline (`ac647a9`'s TTL auditMsg,
+  `AxiomAudit.lean:372-375`'s matching `#guard_msgs`, and `evidenceComplete`'s
+  proven-requires-non-empty-auditMsg check) — the invariant this guard duplicated
+  (STATED->PROVEN only with a matching kernel artifact) survives mechanically without the
+  deleted field. This closure is independent of the v26.7.13 tag sequence completing (it
+  did — see G6) and independent of G5/G6's own status: a self-consistency re-verification
+  run later in this same session (see G5) found unrelated residual staleness elsewhere on
+  the release surface, which does not implicate this fix. Per this workflow's own
+  instruction, G4/G5/G6 are explicitly NOT closed as a group on the strength of this
+  bullet — see G5 and G6 for why they stay OPEN.
 - Evidence: release-manifest.json:2014 marks
   `ProcInt.WfNet.infinite_transition_countermodel_sound_not_bounded` proven=True
   (introduced by ac647a9 "chore: fix countermodel proofs mechanically").
@@ -196,6 +212,27 @@ ledger text alone.
   release_macros.tex mixed-identity instance, and the STANDING.md no-generator finding.
   Fix class is regeneration under the new tag identity, never annotation of different
   bases. Kept OPEN pending the G4 -> G6 -> G5 sequencing in the brief.
+- Update (2026-07-13, later same day): re-verified as part of this session's v26.7.13
+  tag-cutting sequence, after G4 closed and the version bump/tag (G6) landed. The core
+  numeric/hash/runIdentifier lineage this entry worries about IS now unified under one
+  epoch: release-manifest.json (401/203, foldHash `74900dc3...521f32`, runIdentifier
+  `b26e1db`), release/quadrature.json, dist/github-release/title.txt, and
+  release/final_status.json all agree on v26.7.13 / `74900dc3...521f32` / `b26e1db` — a
+  genuine convergence versus the three-lineage state this entry originally described.
+  However, the defect this entry names — a status surface diverging from the manifest
+  without disclosure — recurred in a narrower form: paper/release_macros.tex's
+  `\ReleaseTag` macro and packs/quadrature-pack/ontology.ttl's `quad:releaseTag` both
+  still assert the prior tag string `v26.7.7-procint-certified` (the ontology file is
+  internally self-contradictory: `quad:releaseId "v26.7.13"` sits nine lines from
+  `quad:releaseTag "v26.7.7-procint-certified"`). Root cause: both are rendered via `git
+  describe --tags --abbrev=0`, which could not resolve v26.7.13-procint-certified before
+  that tag existed. Non-gating for build_post_release.py:44-56's CORE_TAG (it reads
+  release-manifest.json's `release` field directly, not these macros); release_macros.tex
+  does ship inside paper/arxiv-submission.tar.gz, though final_status.json records the
+  arxiv upload as still PENDING_EXTERNAL_ACTUATION, so no external party has seen the
+  stale string. Kept OPEN. Fix: re-run the regen step that produces these two files now
+  that the tag exists, confirm both flip to v26.7.13-procint-certified, and check for any
+  other git-describe-derived surface.
 - Verdict: two CONFIRMED (both downgraded release-blocking -> major). The frozen tag
   v26.7.7-procint-certified is internally self-consistent (`git show 184e3a3:...` matches
   942facf3 in both manifest and final_status); the defect is a stale/false status surface
@@ -227,6 +264,25 @@ ledger text alone.
   packet BLOCKED while the field is false. Full version-site inventory, the v26.7.13
   touch list, and the sequencing recommendation are in `TAG_DECISION_BRIEF_v26.7.13.md`
   §G6. Kept OPEN: bump and tag are post-G4, post-Pass-22 human calls.
+- Update (2026-07-13, later same day): the version bump and tag landed. `b26e1db` bumped
+  the release identity across three sites: scripts/build_manifest.py:94,
+  mfact/Mfact/Cli.lean:6, and mfact/lakefile.toml:2 — the third site is an extension
+  beyond TAG_DECISION_BRIEF_v26.7.13.md's original two-site touch list, added because
+  leaving Lake's own version field un-bumped while the CLI/manifest moved would
+  manufacture a new mixed-identity defect of the same shape this gap diagnosed. Manifest,
+  certify, and post-release artifacts were regenerated for v26.7.13, and a local annotated
+  tag v26.7.13-procint-certified was cut at `650b388` (`git cat-file -t` returns "tag";
+  never pushed — pushing remains a user decision). Kept OPEN, not CLOSED: the
+  self-consistency re-verification run later in this session (see G5) found two files
+  still asserting the prior tag string, so "a single, honestly-identified v26.7.13
+  release surface" is not yet true everywhere. Separately: `1bfbe9f` (this gap's
+  version-derivation-hygiene prep, landed earlier in this sequence) has a fabricated
+  AGENTS.md citation in its own commit message — see PRAXIS_SELF_AUDIT.md's "Session
+  note: fabricated AGENTS.md citation in commit 1bfbe9f" for the correction. That commit's
+  three functional changes (deletes scripts/mine_commit.py; derives standing.env's header
+  from the manifest instead of two drifting copies; derives independent_replay.sh's TAG
+  from the manifest) are independently confirmed correct and unaffected by the message
+  error; the fabricated quote is not repeated here.
 - Verdict: CONFIRMED (downgraded release-blocking -> major) — v26.7.12 equals today's
   date and appears nowhere in the repo (roadmap self-identifies as v26.7.11); the release/
   surface is internally consistent at v26.7.7, so this is staleness, not a false gate.
