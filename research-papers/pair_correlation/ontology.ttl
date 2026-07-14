@@ -6,8 +6,12 @@ wf:DynamicSystem a ggen:OntologyObject ;
     ggen:isMathematicallyAdmitted "true" ;
     ggen:leanProofTarget "PairCorrelation.DynamicSystem" .
 
-wf:MixingOrbitsIID a ggen:Theorem ;
-    ggen:isMathematicallyAdmitted "true" ;
-    ggen:leanProofTarget "PairCorrelation.mixing_orbits_asymptotic_iid" ;
-    ggen:computationalConsequence "STOCHASTIC_LOAD_PREDICTION" ;
-    ggen:projectionTarget "IID_CACHE_PREDICTOR" .
+# wf:MixingOrbitsIID removed 2026-07-13 (self-audit Pass 23, finding G3): the Lean
+# declaration it pointed at, PairCorrelation.mixing_orbits_asymptotic_iid, was a vacuous
+# theorem (all hypotheses unused; conclusion trivially witnessed regardless of hypothesis
+# truth) and was deleted in commit 252063e. That deletion left this entity still
+# asserting ggen:isMathematicallyAdmitted "true" for a nonexistent, never-legitimately-
+# admitted declaration, with two downstream consequences (STOCHASTIC_LOAD_PREDICTION,
+# IID_CACHE_PREDICTOR) chained off a claim that was never honest. Removed rather than
+# marked false: it was not a real theorem that later failed, it was vacuous from the
+# start (AGENTS.md section 3, no vacuous tautologies).
