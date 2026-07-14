@@ -1,6 +1,7 @@
 .ggen-v2/receipt-log.jsonl
 .ggen-v2/receipt.json
 .mfact/artifacts.toml
+.mfact/hook-events.jsonl
 crates/mfact-core/build.rs
 crates/mfact-core/src/broker.rs
 crates/mfact-core/src/lean_ffi_wrapper.c
