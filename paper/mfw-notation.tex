@@ -1,0 +1,1403 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+\usepackage{xcolor}
+
+% ---------------------------------------------------------------
+% Standing markers (mirrors the Lean source's audit vocabulary)
+% ---------------------------------------------------------------
+\newcommand{\PROVEN}{\textcolor{teal}{\textsc{[proven]}}}
+\newcommand{\DEFINITION}{\textcolor{gray}{\textsc{[definition]}}}
+\newcommand{\CONJECTURAL}{\textcolor{orange}{\textsc{[conjectural]}}}
+\newcommand{\BLOCKED}{\textcolor{red}{\textsc{[structurally blocked]}}}
+
+% ---------------------------------------------------------------
+% Notation macros
+% ---------------------------------------------------------------
+\newcommand{\PT}{\Pi}                          % planning theory
+\newcommand{\PS}{\mathcal{P}(\PT)}             % behavioral phase space
+\newcommand{\WS}{\mathcal{W}}                  % workflow space
+\newcommand{\tmap}{\tau}                       % the transformation
+\newcommand{\fib}[1]{F_{#1}}                   % fiber
+\newcommand{\kerEq}{\equiv_{K}}                % kernel equivalence
+\newcommand{\traceEq}[1]{\sim_{#1}}            % trace equivalence
+\newcommand{\Lin}{\mathrm{Lin}}
+\newcommand{\Hser}{H_{\mathrm{ser}}}
+\newcommand{\dW}{d_{\mathcal{W}}}
+\newcommand{\dP}{d_{\mathcal{P}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Multi Fractal Workflow:\\
+Transformation Information Geometry for\\
+PDDL~3.1 $\to$ POWL~v2 Compilation\\[0.6em]
+\large Complete Notation and Implementation Consequences\\
+(Formalized in Lean~4, \texttt{ProcInt.MFW}, v26.7.13)}
+\author{Sean Chatman}
+\date{July 14, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Multi Fractal Workflow (MFW) studies the multiscale distribution of PDDL~3.1
+lawful behavioral measures over the hierarchical behavior classes induced by
+POWL~v2 transformation. The central formal object is a map
+$\tmap : (\PS, \dP, \nu) \to (\WS, \dW, \tmap_{*}\nu)$ and the central open
+target is the \emph{crown theorem}
+$\tmap(b_1) = \tmap(b_2) \iff b_1 \kerEq b_2$, characterizing the kernel of
+the transformation as Mazurkiewicz trace equivalence. This paper transcribes
+the complete notation of the Lean~4 formalization
+(\texttt{procint/ProcInt/MFW}, 16~modules, compiled under Lean~4.31.0 with
+zero \texttt{sorry}) into standard mathematical form, records the proof
+standing of every object (\textsc{proven} / \textsc{definition} /
+\textsc{conjectural} / \textsc{structurally blocked}), and derives the
+consequences of each mathematical structure for the \texttt{ggen}
+implementation of the PDDL~3.1 $\to$ POWL~v2 compiler. The paper states only
+what the formalization states: the crown biconditional and the entropy
+collapse are conjectural targets, not results.
+\end{abstract}
+
+\tableofcontents
+
+% ================================================================
+\section{Foundations: Planning Theory and Behavioral Phase Space}
+\label{sec:foundations}
+Source module: \texttt{TransformBasic.lean} (v2, post-audit 2026-07-14).
+
+\subsection{The planning theory $\PT$}
+
+\begin{definition}[PlanningTheory]\DEFINITION\;
+A \emph{PDDL~3.1 planning theory} is a tuple
+\[
+  \PT = (S,\ A,\ \delta,\ s_0,\ G,\ \Theta,\ \models_T,\ N,\ \models_N,\ \Gamma,\ \models_\Gamma)
+\]
+where
+\begin{itemize}[nosep]
+  \item $S$ is the state space, $A$ the action space;
+  \item $\delta : S \times A \to S_\bot$ is the partial transition function
+        (\texttt{Option State} in Lean; $\bot$ = inapplicable);
+  \item $s_0 \in S$ is the initial state and $G \subseteq S$ the goal predicate;
+  \item $\Theta$ is a type of temporal constraints with satisfaction relation
+        $\models_T\ \subseteq \Theta \times \R^{*}$ over timestamp lists;
+  \item $N$ is a type of numeric fluents with effect map
+        $A \times N \to \R$ and precondition satisfaction
+        $\models_N\ \subseteq A \times (N \to \R)$;
+  \item $\Gamma$ is a type of trajectory constraints (always, sometime,
+        within, at-most-once) with satisfaction
+        $\models_\Gamma\ \subseteq \Gamma \times S^{*}$ over state traces.
+\end{itemize}
+The audit rule recorded in the source: \emph{a constraint type without a
+satisfaction law does not constrain the phase space} --- every component of
+$\PT$ must carry semantics or be absent.
+\end{definition}
+
+\begin{definition}[Durative action expansion]\DEFINITION\;
+A durative action over labels $\alpha$ expands into start/end temporal events
+\[
+  a = \langle a_{\vdash},\ a_{\dashv},\ I_a,\ \mathrm{Inv}_a,\ \mathrm{Eff}_a \rangle,
+  \qquad
+  0 \le \underline{d}_a \le \overline{d}_a,
+\]
+with duration bounds $[\underline{d}_a, \overline{d}_a]$
+(\texttt{DurativeActionExpansion}).
+\end{definition}
+
+\subsection{Behavior traces and lawfulness}
+
+The audit split the former monolithic behavior type into raw data, a
+predicate, and a proof-carrying subtype --- the defect being repaired was
+that a ``lawful'' behavior with \texttt{achievesGoal := False} used to be an
+admitted inhabitant.
+
+\begin{definition}[BehaviorTrace]\DEFINITION\;
+A \emph{behavior trace} of $\PT$ is
+$b = (\mathbf{e}, \mathbf{t})$ with events $\mathbf{e} \in A^{*}$,
+timestamps $\mathbf{t} \in \R^{*}$, and $|\mathbf{e}| = |\mathbf{t}|$.
+Its induced \emph{state trace} is the monadic fold
+\[
+  \mathrm{stateTrace}(b) =
+  \mathrm{foldlM}\big(\delta,\ [s_0],\ \mathbf{e}\big) \in (S^{*})_\bot ,
+\]
+which is $\bot$ if any action is inapplicable.
+\end{definition}
+
+\begin{definition}[IsLawful]\DEFINITION\;
+$b$ is \emph{lawful} under $\PT$, written $\mathrm{IsLawful}_\PT(b)$, iff
+there exists a state trace $\sigma \in S^{*}$ such that
+\begin{enumerate}[nosep,label=(\roman*)]
+  \item $\mathrm{stateTrace}(b) = \sigma$ and $|\sigma| = |\mathbf{e}| + 1$;
+  \item the final state of $\sigma$ satisfies $G$;
+  \item $\forall\, \theta \in \Theta$ of $\PT$: $\theta \models_T \mathbf{t}$;
+  \item $\forall\, \gamma \in \Gamma$ of $\PT$: $\gamma \models_\Gamma \sigma$.
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[LawfulBehavior and behavioral phase space]\DEFINITION\;
+A \emph{lawful behavior} is the dependent pair
+$\{\, b : \mathrm{BehaviorTrace}\ \PT \mathrel{/\!/} \mathrm{IsLawful}_\PT(b) \,\}$:
+raw trace plus lawfulness \emph{witness}. The
+\emph{behavioral phase space} is
+\[
+  \PS \;=\; \mathrm{LawfulBehavior}(\PT).
+\]
+Every inhabitant carries its proof; the proof is a witness, not a payload.
+\end{definition}
+
+\subsection{The workflow space $\WS$ (POWL v2)}
+
+The audit replaced the former codomain $\N^3$ (which carried no partial
+order, choice graph, or hierarchy) with the actual POWL model.
+
+\begin{definition}[Powl model; Kourani \& van Zelst, BPM 2023, Defs.~1--2]
+\DEFINITION\;
+Over an activity label type $\alpha$, a POWL model is inductively
+\[
+  \mathrm{Powl}(\alpha) ::=
+  \mathrm{atom}(a) \mid
+  \mathrm{silent} \mid
+  \mathrm{xor}(\vec{c}) \mid
+  \mathrm{loop}(c_{\mathrm{do}}, c_{\mathrm{redo}}) \mid
+  \mathrm{po}(\vec{c}, \prec)
+\]
+where $\vec{c}$ is a list of submodels and
+$\prec\ \subseteq \N \times \N$ a precedence on child indices.
+\emph{Well-formedness} $\mathrm{WF}$ is hereditary and requires
+$|\vec{c}| \ge 2$ for $\mathrm{xor}$, and irreflexivity plus transitivity of
+$\prec$ below the child count for $\mathrm{po}$.
+\end{definition}
+
+\begin{definition}[Choice graph, POWL v2 object, workflow space]\DEFINITION\;
+A \emph{choice graph} is $(\vec{v}, E, |\vec{v}| \ge 2)$ with vertices
+$\vec{v} \in \mathrm{Powl}(\alpha)^{*}$ and edge relation
+$E \subseteq \mathrm{Fin}|\vec{v}| \times \mathrm{Fin}|\vec{v}|$, modeling
+POWL v2's non-block-structured decisions. A \emph{POWL v2 semantic object} is
+\[
+  w = \big(m,\ \mathrm{WF}(m),\ \mathrm{depth} \in \N,\
+           \partial w \subseteq \N\ \text{finite},\
+           \vec{G}_{\mathrm{choice}}\big),
+\]
+carrying the model tree, well-formedness proof, hierarchical depth, semantic
+interface boundary variables $\partial w$, and optional choice graphs. The
+\emph{workflow space} is $\WS = \mathrm{POWLv2Object}(\alpha)$.
+\end{definition}
+
+\subsection{The transformation, fibers, and induced equivalence}
+
+\begin{definition}[WorkflowTransformation]\DEFINITION\;
+The transformation is a bare forward map
+\[
+  \tmap : \PS \to \WS .
+\]
+Deliberately, \emph{no} equivariance law is stored on the structure: the
+audit removed a vacuous \texttt{respects\_equivalence} field, and the kernel
+characterization is a theorem target (\S\ref{sec:kernel}), not an assumption.
+\end{definition}
+
+\begin{definition}[Fiber]\DEFINITION\;
+$\fib{w} = \tmap^{-1}(w) = \{\, b \in \PS : \tmap(b) = w \,\}$.
+\end{definition}
+
+\begin{theorem}[fiber\_partition]\PROVEN\;
+$\forall b \in \PS:\ b \in \fib{\tmap(b)}$.
+\end{theorem}
+
+\begin{theorem}[fiber\_disjoint]\PROVEN\;
+$w_1 \ne w_2 \implies \fib{w_1} \cap \fib{w_2} = \emptyset$.
+\end{theorem}
+
+\begin{remark}[The Jaccard falsifier]
+\texttt{fiber\_disjoint} killed a proposed geometry before implementation:
+for distinct classes the Jaccard similarity is
+$J(\fib{w_1}, \fib{w_2}) = 0$, so the candidate metric
+$\dW(w_1,w_2) = 1 - J$ collapses to the discrete metric. The repair is
+optimal transport over conditional measures (\S\ref{sec:geometry}).
+\end{remark}
+
+\begin{definition}[Transformation equivalence]\DEFINITION\;
+$b_1 \sim_\tmap b_2 \iff \tmap(b_1) = \tmap(b_2)$. Reflexivity, symmetry,
+transitivity: \PROVEN.
+\end{definition}
+
+\subsection{Hierarchy, pushforward, and the seven measures}
+
+\begin{definition}[Hierarchical scale system]\DEFINITION\;
+A filtration of partitions of $\WS$ by depth,
+$P_0 \preceq P_1 \preceq \dots \preceq P_h$, where each depth-$k$ component
+decomposes into depth-$(k{-}1)$ components. \emph{Standing caveat recorded in
+source:} the refinement law currently concludes \texttt{True} --- the proper
+is-submodel-of predicate on POWL v2 objects is \CONJECTURAL.
+\end{definition}
+
+\begin{definition}[Pushforward mass and vector measure]\DEFINITION\;
+A \emph{pushforward mass} is $\mu : \WS \to \R_{\ge 0}$. The MFW
+\emph{vector measure} assigns mass along each of the \textbf{seven}
+distinguished measure kinds:
+\[
+  \mu(\cdot) = \big[\mu_B,\ \mu_T,\ \mu_C,\ \mu_L,\ \mu_{Sl},\ \mu_F,\ \mu_S\big]
+\]
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Kind & Symbol & Semantic freedom measured \\
+\midrule
+behavioral    & $\mu_B$    & $|\{b : \tmap(b) = w\}|$ \\
+temporal      & $\mu_T$    & temporal realization freedom \\
+choice        & $\mu_C$    & choice-graph branch mass \\
+linearization & $\mu_L$    & PDDL-admitted linearization count \\
+slack         & $\mu_{Sl}$ & temporal elasticity \\
+fluent        & $\mu_F$    & object-fluent conditioned mass \\
+entropic      & $\mu_S$    & fiber-entropic contribution $\eta(w) = p(w)\log|\fib{w}|$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The seventh kind (\texttt{.entropic}) was added by audit: fiber entropy and
+temporal slack are orthogonal, $\mathrm{Slack}(w) \ne H(B \mid W = w)$.
+\emph{Provenance requirement (recorded, not yet discharged):} each component
+should be derived from $\tmap$ and $\nu$, not stored as an arbitrary
+nonnegative function.
+\end{definition}
+
+\begin{definition}[Additive entropic contribution]\DEFINITION\;
+$\log|\fib{w}|$ is not additive over disjoint fibers
+($\log(|F_1| + |F_2|) \ne \log|F_1| + \log|F_2|$); the additive atom is
+\[
+  \eta(w) = p(w)\cdot \log|\fib{w}|,
+  \qquad
+  H(B \mid W) = \sum_{w} \eta(w),
+  \qquad
+  \eta(C) = \sum_{w \in \mathrm{Leaves}(C)} \eta(w).
+\]
+\end{definition}
+
+% ================================================================
+\section{Concurrency: Independence, Traces, Serialization Entropy}
+\label{sec:concurrency}
+Source module: \texttt{Concurrency.lean}. The organizing thesis:
+\emph{the PDDL~3.1 $\to$ POWL~v2 transformation is causal constraint
+erasure} --- remove every ordering distinction not forced by planning truth.
+A total-order plan contains too much order; POWL~v2 is the quotient produced
+by erasing accidental chronology.
+
+\subsection{Independence}
+
+\begin{definition}[IndependenceRelation]\DEFINITION\;
+$I \subseteq A \times A$, symmetric. Two actions commute when
+$\delta_b(\delta_a(s)) = \delta_a(\delta_b(s))$ on the admitted state
+domain. The PDDL~3.1 \emph{temporal independence witness} requires five
+components for $(a,b)$:
+\[
+  \mathrm{EffectsCommute} \wedge
+  \mathrm{PreconditionStable} \wedge
+  \mathrm{InvariantStable} \wedge
+  \mathrm{NumericFlowCompatible} \wedge
+  \mathrm{TrajectoryPreserved}.
+\]
+The dependence relation is $D = (A \times A) \setminus I$.
+\end{definition}
+
+\subsection{Mazurkiewicz traces}
+
+\begin{definition}[TraceEquiv]\DEFINITION\;
+For sequences $u, v \in A^{*}$, trace equivalence
+$u \traceEq{I} v$ is the reflexive--symmetric--transitive closure of the
+adjacent swap
+\[
+  u \cdot a \cdot b \cdot v \;\traceEq{I}\; u \cdot b \cdot a \cdot v
+  \qquad \text{whenever } (a,b) \in I .
+\]
+\end{definition}
+
+\begin{theorem}[traceEquiv\_equivalence]\PROVEN\;
+$\traceEq{I}$ is an equivalence relation.
+\end{theorem}
+
+\begin{remark}[The compression claim]
+With $n$ pairwise-independent actions, sequence semantics sees $n!$
+linearizations while the trace quotient sees one concurrency class:
+PDDL $\to$ POWL is potentially \emph{factorial} state-space compression by
+quotienting interleavings. The stronger claim recorded in the source --- POWL
+as a candidate normal form for equivalence classes of lawful plan
+interleavings --- is a research position, not a theorem.
+\end{remark}
+
+\subsection{Causal partial orders and serialization entropy}
+
+\begin{definition}[CausalOrder, linear extensions]\DEFINITION\;
+A \emph{causal order} on $n$ events is an irreflexive transitive
+$\prec\ \subseteq \mathrm{Fin}(n)^2$. The least causal relation preserving
+correctness is the erasure target
+\[
+  R^{*} = \arg\min_{R} |R|
+  \quad\text{subject to}\quad
+  \Lin(E, R) \subseteq \mathrm{Valid}(\PT),
+\]
+where $\Lin(P)$ denotes linear extensions: bijections
+$\sigma$ with $i \prec j \implies \sigma(i) < \sigma(j)$. Write
+$e(P) = |\Lin(P)|$ (\texttt{linearExtensionCount}).
+\end{definition}
+
+\begin{definition}[Serialization entropy]\DEFINITION\;
+\[
+  \Hser(P) = \log e(P).
+\]
+$\Hser = 0$ means the process is totally forced; large $\Hser$ means many
+serializations correspond to one causal object. The transformation's
+distinction-erasure gain for one concurrency class is $G(P) = \log e(P)$.
+\end{definition}
+
+\begin{definition}[Temporal serialization entropy]\DEFINITION\;
+For a simple temporal network $N$ (difference bounds
+$\ell_{ij} \le t_j - t_i \le u_{ij}$),
+\[
+  \Lin_T(P, N) = \{\ell \in \Lin(P) : \ell \text{ admits a schedule satisfying } N\},
+  \qquad
+  H_T(P, N) = \log|\Lin_T(P, N)| ,
+\]
+and the \emph{temporal restriction gap}
+$\Hser(P) - H_T(P,N)$ measures how much apparent causal concurrency is
+removed by metric temporal restriction. (In Lean, $H_T$ is currently
+\texttt{opaque}: interface only.) This gap is the formal reason time cannot
+be omitted from the theory.
+\end{definition}
+
+\subsection{Width, concurrency complex, abstraction ladder}
+
+\begin{definition}[Antichain and width]\DEFINITION\;
+$A \subseteq E$ is an antichain iff its elements are pairwise
+$\prec$-incomparable; the width is
+$w(P) = \max\{|A| : A \text{ antichain}\}$ (by Dilworth, the minimum chain
+cover size). One scalar is too weak; the intended refinement is local
+antichain structure over workflow regions, leading to concurrency mass
+distributions and multifractal analysis of concurrency.
+\end{definition}
+
+\begin{definition}[Concurrency complex]\DEFINITION\;
+Given jointly-concurrent admissibility
+$\mathrm{conc} : \mathcal{P}(\mathrm{Fin}\,n) \to \mathrm{Prop}$ with
+downward closure and $\mathrm{conc}(\emptyset)$ \emph{supplied as admission
+hypotheses} (the audit removed sorry'd closure proofs --- they are false for
+arbitrary predicates),
+\[
+  K_\PT = \{ A \subseteq E : \mathrm{conc}(A) \}
+\]
+is an abstract simplicial complex, with dimension
+$\dim K = \max_{A \in K} |A| - 1$. \emph{Falsifier recorded in source:} the
+concurrency-complex thesis fails if $K_\PT$ is trivially contractible for
+all admitted planning theories. Homological claims: \CONJECTURAL.
+\end{definition}
+
+\begin{definition}[Temporal abstraction ladder]\DEFINITION\;
+$\mathrm{MetricTime} \to \mathrm{IntervalTime} \to \mathrm{CausalTime} \to
+\mathrm{HierarchicalTime}$; each level erases different temporal
+distinctions, and the sufficient abstraction is determined by the question
+($\mathrm{TimeComplete}(Q) \ne \mathrm{TimeComplete}(\mathrm{World})$).
+Interval orders: $a \prec_I b \iff e_a < s_b$ over intervals
+$I_a = [s_a, e_a]$; the full chain is
+$\mathrm{TemporalPlan} \to \mathrm{IntervalOrder} \to \mathrm{CausalOrder}
+\to \mathrm{POWL}$.
+\end{definition}
+
+\begin{definition}[Four concurrency types]\DEFINITION\;
+$C_C$ (causal: unordered in $\prec$), $C_T$ (temporal: intervals may
+overlap), $C_R$ (resource), and \emph{executable} concurrency
+$C_E = C_C \cap C_T \cap C_R$.
+\end{definition}
+
+% ================================================================
+\section{The Kernel: Center of MFW}
+\label{sec:kernel}
+Source module: \texttt{Kernel.lean}. Everything downstream becomes derived
+mathematics once the kernel is established; without it, $\tmap$ is an
+arbitrary classifier and every downstream object is a named aspiration.
+
+\subsection{The four equivalence layers}
+
+\begin{definition}[K1: State equivalence]\DEFINITION\;
+$\mathrm{StateEquiv}(b_1, b_2) \iff
+\mathrm{stateTraceOf}(b_1) = \mathrm{stateTraceOf}(b_2)$ (state sequences
+agree, ignoring temporal realization). Equivalence laws: \PROVEN.
+\end{definition}
+
+\begin{definition}[K2: Causal equivalence]\DEFINITION\;
+With $\mathrm{inducedCausalOrder}(b, I)$ the causal order extracted from $I$
+(currently \texttt{opaque}: $a \prec b$ iff dependent and earlier),
+\[
+  \mathrm{CausalEquiv}_I(b_1, b_2) \iff
+  \exists\, h : |\mathbf{e}_1| = |\mathbf{e}_2|,\
+  \forall i\, j:\
+  \prec_{b_1}(i,j) \leftrightarrow \prec_{b_2}(i^h, j^h).
+\]
+\end{definition}
+
+\begin{definition}[K3: Trace equivalence on lawful behaviors]\DEFINITION\;
+\[
+  \mathrm{PDDL31TraceEquiv}_I(b_1, b_2) \iff
+  \mathbf{e}_1 \traceEq{I} \mathbf{e}_2 .
+\]
+Equivalence laws: \PROVEN.
+\end{definition}
+
+\begin{definition}[Load-bearing target: swap preserves lawfulness]
+\CONJECTURAL\;
+\[
+  \mathrm{TraceSwapPreservesLawful}:\quad
+  \mathbf{e}_1 \traceEq{I} \mathbf{e}_2 \implies
+  \big(\mathrm{IsLawful}_\PT(b_1) \implies \mathrm{IsLawful}_\PT(b_2)\big).
+\]
+This is the bridge from the algebraic independence relation to the
+planning-theoretic admission law. Stated as a \texttt{Prop}-valued
+definition, not proved.
+\end{definition}
+
+\begin{definition}[K4: The kernel]\DEFINITION\;
+\[
+  \mathrm{KernelEquiv}_\tmap(b_1, b_2) \iff \tmap(b_1) = \tmap(b_2),
+  \qquad\text{written } b_1 \kerEq b_2 .
+\]
+Equivalence laws and $\kerEq\ =\ \sim_\tmap$ definitionally: \PROVEN.
+\end{definition}
+
+\subsection{The crown theorem}
+
+\begin{conjecture}[Crown, forward: $\tmap$ respects trace equivalence]
+\CONJECTURAL\;
+$\mathrm{PDDL31TraceEquiv}_I(b_1,b_2) \implies b_1 \kerEq b_2$
+(soundness: accidental serialization does not affect classification).
+\end{conjecture}
+
+\begin{conjecture}[Crown, partial reverse: kernel refines state equivalence]
+\CONJECTURAL\;
+$b_1 \kerEq b_2 \implies \mathrm{StateEquiv}(b_1, b_2)$
+($\tmap$ does not merge state-inequivalent behaviors).
+\end{conjecture}
+
+\begin{conjecture}[Crown biconditional / kernel characterization]
+\CONJECTURAL\;
+\[
+  \boxed{\;\tmap(b_1) = \tmap(b_2) \iff \mathrm{PDDL31TraceEquiv}_I(b_1,b_2)\;}
+  \qquad\text{i.e.}\qquad
+  \ker(\tmap) = \mathrm{TraceEq}_I .
+\]
+\end{conjecture}
+
+\begin{theorem}[Non-circularity witnesses]\PROVEN\;
+The two sides are independently defined:
+\texttt{kernelEquiv\_unfolds\_without\_traces} shows
+$\mathrm{KernelEquiv}_\tmap(b_1,b_2) = (\tmap(b_1) = \tmap(b_2))$ with no
+reference to independence or traces;
+\texttt{traceEquiv\_unfolds\_without\_tau} shows
+$\mathrm{PDDL31TraceEquiv}_I(b_1,b_2) =
+(\mathbf{e}_1 \traceEq{I} \mathbf{e}_2)$ with no reference to $\tmap$ or
+$\WS$. Both are \texttt{rfl}. The biconditional therefore connects two
+independently specified relations; if proved, it is a structural
+correspondence, not a definitional unfolding.
+\end{theorem}
+
+\subsection{Consequences conditional on the crown}
+
+\begin{theorem}[observable\_iff\_kernel\_constant]\PROVEN\;
+(Definitional preview.) $P$ constant on kernel classes
+$\iff$ $P$ constant on $\tmap$-fibers.
+\end{theorem}
+
+\begin{definition}[Horizon crossing]\DEFINITION\;
+$\mathrm{crossesHorizon}_\tmap(P) \iff
+\exists b_1\, b_2:\ b_1 \kerEq b_2 \wedge P(b_1) \wedge \neg P(b_2)$.
+\end{definition}
+
+\begin{theorem}[fiber\_eq\_traceClass, conditional]\PROVEN\ \emph{under
+hypothesis}\;
+Let $[b]_I = \{b' : \mathrm{PDDL31TraceEquiv}_I(b, b')\}$. If the kernel
+characterization holds (taken as an explicit hypothesis \texttt{hKernel}),
+then
+\[
+  \fib{\tmap(b)} = [b]_I .
+\]
+The Lean proof is unconditional \emph{given} the hypothesis; the hypothesis
+itself is the crown conjecture.
+\end{theorem}
+
+\begin{conjecture}[Trace class $\cong$ linear extensions]\CONJECTURAL\;
+Under the bijection hypotheses (events distinct/\texttt{Nodup}, decidable
+$I$, independence exactly complementing transition-level dependence):
+\[
+  [b]_{\mathrm{TraceEq}_I} \;\simeq\; \Lin(P_b),
+\]
+where $P_b = \mathrm{inducedCausalOrder}(b, I)$. Known in concurrency theory
+(Mazurkiewicz 1977; Diekert--Rozenberg 1995) but not yet formalized under
+PDDL~3.1 semantics.
+\end{conjecture}
+
+\begin{conjecture}[Entropy collapse]\CONJECTURAL\;
+If both the crown and the bijection close, then
+\[
+  S_\tmap(\tmap(b))
+  = \log|\fib{\tmap(b)}|
+  = \log|[b]_I|
+  = \log|\Lin(P_b)|
+  = \log e(P_b)
+  = \Hser(P_b):
+\]
+\emph{fiber entropy equals serialization entropy}, collapsing two
+independently derived quantities and potentially identifying
+$D_q^{\mathrm{Entropic}}$ with $D_q^{\mathrm{Linearization}}$ under some
+admitted profile. In Lean the statement shell
+(\texttt{FiberEntropyEqSerializationEntropy}) currently concludes
+\texttt{True}: it is a stated target whose conclusion is not yet encoded.
+\end{conjecture}
+
+\subsection{Kernel generators}
+
+\begin{definition}[KernelGenerator, KernelPath]\DEFINITION\;
+Primitive distinction-erasing moves:
+\[
+  g \in \{\ \mathrm{traceSwap},\ \mathrm{choiceNormalization},\
+  \mathrm{hierarchyCollapse},\ \mathrm{temporalAbstraction}\ \}.
+\]
+A \emph{kernel path} $b_1 \to^{g_1} b' \to^{g_2} \cdots \to^{g_n} b_2$
+carries its generator sequence, intermediates, and endpoint proofs; its
+generator-count vector is
+$\kappa(\mathrm{path}) = (n_{\mathrm{trace}}, n_{\mathrm{choice}},
+n_{\mathrm{hier}}, n_{\mathrm{temp}})$.
+\end{definition}
+
+\begin{conjecture}[Kernel generated]\CONJECTURAL\;
+$b_1 \kerEq b_2 \iff \exists$ kernel path $b_1 \rightsquigarrow b_2$,
+i.e.\ $\ker(\tmap) = \mathrm{EqClosure}(\{g_{\mathrm{trace}},
+g_{\mathrm{choice}}, g_{\mathrm{hierarchy}}, g_{\mathrm{temporal}}\})$.
+If it holds, independent generators yield independent spectrum coordinates
+(one $D_q$ per independent erasure mode) --- the proof-first alternative to
+declaring measure kinds by enumeration.
+\end{conjecture}
+
+% ================================================================
+\section{Observability and the Information Horizon}
+\label{sec:observability}
+Source module: \texttt{Observability.lean} (Layer 5).
+
+\begin{definition}[Observable / hidden / fiber-constant]\DEFINITION\;
+For $P : \PS \to \mathrm{Prop}$:
+\begin{align*}
+  \mathrm{IsObservable}_\tmap(P)
+    &\iff \exists \hat{P} : \WS \to \mathrm{Prop},\
+      \forall b:\ P(b) \leftrightarrow \hat{P}(\tmap(b)); \\
+  \mathrm{IsFiberConstant}_\tmap(P)
+    &\iff \forall b_1\, b_2:\ \tmap(b_1) = \tmap(b_2)
+      \implies (P(b_1) \leftrightarrow P(b_2)); \\
+  \mathrm{IsHidden}_\tmap(P)
+    &\iff \exists b_1\, b_2:\ \tmap(b_1) = \tmap(b_2)
+      \wedge P(b_1) \wedge \neg P(b_2).
+\end{align*}
+\end{definition}
+
+\begin{theorem}[observable\_iff\_fiber\_constant]\;
+$\mathrm{IsObservable} \iff \mathrm{IsFiberConstant}$.
+Forward direction \PROVEN; reverse direction implemented via the factoring
+predicate $\hat{P}(w) := \forall b,\ \tmap(b) = w \to P(b)$ --- the source
+labels this direction \CONJECTURAL{} on account of fiber-representative
+choice, though the stated proof term closes in Lean.
+\end{theorem}
+
+\begin{theorem}[hidden\_iff\_not\_fiber\_constant; observable\_not\_hidden]\;
+Hidden $\iff$ not fiber-constant (reverse direction labeled \CONJECTURAL{}
+in-source, classical witnesses); observable $\implies$ not hidden \PROVEN.
+\end{theorem}
+
+\begin{definition}[Observable sigma-algebra]\DEFINITION\;
+$S \subseteq \PS$ is \emph{$\tmap$-saturated} iff membership is
+fiber-constant. The observable sigma-algebra is
+\[
+  \mathcal{O}_\tmap
+  = \{\, S \subseteq \PS : S \text{ saturated} \,\}
+  = \{\, \tmap^{-1}(U) : U \subseteq \WS \,\},
+\]
+the largest sigma-algebra making $\tmap$ measurable. Both inclusions
+(pullbacks are saturated; saturated sets are pullbacks): \PROVEN.
+\end{definition}
+
+\begin{theorem}[Boolean closure]\PROVEN\;
+Observables are closed under $\neg, \wedge, \vee, \to$, under arbitrary
+binary connectives $f(\mathrm{P},\mathrm{Q})$ and unary $g(\mathrm{P})$, and
+contain $\top, \bot$ and every $\hat{P} \circ \tmap$.
+\end{theorem}
+
+\begin{definition}[Sufficiency and semantic residual]\DEFINITION\;
+$\tmap$ is \emph{sufficient for} $Y$ iff $Y$ is observable (deterministic
+Fisher--Neyman fragment). The stochastic form is
+\[
+  I(Y ; B \mid W) = H(Y \mid W) - H(Y \mid B) = H(Y \mid W) = 0,
+\]
+formalized only as a placeholder structure
+(\texttt{SemanticResidualInfo}, residual $\ge 0$); the bridge
+``zero residual $\implies$ sufficiency'' is \CONJECTURAL{} (needs
+measure-theoretic conditional entropy).
+\end{definition}
+
+\begin{definition}[Information horizon]\DEFINITION\;
+$H_\tmap$ = the observable/hidden dichotomy, packaged with
+$\mathrm{isWithin}(P) \iff \mathrm{IsObservable}_\tmap(P)$ (canonical
+construction \PROVEN).
+\end{definition}
+
+\begin{definition}[Refinement order]\DEFINITION\;
+$\tmap_1 \sqsubseteq \tmap_2$ (``$\tmap_1$ refines $\tmap_2$'') iff
+$\tmap_1(b_1) = \tmap_1(b_2) \implies \tmap_2(b_1) = \tmap_2(b_2)$,
+equivalently $\tmap_2 = \psi \circ \tmap_1$. Monotonicity (refined
+transformations observe more), reflexivity, transitivity: \PROVEN.
+\end{definition}
+
+% ================================================================
+\section{Fiber Entropy (Layer 6)}
+\label{sec:fiberentropy}
+Source module: \texttt{FiberEntropy.lean}. Finite/uniform model with
+$\mathrm{behaviors}$ a finite enumeration of $\PS$.
+
+\begin{definition}[Cardinality, entropy, probability]\DEFINITION\;
+\[
+  |\fib{w}| = |\{b \in \mathrm{behaviors} : \tmap(b) = w\}|,
+  \qquad
+  S_\tmap(w) = \log|\fib{w}| \ \text{(nats)},
+  \qquad
+  p(w) = \frac{|\fib{w}|}{|\PS|}.
+\]
+Probabilistic generalization $S_\tmap(w) = H(B \mid W = w)$: future work.
+\end{definition}
+
+Standing of the structural lemmas (as recorded in-source; several carry
+complete Lean proofs but retain a \textsc{conjectural} docstring label
+pending API review):
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Statement & Standing \\
+\midrule
+$|\fib{w}| > 0$ when $w$ reachable & \PROVEN \\
+$S_\tmap(w) \ge 0$ & \CONJECTURAL{} (proof term present) \\
+$S_\tmap(w) = 0 \iff |\fib{w}| \le 1$; for reachable $w$: $\iff |\fib{w}| = 1$ & \CONJECTURAL{} (proof term present) \\
+$|\fib{w_1}| \le |\fib{w_2}| \implies S_\tmap(w_1) \le S_\tmap(w_2)$ & \CONJECTURAL{} (proof term present) \\
+$S_\tmap$ congruence under $w_1 = w_2$ & \PROVEN \\
+total collapse: all $b \mapsto w_{\mathrm{top}}$ gives $S = \log|\PS|$ & \CONJECTURAL{} (proof term present) \\
+$S_\tmap(w) \le \log|\PS|$ & \CONJECTURAL{} (proof term present) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{definition}[Total fiber entropy]\DEFINITION\;
+\[
+  H(B \mid W) = \sum_{w} p(w)\, S_\tmap(w),
+  \qquad
+  0 \le H(B \mid W) \le \log|\PS| ,
+\]
+lower bound at injective $\tmap$, upper at total collapse. Nonnegativity:
+proof present, labeled \CONJECTURAL{} via its dependency.
+\end{definition}
+
+\begin{definition}[Entropy measure and hierarchy]\DEFINITION\;
+$\mu_S(w) = S_\tmap(w)$ defines a \texttt{PushforwardMass};
+$\mu_S(C) = H(B_C \mid W_C)$ distributes entropy over hierarchical
+components, feeding $D_q^{\mathrm{FiberEntropy}}$. The injection
+\texttt{withFiberEntropySlack} replaces the slack component of a vector
+measure with $S_\tmap$, witnessing the entropic reading
+$\mu_{Sl}(w) = S_\tmap(w)$.
+\end{definition}
+
+\begin{definition}[Scaling models and the boundary sufficiency hypothesis]
+\DEFINITION\;
+With $|C|$ the component size (proxy: $|\partial C| + 1$) and $|\partial C|$
+the boundary-variable count:
+\[
+  \text{volume: } S_\tmap(C) \sim \alpha\,|C|,
+  \qquad
+  \text{area: } S_\tmap(C) \sim \beta\,|\partial C|,
+  \qquad
+  \text{mixed: } S_\tmap(C) \sim \alpha\,|C|^{\gamma}\,|\partial C|^{\delta}.
+\]
+\emph{Boundary sufficiency} (the Bekenstein--Hawking analogue for process
+models):
+\[
+  \exists \beta > 0:\ \forall C,\
+  \big|\,S_\tmap(C) - \beta\,|\partial C|\,\big| \le \varepsilon .
+\]
+Whether real PDDL~3.1 domains exhibit area or volume scaling is an open
+empirical/theoretical question.
+\end{definition}
+
+% ================================================================
+\section{Intrinsic Dimension Loss (Layer 7)}
+\label{sec:dimension}
+Source module: \texttt{IntrinsicDimension.lean}.
+
+\begin{definition}[Coordinates and stratification]\DEFINITION\;
+Phase-space coordinates come in five families:
+\[
+  x = (\text{event occurrence},\ \text{temporal},\ \text{object-fluent},\
+       \text{numeric},\ \text{trajectory}).
+\]
+Admissibility imposes $C(x) = 0$ and $G(x) \le 0$; the lawful space is
+\emph{stratified},
+\[
+  \PS = \bigcup_{\sigma \in \Sigma} P_\sigma ,
+\]
+$\Sigma$ indexing discrete choice patterns; each stratum carries a local
+dimension $\dim P_\sigma$ (continuous freedom: temporal slack, numeric
+state). Covering law required; overlaps only on boundaries.
+\end{definition}
+
+\begin{definition}[Local dimensions and dimension loss]\DEFINITION\;
+$d^{\mathrm{PDDL}}_{\mathrm{loc}}(b) = \max\{\dim P_\sigma : b \in P_\sigma\}$;
+$d^{\mathrm{POWL}}_{\mathrm{loc}}(w)$ --- currently the placeholder $0$
+(untimed structural POWL). The \emph{transformation dimension loss}:
+\[
+  \Delta d_\tmap(b)
+  = d^{\mathrm{PDDL}}_{\mathrm{loc}}(b) - d^{\mathrm{POWL}}_{\mathrm{loc}}(\tmap(b))
+  \in \mathbb{Z}.
+\]
+Dimension loss is stronger than cardinality: an uncountable fiber may be
+low-dimensional; a finite fiber of $k$ points has dimension $0$.
+\end{definition}
+
+Standing:
+$\Delta d_\tmap \ge 0$ --- stated with a proof that currently succeeds only
+because the POWL side is the placeholder $0$; the honest statement needs a
+Lipschitz hypothesis, \CONJECTURAL.
+``$\Delta d_\tmap(b) = 0 \iff \tmap$ locally invertible at $b$'' and
+``fiber dimension $=$ dimension loss under submersion'' are
+\BLOCKED{}: they require smooth structure on $\PS$ and $\WS$ that is not
+formalized; both are recorded as \texttt{Prop} shells with placeholder
+right-hand sides.
+
+\begin{definition}[Null perturbation space]\DEFINITION\;
+\[
+  \mathrm{Null}_\tmap(b) = \{\delta : \tmap(b \oplus \delta) = \tmap(b)\},
+  \qquad
+  \mathrm{Null}_\tmap(b)
+  = \bigoplus_{k} \mathrm{Null}^{k}_\tmap(b),
+  \quad k \in \{\text{temp},\ \text{fluent},\ \text{num},\ \text{traj}\},
+\]
+the $\tmap$-invisible lawful perturbations; at smooth points this is the
+fiber tangent space, $\dim \mathrm{Null}_\tmap(b) = \dim \fib{\tmap(b)}
+= \Delta d_\tmap(b)$. Proven basics: the trivial perturbation is null; each
+kind-component is a subset; null perturbations preserve $\sim_\tmap$ and stay
+in the fiber. The direct-sum decomposition
+$\Delta d_\tmap = \Delta d^{\mathrm{temp}} + \Delta d^{\mathrm{fluent}} +
+\Delta d^{\mathrm{num}} + \Delta d^{\mathrm{traj}}$ is \BLOCKED{} (needs
+tangent-space decomposition); the per-kind dimension function is a
+placeholder returning $0$.
+\end{definition}
+
+\begin{definition}[Profile and effective scaling]\DEFINITION\;
+$\Delta D_\tmap(w) = \sup_{b \in \fib{w}} \Delta d_\tmap(b)$ (proxied by
+fiber dimension); effective scaling dimension
+$\alpha(w) = d^{\mathrm{PDDL}}_{\mathrm{loc}}(b) - \dim\fib{\tmap(b)}$
+with $\alpha \le d^{\mathrm{PDDL}}_{\mathrm{loc}}$ \PROVEN{} (by
+$\N$-subtraction). Measure connection (informal, in-source):
+$\mu(B_\varepsilon(w)) \sim \varepsilon^{\,d-k}\,
+\mathrm{Vol}_k(\fib{w} \cap B_\varepsilon)$ for source dimension $d$ and
+fiber dimension $k$.
+\end{definition}
+
+% ================================================================
+\section{Observable Basis (Layer 8)}
+\label{sec:basis}
+Source module: \texttt{ObservableBasis.lean}. Inspired by Energy Flow
+Polynomials (EFPs), which give a complete linear basis for
+infrared/collinear-safe observables in collider physics.
+
+\begin{definition}[Invariant observables]\DEFINITION\;
+\[
+  F_\tmap
+  = \{ f : \PS \to \R \mid
+       \forall b_1 b_2,\ \tmap(b_1) = \tmap(b_2) \implies f(b_1) = f(b_2) \}.
+\]
+Equivalently $f = g \circ \tmap$; the analogue of infrared safety. Bundled
+form: \texttt{InvariantObservable} $= (f, \text{invariance proof})$, with
+extensionality \PROVEN.
+\end{definition}
+
+\begin{theorem}[Algebra of $F_\tmap$]\PROVEN\;
+$F_\tmap$ contains $0$ and all constants and is closed under $+$, scalar
+$\cdot$, negation, and pointwise product; the three subspace axioms are
+packaged (\texttt{invariant\_observable\_subspace}, whose docstring defers
+Mathlib \texttt{Submodule} plumbing). Pullbacks: every $g \circ \tmap \in
+F_\tmap$ \PROVEN; conversely every $f \in F_\tmap$ factors through
+surjective $\tmap$ via choice of fiber representatives
+(\texttt{invariant\_observable\_factors} --- proof term present, labeled
+\CONJECTURAL{} in-source). Hence, at the intended level of generality,
+$F_\tmap \cong (\WS \to \R)$; when $\WS$ is finite,
+$\dim F_\tmap = |\mathrm{im}\,\tmap|$.
+\end{theorem}
+
+\begin{definition}[Primitive kinds and basis]\DEFINITION\;
+Candidate generators by kind (with their EFP analogies):
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Kind & Measures & EFP analogy \\
+\midrule
+causal        & causal partial-order incidence      & angular structure \\
+interval      & partial-order interval lengths      & energy flow \\
+motif         & choice-graph subgraph motif counts  & graph polynomials \\
+hierarchical  & depth/width/composition             & jet substructure \\
+temporal      & boundary separation, slack          & thrust-like variables \\
+\bottomrule
+\end{tabular}
+\end{center}
+The span of $\vec{\varphi} = [\varphi_1, \dots, \varphi_n]$:
+$\mathrm{span}\{\varphi_i\} = \{ f : \exists \vec{c},\
+f(b) = \sum_i c_i\,\varphi_i(b) \}$; span $\subseteq F_\tmap$ has a complete
+induction proof (labeled \CONJECTURAL{} in-source). A \emph{basis} for the
+admitted space $F^{\mathrm{adm}}_\tmap$ requires membership, spanning
+($F_\tmap \subseteq \mathrm{span}$), and linear independence
+(\texttt{IsObservableBasis}). The conjecture: the five kinds with products
+and linear combinations generate $F^{\mathrm{adm}}_\tmap$. \CONJECTURAL
+\end{definition}
+
+\begin{definition}[Admission profiles and truncation]\DEFINITION\;
+An \emph{admission profile}
+$(\mathrm{maxDepth}, \mathrm{maxBranching}, \mathrm{maxConcurrency},
+\mathrm{maxDuration})$, all positive, bounds the theory. An
+\emph{observable truncation} records surviving kinds, per-kind counts, and a
+truncated basis, with bound fields (conjectured, carried as structure
+constraints):
+\[
+  \#\mathrm{causal} \le \binom{\mathrm{maxConcurrency}}{2},
+  \qquad
+  \#\mathrm{motif} \le 2^{\binom{\mathrm{maxBranching}}{2}},
+\]
+\[
+  \mathrm{truncationOrder} \le
+  \mathrm{maxConcurrency}^2 + 2^{\mathrm{maxBranching}}
+  + \mathrm{maxDepth}\cdot\mathrm{maxBranching} + \mathrm{maxDuration}.
+\]
+This is proof-directed observable truncation: the analogue of EFP power
+counting. \CONJECTURAL
+\end{definition}
+
+\begin{definition}[Feature vectors]\DEFINITION\;
+$\mathrm{evaluateBasis}(\vec{\varphi}, b) = [\varphi_1(b), \dots,
+\varphi_n(b)]$. Fiber-mates produce equal feature vectors and the length
+equals the basis size: both \PROVEN. Kind correspondence to measures:
+behavioral/entropic $\to$ causal, temporal/slack $\to$ temporal, choice
+$\to$ motif, linearization $\to$ interval, fluent $\to$ hierarchical.
+Measure--observable duality ($\mu_k(w) = \Lambda_k(\delta_w)$ for linear
+functionals $\Lambda_k$ on $F_\tmap$): stated with a trivial witness
+($\Lambda = 0$), \CONJECTURAL{} in substance.
+\end{definition}
+
+% ================================================================
+\section{Spectrum Bundle and Cross-Spectrum Tension (Layer 9)}
+\label{sec:spectrum}
+Source module: \texttt{SpectrumBundle.lean}.
+
+\begin{definition}[Multifractal workflow spectrum bundle]\DEFINITION\;
+For each R\'enyi exponent $q \in \R$ and measure kind $i$, a generalized
+dimension $D_q^i \in \R$:
+\[
+  \vec{D}_q = \big(D_q^{B},\ D_q^{T},\ D_q^{C},\ D_q^{L},\ D_q^{Sl},\ D_q^{F}\big),
+\]
+a section of a trivial $\R^{6}$-bundle over the $q$-line, with the
+structural axiom that $D_0^{i}$ is finite for every kind.
+\emph{Provenance requirement (audit):} the bundle must be manufactured from
+admitted measure + scale + fit evidence, not constructed as an arbitrary
+function of $q$.
+\end{definition}
+
+\begin{definition}[Cross-spectrum tension]\DEFINITION\;
+\[
+  \Delta_{ij}(q) = D_q^{i} - D_q^{j}.
+\]
+Antisymmetry $\Delta_{ij} = -\Delta_{ji}$, diagonal vanishing
+$\Delta_{ii} = 0$, zero trace: all \PROVEN. Interpretation table
+(classification thresholds $\pm\varepsilon$, \texttt{classifyTension}):
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Pattern & Diagnosis \\
+\midrule
+$D_q^{B} \gg D_q^{T}$ & temporal bottleneck \\
+$D_q^{B} \ll D_q^{T}$ & scheduling elasticity \\
+$D_q^{C} \gg D_q^{B}$ & choice sparsity (dead branches) \\
+$D_q^{L} \gg D_q^{T}$ & false concurrency pressure \\
+\bottomrule
+\end{tabular}
+\end{center}
+The tension profile, not any single spectrum, is the intended optimization
+signal.
+\end{definition}
+
+\begin{definition}[Hierarchical partition sum]\DEFINITION\;
+Over the POWL v2 filtration $P_0 \preceq \cdots \preceq P_h$ with component
+masses $p_B$:
+\[
+  Z(q, k) = \sum_{B \in P_k} p_B^{\,q}.
+\]
+$Z(0,k) = |P_k|$ (proof term present, requires $p > 0$; labeled
+\CONJECTURAL); $Z(1,k) = 1$ under normalization \PROVEN; nonnegativity and
+additivity over concatenation: proof terms present, labeled \CONJECTURAL.
+Log-convexity in $q$: open question.
+\end{definition}
+
+\begin{definition}[The q-lens]\DEFINITION\;
+$q$ is attention control over behavioral mass inside POWL v2 choice
+structure: $q \gg 0$ spotlights dominant channels; $q = 0$ is democratic
+counting; $q = 1$ is the Shannon lens; $q \ll 0$ spotlights rare behaviors.
+\texttt{QLensWorkflow} $= (\text{bundle}, \text{focus kind}, q)$ evaluates to
+$D_q^{\mathrm{kind}}$; \texttt{qLensChoice} is the branching-structure lens.
+\end{definition}
+
+\begin{definition}[q-lens deformation; \texttt{QLens.lean} \S30]\;
+For a positive finite distribution $p$ on finite $\alpha$:
+\[
+  L_q(p)(x) = \frac{p(x)^q}{\sum_{y} p(y)^q}.
+\]
+Well-definedness (positivity, normalization): \PROVEN. Ratio law
+\PROVEN{} (\texttt{qLens\_ratio\_law}):
+\[
+  \frac{L_q(p)(x)}{L_q(p)(y)} = \left(\frac{p(x)}{p(y)}\right)^{q}.
+\]
+\end{definition}
+
+\begin{definition}[Workflow metric and information profile]\DEFINITION\;
+A \texttt{WorkflowMetric} is $(d, d \ge 0, d(w,w) = 0, \text{symm},
+\text{triangle})$, inducing a \texttt{PseudoMetricSpace} (construction
+labeled \CONJECTURAL{} pending the distance's own well-definedness). Note
+this module's docstring still describes the superseded Jaccard reading
+$\dW = 1 - J$; the operative construction is Wasserstein
+(\S\ref{sec:geometry}). The \emph{Transformation Information Profile} is the
+master diagnostic
+\[
+  I_\tmap = \big(d_{\mathrm{int}},\ \vec{D}_q,\ H(B \mid W),\
+  I(Y; B \mid W),\ \dim \fib{w},\ \dW,\ \Delta_{ij}(q)\big),
+\]
+with the cached tension provably consistent with the bundle \PROVEN. The
+scale-resolved bundle $\vec{D}_q(k)$ adds hierarchical depth; antisymmetry
+persists at every depth \PROVEN.
+\end{definition}
+
+% ================================================================
+\section{Workflow Geometry via Conditional Measures}
+\label{sec:geometry}
+Source: \texttt{Kernel.lean} (geometry section).
+
+\begin{definition}[Behavior metric and Wasserstein workflow distance]
+\DEFINITION\;
+Given a metric $\dP$ on $\PS$ (nonnegative, symmetric, triangle), define
+conditional fiber measures $\nu_w = \nu(\,\cdot \mid \tmap = w)$ and
+\[
+  \dW(w_1, w_2) = W_p(\nu_{w_1}, \nu_{w_2})
+  = \inf_{\pi \in \Pi(\nu_{w_1}, \nu_{w_2})}
+    \mathbb{E}_\pi\big[\dP(b_1, b_2)\big].
+\]
+Fibers are disjoint as sets (\texttt{fiber\_disjoint}), but their behavior
+distributions may be geometrically close in $\dP$ --- that is the
+optimal-transport repair of the Jaccard collapse. In Lean the distance is
+\texttt{opaque} (interface; the transport construction needs measure theory
+beyond the module's scope).
+\end{definition}
+
+% ================================================================
+\section{Specification and Governance Modules}
+\label{sec:governance}
+These modules (Notation Authority \S\S1--40) formalize the surrounding
+manufacturing discipline. They are intentionally interface-level: most
+carriers are \texttt{opaque} types, and the properties are
+\texttt{Prop}-valued specifications, not proven theorems.
+
+\subsection{Manufacture (\S\S1--6, 15)}
+Opaque carriers: observation space $\mathcal{O}$, admitted observations
+$\mathcal{O}^{\mathrm{adm}}$, artifact domain $\mathcal{A}$; relations:
+manufacturing law $\mathcal{L} \subseteq \mathcal{A} \times \mathcal{O}$,
+standing $\mathrm{stand} \subseteq \mathcal{A}$, receipts
+$\mathrm{receipt} \subseteq \mathcal{A} \times \mathcal{O}^{\mathrm{adm}}$,
+actuations with $\mathrm{isReceipted}$. The \emph{BRCE invariant} (Zero
+Unreceipted Actuation):
+\[
+  \mathrm{brce} \iff \forall a \in \mathrm{Actuation}:\ \mathrm{isReceipted}(a).
+\]
+Quality: defect vectors $\mathrm{DefectVector} = \mathrm{Option}\,
+\mathrm{DefectVectorImpl}$, voice-of-customer $\mathrm{Voice}$, CTQ
+derivation $\mathrm{ctq} : \mathrm{Voice} \to \mathrm{DefectVector}$;
+Rice containment $\mathrm{rice} \subseteq \mathcal{A}$ (semantic-domain
+constraint acknowledging Rice's theorem: verify artifacts within an admitted
+domain rather than deciding arbitrary semantic properties). All
+\DEFINITION.
+
+\subsection{Falsification (\S38)}
+Status inductive $\{\mathrm{Admitted}, \mathrm{Revoked}\}$; opaque empirical
+falsifier $F \subseteq \mathrm{Transformation} \times
+\mathrm{DefectEvidence}$, status lookup, and revocation
+$\mathrm{revoke} : \mathrm{Context} \times \mathrm{Transformation} \to
+\mathrm{Context}$. For context $c$, transformation $T$, evidence $E$:
+\begin{align*}
+  \mathrm{RevCond}(c, T, E) &\iff
+    \mathrm{status}(c, T) = \mathrm{Admitted} \wedge F(T, E), \\
+  \mathrm{FalsLoop}(c, T, E) &\iff
+    \big(\mathrm{RevCond}(c,T,E) \implies
+    \mathrm{status}(\mathrm{revoke}(c,T),\, T) = \mathrm{Revoked}\big).
+\end{align*}
+Both \DEFINITION{} (specifications of the admission governance loop);
+the test module proves the composition
+$\mathrm{Admitted} \wedge F \wedge \mathrm{FalsLoop} \implies
+\mathrm{Revoked}$ from these hypotheses.
+
+\subsection{Explore/Exploit (\S\S7--12, 35)}
+Opaque spaces $\Omega$ (open realization space), observations, contracts;
+noncomputable opaque maps
+$\mathrm{explore} : \mathrm{Obs} \to \mathrm{Contracts}$,
+$\mathrm{exploit} : \mathrm{Contracts} \to \Omega_C$ where
+$\Omega_C = (\Omega \to \mathrm{Prop})$ is a realization class;
+equivalent-closure selection $\Omega_C \to \mathrm{EquivClosure}$.
+\emph{Strict separation}:
+\[
+  \forall o_1\, o_2:\ \mathrm{explore}(o_1) = \mathrm{explore}(o_2)
+  \implies \mathrm{exploit}(\mathrm{explore}(o_1))
+         = \mathrm{exploit}(\mathrm{explore}(o_2)),
+\]
+i.e.\ exploitation factors through contracts, never touching raw
+observations. \DEFINITION{} (trivially satisfiable as stated --- it is a
+congruence --- but it pins the \emph{interface} shape).
+
+\subsection{Search portfolio (\texttt{QLens.lean} \S\S31--35)}
+Budget apportionment $\sum_i \mathrm{alloc}(i) = B$ (conservation carried as
+a proof field). Search rails: an exact completeness carrier $F_0$ plus
+exploitation rails $\{q_j\} \subset \R$ (q-lens--parameterized). With
+uninterpreted $\mathrm{Served}$, $\mathrm{DestructivelyInterferes}$,
+$\mathrm{Complete}$:
+\[
+  \mathrm{PersistentService}(F_0) \iff \forall k\ \exists t > k:\
+  \mathrm{Served}(F_0, t),
+\]
+\[
+  \mathrm{Noninterference}(P) \iff \forall q \in P:\
+  \neg \mathrm{DI}(\mathrm{exploit}_q, F_0).
+\]
+\begin{conjecture}[Portfolio completeness]\CONJECTURAL\;
+$\mathrm{Complete}(F_0) \wedge \mathrm{PersistentService}(F_0) \wedge
+\mathrm{Noninterference}(P) \implies \mathrm{PortfolioComplete}(P)$.
+Requires an operational semantics for rails.
+\end{conjecture}
+
+\subsection{Compiler pipeline (\S\S36--37)}
+Opaque targets $\mathrm{TTLGraph}$, $\mathrm{TeraTemplate}$,
+$\mathrm{RustExecutable}$; opaque functors
+\[
+  \mathrm{projectTtl} : \mathrm{Coords} \to \mathrm{TTL},
+  \quad
+  \mathrm{interpolateTera} : \mathrm{TTL} \to \mathrm{Tera},
+  \quad
+  \mathrm{compileRust} : \mathrm{Tera} \to \mathrm{Exe}.
+\]
+Complexity coordinates $(\text{time}, \text{space},
+\text{multiplicativeDepth}) \in \N^3$. The \emph{Multiplicative Cascade Wind
+Tunnel} is a record carrying the three stage-equalities as proof fields
+($g = \mathrm{projectTtl}(x)$, $t = \mathrm{interpolateTera}(g)$,
+$e = \mathrm{compileRust}(t)$), and the complexity bound
+\[
+  \mathrm{windTunnelComplexityBound} \iff
+  \text{multiplicativeDepth} \le \text{time}.
+\]
+\DEFINITION. Test module instantiates a concrete tunnel with \texttt{rfl}
+proofs.
+
+\subsection{Central theorem ledger (\S\S39--40)}
+Meta-mathematical DAG: nodes $(\mathrm{id}, \mathrm{statement})$, edges;
+ledger $=$ DAG + proved-node subset; a \emph{canonical derivation} carries a
+sequence with a validity proof. \emph{Known stub:}
+$\mathrm{validTopologicalSort}(\mathrm{dag}, \mathrm{seq}) := \mathrm{True}$
+--- the real acyclicity/order check is not yet written, so ledger tests
+instantiate the derivation with \texttt{True.intro} and validate nothing
+about ordering. \DEFINITION{} (placeholder).
+
+% ================================================================
+\section{Verified Test Surface}
+\label{sec:tests}
+\texttt{Tests.lean} constructs concrete instances: a two-block blocks-world
+\texttt{PlanningTheory} (full transition function, goal $A$ on $B$); a
+four-action theory with exactly one independent pair
+($a_1 \perp a_2$) on which
+$[a_1, a_2] \traceEq{I} [a_2, a_1]$ is \PROVEN{} by a single swap, and
+reflexivity/symmetry/transitivity are exercised on concrete lists; a
+two-chain causal order on four events with width-2 antichain facts proved;
+non-circularity \texttt{\#check}s; the \texttt{fastStart} (hidden:
+timestamp-dependent) vs.\ \texttt{reachesGoal} (observable) property pair
+(stated, not yet run through \texttt{IsObservable}); generator-count
+computations by \texttt{native\_decide}; distinctness and exhaustiveness of
+all seven \texttt{MeasureKind}s. One negative statement --- that
+$[a_1, a_3]$ and $[a_3, a_1]$ are \emph{not} trace-equivalent through a
+dependent pair --- is commented out as \CONJECTURAL{} (requires a
+no-swap-path argument). The unit test files instantiate the governance
+modules with toys; \texttt{ExploreTests} manufactures inhabitants of opaque
+types via \texttt{unsafeCast}, a pattern that bypasses type safety and is
+flagged for replacement.
+
+% ================================================================
+\section{How the Mathematics Shapes the Implementation}
+\label{sec:implementation}
+This section maps each formal structure to a concrete constraint or design
+decision for the \texttt{ggen}-based PDDL~3.1 $\to$ POWL~v2 compiler. The
+compiler chain itself is fixed by \S36--37: PDDL~3.1 semantics are lowered
+to a TTL (Turtle/RDF) semantic graph, \texttt{ggen} interpolates Tera
+templates from the graph, and the templates compile to a Rust executable ---
+with the wind-tunnel record demanding that each stage equality be carried as
+evidence, not asserted.
+
+\subsection{The kernel decides what the compiler may merge}
+The crown target $\ker(\tmap) = \mathrm{TraceEq}_I$ is a two-sided
+implementation contract:
+\begin{itemize}[nosep]
+  \item \textbf{Soundness (forward direction)} --- the POWL v2 constructor in
+  \texttt{ggen} must be invariant under adjacent swaps of $I$-independent
+  actions. Concretely: build the workflow object from the \emph{causal
+  partial order} $P_b$ (and choice/hierarchy data), never from the raw event
+  list; any code path that consults raw order beyond $\prec$ breaks the
+  forward direction.
+  \item \textbf{Completeness (reverse direction)} --- the constructor must
+  \emph{not} merge behaviors that differ causally. Hash-consing or
+  normalization passes in the emitter must be justified by one of the four
+  kernel generators (\texttt{traceSwap}, \texttt{choiceNormalization},
+  \texttt{hierarchyCollapse}, \texttt{temporalAbstraction}); a merge with no
+  generator path is a completeness bug by definition
+  (\texttt{KernelGenerated}).
+\end{itemize}
+The non-circularity theorems matter operationally: the test oracle for the
+compiler (trace equivalence, computed from PDDL semantics and $I$) is
+independent of the code under test (the emitter), so conformance testing is
+not self-referential.
+
+\subsection{Independence extraction is the load-bearing analysis}
+Everything routes through $I$. The five-component witness
+(effects commute, preconditions stable, invariants stable, numeric flow
+compatible, trajectory preserved) is the specification of the static
+analysis \texttt{ggen} must run over ground actions. Two consequences:
+\begin{itemize}[nosep]
+  \item Under-approximating $I$ (declaring dependent what is independent) is
+  \emph{safe but lossy}: the emitted partial order over-sequentializes, and
+  the loss is measurable as unrealized serialization entropy
+  $\Hser(P)$.
+  \item Over-approximating $I$ is \emph{unsound}: it licenses swaps that
+  break lawfulness, violating \texttt{TraceSwapPreservesLawful}. The
+  bijection hypotheses (\texttt{independence\_exact}) say exactly which
+  notion of dependence must be complemented: transition-level commutation
+  over reachable states.
+\end{itemize}
+The temporal restriction gap $\Hser(P) - H_T(P,N)$ dictates that the
+scheduler cannot be an afterthought: causal concurrency the temporal network
+forbids (``false concurrency,'' also visible as $\Delta_{LT}(q) \gg 0$) must
+be pruned at emission or the runtime will discover it as deadline misses.
+
+\subsection{Fibers are disjoint: geometry and caching consequences}
+\texttt{fiber\_disjoint} is proven, so any implementation feature that
+assumes overlapping fibers (similarity search by fiber intersection,
+Jaccard-based workflow clustering) is wrong by theorem. Workflow similarity
+must be computed as optimal transport between conditional behavior
+distributions ($W_p(\nu_{w_1}, \nu_{w_2})$) --- for the implementation this
+means retaining per-class behavior samples (or sufficient statistics) rather
+than only class labels. Conversely, disjointness enables a clean cache: a
+behavior's class is a pure function of its trace class, so memoization can
+key on any canonical representative of $[b]_I$ --- e.g.\ the
+lexicographically-least linear extension of $P_b$ --- and, conditional on
+the crown, this key is \emph{exactly} right (no false sharing, no misses
+among equivalent behaviors).
+
+\subsection{Entropy accounting as compiler telemetry}
+The additive atom $\eta(w) = p(w)\log|\fib{w}|$ and the identity
+$H(B \mid W) = \sum_w \eta(w)$ give the compiler a per-class,
+hierarchy-summable ledger of erased information. If the entropy collapse
+closes, $\log|\fib{w}| = \Hser(P_b)$ is computable from the emitted partial
+order alone (count linear extensions) --- no fiber enumeration --- turning an
+information-theoretic diagnostic into a static analysis. The
+boundary-sufficiency hypothesis is directly testable in the implementation:
+regress measured $S_\tmap(C)$ against $|\partial C|$ (interface variables of
+each emitted component) versus $|C|$; an area law would justify
+interface-first component summaries (the POWL boundary suffices to
+reconstruct interior behavioral information), while a volume law says
+interior detail must be retained.
+
+\subsection{Observability gates what the generated system can report}
+The Boolean closure theorems plus
+$\mathcal{O}_\tmap = \{\tmap^{-1}(U)\}$ mean the emitted Rust artifact can
+answer, from workflow state alone, exactly the fiber-constant properties ---
+and no engineering on the query layer can recover a hidden one. Practical
+protocol for \texttt{ggen}: every monitoring/analytics requirement $Y$
+attached to a domain must be checked for factorization through $\tmap$
+(deterministic sufficiency). \texttt{reachesGoal} passes; \texttt{fastStart}
+(timestamp-dependent) fails and requires either carrying timestamps into the
+POWL object (refining $\tmap$, per the \texttt{Refines} order --- refinement
+monotonically enlarges the observable algebra, \PROVEN) or logging outside
+the workflow representation. The refinement partial order is the principled
+knob: deepen hierarchy or tighten temporal precision until the required $Y$
+becomes observable, and no further.
+
+\subsection{The observable basis is the feature schema}
+$F_\tmap \cong (\WS \to \R)$ says invariant observables are exactly
+workflow-computable features. The five primitive kinds (causal incidence,
+interval, motif, hierarchical, temporal-boundary) are the candidate feature
+generators for process-mining and ML layers over emitted workflows, and
+\texttt{evaluateBasis} (fiber-constant, \PROVEN) is the specification of the
+feature extractor: equivalent behaviors must produce identical vectors, which
+is a directly fuzzable property. The truncation bounds tie feature-set size
+to the admission profile ---
+$O(\mathrm{maxConcurrency}^2 + 2^{\mathrm{maxBranching}} +
+\mathrm{depth}\cdot\mathrm{branching} + \mathrm{duration})$ --- so bounding
+the accepted PDDL fragment bounds the feature dimension \emph{a priori}
+(conjectural constants, but the right shape for capacity planning).
+
+\subsection{Spectrum tension as the optimizer's objective}
+The formalization is explicit that single spectra are not the optimization
+signal; the tension profile $\Delta_{ij}(q)$ is. For the implementation this
+prescribes a diagnostic pass over emitted hierarchies: compute partition
+sums $Z(q,k)$ from pushforward masses at each depth ($Z(0,k)$ audits
+component counts, $Z(1,k) = 1$ audits normalization --- both good runtime
+assertions), extract $\vec{D}_q(k)$, and classify tensions: temporal
+bottleneck $\to$ scheduler pressure; choice sparsity $\to$ dead-branch
+elimination in the choice graph; false concurrency $\to$ tighten the emitted
+partial order. The q-lens gives the reviewer dial: $q \gg 0$ audits the hot
+paths, $q \ll 0$ audits the rare-behavior tail (where lawfulness bugs
+hide). The q-lens ratio law (\PROVEN) guarantees the deformation preserves
+relative mass ordering monotonically in $q$ --- reweighting for the portfolio
+rails cannot invert priorities.
+
+\subsection{Governance loop around the compiler}
+The specification modules dictate the pipeline's control plane:
+\begin{itemize}[nosep]
+  \item \emph{Explore/exploit separation}: discovery (mining observations
+  into contracts) and generation (contracts into realizations) must
+  communicate only through the contract type --- \texttt{ggen} may not peek
+  at raw observations during emission.
+  \item \emph{Admission and falsification}: emitted transformations enter a
+  registry as \texttt{Admitted}; runtime defect evidence $E$ with
+  $F(T,E)$ triggers \texttt{revoke}, and the falsification-loop property is
+  the contract that revocation actually lands
+  ($\mathrm{status} = \mathrm{Revoked}$). This is the formal shape of a
+  canary/rollback system for generated code.
+  \item \emph{BRCE}: every actuation of a generated artifact must be
+  receipted --- an audit-log invariant the Rust emitter should enforce by
+  construction (no side-effecting entry point without a receipt).
+  \item \emph{Rice containment}: verification claims are scoped to an
+  admitted artifact domain; the implementation should refuse to claim
+  semantic properties outside it.
+  \item \emph{Ledger}: proof/claim dependencies form a DAG with derivations
+  replayed in topological order --- but note the current
+  \texttt{validTopologicalSort := True} stub: as implemented, the ledger
+  does not yet check ordering, and any tooling built on it must not assume
+  it does.
+  \item \emph{Search portfolio}: generation-time search runs an exact
+  completeness rail alongside q-parameterized exploitation rails, with
+  persistent service and noninterference as the (conjectural) conditions
+  under which adding heuristic rails cannot destroy completeness.
+\end{itemize}
+
+\subsection{What is not yet load-bearing}
+For honest engineering scope: the crown biconditional, swap-preserves-
+lawfulness, trace-class/linear-extension bijection, entropy collapse, kernel
+generation, portfolio completeness, boundary sufficiency, and the observable
+basis completeness are \CONJECTURAL; local-invertibility and dimension-loss
+decomposition are \BLOCKED{} on smooth structure;
+$d^{\mathrm{POWL}}_{\mathrm{loc}}$, per-kind null dimensions, temporal
+serialization entropy, the Wasserstein distance, and
+\texttt{validTopologicalSort} are placeholders or opaque interfaces.
+Implementation work may \emph{target} these (they are precise), but no
+correctness argument may \emph{assume} them yet.
+
+% ================================================================
+\section{Notation Index}
+\label{sec:index}
+
+\begin{longtable}{@{}lll@{}}
+\toprule
+Notation & Meaning & Source (standing) \\
+\midrule
+$\PT$ & planning theory $(S, A, \delta, s_0, G, \Theta, \models_T, N, \models_N, \Gamma, \models_\Gamma)$ & TransformBasic (def) \\
+$b = (\mathbf{e}, \mathbf{t})$ & behavior trace: events, timestamps & TransformBasic (def) \\
+$\mathrm{IsLawful}_\PT(b)$ & lawfulness predicate (5 clauses) & TransformBasic (def) \\
+$\PS$ & behavioral phase space (proof-carrying) & TransformBasic (def) \\
+$\mathrm{Powl}(\alpha)$ & atom/silent/xor/loop/po model & TransformBasic (def) \\
+$\WS$ & POWL v2 objects (model, WF, depth, $\partial w$, choice graphs) & TransformBasic (def) \\
+$\tmap : \PS \to \WS$ & the transformation (bare map) & TransformBasic (def) \\
+$\fib{w} = \tmap^{-1}(w)$ & fiber & TransformBasic (def) \\
+$\fib{w_1} \cap \fib{w_2} = \emptyset$ & fiber disjointness & TransformBasic (proven) \\
+$b_1 \sim_\tmap b_2$ & transformation equivalence & TransformBasic (proven eq.\ rel.) \\
+$P_0 \preceq \cdots \preceq P_h$ & hierarchical scale system & TransformBasic (refinement stub) \\
+$\mu = [\mu_B, \mu_T, \mu_C, \mu_L, \mu_{Sl}, \mu_F, \mu_S]$ & 7-kind vector measure & TransformBasic (def) \\
+$\eta(w) = p(w)\log|\fib{w}|$ & additive entropic atom & TransformBasic (def) \\
+$I$, $D = A^2 \setminus I$ & independence, dependence & Concurrency (def) \\
+$u \traceEq{I} v$ & Mazurkiewicz trace equivalence & Concurrency (proven eq.\ rel.) \\
+$P_b$, $\Lin(P)$, $e(P)$ & causal order, linear extensions, count & Concurrency (def) \\
+$\Hser(P) = \log e(P)$ & serialization entropy & Concurrency (def) \\
+$H_T(P, N)$ & temporally feasible entropy & Concurrency (opaque) \\
+$w(P)$ & causal width (max antichain) & Concurrency (def) \\
+$K_\PT$ & concurrency complex & Concurrency (def, hyp.-gated) \\
+$C_E = C_C \cap C_T \cap C_R$ & executable concurrency & Concurrency (def) \\
+$b_1 \kerEq b_2$ & kernel equivalence $\tmap(b_1) = \tmap(b_2)$ & Kernel (proven eq.\ rel.) \\
+$\ker(\tmap) = \mathrm{TraceEq}_I$ & crown biconditional & Kernel (conjectural) \\
+$[b]_I$ & trace class & Kernel (def) \\
+$\fib{\tmap(b)} = [b]_I$ & fiber = trace class & Kernel (proven under crown hyp.) \\
+$[b]_I \simeq \Lin(P_b)$ & trace class/linear extension bijection & Kernel (conjectural) \\
+$g \in \{$trace, choice, hierarchy, temporal$\}$ & kernel generators & Kernel (def) \\
+$\kappa(\mathrm{path})$ & generator count vector & Kernel (def) \\
+$\mathrm{IsObservable}, \mathrm{IsHidden}, \mathrm{IsFiberConstant}$ & property trichotomy & Observability \\
+$\mathcal{O}_\tmap$ & observable sigma-algebra & Observability (proven) \\
+$I(Y; B \mid W)$ & semantic residual information & Observability (placeholder) \\
+$H_\tmap$ & information horizon & Observability (def) \\
+$\tmap_1 \sqsubseteq \tmap_2$ & refinement of transformations & Observability (proven order) \\
+$S_\tmap(w) = \log|\fib{w}|$ & fiber entropy & FiberEntropy (def) \\
+$H(B \mid W) = \sum_w p(w) S_\tmap(w)$ & total fiber entropy & FiberEntropy (def) \\
+$S_\tmap(C) \sim \alpha|C|$ vs.\ $\beta|\partial C|$ & volume vs.\ area scaling & FiberEntropy (hypotheses) \\
+$P(\mathrm{Th}) = \bigcup_\sigma P_\sigma$ & stratification & IntrinsicDimension (def) \\
+$\Delta d_\tmap(b) = d^{\mathrm{PDDL}}_{\mathrm{loc}} - d^{\mathrm{POWL}}_{\mathrm{loc}}$ & dimension loss & IntrinsicDimension (def) \\
+$\mathrm{Null}_\tmap(b)$, $\mathrm{Null}^k_\tmap(b)$ & null perturbation spaces & IntrinsicDimension (def) \\
+$\Delta D_\tmap(w)$, $\alpha(w)$ & loss profile, effective scaling dim.\ & IntrinsicDimension (def) \\
+$F_\tmap$ & invariant observable space & ObservableBasis (def) \\
+$f = g \circ \tmap$ & factorization through $\tmap$ & ObservableBasis \\
+$\mathrm{span}\{\varphi_i\} = F^{\mathrm{adm}}_\tmap$ & observable basis target & ObservableBasis (conjectural) \\
+$\vec{D}_q = (D_q^B, \dots, D_q^F)$ & spectrum bundle & SpectrumBundle (def) \\
+$\Delta_{ij}(q) = D_q^i - D_q^j$ & cross-spectrum tension & SpectrumBundle (proven algebra) \\
+$Z(q,k) = \sum_{B \in P_k} p_B^q$ & hierarchical partition sum & SpectrumBundle (def) \\
+$\vec{D}_q(k)$ & scale-resolved bundle & SpectrumBundle (def) \\
+$I_\tmap$ & transformation information profile & SpectrumBundle (def) \\
+$L_q(p)(x) = p(x)^q / \sum_y p(y)^q$ & q-lens deformation & QLens (proven) \\
+$\nu_w = \nu(\cdot \mid \tmap = w)$, $W_p(\nu_{w_1}, \nu_{w_2})$ & conditional measures, Wasserstein $\dW$ & Kernel (opaque) \\
+$\mathrm{brce}$ & zero unreceipted actuation & Manufacture (def) \\
+$\mathrm{RevCond}, \mathrm{FalsLoop}$ & revocation condition, falsification loop & Falsification (def) \\
+explore/exploit, $\Omega_C$ & strict-separation interface & ExploreExploit (def) \\
+$F_0$, exploit$(q)$ rails & search portfolio & QLens (conjectural completeness) \\
+projectTtl / interpolateTera / compileRust & compiler cascade & CompilerPipeline (opaque) \\
+$\mathrm{multDepth} \le \mathrm{time}$ & wind-tunnel complexity bound & CompilerPipeline (def) \\
+$\mathrm{validTopologicalSort}$ & ledger ordering check & Ledger (\textbf{stub} $:=$ True) \\
+\bottomrule
+\end{longtable}
+
+% ================================================================
+\begin{thebibliography}{9}
+\bibitem{mazurkiewicz} A.~Mazurkiewicz, \emph{Concurrent program schemes and
+their interpretations}, DAIMI Report PB-78, Aarhus University, 1977.
+\bibitem{diekert} V.~Diekert and G.~Rozenberg (eds.), \emph{The Book of
+Traces}, World Scientific, 1995.
+\bibitem{powl} H.~Kourani and S.~J.~van Zelst, \emph{POWL: Partially Ordered
+Workflow Language}, BPM 2023, Definitions 1--2.
+\bibitem{pddl31} M.~Fox and D.~Long, \emph{PDDL2.1/3.x: temporal and
+trajectory extensions of the Planning Domain Definition Language}.
+\bibitem{villani} C.~Villani, \emph{Optimal Transport: Old and New},
+Springer, 2009.
+\bibitem{efp} P.~Komiske, E.~Metodiev, J.~Thaler, \emph{Energy Flow
+Polynomials: a complete linear basis for jet substructure}, JHEP 2018.
+\bibitem{lean} The Lean~4 theorem prover and Mathlib; formalization at
+\texttt{procint/ProcInt/MFW}, toolchain \texttt{leanprover/lean4:v4.31.0},
+Mathlib pinned \texttt{fabf563a}.
+\end{thebibliography}
+
+\end{document}

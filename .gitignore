@@ -10,3 +10,19 @@
 scripts/.rm_set_option_progress.jsonl
 # Artifacts from using the devcontainer setup
 .devcontainer/devcontainer-lock.json
+# Vendored/build directories
+/batteries/
+/crates/
+/target/
+/mathlib-temp/
+/mathlib_temp/
+/release/
+/pylab/
+/.agents/
+/.mfact/
+/.verif-toolchain/
+# Scratch/test artifacts
+computable.o
+test.js
+test.wasm
+test_collect*.lean
