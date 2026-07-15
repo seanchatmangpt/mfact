@@ -10,23 +10,23 @@ def toyRustExecutable : RustExecutable := {}
 def toyCoords : ComplexityCoordinates := {
   time := 10
   space := 5
-  multiplicative_depth := 3
+  multiplicativeDepth := 3
 }
 
 -- 2. Prove that the cascade functors successfully preserve signatures.
 def toyTunnel : MultiplicativeCascadeWindTunnel where
   coords := toyCoords
-  graph := project_ttl toyCoords
-  template := interpolate_tera (project_ttl toyCoords)
-  exe := compile_rust (interpolate_tera (project_ttl toyCoords))
-  ttl_proj_eq := rfl
-  tera_interp_eq := rfl
-  rust_comp_eq := rfl
+  graph := projectTtl toyCoords
+  template := interpolateTera (projectTtl toyCoords)
+  exe := compileRust (interpolateTera (projectTtl toyCoords))
+  ttlProjEq := rfl
+  teraInterpEq := rfl
+  rustCompEq := rfl
 
 theorem cascade_signatures_preserve (tunnel : MultiplicativeCascadeWindTunnel) :
-    tunnel.graph = project_ttl tunnel.coords ∧
-    tunnel.template = interpolate_tera tunnel.graph ∧
-    tunnel.exe = compile_rust tunnel.template := by
-  exact ⟨tunnel.ttl_proj_eq, tunnel.tera_interp_eq, tunnel.rust_comp_eq⟩
+    tunnel.graph = projectTtl tunnel.coords ∧
+    tunnel.template = interpolateTera tunnel.graph ∧
+    tunnel.exe = compileRust tunnel.template := by
+  exact ⟨tunnel.ttlProjEq, tunnel.teraInterpEq, tunnel.rustCompEq⟩
 
 end ProcInt.MFW.Tests

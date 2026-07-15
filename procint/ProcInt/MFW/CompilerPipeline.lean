@@ -1,30 +1,43 @@
 namespace ProcInt.MFW
 
+/-- Abstract target representing Turtle (TTL) semantic graphs. -/
 structure TTLGraph deriving Inhabited
+
+/-- Abstract target representing Tera code generation templates. -/
 structure TeraTemplate deriving Inhabited
+
+/-- Abstract target representing the final Rust executable artifact. -/
 structure RustExecutable deriving Inhabited
 
+/-- [Notation Authority §37] Complexity Coordinates across the compilation chain. -/
 structure ComplexityCoordinates where
   time : Nat
   space : Nat
-  multiplicative_depth : Nat
+  multiplicativeDepth : Nat
 deriving Inhabited
 
-opaque project_ttl : ComplexityCoordinates → TTLGraph
-opaque interpolate_tera : TTLGraph → TeraTemplate
-opaque compile_rust : TeraTemplate → RustExecutable
+/-- Functor projecting complexity coordinates to a TTL graph. -/
+opaque projectTtl : ComplexityCoordinates → TTLGraph
 
--- Multiplicative Cascade Wind Tunnel (Parts XXXVI, XXXVII of Notation Authority)
+/-- Functor interpolating a TTL graph into a Tera template. -/
+opaque interpolateTera : TTLGraph → TeraTemplate
+
+/-- Functor compiling a Tera template to a Rust executable. -/
+opaque compileRust : TeraTemplate → RustExecutable
+
+/-- [Notation Authority §36] The Multiplicative Cascade Wind Tunnel.
+    Captures the deterministic translation logic mapping specifications to code. -/
 structure MultiplicativeCascadeWindTunnel where
   coords : ComplexityCoordinates
   graph : TTLGraph
   template : TeraTemplate
   exe : RustExecutable
-  ttl_proj_eq : graph = project_ttl coords
-  tera_interp_eq : template = interpolate_tera graph
-  rust_comp_eq : exe = compile_rust template
+  ttlProjEq : graph = projectTtl coords
+  teraInterpEq : template = interpolateTera graph
+  rustCompEq : exe = compileRust template
 
-def wind_tunnel_complexity_bound (tunnel : MultiplicativeCascadeWindTunnel) : Prop :=
-  tunnel.coords.multiplicative_depth ≤ tunnel.coords.time
+/-- [Notation Authority §36] Complexity bounding constraint of the wind tunnel. -/
+def windTunnelComplexityBound (tunnel : MultiplicativeCascadeWindTunnel) : Prop :=
+  tunnel.coords.multiplicativeDepth ≤ tunnel.coords.time
 
 end ProcInt.MFW
