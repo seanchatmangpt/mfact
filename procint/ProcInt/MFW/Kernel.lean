@@ -186,10 +186,8 @@ trajectory constraints are maintained under the swap.
   `TraceEquiv I b₁.events b₂.events → IsLawful Th b₁ → IsLawful Th b₂` -/
 def TraceSwapPreservesLawful {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
-    (b₁ b₂ : BehaviorTrace Th)
-    (hEquiv : TraceEquiv I b₁.events b₂.events)
-    (hLawful : IsLawful Th b₁) : Prop :=
-    IsLawful Th b₂
+    (b₁ b₂ : BehaviorTrace Th) : Prop :=
+    TraceEquiv I b₁.events b₂.events → IsLawful Th b₁ → IsLawful Th b₂
 
 /-! ## POWL v2 Observational Kernel (Layer K4)
 
@@ -284,9 +282,8 @@ action reordering. -/
 def TauRespectsTraceEquiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
-    {b₁ b₂ : BehavioralPhaseSpace Th}
-    (hEquiv : PDDL31TraceEquiv I b₁ b₂) : Prop :=
-    KernelEquiv τ b₁ b₂
+    {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
+    PDDL31TraceEquiv I b₁ b₂ → KernelEquiv τ b₁ b₂
 
 /-- **Crown Theorem (Reverse — Partial):** The kernel refines state equivalence.
 
@@ -299,9 +296,8 @@ This is a partial reverse: it says τ does not merge state-inequivalent
 behaviors. The full reverse characterization is `kernel_characterization`. -/
 def KernelRefinesStateEquiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
-    {b₁ b₂ : BehavioralPhaseSpace Th}
-    (hKernel : KernelEquiv τ b₁ b₂) : Prop :=
-    StateEquiv b₁ b₂
+    {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
+    KernelEquiv τ b₁ b₂ → StateEquiv b₁ b₂
 
 /-- **Crown Theorem (Biconditional):** The transformation kernel is exactly
 the POWL v2 observational equivalence.
@@ -549,8 +545,8 @@ formalization under PDDL 3.1 semantics.
 -/
 def TraceClassEquivLinearExtensions {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
-    (b : LawfulBehavior Th)
-    (hyp : TraceClassBijectionHypotheses I b) : Prop :=
+    (b : LawfulBehavior Th) : Prop :=
+    TraceClassBijectionHypotheses I b →
     ∃ (f : traceClass I b → {σ : Equiv.Perm (Fin b.trace.events.length) //
            IsLinearExtension (inducedCausalOrder b I) σ}),
       Function.Bijective f
@@ -596,10 +592,9 @@ def FiberEntropyEqSerializationEntropy {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
     (b : BehavioralPhaseSpace Th)
-    (hKernel : ∀ b₁ b₂ : BehavioralPhaseSpace Th,
-      KernelEquiv τ b₁ b₂ ↔ PDDL31TraceEquiv I b₁ b₂)
-    (hyp : TraceClassBijectionHypotheses I b)
     [DecidableRel (inducedCausalOrder b I).prec] : Prop :=
+    (∀ b₁ b₂ : BehavioralPhaseSpace Th, KernelEquiv τ b₁ b₂ ↔ PDDL31TraceEquiv I b₁ b₂) →
+    TraceClassBijectionHypotheses I b →
     True
 
 /-! ## Kernel Generators
@@ -668,9 +663,8 @@ If this holds, the kernel generators determine:
 -/
 def KernelGenerated {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
-    {b₁ b₂ : BehavioralPhaseSpace Th}
-    (hKernel : KernelEquiv τ b₁ b₂) : Prop :=
-    ∃ path : KernelPath b₁ b₂, True
+    {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
+    KernelEquiv τ b₁ b₂ → ∃ path : KernelPath b₁ b₂, True
 
 /-- **Spectrum Basis Derivation.** Independent kernel generators yield
 independent spectrum coordinates.

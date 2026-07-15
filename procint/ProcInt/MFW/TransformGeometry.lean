@@ -6,6 +6,11 @@ import ProcInt.MFW.FiberEntropy
 import ProcInt.MFW.IntrinsicDimension
 import ProcInt.MFW.ObservableBasis
 import ProcInt.MFW.SpectrumBundle
+import ProcInt.MFW.Manufacture
+import ProcInt.MFW.ExploreExploit
+import ProcInt.MFW.Falsification
+import ProcInt.MFW.CompilerPipeline
+import ProcInt.MFW.Ledger
 
 /-!
 # ProcInt.MFW — Multi Fractal Workflow

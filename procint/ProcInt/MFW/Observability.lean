@@ -463,9 +463,8 @@ Standing: CONJECTURAL — bridges information-theoretic and algebraic definition
 def ZeroResidualImpliesSufficient {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (Y : BehavioralPhaseSpace Th → Prop)
-    (info : SemanticResidualInfo τ Y)
-    (hzero : info.residual = 0) : Prop :=
-    IsSufficientFor τ Y
+    (info : SemanticResidualInfo τ Y) : Prop :=
+    info.residual = 0 → IsSufficientFor τ Y
 
 /-! ## Information Horizon
 

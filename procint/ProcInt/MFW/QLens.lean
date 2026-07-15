@@ -92,10 +92,10 @@ def Noninterference (P : Portfolio) : Prop :=
 If the exact rail is complete, receives persistent service, and is not destructively
 interfered with, then the parallel portfolio is complete. 
 Standing: CONJECTURAL. Requires an operational semantics for search rails. -/
-def PortfolioCompletenessConjectural (P : Portfolio)
-    (h_comp : Complete P.F0)
-    (h_ps : PersistentService Served P.F0)
-    (h_ni : Noninterference DestructivelyInterferes P) : Prop :=
+def PortfolioCompletenessConjectural (P : Portfolio) : Prop :=
+    Complete P.F0 →
+    PersistentService Served P.F0 →
+    Noninterference DestructivelyInterferes P →
     PortfolioComplete P
 
 end ProcInt.MFW
