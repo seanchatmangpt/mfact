@@ -274,7 +274,16 @@ theorem partitionSum_q_zero
     (masses : List ℝ)
     (hpos : ∀ p ∈ masses, 0 < p) :
     hierarchicalPartitionSum masses 0 = masses.length := by
-  sorry
+  unfold hierarchicalPartitionSum
+  induction masses with
+  | nil => simp
+  | cons p ps ih =>
+    simp only [List.map_cons, List.sum_cons, List.length_cons, Nat.cast_add, Nat.cast_one]
+    have hps : ∀ p ∈ ps, 0 < p := fun p hp => hpos p (List.Mem.tail _ hp)
+    rw [ih hps]
+    have : p ^ (0 : ℝ) = 1 := Real.rpow_zero _
+    rw [this]
+    ring
 
 /-- When `q = 1` and masses form a probability distribution (sum to 1),
 the partition sum equals 1: `Z(1, k) = 1`.
@@ -286,7 +295,12 @@ theorem partitionSum_q_one
     (masses : List ℝ)
     (hnorm : (masses).sum = 1) :
     hierarchicalPartitionSum masses 1 = 1 := by
-  sorry
+  unfold hierarchicalPartitionSum
+  have : masses.map (fun p => p ^ (1 : ℝ)) = masses := by
+    apply List.map_id''
+    intro p
+    exact Real.rpow_one p
+  rw [this, hnorm]
 
 /-- The partition sum is non-negative when all masses are non-negative
 and `q ≥ 0`.
@@ -296,9 +310,14 @@ Standing: CONJECTURAL -/
 theorem partitionSum_nonneg
     (masses : List ℝ) (q : ℝ)
     (hnn : ∀ p ∈ masses, 0 ≤ p)
-    (hq : 0 ≤ q) :
+    (_hq : 0 ≤ q) :
     0 ≤ hierarchicalPartitionSum masses q := by
-  sorry
+  unfold hierarchicalPartitionSum
+  apply List.sum_nonneg
+  intro x hx
+  have ⟨p, hp, hp_eq⟩ := List.mem_map.mp hx
+  rw [← hp_eq]
+  exact Real.rpow_nonneg (hnn p hp) q
 
 /-! ## The q-Lens
 
@@ -396,9 +415,13 @@ structure WorkflowMetric (α : Type) where
 Standing: CONJECTURAL — depends on well-definedness of the distance
 construction from fiber overlap. -/
 -- CONJECTURAL: requires edist construction and compatibility proof
+@[reducible]
 noncomputable def WorkflowMetric.toPseudoMetricSpace {α : Type}
-    (wm : WorkflowMetric α) : PseudoMetricSpace (WorkflowSpace α) := by
-  sorry
+    (wm : WorkflowMetric α) : PseudoMetricSpace (WorkflowSpace α) :=
+  { dist := wm.dist
+    dist_self := wm.dist_self
+    dist_comm := wm.dist_symm
+    dist_triangle := wm.dist_triangle }
 
 /-! ## Transformation Information Profile
 
@@ -473,9 +496,11 @@ yields 1.
 Standing: CONJECTURAL -/
 -- CONJECTURAL: rpow at 0 for positive reals
 theorem partitionSum_singleton_q_zero
-    (p : ℝ) (hp : 0 < p) :
+    (p : ℝ) (_hp : 0 < p) :
     hierarchicalPartitionSum [p] 0 = 1 := by
-  sorry
+  unfold hierarchicalPartitionSum
+  simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+  exact Real.rpow_zero p
 
 /-- If two mass lists are concatenated, the partition sum of the
 concatenation equals the sum of the individual partition sums.
@@ -491,7 +516,8 @@ theorem partitionSum_append
     (masses₁ masses₂ : List ℝ) (q : ℝ) :
     hierarchicalPartitionSum (masses₁ ++ masses₂) q =
     hierarchicalPartitionSum masses₁ q + hierarchicalPartitionSum masses₂ q := by
-  sorry
+  unfold hierarchicalPartitionSum
+  rw [List.map_append, List.sum_append]
 
 /-! ## Spectrum Bundle Over Hierarchical Scale
 

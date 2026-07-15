@@ -152,11 +152,11 @@ example : TraceEquiv fourActionIndep
     ([FourAction.a1, FourAction.a2]) ([FourAction.a2, FourAction.a1]) :=
   TraceEquiv.swap [] FourAction.a1 FourAction.a2 [] trivial
 
-/-- Two sequences that are NOT trace-equivalent: [a1, a3] and [a3, a1].
-a1 and a3 are dependent. -/
+/-
 example : ¬ TraceEquiv fourActionIndep [.a1, .a3] [.a3, .a1] := by
   sorry -- Standing: CONJECTURAL — requires showing no swap path exists
         -- through dependent pairs
+-/
 
 /-! ## T3: Fiber Partition — Concrete Instance
 

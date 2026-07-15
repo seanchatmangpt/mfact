@@ -174,10 +174,13 @@ theorem fiberEntropy_nonneg {Th : PlanningTheory} {α : Type}
     [DecidableEq (WorkflowSpace α)]
     (w : WorkflowSpace α) :
     0 ≤ fiberEntropy τ behaviors w := by
-  -- `fiberCardinality τ behaviors w : ℕ` so `(↑n : ℝ) ≥ 0`
-  -- `Real.log x ≥ 0` when `x ≥ 1` or `x = 0` (by convention)
-  -- Since n is a Nat, n ≥ 0 as ℝ, and log is ≥ 0 for Nat-cast reals.
-  sorry
+  unfold fiberEntropy
+  cases h : fiberCardinality τ behaviors w with
+  | zero => simp
+  | succ m =>
+    apply Real.log_nonneg
+    have h1 : 1 ≤ m + 1 := Nat.le_add_left 1 m
+    exact_mod_cast h1
 
 /-- Fiber entropy is zero if and only if the fiber is at most a singleton.
 
@@ -198,7 +201,27 @@ theorem fiberEntropy_zero_iff_singleton {Th : PlanningTheory} {α : Type}
     [DecidableEq (WorkflowSpace α)]
     (w : WorkflowSpace α) :
     fiberEntropy τ behaviors w = 0 ↔ fiberCardinality τ behaviors w ≤ 1 := by
-  sorry
+  unfold fiberEntropy
+  constructor
+  · intro h
+    cases h_card : fiberCardinality τ behaviors w with
+    | zero => simp
+    | succ m =>
+      cases m with
+      | zero => simp
+      | succ m' =>
+        have ht : 1 < m' + 2 := by omega
+        have h3 : 1 < ((m' + 2 : ℕ) : ℝ) := by exact_mod_cast ht
+        have h4 : Real.log ((m' + 2 : ℕ) : ℝ) > 0 := Real.log_pos h3
+        rw [h_card] at h
+        linarith
+  · intro h
+    cases h_card : fiberCardinality τ behaviors w with
+    | zero => simp
+    | succ m =>
+      have hm : m = 0 := by omega
+      subst hm
+      simp
 
 /-- For reachable fibers, zero entropy characterizes injectivity.
 
@@ -216,7 +239,8 @@ theorem fiberEntropy_zero_iff_injective {Th : PlanningTheory} {α : Type}
     (w : WorkflowSpace α)
     (hw : 1 ≤ fiberCardinality τ behaviors w) :
     fiberEntropy τ behaviors w = 0 ↔ fiberCardinality τ behaviors w = 1 := by
-  sorry
+  rw [fiberEntropy_zero_iff_singleton]
+  omega
 
 /-- Fiber entropy is monotone in fiber cardinality: larger fibers have more
 entropy.
@@ -233,7 +257,22 @@ theorem fiberEntropy_mono {Th : PlanningTheory} {α : Type}
     (w₁ w₂ : WorkflowSpace α)
     (h : fiberCardinality τ behaviors w₁ ≤ fiberCardinality τ behaviors w₂) :
     fiberEntropy τ behaviors w₁ ≤ fiberEntropy τ behaviors w₂ := by
-  sorry
+  unfold fiberEntropy
+  cases h1 : fiberCardinality τ behaviors w₁ with
+  | zero =>
+    simp
+    cases h2 : fiberCardinality τ behaviors w₂ with
+    | zero => simp
+    | succ m' =>
+      apply Real.log_nonneg
+      have h3 : 1 ≤ m' + 1 := Nat.le_add_left 1 m'
+      exact_mod_cast h3
+  | succ n' =>
+    have hn_pos : 0 < n' + 1 := Nat.succ_pos n'
+    have hn : 0 < ((n' + 1 : ℕ) : ℝ) := by exact_mod_cast hn_pos
+    rw [h1] at h
+    have h' : ((n' + 1 : ℕ) : ℝ) ≤ (fiberCardinality τ behaviors w₂ : ℝ) := by exact_mod_cast h
+    exact Real.log_le_log hn h'
 
 /-! ## Total Fiber Entropy
 
@@ -310,7 +349,12 @@ theorem totalFiberEntropy_nonneg {Th : PlanningTheory} {α : Type}
     (classes : Finset (WorkflowSpace α))
     [DecidableEq (WorkflowSpace α)] :
     0 ≤ totalFiberEntropy τ behaviors classes := by
-  sorry
+  unfold totalFiberEntropy
+  apply Finset.sum_nonneg
+  intro w _
+  apply mul_nonneg
+  · exact fiberProbability_nonneg τ behaviors w
+  · exact fiberEntropy_nonneg τ behaviors w
 
 /-! ## Fiber Entropy Measure
 
@@ -355,8 +399,8 @@ noncomputable def fiberEntropyMeasure {Th : PlanningTheory} {α : Type}
   mass := fiberEntropyMass τ behaviors
   nonneg := by
     intro w
-    -- This requires fiberEntropy_nonneg, which is sorry'd
-    sorry
+    unfold fiberEntropyMass
+    exact fiberEntropy_nonneg τ behaviors w
 
 /-- The fiber entropy at a hierarchical component: the fiber entropy
 restricted to the sub-workflow rooted at component `C`.
@@ -523,8 +567,7 @@ noncomputable def withFiberEntropySlack {Th : PlanningTheory} {α : Type}
     intro k w
     match k with
     | .slack =>
-      -- Requires fiberEntropy_nonneg
-      sorry
+      exact fiberEntropy_nonneg τ behaviors w
     | .behavioral => exact base.nonneg .behavioral w
     | .temporal => exact base.nonneg .temporal w
     | .choice => exact base.nonneg .choice w
@@ -569,7 +612,19 @@ theorem fiberEntropy_total_collapse {Th : PlanningTheory} {α : Type}
     (w_top : WorkflowSpace α)
     (h_all : ∀ b ∈ behaviors, τ.map b = w_top) :
     fiberEntropy τ behaviors w_top = Real.log (behaviors.card : ℝ) := by
-  sorry
+  unfold fiberEntropy
+  congr 1
+  congr 1
+  unfold fiberCardinality
+  have h_filter : behaviors.filter (fun b => τ.map b = w_top) = behaviors := by
+    ext b
+    simp only [Finset.mem_filter]
+    constructor
+    · intro h
+      exact h.1
+    · intro h
+      exact ⟨h, h_all b h⟩
+  rw [h_filter]
 
 /-- An upper bound for fiber entropy: `S_τ(w) ≤ log|P(Π)|`.
 
@@ -582,7 +637,25 @@ theorem fiberEntropy_le_log_total {Th : PlanningTheory} {α : Type}
     [DecidableEq (WorkflowSpace α)]
     (w : WorkflowSpace α) :
     fiberEntropy τ behaviors w ≤ Real.log (behaviors.card : ℝ) := by
-  sorry
+  have h : fiberCardinality τ behaviors w ≤ behaviors.card := by
+    unfold fiberCardinality
+    apply Finset.card_filter_le
+  unfold fiberEntropy
+  cases h1 : fiberCardinality τ behaviors w with
+  | zero =>
+    simp
+    cases h2 : behaviors.card with
+    | zero => simp
+    | succ m' =>
+      apply Real.log_nonneg
+      have h3 : 1 ≤ m' + 1 := Nat.le_add_left 1 m'
+      exact_mod_cast h3
+  | succ n' =>
+    have hn_pos : 0 < n' + 1 := Nat.succ_pos n'
+    have hn : 0 < ((n' + 1 : ℕ) : ℝ) := by exact_mod_cast hn_pos
+    rw [h1] at h
+    have h' : ((n' + 1 : ℕ) : ℝ) ≤ (behaviors.card : ℝ) := by exact_mod_cast h
+    exact Real.log_le_log hn h'
 
 /-! ## Summary
 

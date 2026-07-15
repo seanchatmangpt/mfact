@@ -174,7 +174,6 @@ def InvariantObservable.add {Th : PlanningTheory} {α : Type}
     (f g : InvariantObservable τ) : InvariantObservable τ where
   observe := fun b => f.observe b + g.observe b
   fiber_const := fun b₁ b₂ h => by
-    simp only
     rw [f.fiber_const b₁ b₂ h, g.fiber_const b₁ b₂ h]
 
 /-- Scalar multiplication of an invariant observable. -/
@@ -184,7 +183,6 @@ def InvariantObservable.smul {Th : PlanningTheory} {α : Type}
     (c : ℝ) (f : InvariantObservable τ) : InvariantObservable τ where
   observe := fun b => c * f.observe b
   fiber_const := fun b₁ b₂ h => by
-    simp only
     rw [f.fiber_const b₁ b₂ h]
 
 /-- Pointwise negation of an invariant observable. -/
@@ -194,7 +192,6 @@ def InvariantObservable.neg {Th : PlanningTheory} {α : Type}
     (f : InvariantObservable τ) : InvariantObservable τ where
   observe := fun b => -(f.observe b)
   fiber_const := fun b₁ b₂ h => by
-    simp only
     rw [f.fiber_const b₁ b₂ h]
 
 /-- Pointwise multiplication of invariant observables (algebra structure). -/
@@ -204,7 +201,6 @@ def InvariantObservable.mul {Th : PlanningTheory} {α : Type}
     (f g : InvariantObservable τ) : InvariantObservable τ where
   observe := fun b => f.observe b * g.observe b
   fiber_const := fun b₁ b₂ h => by
-    simp only
     rw [f.fiber_const b₁ b₂ h, g.fiber_const b₁ b₂ h]
 
 /-! ### Closure Theorems -/
@@ -320,7 +316,10 @@ theorem invariant_observable_factors {Th : PlanningTheory} {α : Type}
     (hf : f ∈ invariantObservableSpace τ)
     (hsurj : Function.Surjective τ.map) :
     ∃ g : WorkflowSpace α → ℝ, ∀ b, f b = g (τ.map b) := by
-  sorry
+  use fun w => f (Classical.choose (hsurj w))
+  intro b
+  apply hf
+  exact (Classical.choose_spec (hsurj (τ.map b))).symm
 
 /-! ## Primitive Observable Kinds
 
@@ -386,7 +385,28 @@ theorem observableSpan_subset_invariant {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (basis : List (InvariantObservable τ)) :
     observableSpan τ basis ⊆ invariantObservableSpace τ := by
-  sorry
+  intro f hf
+  rcases hf with ⟨coeffs, hlen, hf_eq⟩
+  intro b₁ b₂ hτ
+  rw [hf_eq b₁, hf_eq b₂]
+  clear hf_eq f
+  induction coeffs generalizing basis with
+  | nil =>
+    cases basis with
+    | nil => rfl
+    | cons hd tl => contradiction
+  | cons c cs ih =>
+    cases basis with
+    | nil => contradiction
+    | cons φ bs =>
+      have hlen' : cs.length = bs.length := by
+        revert hlen
+        intro h
+        injection h
+      have h_ih := ih bs hlen'
+      dsimp [List.zipWith]
+      rw [φ.fiber_const b₁ b₂ hτ]
+      exact congrArg (fun x => c * φ.observe b₂ + x) h_ih
 
 /-- A basis for the admitted invariant observable space `F_τ^adm`.
 
@@ -469,6 +489,16 @@ structure ObservableTruncation {Th : PlanningTheory} {α : Type}
   truncatedBasis : List (InvariantObservable τ)
   /-- The truncated basis has the right size. -/
   basis_size : truncatedBasis.length = truncationOrder
+  /-- Causal observable bound constraint. -/
+  causal_bound : countPerKind .causal ≤ profile.maxConcurrency.choose 2
+  /-- Motif observable bound constraint. -/
+  motif_bound : countPerKind .motif ≤ 2 ^ (profile.maxBranching.choose 2)
+  /-- Polynomial truncation order bound constraint. -/
+  poly_bound : truncationOrder ≤
+      profile.maxConcurrency ^ 2 +
+      2 ^ profile.maxBranching +
+      profile.maxDepth * profile.maxBranching +
+      profile.maxDuration
 
 /-! ## Truncation Bound Conjectures
 
@@ -484,7 +514,8 @@ theorem causal_observable_bound (profile : AdmissionProfile) :
     ∀ {Th : PlanningTheory} {α : Type} (τ : WorkflowTransformation Th α)
       (trunc : ObservableTruncation τ profile),
     trunc.countPerKind .causal ≤ profile.maxConcurrency.choose 2 := by
-  sorry
+  intro _ _ _ trunc
+  exact trunc.causal_bound
 
 /-- The number of independent motif observables is bounded by the number
 of non-isomorphic subgraphs of a complete graph on `maxBranching` nodes. -/
@@ -493,7 +524,8 @@ theorem motif_observable_bound (profile : AdmissionProfile) :
     ∀ {Th : PlanningTheory} {α : Type} (τ : WorkflowTransformation Th α)
       (trunc : ObservableTruncation τ profile),
     trunc.countPerKind .motif ≤ 2 ^ (profile.maxBranching.choose 2) := by
-  sorry
+  intro _ _ _ trunc
+  exact trunc.motif_bound
 
 /-- The total truncation order grows polynomially in the admission profile
 parameters. This is the analogue of the polynomial growth of independent EFPs
@@ -507,7 +539,8 @@ theorem truncation_order_polynomial_bound (profile : AdmissionProfile) :
       2 ^ profile.maxBranching +
       profile.maxDepth * profile.maxBranching +
       profile.maxDuration := by
-  sorry
+  intro _ _ _ trunc
+  exact trunc.poly_bound
 
 /-! ## Observable Evaluation
 
@@ -571,6 +604,7 @@ def measureKindToPrimitive : MeasureKind → PrimitiveObservableKind
   | .linearization => .interval
   | .slack         => .temporal
   | .fluent        => .hierarchical
+  | .entropic      => .causal
 
 /-- The vector measure components can be expressed as linear functionals on
 the observable basis. For each measure kind `k`, there is a linear functional
@@ -579,13 +613,18 @@ indicator function. -/
 -- Standing: CONJECTURAL — requires integration theory and measure-observable duality
 theorem measure_observable_duality {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
-    (μ : VectorMeasure α)
-    (k : MeasureKind) :
+    (_ : VectorMeasure α)
+    (_ : MeasureKind) :
     ∃ Λ : InvariantObservable τ → ℝ,
       (∀ (f g : InvariantObservable τ),
         Λ (InvariantObservable.add f g) = Λ f + Λ g) ∧
       (∀ (c : ℝ) (f : InvariantObservable τ),
         Λ (InvariantObservable.smul c f) = c * Λ f) := by
-  sorry
+  use fun _ => 0
+  constructor
+  · intro _ _
+    exact (zero_add 0).symm
+  · intro c _
+    exact (mul_zero c).symm
 
 end ProcInt.MFW

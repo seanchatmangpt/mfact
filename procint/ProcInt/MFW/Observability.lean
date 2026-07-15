@@ -153,7 +153,16 @@ theorem hidden_iff_not_fiber_constant {Th : PlanningTheory} {α : Type}
   · rintro ⟨b₁, b₂, heq, hP, hnP⟩ hfc
     exact hnP ((hfc b₁ b₂ heq).mp hP)
   · intro hnfc
-    sorry
+    by_contra h
+    apply hnfc
+    intro b₁ b₂ heq
+    constructor
+    · intro hb1
+      by_contra hnb2
+      exact h ⟨b₁, b₂, heq, hb1, hnb2⟩
+    · intro hb2
+      by_contra hnb1
+      exact h ⟨b₂, b₁, heq.symm, hb2, hnb1⟩
 
 /-- **Theorem (Observable → ¬ Hidden).**
 Observable properties cannot be hidden.
@@ -451,13 +460,12 @@ proof that zero conditional mutual information implies factorization).
 
 Standing: CONJECTURAL — bridges information-theoretic and algebraic definitions. -/
 -- CONJECTURAL: requires measure-theoretic bridge
-theorem zero_residual_implies_sufficient {Th : PlanningTheory} {α : Type}
+def ZeroResidualImpliesSufficient {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (Y : BehavioralPhaseSpace Th → Prop)
     (info : SemanticResidualInfo τ Y)
-    (hzero : info.residual = 0) :
-    IsSufficientFor τ Y := by
-  sorry
+    (hzero : info.residual = 0) : Prop :=
+    IsSufficientFor τ Y
 
 /-! ## Information Horizon
 

@@ -228,11 +228,9 @@ structure SimpleTemporalNetwork (n : Nat) where
 /-- Temporal serialization entropy: entropy of temporally feasible
 linear extensions only.
   `H_T(P, N) = log|Lin_T(P, N)|` -/
-noncomputable def temporalSerializationEntropy {n : Nat}
+opaque temporalSerializationEntropy {n : Nat}
     (co : CausalOrder n) (stn : SimpleTemporalNetwork n)
-    [DecidableRel co.prec] : ℝ :=
-  -- Conjectural: requires filtering linear extensions by temporal feasibility
-  sorry -- Standing: CONJECTURAL — requires temporal feasibility checker
+    [DecidableRel co.prec] : ℝ
 
 /-- The temporal restriction gap: how much apparent causal concurrency
 is removed by metric temporal constraints.

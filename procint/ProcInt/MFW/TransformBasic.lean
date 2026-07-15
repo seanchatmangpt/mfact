@@ -117,7 +117,7 @@ def BehaviorTrace.stateTrace {Th : PlanningTheory} (b : BehaviorTrace Th) :
     Option (List Th.State) :=
   b.events.foldlM
     (fun acc a => do
-      let s := acc.getLast (by sorry)  -- Standing: CONJECTURAL — needs nonempty proof
+      let s ← acc.getLast?
       let s' ← Th.transition s a
       return acc ++ [s'])
     [Th.initial]
