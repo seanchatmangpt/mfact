@@ -11,7 +11,7 @@ namespace ProcInt.MFW
 ### Derivation Chain Position
 
 ```
-Layer 0–4: TransformBasic (P(Π), W, τ, fiber, pushforward)
+Layer 0–4: TransformBasic (P(Th), W, τ, fiber, pushforward)
     ↓
 Layer 5–8: VectorMeasure, MeasureKind, hierarchical partition (in TransformBasic)
     ↓
@@ -98,7 +98,7 @@ preserves, erases, and distorts.
 
 /-! ## Spectrum Bundle -/
 
-/-- The **Multifractal Workflow Spectrum Bundle**.
+/-- [Notation Authority §166] The **Multifractal Workflow Spectrum Bundle**.
 
 For each Rényi exponent `q ∈ ℝ`, the spectrum bundle assigns a generalized
 dimension `D_q^i` to each of the six distinguished measure kinds. The
@@ -109,7 +109,7 @@ bundle is:
 Mathematically, this is a section of a trivial `ℝ^6`-bundle over the
 q-line `ℝ`, but the semantic content is that each component dimension
 captures a different kind of scaling freedom in the transformation
-`τ : P(Π) → W`.
+`τ : P(Th) → W`.
 
 The bundle is parameterized by workflow label type `α` to match
 the POWL v2 workflow space `WorkflowSpace α`. -/
@@ -122,7 +122,7 @@ structure SpectrumBundle (α : Type) where
       This is a structural axiom of the spectrum. -/
   q_zero_finite : ∀ kind, ∃ d : ℝ, dimension 0 kind = d
 
-/-- Evaluate the full spectrum vector at a fixed Rényi exponent `q`.
+/-- [Notation Authority §166] Evaluate the full spectrum vector at a fixed Rényi exponent `q`.
 Returns a function from `MeasureKind` to `ℝ`, representing the 6-vector
 `D⃗_q = (D_q^B, D_q^T, D_q^C, D_q^L, D_q^S, D_q^F)`. -/
 def SpectrumBundle.spectrumAt {α : Type} (sb : SpectrumBundle α) (q : ℝ) :
@@ -131,7 +131,7 @@ def SpectrumBundle.spectrumAt {α : Type} (sb : SpectrumBundle α) (q : ℝ) :
 
 /-! ## Cross-Spectrum Tension -/
 
-/-- **Cross-spectrum tension** between measure kinds `i` and `j` at Rényi
+/-- [Notation Authority §167] **Cross-spectrum tension** between measure kinds `i` and `j` at Rényi
 exponent `q`:
 
   `Δ_ij(q) = D_q^i − D_q^j`
@@ -146,7 +146,7 @@ def crossSpectrumTension {α : Type} (sb : SpectrumBundle α)
     (i j : MeasureKind) (q : ℝ) : ℝ :=
   sb.dimension q i - sb.dimension q j
 
-/-- Cross-spectrum tension is antisymmetric: `Δ_ij(q) = −Δ_ji(q)`.
+/-- [Notation Authority §167] Cross-spectrum tension is antisymmetric: `Δ_ij(q) = −Δ_ji(q)`.
 
 Standing: PROVEN -/
 theorem tension_antisymmetric {α : Type} (sb : SpectrumBundle α)
@@ -155,7 +155,7 @@ theorem tension_antisymmetric {α : Type} (sb : SpectrumBundle α)
   unfold crossSpectrumTension
   ring
 
-/-- Cross-spectrum tension vanishes on the diagonal: `Δ_ii(q) = 0`.
+/-- [Notation Authority §167] Cross-spectrum tension vanishes on the diagonal: `Δ_ii(q) = 0`.
 
 Standing: PROVEN -/
 theorem tension_diagonal_zero {α : Type} (sb : SpectrumBundle α)
@@ -163,7 +163,7 @@ theorem tension_diagonal_zero {α : Type} (sb : SpectrumBundle α)
     crossSpectrumTension sb i i q = 0 := by
   simp [crossSpectrumTension]
 
-/-- The tension matrix at fixed `q` has zero trace (sum over all Δ_ii = 0).
+/-- [Notation Authority §167] The tension matrix at fixed `q` has zero trace (sum over all Δ_ii = 0).
 This is immediate from `Δ_ii = 0` for all `i`.
 
 Standing: PROVEN -/
@@ -174,7 +174,7 @@ theorem tension_trace_zero {α : Type} (sb : SpectrumBundle α)
 
 /-! ## Tension Interpretation -/
 
-/-- Qualitative interpretation of cross-spectrum tension patterns.
+/-- [Notation Authority §168] Qualitative interpretation of cross-spectrum tension patterns.
 
 Each constructor corresponds to a structural bottleneck or freedom
 pattern diagnosed by the sign of specific `Δ_ij(q)` values:
@@ -196,13 +196,21 @@ pattern diagnosed by the sign of specific `Δ_ij(q)` values:
   constraints bind them tightly, creating the illusion of concurrency
   without actual scheduling freedom. -/
 inductive TensionInterpretation : Type
-  | temporalBottleneck     -- D_q^B ≫ D_q^T
-  | schedulingElasticity   -- D_q^B ≪ D_q^T
-  | choiceSparsity         -- D_q^C ≫ D_q^B
-  | falseConcurrency       -- D_q^L ≫ D_q^T
+  /-- High behavioral dimension / low temporal dimension: `D_q^B ≫ D_q^T`.
+  Scheduling is the binding constraint. -/
+  | temporalBottleneck
+  /-- Low behavioral dimension / high temporal dimension: `D_q^B ≪ D_q^T`.
+  The system is temporally flexible but behaviorally constrained. -/
+  | schedulingElasticity
+  /-- High choice dimension / low behavioral mass: `D_q^C ≫ D_q^B`.
+  Most choices are "dead" or near-empty. -/
+  | choiceSparsity
+  /-- High linearization dimension / low temporal dimension: `D_q^L ≫ D_q^T`.
+  Creates the illusion of concurrency without actual scheduling freedom. -/
+  | falseConcurrency
   deriving Repr, DecidableEq
 
-/-- Classify a tension value into a structural interpretation.
+/-- [Notation Authority §168] Classify a tension value into a structural interpretation.
 
 Given the tension `Δ_ij(q)` between two specific measure kinds and a
 threshold `ε > 0`, classify the tension as:
@@ -246,7 +254,7 @@ Key values:
 - `Z(q, k)` is log-convex in `q` (standard Rényi property)
 -/
 
-/-- The **hierarchical partition sum** at Rényi exponent `q` and
+/-- [Notation Authority §169] The **hierarchical partition sum** at Rényi exponent `q` and
 POWL v2 depth `k`.
 
   `Z(q, k) = Σ_{B ∈ P_k} p_B^q`
@@ -262,14 +270,13 @@ noncomputable def hierarchicalPartitionSum
     (componentMasses : List ℝ) (q : ℝ) : ℝ :=
   (componentMasses.map (fun p => p ^ q)).sum
 
-/-- When `q = 0`, the partition sum counts the number of components:
+/-- [Notation Authority §169] When `q = 0`, the partition sum counts the number of components:
 `Z(0, k) = |P_k|`.
 
 This is because `p^0 = 1` for any `p ≠ 0`, so the sum reduces to
 counting terms.
 
-Standing: CONJECTURAL — requires `p > 0` for all component masses. -/
--- CONJECTURAL: requires proof that all masses are positive
+Standing: PROVEN -/
 theorem partitionSum_q_zero
     (masses : List ℝ)
     (hpos : ∀ p ∈ masses, 0 < p) :
@@ -285,7 +292,7 @@ theorem partitionSum_q_zero
     rw [this]
     ring
 
-/-- When `q = 1` and masses form a probability distribution (sum to 1),
+/-- [Notation Authority §169] When `q = 1` and masses form a probability distribution (sum to 1),
 the partition sum equals 1: `Z(1, k) = 1`.
 
 This is the normalization condition: `Σ p_B = 1 ⟹ Σ p_B^1 = 1`.
@@ -302,11 +309,10 @@ theorem partitionSum_q_one
     exact Real.rpow_one p
   rw [this, hnorm]
 
-/-- The partition sum is non-negative when all masses are non-negative
+/-- [Notation Authority §169] The partition sum is non-negative when all masses are non-negative
 and `q ≥ 0`.
 
-Standing: CONJECTURAL -/
--- CONJECTURAL: needs positivity argument through rpow
+Standing: PROVEN -/
 theorem partitionSum_nonneg
     (masses : List ℝ) (q : ℝ)
     (hnn : ∀ p ∈ masses, 0 ≤ p)
@@ -343,7 +349,7 @@ PDDL 3.1 behavioral mass inside POWL v2 choice structure.
   "tail" of the behavioral distribution.
 -/
 
-/-- A **q-lens** specialized to a particular measure kind and workflow
+/-- [Notation Authority §170] A **q-lens** specialized to a particular measure kind and workflow
 space. This combines the Rényi exponent with the spectrum bundle
 to produce a scalar diagnostic.
 
@@ -357,11 +363,11 @@ structure QLensWorkflow (α : Type) where
   /-- The Rényi exponent. -/
   q : ℝ
 
-/-- Evaluate a q-lens to produce a scalar generalized dimension. -/
+/-- [Notation Authority §170] Evaluate a q-lens to produce a scalar generalized dimension. -/
 def QLensWorkflow.eval {α : Type} (lens : QLensWorkflow α) : ℝ :=
   lens.bundle.dimension lens.q lens.focusKind
 
-/-- A **choice-graph q-lens** focuses specifically on choice mass.
+/-- [Notation Authority §170] A **choice-graph q-lens** focuses specifically on choice mass.
 This is the natural lens for studying POWL v2 branching structure:
 it controls attention over how PDDL 3.1 behaviors distribute across
 choice-graph branches. -/
@@ -386,7 +392,7 @@ The metric `d_W` is the workflow geometry induced by the transformation.
 It is NOT the graph distance in POWL v2 — it is the behavioral distance.
 -/
 
-/-- A **workflow metric** induced by the transformation.
+/-- [Notation Authority §171] A **workflow metric** induced by the transformation.
 
 The metric `d_W : W × W → ℝ` measures behavioral proximity between
 workflow classes. It satisfies the standard metric axioms:
@@ -409,12 +415,11 @@ structure WorkflowMetric (α : Type) where
   /-- Triangle inequality. -/
   dist_triangle : ∀ w₁ w₂ w₃, dist w₁ w₃ ≤ dist w₁ w₂ + dist w₂ w₃
 
-/-- A `WorkflowMetric` induces a `PseudoMetricSpace` instance on
+/-- [Notation Authority §171] A `WorkflowMetric` induces a `PseudoMetricSpace` instance on
 `WorkflowSpace α`.
 
 Standing: CONJECTURAL — depends on well-definedness of the distance
 construction from fiber overlap. -/
--- CONJECTURAL: requires edist construction and compatibility proof
 @[reducible]
 noncomputable def WorkflowMetric.toPseudoMetricSpace {α : Type}
     (wm : WorkflowMetric α) : PseudoMetricSpace (WorkflowSpace α) :=
@@ -427,7 +432,7 @@ noncomputable def WorkflowMetric.toPseudoMetricSpace {α : Type}
 
 The **Transformation Information Profile** is the master diagnostic
 consolidating all information-geometric quantities of the transformation
-`τ : P(Π) → W`.
+`τ : P(Th) → W`.
 
   `I_τ = (d_int, D⃗_q, H(B|W), I(Y;B|W), dim F_w, d_W, Δ_ij(q))`
 
@@ -442,16 +447,16 @@ Components:
 - `Δ_ij(q)`: cross-spectrum tension matrix
 -/
 
-/-- The **Transformation Information Profile** — the complete
+/-- [Notation Authority §172] The **Transformation Information Profile** — the complete
 information-geometric characterization of the transformation
-`τ : P(Π) → W`.
+`τ : P(Th) → W`.
 
 This structure is the master diagnostic object of MFW. It packages
 all derived information-geometric quantities into a single coherent
 record. Every downstream analysis (bottleneck detection, optimization
 targeting, structural comparison) draws from this profile. -/
 structure TransformationInfoProfile (α : Type) where
-  /-- Intrinsic dimension of the behavioral phase space `P(Π)`. -/
+  /-- Intrinsic dimension of the behavioral phase space `P(Th)`. -/
   intrinsicDimension : ℝ
   /-- The spectrum bundle: `D⃗_q` for all `q` and all measure kinds. -/
   spectrumBundle : SpectrumBundle α
@@ -471,13 +476,13 @@ structure TransformationInfoProfile (α : Type) where
       but we cache the full tension profile for efficient querying. -/
   tensionAt : MeasureKind → MeasureKind → ℝ → ℝ
 
-/-- Construct the tension component of the information profile from
+/-- [Notation Authority §172] Construct the tension component of the information profile from
 the spectrum bundle. The tension is always derived from the bundle. -/
 def TransformationInfoProfile.tensionFromBundle {α : Type}
     (sb : SpectrumBundle α) : MeasureKind → MeasureKind → ℝ → ℝ :=
   fun i j q => crossSpectrumTension sb i j q
 
-/-- The tension stored in the information profile is consistent with
+/-- [Notation Authority §172] The tension stored in the information profile is consistent with
 the spectrum bundle: it equals the cross-spectrum tension derived
 from the bundle's dimension function.
 
@@ -490,11 +495,10 @@ theorem tensionProfile_consistent {α : Type}
 
 /-! ## Partition Sum Structure Theorems -/
 
-/-- The partition sum at `q = 0` with a single component of mass `p > 0`
+/-- [Notation Authority §173] The partition sum at `q = 0` with a single component of mass `p > 0`
 yields 1.
 
-Standing: CONJECTURAL -/
--- CONJECTURAL: rpow at 0 for positive reals
+Standing: PROVEN -/
 theorem partitionSum_singleton_q_zero
     (p : ℝ) (_hp : 0 < p) :
     hierarchicalPartitionSum [p] 0 = 1 := by
@@ -502,7 +506,7 @@ theorem partitionSum_singleton_q_zero
   simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
   exact Real.rpow_zero p
 
-/-- If two mass lists are concatenated, the partition sum of the
+/-- [Notation Authority §173] If two mass lists are concatenated, the partition sum of the
 concatenation equals the sum of the individual partition sums.
 
   `Z(q, masses₁ ++ masses₂) = Z(q, masses₁) + Z(q, masses₂)`
@@ -510,8 +514,7 @@ concatenation equals the sum of the individual partition sums.
 This additivity reflects the fact that partition sums over disjoint
 components sum independently.
 
-Standing: CONJECTURAL -/
--- CONJECTURAL: needs List.map_append and List.sum_append
+Standing: PROVEN -/
 theorem partitionSum_append
     (masses₁ masses₂ : List ℝ) (q : ℝ) :
     hierarchicalPartitionSum (masses₁ ++ masses₂) q =
@@ -531,7 +534,7 @@ The scaling behavior of `D⃗_q(k)` with `k` reveals how the multifractal
 structure varies across the POWL v2 hierarchy.
 -/
 
-/-- A **scale-resolved spectrum bundle** parameterized by both Rényi
+/-- [Notation Authority §174] A **scale-resolved spectrum bundle** parameterized by both Rényi
 exponent `q` and hierarchical depth `k`.
 
 This is the fully resolved object: at each `(q, k)` pair, it assigns
@@ -541,7 +544,7 @@ structure ScaleResolvedSpectrumBundle (α : Type) where
       hierarchical depth `k`, and measure kind `i`. -/
   dimension : ℝ → Nat → MeasureKind → ℝ
 
-/-- Project a scale-resolved spectrum bundle to a fixed depth,
+/-- [Notation Authority §174] Project a scale-resolved spectrum bundle to a fixed depth,
 yielding an ordinary spectrum bundle. -/
 def ScaleResolvedSpectrumBundle.atDepth {α : Type}
     (srsb : ScaleResolvedSpectrumBundle α) (k : Nat) :
@@ -549,13 +552,13 @@ def ScaleResolvedSpectrumBundle.atDepth {α : Type}
   { dimension := fun q kind => srsb.dimension q k kind
     q_zero_finite := fun kind => ⟨srsb.dimension 0 k kind, rfl⟩ }
 
-/-- The cross-spectrum tension at a specific hierarchical depth. -/
+/-- [Notation Authority §174] The cross-spectrum tension at a specific hierarchical depth. -/
 def scaleResolvedTension {α : Type}
     (srsb : ScaleResolvedSpectrumBundle α)
     (i j : MeasureKind) (q : ℝ) (k : Nat) : ℝ :=
   crossSpectrumTension (srsb.atDepth k) i j q
 
-/-- Scale-resolved tension is still antisymmetric at every depth.
+/-- [Notation Authority §174] Scale-resolved tension is still antisymmetric at every depth.
 
 Standing: PROVEN -/
 theorem scaleResolvedTension_antisymmetric {α : Type}

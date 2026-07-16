@@ -16,28 +16,32 @@ structure ComplexityCoordinates where
   multiplicativeDepth : Nat
 deriving Inhabited
 
-/-- Functor projecting complexity coordinates to a TTL graph. -/
-opaque projectTtl : ComplexityCoordinates → TTLGraph
-
-/-- Functor interpolating a TTL graph into a Tera template. -/
-opaque interpolateTera : TTLGraph → TeraTemplate
-
-/-- Functor compiling a Tera template to a Rust executable. -/
-opaque compileRust : TeraTemplate → RustExecutable
+/-- Theory record bundling the compilation-chain functors as explicit hypotheses.
+    Replaces three prior bodyless `opaque` declarations (hidden global axioms):
+    every consumer must now supply concrete functors as visible data. -/
+structure CompilerPipelineTheory where
+  /-- Functor projecting complexity coordinates to a TTL graph. -/
+  projectTtl : ComplexityCoordinates → TTLGraph
+  /-- Functor interpolating a TTL graph into a Tera template. -/
+  interpolateTera : TTLGraph → TeraTemplate
+  /-- Functor compiling a Tera template to a Rust executable. -/
+  compileRust : TeraTemplate → RustExecutable
 
 /-- [Notation Authority §36] The Multiplicative Cascade Wind Tunnel.
-    Captures the deterministic translation logic mapping specifications to code. -/
-structure MultiplicativeCascadeWindTunnel where
+    Captures the deterministic translation logic mapping specifications to code,
+    relative to an explicit pipeline theory `T`. -/
+structure MultiplicativeCascadeWindTunnel (T : CompilerPipelineTheory) where
   coords : ComplexityCoordinates
   graph : TTLGraph
   template : TeraTemplate
   exe : RustExecutable
-  ttlProjEq : graph = projectTtl coords
-  teraInterpEq : template = interpolateTera graph
-  rustCompEq : exe = compileRust template
+  ttlProjEq : graph = T.projectTtl coords
+  teraInterpEq : template = T.interpolateTera graph
+  rustCompEq : exe = T.compileRust template
 
 /-- [Notation Authority §36] Complexity bounding constraint of the wind tunnel. -/
-def windTunnelComplexityBound (tunnel : MultiplicativeCascadeWindTunnel) : Prop :=
+def windTunnelComplexityBound {T : CompilerPipelineTheory}
+    (tunnel : MultiplicativeCascadeWindTunnel T) : Prop :=
   tunnel.coords.multiplicativeDepth ≤ tunnel.coords.time
 
 end ProcInt.MFW

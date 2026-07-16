@@ -87,9 +87,11 @@ Each kind reveals a different mode of transformation insensitivity.
 
 ### Standing
 
-- All `structure` and `def` declarations: DEFINITION
-- Structural lemmas with proofs: PROVEN
-- Lemmas with `sorry`: CONJECTURAL — proof target for formal exploration
+- Plain `structure` and `def` declarations carry no standing claim.
+- Structural lemmas with complete proofs are tagged PROVEN; where a proof
+  is discharged only by a stub dimension model, the tag says so.
+- Statement-shaped `def ... : Prop` declarations are tagged CONJECTURAL
+  with a named blocker; they impose no proof obligation.
 -/
 
 /-! ## Phase-Space Coordinate Kinds
@@ -98,7 +100,7 @@ The five coordinate families of `P(Th)`.  These correspond to independent
 parameter families that together parameterize the behavioral phase space.
 A point `x ∈ P(Th)` has projections onto each coordinate kind. -/
 
-/-- The five independent coordinate families of the behavioral phase space.
+/-- [Notation Authority §91] The five independent coordinate families of the behavioral phase space.
 
 Every point `x ∈ P(Th)` has components in each family:
 - `eventOccurrence`: which events occur and in what order (discrete)
@@ -107,11 +109,16 @@ Every point `x ∈ P(Th)` has components in each family:
 - `numeric`: numeric fluent values (continuous)
 - `trajectory`: trajectory constraint witness structure -/
 inductive PhaseCoordinateKind : Type
-  | eventOccurrence  -- which events occur / ordering
-  | temporal         -- timestamp assignments
-  | objectFluent     -- object-valued fluent configurations
-  | numeric          -- numeric fluent values
-  | trajectory       -- trajectory constraint witnesses
+  /-- Which events occur, and in what order. -/
+  | eventOccurrence
+  /-- Timestamp assignments. -/
+  | temporal
+  /-- Object-valued fluent configurations. -/
+  | objectFluent
+  /-- Numeric fluent values. -/
+  | numeric
+  /-- Trajectory constraint witnesses. -/
+  | trajectory
   deriving Repr, DecidableEq
 
 /-! ## Stratification
@@ -121,7 +128,7 @@ Different action selection patterns yield subsets of different local
 dimension.  The stratification is indexed by a discrete choice label `σ`
 that captures which branch of every decision point was taken. -/
 
-/-- A choice stratum label.
+/-- [Notation Authority §92] A choice stratum label.
 
 `σ ∈ Σ` encodes a complete discrete choice pattern: which actions were
 selected, which branches of `(or ...)` goals were pursued, which XOR-choice
@@ -132,7 +139,7 @@ structure StratumLabel where
   id : Nat
   deriving Repr, DecidableEq
 
-/-- A stratum of the behavioral phase space.
+/-- [Notation Authority §93] A stratum of the behavioral phase space.
 
 `P_σ` is the subset of `P(Th)` whose behaviors share the discrete choice
 pattern `σ`.  Within a stratum the remaining freedom is continuous
@@ -149,7 +156,7 @@ structure Stratum (Th : PlanningTheory) where
       the same discrete choice pattern `σ`. -/
   localDim : ℕ
 
-/-- The full stratified decomposition of the behavioral phase space.
+/-- [Notation Authority §94] The full stratified decomposition of the behavioral phase space.
 
   `P(Th) = ⋃_{σ ∈ Σ} P_σ`
 
@@ -171,7 +178,7 @@ dimension drops.
 Analogously, the POWL v2 workflow space `W` has a local dimension at each
 point `w`.  The **dimension loss** is the difference. -/
 
-/-- Local intrinsic dimension at a point of a space.
+/-- [Notation Authority §95] Local intrinsic dimension at a point of a space.
 
 `d_loc(x)` counts the number of independent continuous degrees of freedom
 available in an infinitesimal neighborhood of `x`.
@@ -185,12 +192,14 @@ structure LocalDimension where
   /-- The intrinsic dimension value (a natural number for manifold-like spaces,
       or could be extended to ℝ for fractal dimensions). -/
   dim : ℕ
-  /-- The dimension is well-defined (the point lies in the interior of
-      some regular stratum). -/
-  wellDefined : Prop
   deriving Repr
+  -- Well-definedness (the point lies in the interior of some regular stratum) is NOT
+  -- captured by this structure. A former `wellDefined : Prop` data field stored an
+  -- arbitrary caller-chosen proposition while its doc claimed the constraint was
+  -- enforced; it was removed. Consumers needing well-definedness must take it as an
+  -- explicit hypothesis.
 
-/-- Compute the local dimension of a behavior in the PDDL 3.1 phase space.
+/-- [Notation Authority §96] Compute the local dimension of a behavior in the PDDL 3.1 phase space.
 This requires identifying which stratum `b` belongs to and returning
 that stratum's local dimension.
 
@@ -205,7 +214,7 @@ noncomputable def pddlLocalDim {Th : PlanningTheory}
   let containing := S.strata.filter (fun s => s.mem b)
   containing.foldl (fun acc s => max acc s.localDim) 0
 
-/-- The local dimension on the POWL v2 workflow side.
+/-- [Notation Authority §97] The local dimension on the POWL v2 workflow side.
 
 At a workflow class `w ∈ W`, the local dimension is the number of
 independent parameters in the POWL v2 representation near `w`.
@@ -239,7 +248,7 @@ the transformation.
   containing `b` (i.e. the fiber theorem applies).
 -/
 
-/-- The transformation dimension loss at a behavior `b`.
+/-- [Notation Authority §98] The transformation dimension loss at a behavior `b`.
 
   `Δd_τ(b) = d_loc^PDDL(b) - d_loc^POWL(τ(b))`
 
@@ -252,16 +261,17 @@ noncomputable def transformationDimensionLoss {Th : PlanningTheory} {α : Type}
     (b : BehavioralPhaseSpace Th) : ℤ :=
   (pddlLocalDim S b : ℤ) - (powlLocalDim (τ.map b) : ℤ)
 
-/-- **Theorem (CONJECTURAL):** Dimension loss is non-negative.
+/-- Dimension loss is non-negative.
 
-If τ is Lipschitz on each stratum (hence cannot increase local dimension),
-then `Δd_τ(b) ≥ 0` for all behaviors `b`.
+Under the current model this holds only because `powlLocalDim` is a
+hardcoded 0 stub, so the loss reduces to `(pddlLocalDim S b : ℤ) ≥ 0`.
 
-Geometric intuition: a Lipschitz map cannot increase the Hausdorff dimension
-of a set.  Since POWL v2 workflow classes are images of strata under τ,
-the image dimension is at most the source dimension.
+The intended general statement — if τ is Lipschitz on each stratum it
+cannot increase local dimension, hence `Δd_τ(b) ≥ 0` — remains open and
+needs a Lipschitz regularity hypothesis on τ that is not yet formalized.
 
-Standing: CONJECTURAL — requires Lipschitz regularity hypothesis on τ. -/
+Standing: PROVEN — discharged under the current stub dimension model
+(powlLocalDim ≡ 0); strengthen when real POWL-side dimensions land. -/
 theorem dimension_loss_nonneg {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)
@@ -271,7 +281,7 @@ theorem dimension_loss_nonneg {Th : PlanningTheory} {α : Type}
   -- Then d_loc^POWL(τ(b)) ≤ d_loc^PDDL(b) by Lipschitz dimension bound.
   simp [transformationDimensionLoss, powlLocalDim]
 
-/-- **Theorem (CONJECTURAL):** Zero dimension loss characterizes local invertibility.
+/-- **Conjecture:** Zero dimension loss characterizes local invertibility.
 
   `Δd_τ(b) = 0 ↔ τ is locally invertible at b`
 
@@ -280,21 +290,26 @@ degrees of freedom, hence admits a local inverse (up to discrete
 stratum labelling).
 
 Forward direction: Δd = 0 implies the differential/tangent map of τ
-is an isomorphism, hence τ is a local diffeomorphism by inverse function
-theorem.
+is an isomorphism, hence τ is a local diffeomorphism by the inverse
+function theorem.
 
 Reverse direction: if τ is a local diffeomorphism, it preserves local
 dimension.
 
-Standing: CONJECTURAL — requires smooth structure on P(Th) and W.
+`P(Th)` and `W` carry no smooth structure yet, so "τ is a local
+diffeomorphism at `b`" cannot be stated internally.  It is therefore an
+explicit hypothesis `locallyInvertible` supplied by the consumer, not a
+hidden `True` placeholder.  This is a `def : Prop` — a statement shape,
+not an asserted or proven result.
 
-STRUCTURALLY BLOCKED: requires smooth structure on P(Th) and W to formalize `local diffeomorphism`.
-Leaving as axiom to document the conjectural equivalence. -/
+Standing: CONJECTURAL — requires smooth structure on P(Th) and W to
+formalize local diffeomorphism; no proof obligation exists yet. -/
 def DimensionLossZeroIffLocalDiffeo {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)
-    (b : BehavioralPhaseSpace Th) : Prop :=
-    transformationDimensionLoss τ S b = 0 ↔ True /- placeholder for: τ is a local diffeomorphism at b -/
+    (b : BehavioralPhaseSpace Th)
+    (locallyInvertible : Prop) : Prop :=
+    transformationDimensionLoss τ S b = 0 ↔ locallyInvertible
 
 /-! ## Fiber Dimension
 
@@ -308,7 +323,7 @@ In general (stratified, non-smooth) the fiber may itself be stratified
 and we define its dimension as the maximum stratum dimension restricted
 to the fiber. -/
 
-/-- The dimension of a fiber `F_w`, defined as the maximum local dimension
+/-- [Notation Authority §99] The dimension of a fiber `F_w`, defined as the maximum local dimension
 among all strata restricted to the fiber.
 
   `dim(F_w) = max_{σ : P_σ ∩ F_w ≠ ∅} dim_σ(F_w)`
@@ -326,7 +341,7 @@ noncomputable def fiberDimension {Th : PlanningTheory} {α : Type}
     (fun s => ∃ b, s.mem b ∧ τ.map b = w)
   fiberStrata.foldl (fun acc s => max acc s.localDim) 0
 
-/-- **Theorem (CONJECTURAL):** When τ is a submersion on a stratum,
+/-- **Conjecture:** When τ is a submersion on a stratum,
 fiber dimension equals transformation dimension loss.
 
   `dim(F_{τ(b)}) = Δd_τ(b)`
@@ -335,9 +350,11 @@ This is a consequence of the fiber theorem (preimage theorem) in
 differential geometry: if τ is a submersion at `b`, then `F_{τ(b)}`
 is a smooth submanifold of dimension `dim(P_σ) - dim(W)`.
 
-Standing: CONJECTURAL — requires submersion hypothesis and smooth structure.
+This is a `def : Prop` — a statement shape, not an asserted or proven
+result.
 
-STRUCTURALLY BLOCKED: Requires submersion hypothesis on τ at b, which is not formalized. -/
+Standing: CONJECTURAL — requires a submersion hypothesis on τ at `b` and
+smooth structure on P(Th) and W, none of which is formalized yet. -/
 def FiberDimEqDimensionLoss {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)
@@ -356,17 +373,21 @@ kinds reveal different modes of transformation insensitivity:
   numeric state changes → numeric precision is lost information.
 -/
 
-/-- A classification of perturbation kinds by which coordinate family
+/-- [Notation Authority §100] A classification of perturbation kinds by which coordinate family
 of `P(Th)` they affect.
 
 A perturbation `δ` displaces a behavior `b` to `b ⊕ δ` along one or
 more coordinate families.  We classify by the *primary* coordinate
 family affected. -/
 inductive PerturbationKind : Type
-  | temporal     -- shift event timestamps within feasible slack
-  | fluent       -- alter object-fluent valuations
-  | numeric      -- change numeric fluent values
-  | trajectory   -- modify trajectory-constraint witness structure
+  /-- Shift event timestamps within feasible slack. -/
+  | temporal
+  /-- Alter object-fluent valuations. -/
+  | fluent
+  /-- Change numeric fluent values. -/
+  | numeric
+  /-- Modify trajectory-constraint witness structure. -/
+  | trajectory
   deriving Repr, DecidableEq
 
 /-! ## Null Perturbation Space
@@ -385,7 +406,8 @@ giving a finer accounting of *what type* of information the transformation
 discards.
 -/
 
-/-- A perturbation of a behavior: a displacement in the behavioral phase space.
+/-- [Notation Authority §101] A perturbation of a behavior: a displacement
+in the behavioral phase space.
 
 Mathematically `δ` is a tangent vector at `b ∈ P(Th)`, or more precisely
 an element of the perturbation space at `b` (which is a subset of the
@@ -394,18 +416,22 @@ tangent cone when the space is stratified).
 The perturbation carries:
 - The perturbed behavior `b ⊕ δ`
 - The kind of coordinate family primarily affected
-- Lawfulness: the perturbed behavior is still in `P(Th)` -/
+
+Lawfulness is enforced by the field types: `base` and `perturbed` inhabit
+`BehavioralPhaseSpace Th = LawfulBehavior Th`, whose every inhabitant carries an
+`IsLawful` proof. (A former `lawful : Prop` data field stored an arbitrary
+caller-chosen proposition while its doc claimed lawfulness was enforced; it was
+removed as redundant and misleading.) -/
 structure Perturbation (Th : PlanningTheory) where
   /-- The original behavior. -/
   base : BehavioralPhaseSpace Th
-  /-- The perturbed behavior `b ⊕ δ`. -/
+  /-- The perturbed behavior `b ⊕ δ` (lawful by the type of this field). -/
   perturbed : BehavioralPhaseSpace Th
   /-- Which coordinate family this perturbation primarily affects. -/
   kind : PerturbationKind
-  /-- The perturbed behavior is lawful (remains in P(Th)). -/
-  lawful : Prop
 
-/-- The null perturbation space at a behavior `b` under transformation `τ`.
+/-- [Notation Authority §102] The null perturbation space at a behavior `b`
+under transformation `τ`.
 
   `Null_τ(b) = {δ : τ(b ⊕ δ) = τ(b)}`
 
@@ -421,9 +447,10 @@ Its dimension equals the fiber dimension at smooth points:
 def NullPerturbation {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b : BehavioralPhaseSpace Th) : Set (Perturbation Th) :=
-  {δ | δ.base = b ∧ δ.lawful ∧ τ.map δ.perturbed = τ.map b}
+  {δ | δ.base = b ∧ τ.map δ.perturbed = τ.map b}
 
-/-- The null perturbation space restricted to a specific perturbation kind.
+/-- [Notation Authority §103] The null perturbation space restricted to a
+specific perturbation kind.
 
   `Null_τ^k(b) = {δ ∈ Null_τ(b) : kind(δ) = k}`
 
@@ -439,7 +466,7 @@ def NullPerturbationOfKind {Th : PlanningTheory} {α : Type}
     (k : PerturbationKind) : Set (Perturbation Th) :=
   {δ ∈ NullPerturbation τ b | δ.kind = k}
 
-/-- Classify which perturbation kinds have non-trivial null components
+/-- [Notation Authority §104] Classify which perturbation kinds have non-trivial null components
 at a behavior `b` under transformation `τ`.
 
 Returns the set of perturbation kinds `k` for which there exists a
@@ -455,25 +482,22 @@ def classifyNullPerturbation {Th : PlanningTheory} {α : Type}
 
 /-! ## Structural Lemmas -/
 
-/-- The trivial (zero) perturbation is always in the null space.
-Standing: PROVEN. -/
+/-- [Notation Authority §105] The trivial (zero) perturbation is always in the null space.
+Standing: PROVEN -/
 theorem trivial_perturbation_in_null {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b : BehavioralPhaseSpace Th)
     (k : PerturbationKind)
-    (h_lawful : Prop)
     (δ₀ : Perturbation Th)
     (h_base : δ₀.base = b)
     (h_pert : δ₀.perturbed = b)
-    (_h_kind : δ₀.kind = k)
-    (h_law : δ₀.lawful = h_lawful)
-    (h_lawful_true : h_lawful) :
+    (_h_kind : δ₀.kind = k) :
     δ₀ ∈ NullPerturbation τ b := by
   simp [NullPerturbation, Set.mem_setOf_eq]
-  exact ⟨h_base, h_law ▸ h_lawful_true, by rw [h_pert]⟩
+  exact ⟨h_base, by rw [h_pert]⟩
 
-/-- The null perturbation of kind `k` is a subset of the full null space.
-Standing: PROVEN. -/
+/-- [Notation Authority §106] The null perturbation of kind `k` is a subset of the full null space.
+Standing: PROVEN -/
 theorem null_kind_subset_null {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b : BehavioralPhaseSpace Th)
@@ -482,9 +506,9 @@ theorem null_kind_subset_null {Th : PlanningTheory} {α : Type}
   intro δ hδ
   exact hδ.1
 
-/-- Null perturbations preserve the transformation equivalence class.
+/-- [Notation Authority §107] Null perturbations preserve the transformation equivalence class.
 If `δ ∈ Null_τ(b)` then `b ~_τ (b ⊕ δ)`.
-Standing: PROVEN. -/
+Standing: PROVEN -/
 theorem null_perturbation_preserves_equiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b : BehavioralPhaseSpace Th)
@@ -493,11 +517,11 @@ theorem null_perturbation_preserves_equiv {Th : PlanningTheory} {α : Type}
     transformEquiv τ b δ.perturbed := by
   simp [NullPerturbation, Set.mem_setOf_eq] at hδ
   simp [transformEquiv]
-  exact hδ.2.2.symm
+  exact hδ.2.symm
 
-/-- Null perturbations land in the same fiber.
+/-- [Notation Authority §108] Null perturbations land in the same fiber.
 If `δ ∈ Null_τ(b)` then `b ⊕ δ ∈ F_{τ(b)}`.
-Standing: PROVEN. -/
+Standing: PROVEN -/
 theorem null_perturbation_stays_in_fiber {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b : BehavioralPhaseSpace Th)
@@ -506,7 +530,7 @@ theorem null_perturbation_stays_in_fiber {Th : PlanningTheory} {α : Type}
     δ.perturbed ∈ fiber τ (τ.map b) := by
   simp [fiber, Set.mem_setOf_eq]
   simp [NullPerturbation, Set.mem_setOf_eq] at hδ
-  exact hδ.2.2
+  exact hδ.2
 
 /-! ## Dimension Loss Decomposition
 
@@ -518,7 +542,7 @@ where `Δd_τ^k(b) = dim(Null_τ^k(b))` is the dimension of the null
 component along coordinate family `k`.  This decomposition tells us
 *how much* of each type of freedom the transformation destroys. -/
 
-/-- The dimension of the null perturbation space of a given kind.
+/-- [Notation Authority §109] The dimension of the null perturbation space of a given kind.
 
   `Δd_τ^k(b) = dim(Null_τ^k(b))`
 
@@ -531,7 +555,7 @@ noncomputable def nullDimensionOfKind {Th : PlanningTheory} {α : Type}
   -- dimension of the null perturbation subspace along kind k.
   0
 
-/-- A record collecting the per-kind dimension loss decomposition.
+/-- [Notation Authority §110] A record collecting the per-kind dimension loss decomposition.
 
   `Δd_τ(b) = temporal + fluent + numeric + trajectory`
 
@@ -548,11 +572,11 @@ structure DimensionLossDecomposition where
   trajectory : ℕ
   deriving Repr
 
-/-- The total dimension loss from the decomposition. -/
+/-- [Notation Authority §111] The total dimension loss from the decomposition. -/
 def DimensionLossDecomposition.total (d : DimensionLossDecomposition) : ℕ :=
   d.temporal + d.fluent + d.numeric + d.trajectory
 
-/-- Compute the dimension loss decomposition at a behavior `b`.
+/-- [Notation Authority §112] Compute the dimension loss decomposition at a behavior `b`.
 
 Returns a `DimensionLossDecomposition` recording how many independent
 degrees of freedom of each perturbation kind are lost. -/
@@ -564,7 +588,7 @@ noncomputable def dimensionLossDecomposition {Th : PlanningTheory} {α : Type}
     numeric    := nullDimensionOfKind τ b .numeric
     trajectory := nullDimensionOfKind τ b .trajectory }
 
-/-- **Theorem (CONJECTURAL):** The total decomposed dimension loss equals
+/-- **Conjecture:** The total decomposed dimension loss equals
 the transformation dimension loss.
 
   `Δd_τ^temp(b) + Δd_τ^fluent(b) + Δd_τ^num(b) + Δd_τ^traj(b) = Δd_τ(b)`
@@ -572,9 +596,13 @@ the transformation dimension loss.
 This requires the null perturbation space to decompose as a direct sum
 along coordinate families (no cross-term interactions).
 
-Standing: CONJECTURAL — requires direct sum decomposition of tangent spaces.
+Note that under the current stub model (`nullDimensionOfKind ≡ 0`) the
+left-hand side is identically 0, so this proposition is generally false
+until real per-kind null dimensions land.  This is a `def : Prop` — a
+statement shape, not an asserted or proven result.
 
-STRUCTURALLY BLOCKED: requires direct sum decomposition of tangent spaces. -/
+Standing: CONJECTURAL — requires a direct sum decomposition of tangent
+spaces, which is not yet formalized. -/
 def DimensionLossDecomposes {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)
@@ -588,7 +616,7 @@ For analysis across the workflow space, we define the dimension loss
 *profile*: a function assigning the dimension loss to each workflow class,
 computed as the maximum (or generic) dimension loss across the fiber. -/
 
-/-- The dimension loss profile across the workflow space.
+/-- [Notation Authority §113] The dimension loss profile across the workflow space.
 
   `ΔD_τ(w) = sup_{b ∈ F_w} Δd_τ(b)`
 
@@ -602,11 +630,16 @@ noncomputable def dimensionLossProfile {Th : PlanningTheory} {α : Type}
   -- in the fiber.  Here we use fiberDimension as a proxy.
   (fiberDimension τ S w : ℤ)
 
-/-- **Theorem (CONJECTURAL):** The dimension loss profile is non-negative
-everywhere.
+/-- The dimension loss profile is non-negative everywhere.
 
-Standing: CONJECTURAL — follows from dimension_loss_nonneg via the
-definition of the profile as a supremum of non-negative quantities. -/
+This holds trivially: `dimensionLossProfile` is currently defined as the
+ℕ-valued `fiberDimension` cast to ℤ, so non-negativity is a property of
+the cast, not a geometric comparison of dimensions.  The intended
+supremum-of-losses reading of the profile remains informal.
+
+Standing: PROVEN — trivially, as a ℕ-to-ℤ cast bound under the current
+proxy definition of the profile; revisit when the profile becomes a real
+supremum over the fiber. -/
 theorem dimension_loss_profile_nonneg {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)
@@ -627,7 +660,7 @@ measure at scale ε satisfies:
 
 The dimension loss `k` directly controls how the measure concentrates. -/
 
-/-- The effective scaling exponent at a workflow class.
+/-- [Notation Authority §114] The effective scaling exponent at a workflow class.
 
   `α(w) = d_loc^PDDL(b) - Δd_τ(b) = d_loc^POWL(w)`
 
@@ -640,10 +673,13 @@ noncomputable def effectiveScalingDimension {Th : PlanningTheory} {α : Type}
     (b : BehavioralPhaseSpace Th) : ℕ :=
   pddlLocalDim S b - (fiberDimension τ S (τ.map b))
 
-/-- **Theorem (PROVEN):** The dimension loss profile is non-negative
-(alternative proof via Nat cast).
+/-- The effective scaling dimension is bounded by the source dimension.
 
-Standing: PROVEN. -/
+This holds by ℕ truncated subtraction (`a - b ≤ a`); it does not depend
+on any geometric relationship between fiber and source dimensions.
+
+Standing: PROVEN — by truncated-subtraction arithmetic; the bound is
+definitional, not geometric. -/
 theorem effective_scaling_le_source_dim {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (S : StratifiedPhaseSpace Th)

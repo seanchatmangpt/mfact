@@ -13,20 +13,29 @@ def toyCoords : ComplexityCoordinates := {
   multiplicativeDepth := 3
 }
 
--- 2. Prove that the cascade functors successfully preserve signatures.
-def toyTunnel : MultiplicativeCascadeWindTunnel where
+-- 2. Supply a toy pipeline theory: the functors are explicit test witnesses,
+-- not hidden global axioms.
+def toyPipelineTheory : CompilerPipelineTheory where
+  projectTtl := fun _ => toyTTLGraph
+  interpolateTera := fun _ => toyTeraTemplate
+  compileRust := fun _ => toyRustExecutable
+
+-- 3. Prove that the cascade functors successfully preserve signatures.
+def toyTunnel : MultiplicativeCascadeWindTunnel toyPipelineTheory where
   coords := toyCoords
-  graph := projectTtl toyCoords
-  template := interpolateTera (projectTtl toyCoords)
-  exe := compileRust (interpolateTera (projectTtl toyCoords))
+  graph := toyPipelineTheory.projectTtl toyCoords
+  template := toyPipelineTheory.interpolateTera (toyPipelineTheory.projectTtl toyCoords)
+  exe := toyPipelineTheory.compileRust
+    (toyPipelineTheory.interpolateTera (toyPipelineTheory.projectTtl toyCoords))
   ttlProjEq := rfl
   teraInterpEq := rfl
   rustCompEq := rfl
 
-theorem cascade_signatures_preserve (tunnel : MultiplicativeCascadeWindTunnel) :
-    tunnel.graph = projectTtl tunnel.coords ∧
-    tunnel.template = interpolateTera tunnel.graph ∧
-    tunnel.exe = compileRust tunnel.template := by
+theorem cascade_signatures_preserve {T : CompilerPipelineTheory}
+    (tunnel : MultiplicativeCascadeWindTunnel T) :
+    tunnel.graph = T.projectTtl tunnel.coords ∧
+    tunnel.template = T.interpolateTera tunnel.graph ∧
+    tunnel.exe = T.compileRust tunnel.template := by
   exact ⟨tunnel.ttlProjEq, tunnel.teraInterpEq, tunnel.rustCompEq⟩
 
 end ProcInt.MFW.Tests

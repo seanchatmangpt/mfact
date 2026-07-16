@@ -20,29 +20,15 @@ rev = "1dbda5335e3fc06c414b84ca885a35d4c6d4ab7c"
 
 [[lean_lib]]
 name = "ProcInt"
-
-[[lean_lib]]
-name = "AxiomAudit"
-
-[[lean_lib]]
-name = "Quadrature"
-roots = ["ProcInt.Release.Quadrature"]
+# Hygiene checks for this directory (tracked scratch files, unmarked axioms, stale
+# CONJECTURAL labels, theorem-shaped defs, vacuous Prop bodies, duplicate Notation
+# Authority tags) live in the root repo's scripts/lint-style.lean, not here — `procint/`
+# is a separate, unintegrated Lake workspace (own pinned Mathlib, no `require` on the root
+# package), so a `leanOptions`-based `lake exe lint-style` invocation from *inside* this
+# directory can't reach that executable. Run `lake exe lint-style --procint` from the
+# repository root instead; see that flag's help text and the "ProcInt-scoped checks"
+# section of scripts/lint-style.lean for how it's wired.
 
 [[lean_lib]]
 name = "Tests"
 roots = ["ProcInt.MFW.Tests"]
-
-[[lean_lib]]
-name = "PostRelease"
-roots = ["ProcInt.Release.PostRelease"]
-
-[[lean_lib]]
-name = "Playground"
-roots = ["ProcInt.Playground"]
-
-# Hand-authored demo executable — audits the compiled Playground.Swarm11
-# environment via Environment.constants (not a regex/self-report claim
-# file). Not a default target; invoked explicitly via `just swarm11-verify`.
-[[lean_exe]]
-name = "swarm11Verifier"
-root = "ProcInt.Playground.Swarm11Verifier"

@@ -25,8 +25,8 @@ erased behavioral information.
 
 ### Dependence on Prior Layers
 
-- **Layer 0–1** (`TransformBasic`): Behavioral phase space `P(Π)`, workflow
-  space `W`, and the transformation `τ : P(Π) → W`.
+- **Layer 0–1** (`TransformBasic`): Behavioral phase space `P(Th)`, workflow
+  space `W`, and the transformation `τ : P(Th) → W`.
 - **Layer 3** (`TransformBasic`): Fibers `F_w = τ⁻¹(w)` — the preimage sets
   whose cardinalities appear in the entropy formula.
 - **Layer 4** (`TransformBasic`): Pushforward mass `μ = τ_*ν` — the probability
@@ -70,10 +70,12 @@ models: is the information erased by `τ` concentrated at the semantic
 interface boundary of each workflow component?
 
 ### Standing
-- All `structure` and `def` declarations: DEFINITION
-- `fiberEntropy_nonneg`, `fiberEntropy_zero_iff_injective`: CONJECTURAL
-- `fiberCardinality_pos`: PROVEN (when nonempty)
-- `totalFiberEntropy_nonneg`: CONJECTURAL
+- All `structure` and `def` declarations (without an embedded proof
+  obligation): DEFINITION
+- `fiberCardinality_pos`, `fiberEntropy_nonneg`, `fiberEntropy_zero_iff_singleton`,
+  `fiberEntropy_zero_iff_injective`, `fiberEntropy_mono`, `fiberProbability_nonneg`,
+  `totalFiberEntropy_nonneg`, `fiberEntropy_congr`, `fiberEntropy_total_collapse`,
+  `fiberEntropy_le_log_total`: PROVEN
 - Scaling hypotheses: DEFINITION (propositional, not proven)
 
 ### Research Questions
@@ -86,9 +88,9 @@ interface boundary of each workflow component?
 
 /-! ## Fiber Cardinality -/
 
-/-- The cardinality of the fiber `F_w = τ⁻¹(w)` in the finite model.
+/-- [Notation Authority §41] The cardinality of the fiber `F_w = τ⁻¹(w)` in the finite model.
 
-Given a finite enumeration `behaviors` of the behavioral phase space `P(Π)`,
+Given a finite enumeration `behaviors` of the behavioral phase space `P(Th)`,
 the fiber cardinality is the number of behaviors mapping to `w`:
   `|F_w| = |{b ∈ behaviors : τ(b) = w}|`
 
@@ -103,10 +105,10 @@ noncomputable def fiberCardinality {Th : PlanningTheory} {α : Type}
     (w : WorkflowSpace α) : ℕ :=
   (behaviors.filter (fun b => τ.map b = w)).card
 
-/-- The fiber cardinality is positive when `w` is reachable, i.e., when
+/-- [Notation Authority §41] The fiber cardinality is positive when `w` is reachable, i.e., when
 some behavior in the enumeration maps to `w`.
 
-Standing: PROVEN. -/
+Standing: PROVEN -/
 theorem fiberCardinality_pos {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -120,10 +122,8 @@ theorem fiberCardinality_pos {Th : PlanningTheory} {α : Type}
   apply Finset.card_pos.mpr
   exact ⟨b, Finset.mem_filter.mpr ⟨hb_mem, hb_map⟩⟩
 
-/-- A fiber is a singleton (cardinality 1) precisely when exactly one
-behavior in the enumeration maps to `w`.
-
-Standing: DEFINITION (characterization). -/
+/-- [Notation Authority §41] A fiber is a singleton (cardinality 1) precisely when exactly one
+behavior in the enumeration maps to `w`. -/
 def fiberIsSingleton {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -144,7 +144,7 @@ This is the logarithm of the number of indistinguishable behaviors. When
 the transformation erases much behavioral distinction.
 -/
 
-/-- Fiber entropy `S_τ(w) = log|F_w|` in the finite uniform model.
+/-- [Notation Authority §42] Fiber entropy `S_τ(w) = log|F_w|` in the finite uniform model.
 
 Uses the natural logarithm (`Real.log`), so entropy is measured in nats.
 For `|F_w| = 0` (unreachable `w`), `Real.log 0 = 0` by convention in Mathlib.
@@ -159,15 +159,13 @@ noncomputable def fiberEntropy {Th : PlanningTheory} {α : Type}
     (w : WorkflowSpace α) : ℝ :=
   Real.log (fiberCardinality τ behaviors w : ℝ)
 
-/-- Fiber entropy is non-negative: `S_τ(w) ≥ 0`.
+/-- [Notation Authority §43] Fiber entropy is non-negative: `S_τ(w) ≥ 0`.
 
 Since `|F_w| ≥ 0` as a natural number, and `|F_w|` is either 0
 (in which case `log 0 = 0` by convention) or `|F_w| ≥ 1` (in which
 case `log|F_w| ≥ log 1 = 0`), we have `S_τ(w) ≥ 0` always.
 
-Standing: CONJECTURAL — requires careful case analysis with Mathlib's
-`Real.log` conventions. The argument is mathematically clear but the
-Lean proof requires navigating `Real.log` API details. -/
+Standing: PROVEN -/
 theorem fiberEntropy_nonneg {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -182,7 +180,7 @@ theorem fiberEntropy_nonneg {Th : PlanningTheory} {α : Type}
     have h1 : 1 ≤ m + 1 := Nat.le_add_left 1 m
     exact_mod_cast h1
 
-/-- Fiber entropy is zero if and only if the fiber is at most a singleton.
+/-- [Notation Authority §43] Fiber entropy is zero if and only if the fiber is at most a singleton.
 
   `S_τ(w) = 0 ↔ |F_w| ≤ 1`
 
@@ -193,8 +191,7 @@ For reachable `w` (i.e., `|F_w| ≥ 1`), this simplifies to:
   `S_τ(w) = 0 ↔ |F_w| = 1`
 meaning `τ` is injective on the fiber of `w`.
 
-Standing: CONJECTURAL — requires `Real.log` injectivity on `[1, ∞)` and
-case analysis on `Nat.cast`. -/
+Standing: PROVEN -/
 theorem fiberEntropy_zero_iff_singleton {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -223,7 +220,7 @@ theorem fiberEntropy_zero_iff_singleton {Th : PlanningTheory} {α : Type}
       subst hm
       simp
 
-/-- For reachable fibers, zero entropy characterizes injectivity.
+/-- [Notation Authority §43] For reachable fibers, zero entropy characterizes injectivity.
 
   Assuming `|F_w| ≥ 1`:
   `S_τ(w) = 0 ↔ |F_w| = 1`
@@ -231,7 +228,7 @@ theorem fiberEntropy_zero_iff_singleton {Th : PlanningTheory} {α : Type}
 This is the precise form: the transformation is injective at `w` if and only
 if the fiber entropy at `w` is zero.
 
-Standing: CONJECTURAL. -/
+Standing: PROVEN -/
 theorem fiberEntropy_zero_iff_injective {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -242,14 +239,14 @@ theorem fiberEntropy_zero_iff_injective {Th : PlanningTheory} {α : Type}
   rw [fiberEntropy_zero_iff_singleton]
   omega
 
-/-- Fiber entropy is monotone in fiber cardinality: larger fibers have more
+/-- [Notation Authority §44] Fiber entropy is monotone in fiber cardinality: larger fibers have more
 entropy.
 
   `|F_{w₁}| ≤ |F_{w₂}| ⟹ S_τ(w₁) ≤ S_τ(w₂)`
 
 This follows from monotonicity of the logarithm.
 
-Standing: CONJECTURAL. -/
+Standing: PROVEN -/
 theorem fiberEntropy_mono {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -281,21 +278,21 @@ the workflow class:
 
   `H(B | W) = Σ_w p(w) · S_τ(w) = Σ_w p(w) · log|F_w|`
 
-where `p(w) = |F_w| / |P(Π)|` in the uniform model.
+where `p(w) = |F_w| / |P(Th)|` in the uniform model.
 
 This measures the total information about PDDL 3.1 behavioral identity that
 is erased by the transformation `τ`. It is bounded:
-  `0 ≤ H(B|W) ≤ log|P(Π)|`
+  `0 ≤ H(B|W) ≤ log|P(Th)|`
 
 The lower bound is achieved when `τ` is injective (no information loss).
 The upper bound is achieved when all behaviors map to a single workflow class
 (maximum erasure, `|W_eff| = 1`).
 -/
 
-/-- The probability weight of workflow class `w` under the uniform counting
+/-- [Notation Authority §45] The probability weight of workflow class `w` under the uniform counting
 measure on behaviors.
 
-  `p(w) = |F_w| / |P(Π)|`
+  `p(w) = |F_w| / |P(Th)|`
 
 This is the fraction of all behaviors that map to `w`. -/
 noncomputable def fiberProbability {Th : PlanningTheory} {α : Type}
@@ -305,7 +302,7 @@ noncomputable def fiberProbability {Th : PlanningTheory} {α : Type}
     (w : WorkflowSpace α) : ℝ :=
   (fiberCardinality τ behaviors w : ℝ) / (behaviors.card : ℝ)
 
-/-- Fiber probability is non-negative.
+/-- [Notation Authority §45] Fiber probability is non-negative.
 
 Standing: PROVEN — follows from natural number cast non-negativity
 and non-negative denominator. -/
@@ -320,12 +317,12 @@ theorem fiberProbability_nonneg {Th : PlanningTheory} {α : Type}
   · exact Nat.cast_nonneg _
   · exact Nat.cast_nonneg _
 
-/-- Total fiber entropy: `H(B | W) = Σ_{w ∈ classes} p(w) · S_τ(w)`.
+/-- [Notation Authority §46] Total fiber entropy: `H(B | W) = Σ_{w ∈ classes} p(w) · S_τ(w)`.
 
 Given an explicit enumeration of workflow classes, this computes the
 weighted sum of per-fiber entropies. The result is the conditional
 Shannon entropy of the behavior random variable given the workflow
-class random variable, under the uniform distribution on `P(Π)`.
+class random variable, under the uniform distribution on `P(Th)`.
 
 Note: `classes` should be the effective image of `τ` (all reachable `w`).
 Unreachable classes contribute `p(w) · S_τ(w) = 0 · 0 = 0`. -/
@@ -337,12 +334,12 @@ noncomputable def totalFiberEntropy {Th : PlanningTheory} {α : Type}
   classes.sum fun w =>
     fiberProbability τ behaviors w * fiberEntropy τ behaviors w
 
-/-- Total fiber entropy is non-negative: `H(B | W) ≥ 0`.
+/-- [Notation Authority §46] Total fiber entropy is non-negative: `H(B | W) ≥ 0`.
 
 Each summand is `p(w) · S_τ(w)` with `p(w) ≥ 0` and `S_τ(w) ≥ 0`,
 so each summand is non-negative, and a sum of non-negatives is non-negative.
 
-Standing: CONJECTURAL — requires `fiberEntropy_nonneg` (itself sorry'd). -/
+Standing: PROVEN -/
 theorem totalFiberEntropy_nonneg {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -372,7 +369,7 @@ The fiber entropy measure `μ_S` is one of the six distinguished measures
 in the MFW vector measure `μ = [μ_B, μ_T, μ_C, μ_L, μ_S, μ_F]`.
 -/
 
-/-- The fiber entropy measure: assigns to each workflow class `w` its
+/-- [Notation Authority §47] The fiber entropy measure: assigns to each workflow class `w` its
 fiber entropy `S_τ(w)`.
 
 This lifts fiber entropy to a mass function on the workflow space,
@@ -387,10 +384,10 @@ noncomputable def fiberEntropyMass {Th : PlanningTheory} {α : Type}
     WorkflowSpace α → ℝ :=
   fun w => fiberEntropy τ behaviors w
 
-/-- The fiber entropy measure as a `PushforwardMass`, demonstrating that
+/-- [Notation Authority §47] The fiber entropy measure as a `PushforwardMass`, demonstrating that
 `μ_S` is a valid non-negative mass function.
 
-Standing: CONJECTURAL — depends on `fiberEntropy_nonneg`. -/
+Standing: PROVEN — the `nonneg` field is discharged via `fiberEntropy_nonneg`. -/
 noncomputable def fiberEntropyMeasure {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -402,7 +399,7 @@ noncomputable def fiberEntropyMeasure {Th : PlanningTheory} {α : Type}
     unfold fiberEntropyMass
     exact fiberEntropy_nonneg τ behaviors w
 
-/-- The fiber entropy at a hierarchical component: the fiber entropy
+/-- [Notation Authority §48] The fiber entropy at a hierarchical component: the fiber entropy
 restricted to the sub-workflow rooted at component `C`.
 
 Given a component `C` at depth `k` in the POWL v2 hierarchy, the
@@ -453,7 +450,7 @@ information loss is concentrated at component boundaries.
 A mixed model where both interior size and boundary complexity contribute.
 -/
 
-/-- Scaling model for fiber entropy as a function of component size.
+/-- [Notation Authority §49] Scaling model for fiber entropy as a function of component size.
 
 This inductive type classifies the asymptotic scaling regime of
 `S_τ(C)` as the component `C` varies:
@@ -473,16 +470,16 @@ inductive ScalingModel : Type
   | /-- `S_τ(C) ~ α · |C|^γ · |∂C|^δ`: mixed power-law scaling. -/
     MixedScaling (α γ δ : ℝ)
 
-/-- The size (number of atomic activities) of a workflow component.
+/-- [Notation Authority §50] The size (number of atomic activities) of a workflow component.
     Proxy: uses the boundary variable count as an approximation. -/
 noncomputable def workflowSize {α : Type} (w : WorkflowSpace α) : ℕ :=
   w.boundaryVars.card + 1
 
-/-- The boundary size (semantic interface variables) of a workflow component. -/
+/-- [Notation Authority §50] The boundary size (semantic interface variables) of a workflow component. -/
 noncomputable def workflowBoundarySize {α : Type} (w : WorkflowSpace α) : ℕ :=
   w.boundaryVars.card
 
-/-- The predicted fiber entropy under a given scaling model,
+/-- [Notation Authority §51] The predicted fiber entropy under a given scaling model,
 applied to a specific workflow component.
 
   - `VolumeScaling α` → `α · |C|`
@@ -496,7 +493,7 @@ noncomputable def scalingPrediction {α : Type} (model : ScalingModel)
   | .AreaScaling β => β * (workflowBoundarySize C : ℝ)
   | .MixedScaling a γ δ => a * (workflowSize C : ℝ) ^ γ * (workflowBoundarySize C : ℝ) ^ δ
 
-/-- The **boundary sufficiency hypothesis**: for a given transformation `τ`
+/-- [Notation Authority §52] The **boundary sufficiency hypothesis**: for a given transformation `τ`
 and behavior set, there exists a constant `β > 0` such that the fiber
 entropy at every component `C` is approximately proportional to the
 boundary size `|∂C|`:
@@ -520,7 +517,7 @@ def BoundarySufficiencyHypothesis {Th : PlanningTheory} {α : Type}
     ∀ C ∈ components,
       |componentFiberEntropy τ behaviors C - β * (workflowBoundarySize C : ℝ)| ≤ ε
 
-/-- The **volume scaling hypothesis**: dual to boundary sufficiency. There
+/-- [Notation Authority §53] The **volume scaling hypothesis**: dual to boundary sufficiency. There
 exists `α > 0` such that `S_τ(C) ≈ α · |C|`. -/
 def VolumeScalingHypothesis {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
@@ -546,7 +543,7 @@ information-theoretic interpretation. (In the temporal interpretation,
 `μ_S` measures temporal elasticity. Here we provide the entropic reading.)
 -/
 
-/-- Inject fiber entropy data into the slack component of a `VectorMeasure`.
+/-- [Notation Authority §54] Inject fiber entropy data into the slack component of a `VectorMeasure`.
 
 Given an existing vector measure `μ` (with possibly trivial slack component),
 this replaces the `MeasureKind.slack` entry with fiber entropy data while
@@ -581,13 +578,13 @@ We collect structural facts about fiber entropy that connect it to
 other layers of the derivation chain.
 -/
 
-/-- Fiber entropy respects the transformation equivalence: if two workflow
+/-- [Notation Authority §55] Fiber entropy respects the transformation equivalence: if two workflow
 classes are equal, their fiber entropies coincide.
 
 This is trivially true but records the functorial nature of the construction:
   `w₁ = w₂ ⟹ S_τ(w₁) = S_τ(w₂)`
 
-Standing: PROVEN. -/
+Standing: PROVEN -/
 theorem fiberEntropy_congr {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -597,14 +594,13 @@ theorem fiberEntropy_congr {Th : PlanningTheory} {α : Type}
     fiberEntropy τ behaviors w₁ = fiberEntropy τ behaviors w₂ := by
   subst h; rfl
 
-/-- The fiber entropy of the entire workflow (single top-level class)
-equals `log|P(Π)|` when all behaviors map to a single class `w_top`.
+/-- [Notation Authority §56] The fiber entropy of the entire workflow (single top-level class)
+equals `log|P(Th)|` when all behaviors map to a single class `w_top`.
 
 This is the maximum entropy scenario: no behavioral distinction at all.
   `S_τ(w_top) = log|behaviors|`
 
-Standing: CONJECTURAL — requires showing that when all behaviors map to
-`w_top`, the fiber cardinality equals `|behaviors|`. -/
+Standing: PROVEN -/
 theorem fiberEntropy_total_collapse {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -626,11 +622,11 @@ theorem fiberEntropy_total_collapse {Th : PlanningTheory} {α : Type}
       exact ⟨h, h_all b h⟩
   rw [h_filter]
 
-/-- An upper bound for fiber entropy: `S_τ(w) ≤ log|P(Π)|`.
+/-- [Notation Authority §57] An upper bound for fiber entropy: `S_τ(w) ≤ log|P(Th)|`.
 
 No fiber can be larger than the entire behavioral phase space.
 
-Standing: CONJECTURAL. -/
+Standing: PROVEN -/
 theorem fiberEntropy_le_log_total {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (behaviors : Finset (BehavioralPhaseSpace Th))
@@ -660,7 +656,7 @@ theorem fiberEntropy_le_log_total {Th : PlanningTheory} {α : Type}
 /-! ## Summary
 
 Layer 6 establishes **fiber entropy** as the information-theoretic measure
-of behavioral distinction erased by the transformation `τ : P(Π) → W`.
+of behavioral distinction erased by the transformation `τ : P(Th) → W`.
 
 The key objects are:
 - `fiberCardinality τ behaviors w` — the raw count `|F_w|`

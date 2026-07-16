@@ -12,7 +12,7 @@ This module is the **center of the entire MFW project**. Every other module
 (observability, fiber entropy, dimension loss, observable basis, spectrum bundle)
 becomes derived mathematics once the kernel is established.
 
-### The Crown Theorem Target
+### The Crown Conjecture Target
 
 ```
   τ(b₁) = τ(b₂)  ↔  b₁ ≡_{K} b₂
@@ -60,7 +60,7 @@ Layer K4: POWL v2 Observational Kernel
 ```
 
 ### Standing
-- Definitions: DEFINITION
+- Plain definitions carry no standing claim
 - Equivalence-relation structure lemmas: PROVEN
 - The crown biconditional: CONJECTURAL (the entire project leads here)
 -/
@@ -71,27 +71,50 @@ Two behaviors are state-equivalent when they produce the same
 sequence of visited states, regardless of temporal realization.
 This is the finest reasonable equivalence on behaviors. -/
 
-/-- The state trace of a lawful behavior: the sequence of states visited.
-Extracted from the lawfulness proof, which guarantees the trace exists. -/
-noncomputable def stateTraceOf {Th : PlanningTheory}
-    (b : LawfulBehavior Th) : List Th.State :=
-  Classical.choice (by
-    obtain ⟨trace, _, _, _, _, _⟩ := b.lawful
-    exact ⟨trace⟩)
+/-- [Notation Authority §66] The state trace of a lawful behavior: the sequence of states visited.
+Computed by replaying the events through `Th.transition` from the initial state
+(`BehaviorTrace.stateTrace`). The lawfulness proof guarantees the replay is defined, so the
+`[]` default of `Option.getD` is never taken (see `stateTrace_eq_some_stateTraceOf`).
 
-/-- Two behaviors are state-equivalent when they visit the same state
+(A former definition applied `Classical.choice` to `Nonempty (List Th.State)`; by proof
+irrelevance that returned one constant list for every behavior, degenerating `StateEquiv`
+into the total relation. This replay definition is the real construction.) -/
+def stateTraceOf {Th : PlanningTheory}
+    (b : LawfulBehavior Th) : List Th.State :=
+  b.trace.stateTrace.getD []
+
+/-- [Notation Authority §66] `stateTraceOf` extracts exactly the trace whose existence the
+lawfulness proof guarantees: replaying `b`'s events yields `some (stateTraceOf b)`.
+
+Standing: PROVEN -/
+theorem stateTrace_eq_some_stateTraceOf {Th : PlanningTheory}
+    (b : LawfulBehavior Th) :
+    b.trace.stateTrace = some (stateTraceOf b) := by
+  obtain ⟨trace, htrace, -, -, -, -⟩ := b.lawful
+  simp [stateTraceOf, htrace]
+
+/-- [Notation Authority §66] Two behaviors are state-equivalent when they visit the same state
 sequence (possibly via different event orderings or temporal realizations). -/
 def StateEquiv {Th : PlanningTheory}
     (b₁ b₂ : LawfulBehavior Th) : Prop :=
   stateTraceOf b₁ = stateTraceOf b₂
 
+/-- [Notation Authority §66] State equivalence is reflexive.
+
+Standing: PROVEN -/
 theorem stateEquiv_refl {Th : PlanningTheory}
     (b : LawfulBehavior Th) : StateEquiv b b := rfl
 
+/-- [Notation Authority §66] State equivalence is symmetric.
+
+Standing: PROVEN -/
 theorem stateEquiv_symm {Th : PlanningTheory}
     {b₁ b₂ : LawfulBehavior Th} (h : StateEquiv b₁ b₂) :
     StateEquiv b₂ b₁ := h.symm
 
+/-- [Notation Authority §66] State equivalence is transitive.
+
+Standing: PROVEN -/
 theorem stateEquiv_trans {Th : PlanningTheory}
     {b₁ b₂ b₃ : LawfulBehavior Th}
     (h₁₂ : StateEquiv b₁ b₂) (h₂₃ : StateEquiv b₂ b₃) :
@@ -104,8 +127,13 @@ causal dependence structure on their events. This is coarser than
 state equivalence: two different event orderings producing the same
 causal partial order are causally equivalent.
 
-The causal order is extracted from the independence relation:
+The intended causal order is extracted from the independence relation:
   `a ≺ b ⟺ a and b are dependent ∧ a occurs before b`
+
+That extraction has not been constructed here. Instead of assuming it as a
+hidden global constant, the assignment of causal orders to behaviors is an
+explicit hypothesis: `CausalOrderAssignment` bundles it as data, and every
+consumer in this file takes an assignment as an argument.
 -/
 
 instance {n : Nat} : Inhabited (CausalOrder n) :=
@@ -115,24 +143,70 @@ instance {n : Nat} : Inhabited (CausalOrder n) :=
     trans := fun _ _ _ h _ => h
   }⟩
 
-/-- The causal order induced by a behavior under an independence relation.
-For events at positions `i < j`, they are causally ordered when they are
-dependent (not independent). -/
-opaque inducedCausalOrder {Th : PlanningTheory}
-    (b : LawfulBehavior Th) (I : IndependenceRelation Th.Action) :
+/-- An explicit assignment of a causal order to each lawful behavior under an
+independence relation. This replaces a former body-less `opaque`
+(`inducedCausalOrder`), which functioned as an unmarked axiom. Consumers now
+take the assignment as a visible hypothesis, so every statement below holds
+relative to a given assignment rather than a hidden global construction. -/
+structure CausalOrderAssignment (Th : PlanningTheory) where
+  /-- The causal order assigned to behavior `b` under independence relation `I`. -/
+  order : (b : LawfulBehavior Th) → IndependenceRelation Th.Action →
     CausalOrder b.trace.events.length
 
-/-- Two behaviors are causally equivalent under independence relation I
-when they induce the same causal partial order. -/
+/-- [Notation Authority §67] Two behaviors are causally equivalent under independence relation I
+and causal-order assignment A when they are assigned the same causal partial order. -/
 def CausalEquiv {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
     (b₁ b₂ : LawfulBehavior Th) : Prop :=
   ∃ (hlen : b₁.trace.events.length = b₂.trace.events.length),
   ∀ (i j : Fin b₁.trace.events.length),
-    (inducedCausalOrder b₁ I).prec i j ↔
-    (inducedCausalOrder b₂ I).prec
+    (A.order b₁ I).prec i j ↔
+    (A.order b₂ I).prec
       (i.cast hlen)
       (j.cast hlen)
+
+/-- [Notation Authority §67] Causal equivalence is reflexive.
+
+Standing: PROVEN -/
+theorem causalEquiv_refl {Th : PlanningTheory}
+    (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
+    (b : LawfulBehavior Th) : CausalEquiv I A b b :=
+  ⟨rfl, fun _ _ => Iff.rfl⟩
+
+/-- [Notation Authority §67] Causal equivalence is symmetric.
+
+Standing: PROVEN -/
+theorem causalEquiv_symm {Th : PlanningTheory}
+    (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
+    {b₁ b₂ : LawfulBehavior Th}
+    (h : CausalEquiv I A b₁ b₂) : CausalEquiv I A b₂ b₁ := by
+  obtain ⟨hlen, hprec⟩ := h
+  refine ⟨hlen.symm, fun i j => ?_⟩
+  have hcast : ∀ k : Fin b₂.trace.events.length,
+      (k.cast hlen.symm).cast hlen = k := fun k => Fin.ext (by simp)
+  have h := (hprec (i.cast hlen.symm) (j.cast hlen.symm)).symm
+  rwa [hcast i, hcast j] at h
+
+/-- [Notation Authority §67] Causal equivalence is transitive.
+
+Standing: PROVEN -/
+theorem causalEquiv_trans {Th : PlanningTheory}
+    (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
+    {b₁ b₂ b₃ : LawfulBehavior Th}
+    (h₁₂ : CausalEquiv I A b₁ b₂) (h₂₃ : CausalEquiv I A b₂ b₃) :
+    CausalEquiv I A b₁ b₃ := by
+  obtain ⟨hlen₁₂, hprec₁₂⟩ := h₁₂
+  obtain ⟨hlen₂₃, hprec₂₃⟩ := h₂₃
+  refine ⟨hlen₁₂.trans hlen₂₃, fun i j => ?_⟩
+  have hcast : ∀ k : Fin b₁.trace.events.length,
+      (k.cast hlen₁₂).cast hlen₂₃ = k.cast (hlen₁₂.trans hlen₂₃) :=
+    fun k => Fin.ext (by simp)
+  have h := (hprec₁₂ i j).trans (hprec₂₃ (i.cast hlen₁₂) (j.cast hlen₁₂))
+  rwa [hcast i, hcast j] at h
 
 /-! ## Trace Equivalence Lift (Layer K3)
 
@@ -145,7 +219,7 @@ This is the mathematical bridge: trace equivalence preserves lawfulness
 when the independence relation is correct.
 -/
 
-/-- Lift of Mazurkiewicz trace equivalence to lawful behaviors.
+/-- [Notation Authority §68] Lift of Mazurkiewicz trace equivalence to lawful behaviors.
 Two lawful behaviors are PDDL 3.1 trace-equivalent when their event
 sequences are trace-equivalent under the independence relation. -/
 def PDDL31TraceEquiv {Th : PlanningTheory}
@@ -153,20 +227,26 @@ def PDDL31TraceEquiv {Th : PlanningTheory}
     (b₁ b₂ : LawfulBehavior Th) : Prop :=
   TraceEquiv I b₁.trace.events b₂.trace.events
 
-/-- Trace equivalence of lawful behaviors is reflexive. -/
+/-- [Notation Authority §68] Trace equivalence of lawful behaviors is reflexive.
+
+Standing: PROVEN -/
 theorem pddl31TraceEquiv_refl {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     (b : LawfulBehavior Th) : PDDL31TraceEquiv I b b :=
   TraceEquiv.refl _
 
-/-- Trace equivalence of lawful behaviors is symmetric. -/
+/-- [Notation Authority §68] Trace equivalence of lawful behaviors is symmetric.
+
+Standing: PROVEN -/
 theorem pddl31TraceEquiv_symm {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     {b₁ b₂ : LawfulBehavior Th}
     (h : PDDL31TraceEquiv I b₁ b₂) : PDDL31TraceEquiv I b₂ b₁ :=
   TraceEquiv.symm _ _ h
 
-/-- Trace equivalence of lawful behaviors is transitive. -/
+/-- [Notation Authority §68] Trace equivalence of lawful behaviors is transitive.
+
+Standing: PROVEN -/
 theorem pddl31TraceEquiv_trans {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     {b₁ b₂ b₃ : LawfulBehavior Th}
@@ -174,7 +254,7 @@ theorem pddl31TraceEquiv_trans {Th : PlanningTheory}
     (h₂₃ : PDDL31TraceEquiv I b₂ b₃) : PDDL31TraceEquiv I b₁ b₃ :=
   TraceEquiv.trans _ _ _ h₁₂ h₂₃
 
-/-- **Load-bearing theorem:** Swapping adjacent independent actions in a
+/-- **Load-bearing conjecture:** Swapping adjacent independent actions in a
 lawful behavior produces another lawful behavior.
 
 This connects the algebraic independence relation to the planning-theoretic
@@ -183,7 +263,11 @@ admission law. If `I` is a correct PDDL 3.1 independence relation, then
 are stable, invariants are preserved, numeric flows are compatible, and
 trajectory constraints are maintained under the swap.
 
-  `TraceEquiv I b₁.events b₂.events → IsLawful Th b₁ → IsLawful Th b₂` -/
+  `TraceEquiv I b₁.events b₂.events → IsLawful Th b₁ → IsLawful Th b₂`
+
+Standing: CONJECTURAL — stated as a `def : Prop`, not proved; requires showing
+that `TemporalIndependenceWitness` commutation preserves `IsLawful` under
+adjacent swaps of independent actions. -/
 def TraceSwapPreservesLawful {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     (b₁ b₂ : BehaviorTrace Th) : Prop :=
@@ -209,7 +293,7 @@ The reverse direction:
 says that τ identifies exactly the right behaviors.
 -/
 
-/-- The transformation kernel: the exact equivalence relation on PDDL 3.1
+/-- [Notation Authority §69] The transformation kernel: the exact equivalence relation on PDDL 3.1
 lawful behaviors induced by τ.
 
   `KernelEquiv τ b₁ b₂ ⟺ τ(b₁) = τ(b₂)` -/
@@ -218,29 +302,37 @@ def KernelEquiv {Th : PlanningTheory} {α : Type}
     (b₁ b₂ : BehavioralPhaseSpace Th) : Prop :=
   τ.map b₁ = τ.map b₂
 
-/-- The kernel equivalence is reflexive. -/
+/-- [Notation Authority §69] The kernel equivalence is reflexive.
+
+Standing: PROVEN -/
 theorem kernelEquiv_refl {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) (b : BehavioralPhaseSpace Th) :
     KernelEquiv τ b b := rfl
 
-/-- The kernel equivalence is symmetric. -/
+/-- [Notation Authority §69] The kernel equivalence is symmetric.
+
+Standing: PROVEN -/
 theorem kernelEquiv_symm {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) {b₁ b₂ : BehavioralPhaseSpace Th}
     (h : KernelEquiv τ b₁ b₂) : KernelEquiv τ b₂ b₁ := h.symm
 
-/-- The kernel equivalence is transitive. -/
+/-- [Notation Authority §69] The kernel equivalence is transitive.
+
+Standing: PROVEN -/
 theorem kernelEquiv_trans {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) {b₁ b₂ b₃ : BehavioralPhaseSpace Th}
     (h₁₂ : KernelEquiv τ b₁ b₂) (h₂₃ : KernelEquiv τ b₂ b₃) :
     KernelEquiv τ b₁ b₃ := h₁₂.trans h₂₃
 
-/-- The kernel equivalence is definitionally equal to `transformEquiv`. -/
+/-- [Notation Authority §69] The kernel equivalence is definitionally equal to `transformEquiv`.
+
+Standing: PROVEN -/
 theorem kernelEquiv_eq_transformEquiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) (b₁ b₂ : BehavioralPhaseSpace Th) :
     KernelEquiv τ b₁ b₂ ↔ transformEquiv τ b₁ b₂ :=
   Iff.rfl
 
-/-! ## Crown Theorems
+/-! ## Crown Conjectures
 
 ### Forward Direction: τ respects trace equivalence
 
@@ -269,7 +361,7 @@ observability becomes "constant on K-classes," fiber entropy becomes
 "entropy of a K-class," and the observable basis becomes "K-invariant functions."
 -/
 
-/-- **Crown Theorem (Forward):** τ respects trace equivalence.
+/-- **Crown Conjecture (Forward):** τ respects trace equivalence.
 
 Trace-equivalent lawful behaviors (differing only by adjacent swaps
 of independent actions) map to the same POWL v2 workflow class.
@@ -278,14 +370,17 @@ of independent actions) map to the same POWL v2 workflow class.
 
 **Proof obligation:** This requires showing that the POWL v2 construction
 preserves the causal partial order and is invariant under independent
-action reordering. -/
+action reordering.
+
+Standing: CONJECTURAL — no proof exists that the POWL v2 construction is
+invariant under adjacent swaps of independent actions. -/
 def TauRespectsTraceEquiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
     {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
     PDDL31TraceEquiv I b₁ b₂ → KernelEquiv τ b₁ b₂
 
-/-- **Crown Theorem (Reverse — Partial):** The kernel refines state equivalence.
+/-- **Crown Conjecture (Reverse — Partial):** The kernel refines state equivalence.
 
 If two lawful behaviors map to the same workflow class, they have the
 same state trace (same causal effects).
@@ -293,13 +388,16 @@ same state trace (same causal effects).
   `KernelEquiv τ b₁ b₂ → StateEquiv b₁ b₂`
 
 This is a partial reverse: it says τ does not merge state-inequivalent
-behaviors. The full reverse characterization is `kernel_characterization`. -/
+behaviors. The full reverse characterization is `KernelCharacterization`.
+
+Standing: CONJECTURAL — no proof exists that τ separates state-inequivalent
+behaviors; requires the reverse direction of the K1–K4 kernel construction. -/
 def KernelRefinesStateEquiv {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
     KernelEquiv τ b₁ b₂ → StateEquiv b₁ b₂
 
-/-- **Crown Theorem (Biconditional):** The transformation kernel is exactly
+/-- **Crown Conjecture (Biconditional):** The transformation kernel is exactly
 the POWL v2 observational equivalence.
 
   `τ(b₁) = τ(b₂) ↔ b₁ ≡_K b₂`
@@ -307,12 +405,15 @@ the POWL v2 observational equivalence.
 where `K` is characterized structurally as trace equivalence refined by
 POWL v2 hierarchical consistency.
 
-Once this theorem is proved, every downstream MFW object becomes derived:
+Once this conjecture is proved, every downstream MFW object becomes derived:
 - Observability = constant on K-classes
 - Fiber entropy = entropy of K-classes
 - Dimension loss = lost DOF within K-classes
 - Observable basis = K-invariant functions
-- Spectrum bundle = distribution of K-class measures over POWL v2 scale -/
+- Spectrum bundle = distribution of K-class measures over POWL v2 scale
+
+Standing: CONJECTURAL — requires proofs of both directions over the K1–K4
+kernel construction; neither direction is proved. -/
 def KernelCharacterization {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
@@ -325,9 +426,11 @@ Once the kernel is established, these become constructive definitions
 rather than named aspirations.
 -/
 
-/-- Observable properties are exactly those constant on kernel classes.
+/-- [Notation Authority §70] Observable properties are exactly those constant on kernel classes.
 (Preview — the full proof follows from `kernel_characterization` +
-`observable_iff_fiber_constant` in `Observability.lean`.) -/
+`observable_iff_fiber_constant` in `Observability.lean`.)
+
+Standing: PROVEN -/
 theorem observable_iff_kernel_constant {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (P : BehavioralPhaseSpace Th → Prop) :
@@ -335,7 +438,7 @@ theorem observable_iff_kernel_constant {Th : PlanningTheory} {α : Type}
     (∀ b₁ b₂, τ.map b₁ = τ.map b₂ → (P b₁ ↔ P b₂)) :=
   Iff.rfl
 
-/-- The information horizon is the boundary of the kernel.
+/-- [Notation Authority §70] The information horizon is the boundary of the kernel.
 A property crosses the horizon (is hidden) exactly when it
 distinguishes behaviors within the same kernel class. -/
 def crossesHorizon {Th : PlanningTheory} {α : Type}
@@ -360,9 +463,15 @@ using Wasserstein distance.
 Fibers are disjoint as sets, but their behavior distributions may be
 geometrically close in the PDDL phase space metric. That is the
 collider/optimal-transport construction.
+
+The Wasserstein metric itself requires optimal-transport measure theory
+beyond this module's scope and is not formalized here; only the underlying
+`BehaviorMetric` interface is defined. (A former body-less
+`opaque wassersteinWorkflowDist` placeholder was removed: it functioned as
+an unmarked axiom and had no consumers.)
 -/
 
-/-- A metric on the behavioral phase space. -/
+/-- [Notation Authority §71] A metric on the behavioral phase space. -/
 structure BehaviorMetric (Th : PlanningTheory) where
   dist : BehavioralPhaseSpace Th → BehavioralPhaseSpace Th → ℝ
   dist_self : ∀ b, dist b b = 0
@@ -370,20 +479,9 @@ structure BehaviorMetric (Th : PlanningTheory) where
   dist_nonneg : ∀ b₁ b₂, 0 ≤ dist b₁ b₂
   dist_triangle : ∀ b₁ b₂ b₃, dist b₁ b₃ ≤ dist b₁ b₂ + dist b₂ b₃
 
-/-- The Wasserstein-induced workflow metric.
-  `d_W(w₁, w₂) = inf over couplings of 𝔼[d_P(b₁, b₂)]`
-where the infimum is over all joint distributions with marginals ν_{w₁}, ν_{w₂}.
-
-Placeholder: the actual optimal transport construction requires measure theory
-beyond this module's scope. -/
-opaque wassersteinWorkflowDist {Th : PlanningTheory} {α : Type}
-    (τ : WorkflowTransformation Th α)
-    (d : BehaviorMetric Th)
-    (w₁ w₂ : WorkflowSpace α) : ℝ
-
 /-! ## Non-Circularity Proof
 
-### Theorem-Design Test
+### Statement-Design Test
 
 The crown biconditional:
   `KernelEquiv τ b₁ b₂ ↔ PDDL31TraceEquiv I b₁ b₂`
@@ -431,17 +529,21 @@ The theorem proves they meet. Every downstream MFW object inherits this.
 -- The following two lemmas witness non-circularity by exhibiting that
 -- each side can be stated without the other's vocabulary.
 
-/-- `KernelEquiv` unfolds without mentioning independence or traces.
+/-- [Notation Authority §72] `KernelEquiv` unfolds without mentioning independence or traces.
 This witnesses that the left side of the crown biconditional is
-defined purely from the transformation τ. -/
+defined purely from the transformation τ.
+
+Standing: PROVEN -/
 theorem kernelEquiv_unfolds_without_traces {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (b₁ b₂ : BehavioralPhaseSpace Th) :
     KernelEquiv τ b₁ b₂ = (τ.map b₁ = τ.map b₂) := rfl
 
-/-- `PDDL31TraceEquiv` unfolds without mentioning τ or WorkflowSpace.
+/-- [Notation Authority §72] `PDDL31TraceEquiv` unfolds without mentioning τ or WorkflowSpace.
 This witnesses that the right side of the crown biconditional is
-defined purely from PDDL 3.1 behavioral semantics. -/
+defined purely from PDDL 3.1 behavioral semantics.
+
+Standing: PROVEN -/
 theorem traceEquiv_unfolds_without_tau {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     (b₁ b₂ : LawfulBehavior Th) :
@@ -463,14 +565,14 @@ This immediately rewrites all fiber-based quantities:
 - Fiber-constant observables become trace-invariant functions
 -/
 
-/-- The trace class of a behavior under independence I:
+/-- [Notation Authority §73] The trace class of a behavior under independence I:
   `[b]_I = {b' | PDDL31TraceEquiv I b b'}` -/
 def traceClass {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
     (b : LawfulBehavior Th) : Set (BehavioralPhaseSpace Th) :=
   {b' | PDDL31TraceEquiv I b b'}
 
-/-- **Fiber = Trace Class.** Under `kernel_characterization`:
+/-- [Notation Authority §73] **Fiber = Trace Class.** Under `kernel_characterization`:
   `F_{τ(b)} = [b]_{TraceEq_I}` as sets.
 
 Proof strategy: unfold both sides.
@@ -478,7 +580,10 @@ Proof strategy: unfold both sides.
   `[b]_I    = {b' | TraceEquiv I b b'}`       — by definition of traceClass
   `kernel_characterization : τ(b') = τ(b) ↔ TraceEquiv I b b'` — the crown
 
-Then extensionality. -/
+Then extensionality.
+
+Standing: PROVEN — proved directly from the `hKernel` hypothesis it takes as
+an argument (it does not depend on the unproven `KernelCharacterization`). -/
 theorem fiber_eq_traceClass {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
@@ -515,7 +620,7 @@ And therefore:
 **Fiber entropy = Serialization entropy.**
 -/
 
-/-- Hypotheses required for the trace-class / linear-extension bijection.
+/-- [Notation Authority §74] Hypotheses required for the trace-class / linear-extension bijection.
 These are the exact conditions under which the bijection holds. -/
 structure TraceClassBijectionHypotheses {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
@@ -537,7 +642,8 @@ structure TraceClassBijectionHypotheses {Th : PlanningTheory}
 Under the bijection hypotheses:
   `[b]_{TraceEq_I} ≃ Lin(P_b)`
 
-where `P_b` is the causal order induced by `b` under `I`.
+where `P_b` is the causal order assigned to `b` under `I` by the explicit
+causal-order assignment `A` (a visible hypothesis, not a hidden constant).
 
 Standing: CONJECTURAL — this is a known result in concurrency theory
 (Mazurkiewicz 1977, Diekert & Rozenberg 1995) but needs explicit
@@ -545,10 +651,11 @@ formalization under PDDL 3.1 semantics.
 -/
 def TraceClassEquivLinearExtensions {Th : PlanningTheory}
     (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
     (b : LawfulBehavior Th) : Prop :=
     TraceClassBijectionHypotheses I b →
     ∃ (f : traceClass I b → {σ : Equiv.Perm (Fin b.trace.events.length) //
-           IsLinearExtension (inducedCausalOrder b I) σ}),
+           IsLinearExtension (A.order b I) σ}),
       Function.Bijective f
 
 /-! ## Entropy Collapse
@@ -584,18 +691,26 @@ If `FiberEntropy = SerializationEntropy`, then `D_q^{Entropic}` may equal
 reduced the spectrum basis before we constructed it.
 -/
 
-/-- **Entropy Collapse Theorem Target.** Under the bijection hypotheses:
+/-- **Entropy Collapse Conjecture.** Under the kernel characterization and the
+bijection hypotheses:
   `log|F_{τ(b)}| = H_ser(P_b)`
 
-Fiber entropy equals serialization entropy. -/
+The log-cardinality of the fiber of `τ(b)` equals the serialization entropy
+of the causal order assigned to `b`. (`Set.ncard` gives 0 for infinite
+fibers, matching `Real.log 0 = 0`; the substantive case is finite fibers.)
+
+Standing: CONJECTURAL — depends on `TraceClassEquivLinearExtensions` (the
+trace-class / linear-extension bijection) and on finiteness of the trace
+class; neither is proved. -/
 def FiberEntropyEqSerializationEntropy {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (I : IndependenceRelation Th.Action)
+    (A : CausalOrderAssignment Th)
     (b : BehavioralPhaseSpace Th)
-    [DecidableRel (inducedCausalOrder b I).prec] : Prop :=
+    [DecidableRel (A.order b I).prec] : Prop :=
     (∀ b₁ b₂ : BehavioralPhaseSpace Th, KernelEquiv τ b₁ b₂ ↔ PDDL31TraceEquiv I b₁ b₂) →
     TraceClassBijectionHypotheses I b →
-    True
+    Real.log ((fiber τ (τ.map b)).ncard : ℝ) = serializationEntropy (A.order b I)
 
 /-! ## Kernel Generators
 
@@ -616,19 +731,23 @@ The natural spectrum basis comes from measuring how each generator
 contributes to the kernel.
 -/
 
-/-- Primitive kernel generators: the elementary distinction-erasing moves
+/-- [Notation Authority §75] Primitive kernel generators: the elementary distinction-erasing moves
 that generate the kernel equivalence.
 
 Each generator type corresponds to an independent mode of information
 erasure by the transformation τ. -/
 inductive KernelGenerator : Type
-  | traceSwap           -- adjacent swap of independent actions
-  | choiceNormalization  -- POWL v2 choice-graph equivalence
-  | hierarchyCollapse    -- hierarchical submodel aggregation
-  | temporalAbstraction  -- metric time → interval/causal time
+  /-- Adjacent swap of independent actions. -/
+  | traceSwap
+  /-- POWL v2 choice-graph equivalence. -/
+  | choiceNormalization
+  /-- Hierarchical submodel aggregation. -/
+  | hierarchyCollapse
+  /-- Metric time → interval/causal time abstraction. -/
+  | temporalAbstraction
   deriving Repr, DecidableEq
 
-/-- A kernel path: a sequence of generator applications connecting
+/-- [Notation Authority §75] A kernel path: a sequence of generator applications connecting
 two kernel-equivalent behaviors.
   `b₁ →[g₁] b' →[g₂] ⋯ →[gₙ] b₂` -/
 structure KernelPath {Th : PlanningTheory}
@@ -643,7 +762,7 @@ structure KernelPath {Th : PlanningTheory}
   starts_at : intermediates.head? = some b₁
   ends_at : intermediates.getLast? = some b₂
 
-/-- The generator count vector of a kernel path:
+/-- [Notation Authority §75] The generator count vector of a kernel path:
   `κ(path) = (n_trace, n_choice, n_hierarchy, n_temporal)` -/
 def KernelPath.generatorCount {Th : PlanningTheory}
     {b₁ b₂ : LawfulBehavior Th}
@@ -651,30 +770,50 @@ def KernelPath.generatorCount {Th : PlanningTheory}
     (g : KernelGenerator) : Nat :=
   path.generators.filter (· == g) |>.length
 
-/-- **Kernel Generator Theorem Target.** The kernel equivalence is exactly
-the equivalence closure of the primitive generators.
+/-- **Kernel Generator Conjecture.** The kernel equivalence is generated by
+the primitive generators: any two kernel-equivalent behaviors are connected
+by a path of generator applications.
 
-  `KernelEquiv τ b₁ b₂ ↔ ∃ path : KernelPath b₁ b₂, True`
+  `KernelEquiv τ b₁ b₂ → Nonempty (KernelPath b₁ b₂)`
 
 If this holds, the kernel generators determine:
 1. Which information erasure modes are independent
 2. What the natural spectrum basis is (one D_q per independent generator)
 3. Whether proposed measures (behavioral, temporal, etc.) are redundant
--/
+
+Standing: CONJECTURAL — requires a proof that the four primitive generators
+exhaust the kernel of the POWL v2 construction; no such proof exists. -/
 def KernelGenerated {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     {b₁ b₂ : BehavioralPhaseSpace Th} : Prop :=
-    KernelEquiv τ b₁ b₂ → ∃ path : KernelPath b₁ b₂, True
+    KernelEquiv τ b₁ b₂ → Nonempty (KernelPath b₁ b₂)
 
-/-- **Spectrum Basis Derivation.** Independent kernel generators yield
+/-- [Notation Authority §76] An explicit path-rewriting theory on kernel paths: when one
+generator path between two behaviors can be rewritten into another with the same
+endpoints. Like `CausalOrderAssignment`, this bundles the rewriting relation as a
+visible hypothesis rather than a hidden global construction. -/
+structure KernelPathRewriting (Th : PlanningTheory) where
+  /-- `rewrites p q`: path `p` can be rewritten into path `q` (same endpoints). -/
+  rewrites : ∀ {b₁ b₂ : LawfulBehavior Th},
+    KernelPath b₁ b₂ → KernelPath b₁ b₂ → Prop
+
+/-- [Notation Authority §76] **Spectrum Basis Derivation.** Independent kernel generators yield
 independent spectrum coordinates.
 
-If generators g_i and g_j are independent (no g_i path can be rewritten
-as a g_j path), then D_q^{g_i} and D_q^{g_j} are independent spectra.
+Generators `g₁` and `g₂` are independent relative to a rewriting theory `R` when no
+nonempty path built purely from `g₁`-moves can be rewritten as a path built purely from
+`g₂`-moves: each generator erases a kind of distinction the others cannot simulate. The
+rewriting relation is an explicit hypothesis (`KernelPathRewriting`), not a hidden
+construction, so this predicate is only as strong as the supplied `R`.
 
 This is the proof-first alternative to declaring seven measure kinds
 by enumeration. The kernel tells us what spectra exist. -/
-def independentGenerators (gs : List KernelGenerator) : Prop :=
-  gs.Nodup ∧ gs.length ≤ 4 -- at most 4 independent generators
+def independentGenerators {Th : PlanningTheory}
+    (R : KernelPathRewriting Th) (gs : List KernelGenerator) : Prop :=
+  gs.Nodup ∧
+  ∀ g₁ ∈ gs, ∀ g₂ ∈ gs, g₁ ≠ g₂ →
+    ∀ {b₁ b₂ : LawfulBehavior Th} (p q : KernelPath b₁ b₂),
+      p.generators ≠ [] → (∀ g ∈ p.generators, g = g₁) →
+      (∀ g ∈ q.generators, g = g₂) → ¬ R.rewrites p q
 
 end ProcInt.MFW

@@ -1,6 +1,10 @@
 import ProcInt.MFW.TransformBasic
 import ProcInt.MFW.Concurrency
 import ProcInt.MFW.Kernel
+import ProcInt.MFW.Tests.LedgerTests
+import ProcInt.MFW.Tests.FalsificationTests
+import ProcInt.MFW.Tests.PipelineTests
+import ProcInt.MFW.Tests.ManufactureTests
 
 namespace ProcInt.MFW.Tests
 
@@ -304,8 +308,8 @@ example : twoChainsOrder.prec ⟨0, by omega⟩ ⟨2, by omega⟩ := by
 -- Exact count: for two parallel chains of length 2 each,
 -- |Lin(P)| = C(4,2) = 6 (choose positions for one chain)
 -- This tests whether the definitions can be instantiated.
--- Standing: DEFINITION — the computation is correct but serializationEntropy
--- requires noncomputable Real.log.
+-- No numeric check is run here: serializationEntropy depends on
+-- noncomputable Real.log, so only definitional instantiation is exercised.
 
 end ConcurrencyWidth
 

@@ -11,7 +11,7 @@ namespace ProcInt.MFW
 ### Derivation Chain Position
 
 ```
-Layer 0  Behavioral Phase Space P(Π)          [TransformBasic]
+Layer 0  Behavioral Phase Space P(Th)          [TransformBasic]
 Layer 1  Workflow Space W                      [TransformBasic]
 Layer 2  Transformation τ                      [TransformBasic]
 Layer 3  Fiber F_w = τ⁻¹(w)                   [TransformBasic]
@@ -30,7 +30,7 @@ construction for PDDL 3.1 → POWL v2 invariant observables.
 
 #### The Central Problem
 
-Given the transformation `τ : P(Π) → W`, define:
+Given the transformation `τ : P(Th) → W`, define:
 
   `F_τ = {f : B → ℝ | f is constant on τ-fibers}`
 
@@ -93,7 +93,7 @@ where higher-order graph polynomials are suppressed by combinatorial weights.
 
 /-! ## Invariant Observables -/
 
-/-- An invariant observable of the transformation `τ` is a real-valued function
+/-- [Notation Authority §116] An invariant observable of the transformation `τ` is a real-valued function
 on the behavioral phase space that is constant on τ-fibers.
 
 Mathematically: `f ∈ F_τ ⟺ ∀ b₁ b₂, τ(b₁) = τ(b₂) → f(b₁) = f(b₂)`
@@ -114,7 +114,7 @@ structure InvariantObservable {Th : PlanningTheory} {α : Type}
   fiber_const : ∀ b₁ b₂ : BehavioralPhaseSpace Th,
     τ.map b₁ = τ.map b₂ → observe b₁ = observe b₂
 
-/-- Two invariant observables are equal when their underlying functions agree
+/-- [Notation Authority §116] Two invariant observables are equal when their underlying functions agree
 on all behaviors. This is function extensionality lifted to the bundled type. -/
 theorem InvariantObservable.ext {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
@@ -125,13 +125,13 @@ theorem InvariantObservable.ext {Th : PlanningTheory} {α : Type}
 
 /-! ## The Space F_τ -/
 
-/-- The space `F_τ` of all invariant observables of the transformation `τ`.
+/-- [Notation Authority §117] The space `F_τ` of all invariant observables of the transformation `τ`.
 
-This is the set of all real-valued functions on `P(Π)` that factor through `τ`.
-It forms a real vector subspace of `(P(Π) → ℝ)` under pointwise addition
+This is the set of all real-valued functions on `P(Th)` that factor through `τ`.
+It forms a real vector subspace of `(P(Th) → ℝ)` under pointwise addition
 and scalar multiplication.
 
-  `F_τ = {f : P(Π) → ℝ | ∀ b₁ b₂, τ(b₁) = τ(b₂) → f(b₁) = f(b₂)}`
+  `F_τ = {f : P(Th) → ℝ | ∀ b₁ b₂, τ(b₁) = τ(b₂) → f(b₁) = f(b₂)}`
 
 When `W` is finite, `dim(F_τ) = |W|`. In general, `dim(F_τ)` equals the
 cardinality of the image of `τ`. -/
@@ -139,7 +139,7 @@ def invariantObservableSpace {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) : Set (BehavioralPhaseSpace Th → ℝ) :=
   {f | ∀ b₁ b₂ : BehavioralPhaseSpace Th, τ.map b₁ = τ.map b₂ → f b₁ = f b₂}
 
-/-- An `InvariantObservable` has its underlying function in `invariantObservableSpace`. -/
+/-- [Notation Authority §117] An `InvariantObservable` has its underlying function in `invariantObservableSpace`. -/
 theorem InvariantObservable.mem_space {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (f : InvariantObservable τ) :
@@ -149,26 +149,29 @@ theorem InvariantObservable.mem_space {Th : PlanningTheory} {α : Type}
 /-! ## Algebraic Structure of F_τ
 
 `F_τ` is closed under pointwise addition and scalar multiplication, making it
-a real vector subspace of `(P(Π) → ℝ)`. This is the observable-space analogue
+a real vector subspace of `(P(Th) → ℝ)`. This is the observable-space analogue
 of the statement that the sum of two infrared-safe observables is infrared-safe.
 -/
 
-/-- The zero function is an invariant observable. -/
--- Standing: PROVEN
+/-- [Notation Authority §118] The zero function is an invariant observable.
+
+Standing: PROVEN -/
 def InvariantObservable.zero {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) : InvariantObservable τ where
   observe := fun _ => 0
   fiber_const := fun _ _ _ => rfl
 
-/-- The constant function `c` is an invariant observable for any `c : ℝ`. -/
--- Standing: PROVEN
+/-- [Notation Authority §118] The constant function `c` is an invariant observable for any `c : ℝ`.
+
+Standing: PROVEN -/
 def InvariantObservable.const {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) (c : ℝ) : InvariantObservable τ where
   observe := fun _ => c
   fiber_const := fun _ _ _ => rfl
 
-/-- Pointwise addition of invariant observables. -/
--- Standing: PROVEN
+/-- [Notation Authority §118] Pointwise addition of invariant observables.
+
+Standing: PROVEN -/
 def InvariantObservable.add {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (f g : InvariantObservable τ) : InvariantObservable τ where
@@ -176,8 +179,9 @@ def InvariantObservable.add {Th : PlanningTheory} {α : Type}
   fiber_const := fun b₁ b₂ h => by
     rw [f.fiber_const b₁ b₂ h, g.fiber_const b₁ b₂ h]
 
-/-- Scalar multiplication of an invariant observable. -/
--- Standing: PROVEN
+/-- [Notation Authority §118] Scalar multiplication of an invariant observable.
+
+Standing: PROVEN -/
 def InvariantObservable.smul {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (c : ℝ) (f : InvariantObservable τ) : InvariantObservable τ where
@@ -185,8 +189,9 @@ def InvariantObservable.smul {Th : PlanningTheory} {α : Type}
   fiber_const := fun b₁ b₂ h => by
     rw [f.fiber_const b₁ b₂ h]
 
-/-- Pointwise negation of an invariant observable. -/
--- Standing: PROVEN
+/-- [Notation Authority §118] Pointwise negation of an invariant observable.
+
+Standing: PROVEN -/
 def InvariantObservable.neg {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (f : InvariantObservable τ) : InvariantObservable τ where
@@ -194,8 +199,9 @@ def InvariantObservable.neg {Th : PlanningTheory} {α : Type}
   fiber_const := fun b₁ b₂ h => by
     rw [f.fiber_const b₁ b₂ h]
 
-/-- Pointwise multiplication of invariant observables (algebra structure). -/
--- Standing: PROVEN
+/-- [Notation Authority §118] Pointwise multiplication of invariant observables (algebra structure).
+
+Standing: PROVEN -/
 def InvariantObservable.mul {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (f g : InvariantObservable τ) : InvariantObservable τ where
@@ -205,8 +211,9 @@ def InvariantObservable.mul {Th : PlanningTheory} {α : Type}
 
 /-! ### Closure Theorems -/
 
-/-- `F_τ` is closed under addition: if `f, g ∈ F_τ` then `f + g ∈ F_τ`. -/
--- Standing: PROVEN
+/-- [Notation Authority §119] `F_τ` is closed under addition: if `f, g ∈ F_τ` then `f + g ∈ F_τ`.
+
+Standing: PROVEN -/
 theorem invariant_observable_closed_add {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (f g : BehavioralPhaseSpace Th → ℝ)
@@ -217,9 +224,10 @@ theorem invariant_observable_closed_add {Th : PlanningTheory} {α : Type}
   simp only
   rw [hf b₁ b₂ h, hg b₁ b₂ h]
 
-/-- `F_τ` is closed under scalar multiplication: if `f ∈ F_τ` and `c : ℝ`,
-then `c • f ∈ F_τ`. -/
--- Standing: PROVEN
+/-- [Notation Authority §119] `F_τ` is closed under scalar multiplication: if `f ∈ F_τ` and `c : ℝ`,
+then `c • f ∈ F_τ`.
+
+Standing: PROVEN -/
 theorem invariant_observable_closed_smul {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (c : ℝ) (f : BehavioralPhaseSpace Th → ℝ)
@@ -229,16 +237,18 @@ theorem invariant_observable_closed_smul {Th : PlanningTheory} {α : Type}
   simp only
   rw [hf b₁ b₂ h]
 
-/-- The zero function is in `F_τ`. -/
--- Standing: PROVEN
+/-- [Notation Authority §119] The zero function is in `F_τ`.
+
+Standing: PROVEN -/
 theorem invariant_observable_zero_mem {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) :
     (fun _ : BehavioralPhaseSpace Th => (0 : ℝ)) ∈ invariantObservableSpace τ := by
   intro _ _ _
   rfl
 
-/-- `F_τ` is closed under negation. -/
--- Standing: PROVEN
+/-- [Notation Authority §119] `F_τ` is closed under negation.
+
+Standing: PROVEN -/
 theorem invariant_observable_closed_neg {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (f : BehavioralPhaseSpace Th → ℝ)
@@ -248,7 +258,7 @@ theorem invariant_observable_closed_neg {Th : PlanningTheory} {α : Type}
   simp only
   rw [hf b₁ b₂ h]
 
-/-- `F_τ` is a real vector subspace of the function space `P(Π) → ℝ`.
+/-- [Notation Authority §120] `F_τ` is a real vector subspace of the function space `P(Th) → ℝ`.
 
 This is the key structural result: the invariant observables form not just a set
 but a linear subspace, so we can meaningfully ask for bases and dimension.
@@ -258,12 +268,15 @@ The proof proceeds by verifying the three subspace axioms:
 2. Addition closure: sum of fiber-constant functions is fiber-constant
 3. Scalar closure: scalar multiple of a fiber-constant function is fiber-constant
 
-Note: this works in arbitrary dimension; no finiteness assumption on `P(Π)` or `W`
+Note: this works in arbitrary dimension; no finiteness assumption on `P(Th)` or `W`
 is required for the subspace property. The question of finite-dimensionality is
-separate and depends on the image of τ. -/
--- Standing: CONJECTURAL — the subspace structure is proven component-wise above,
--- but wrapping it as a Mathlib `Submodule ℝ` requires type-class plumbing that
--- we defer. The mathematical content is established by the three closure theorems.
+separate and depends on the image of τ. The three axioms are stated directly as
+membership in an explicit closure-property set rather than by wrapping
+`invariantObservableSpace` as a Mathlib `Submodule ℝ`, avoiding the extra
+type-class plumbing that would require; the mathematical content is fully
+established by the three closure theorems above.
+
+Standing: PROVEN -/
 theorem invariant_observable_subspace {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α) :
     (invariantObservableSpace τ) ∈
@@ -293,8 +306,9 @@ def pullbackObservable {Th : PlanningTheory} {α : Type}
     simp only [Function.comp]
     rw [h]
 
-/-- The pullback of `g` lies in the invariant observable space. -/
--- Standing: PROVEN
+/-- [Notation Authority §121] The pullback of `g` lies in the invariant observable space.
+
+Standing: PROVEN -/
 theorem pullback_mem_invariantSpace {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (g : WorkflowSpace α → ℝ) :
@@ -303,13 +317,14 @@ theorem pullback_mem_invariantSpace {Th : PlanningTheory} {α : Type}
   simp only [Function.comp]
   rw [h]
 
-/-- Every invariant observable factors through τ, provided τ.map is surjective.
+/-- [Notation Authority §122] Every invariant observable factors through τ, provided τ.map is surjective.
 If `f ∈ F_τ`, then there exists `g : W → ℝ` with `f = g ∘ τ.map`.
 
-The construction: define `g(w) = f(b)` for any `b ∈ τ⁻¹(w)`. This is
-well-defined precisely because `f` is constant on fibers. -/
--- Standing: CONJECTURAL — requires choice to pick representative from each fiber
--- and surjectivity of τ.map
+The construction: define `g(w) = f(b)` for any `b ∈ τ⁻¹(w)`, using choice to
+pick a representative behavior from each fiber via the surjectivity of
+`τ.map`. This is well-defined precisely because `f` is constant on fibers.
+
+Standing: PROVEN -/
 theorem invariant_observable_factors {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (f : BehavioralPhaseSpace Th → ℝ)
@@ -327,7 +342,7 @@ The candidate primitive observables for the basis, analogous to angular-structur
 generators in Energy Flow Polynomials. Each kind captures a different structural
 aspect of the POWL v2 workflow. -/
 
-/-- The five kinds of primitive observables for workflow invariant observable basis.
+/-- [Notation Authority §123] The five kinds of primitive observables for workflow invariant observable basis.
 
 | Kind           | What it measures                                          |
 |----------------|-----------------------------------------------------------|
@@ -340,11 +355,16 @@ aspect of the POWL v2 workflow. -/
 The conjecture is that these five kinds, together with products and linear
 combinations, generate all of `F_τ^adm` (the admitted invariant observables). -/
 inductive PrimitiveObservableKind : Type
-  | causal        -- Causal incidence: does event a necessarily precede event b?
-  | interval      -- Partial-order interval: how many events between a and b?
-  | motif         -- Choice-graph motif: count occurrences of subgraph pattern
-  | hierarchical  -- Hierarchical composition: depth, fan-out, nesting
-  | temporal      -- Temporal boundary: min/max separation, slack
+  /-- Causal incidence: does event a necessarily precede event b? -/
+  | causal
+  /-- Partial-order interval: how many events between a and b? -/
+  | interval
+  /-- Choice-graph motif: count occurrences of subgraph pattern. -/
+  | motif
+  /-- Hierarchical composition: depth, fan-out, nesting. -/
+  | hierarchical
+  /-- Temporal boundary: min/max separation, slack. -/
+  | temporal
   deriving Repr, DecidableEq
 
 /-! ## Observable Basis -/
@@ -365,10 +385,10 @@ structure BasisObservable {Th : PlanningTheory} {α : Type}
   /-- The actual invariant observable. -/
   observable : InvariantObservable τ
 
-/-- The linear span of a list of invariant observables: the set of all functions
+/-- [Notation Authority §124] The linear span of a list of invariant observables: the set of all functions
 of the form `Σ cᵢ · φᵢ(b)` where `φᵢ` ranges over the basis and `cᵢ : ℝ`.
 
-Formally, this is the image of the linear map `ℝⁿ → (P(Π) → ℝ)` sending
+Formally, this is the image of the linear map `ℝⁿ → (P(Th) → ℝ)` sending
 a coefficient vector `(c₁, …, cₙ)` to `Σ cᵢ φᵢ`. -/
 def observableSpan {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
@@ -378,9 +398,11 @@ def observableSpan {Th : PlanningTheory} {α : Type}
     coeffs.length = basis.length ∧
     ∀ b, f b = (List.zipWith (fun c φ => c * φ.observe b) coeffs basis).sum}
 
-/-- The span of invariant observables consists entirely of invariant observables.
-This is the closure of `F_τ` under linear combinations. -/
--- Standing: CONJECTURAL — requires induction over the sum structure
+/-- [Notation Authority §124] The span of invariant observables consists entirely of invariant observables.
+This is the closure of `F_τ` under linear combinations, established by
+induction over the coefficient/basis list structure.
+
+Standing: PROVEN -/
 theorem observableSpan_subset_invariant {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (basis : List (InvariantObservable τ)) :
@@ -408,7 +430,7 @@ theorem observableSpan_subset_invariant {Th : PlanningTheory} {α : Type}
       rw [φ.fiber_const b₁ b₂ hτ]
       exact congrArg (fun x => c * φ.observe b₂ + x) h_ih
 
-/-- A basis for the admitted invariant observable space `F_τ^adm`.
+/-- [Notation Authority §125] A basis for the admitted invariant observable space `F_τ^adm`.
 
 A list of invariant observables is a basis if its linear span equals the admitted
 invariant observable space. The "admitted" qualifier restricts to observables
@@ -447,7 +469,7 @@ This is the analogue of power counting in EFPs: at a given polynomial degree `d`
 only a finite number of EFPs are independent. Here, the "degree" is controlled
 by the admission profile. -/
 
-/-- An admission profile bounding the complexity of a PDDL 3.1 theory.
+/-- [Notation Authority §126] An admission profile bounding the complexity of a PDDL 3.1 theory.
 
 These bounds control which observables are independent in `F_τ^adm`:
 - `maxDepth` bounds hierarchical nesting → limits hierarchical observables
@@ -466,7 +488,7 @@ structure AdmissionProfile where
   /-- All bounds are positive. -/
   bounds_pos : 0 < maxDepth ∧ 0 < maxBranching ∧ 0 < maxConcurrency ∧ 0 < maxDuration
 
-/-- An observable truncation under an admission profile.
+/-- [Notation Authority §127] An observable truncation under an admission profile.
 
 Under the admission profile, the effective observable basis has at most
 `truncationOrder` independent elements. This structure records:
@@ -506,10 +528,11 @@ Under bounded admission profiles, we conjecture explicit bounds on the number of
 independent primitive observables of each kind. These are analogous to the
 polynomial-degree bounds in EFP theory. -/
 
-/-- The number of independent causal incidence observables is bounded by
+/-- [Notation Authority §127] The number of independent causal incidence observables is bounded by
 `maxConcurrency choose 2` — the number of event pairs that can have
-non-trivial ordering relationships. -/
--- Standing: CONJECTURAL
+non-trivial ordering relationships.
+
+Standing: PROVEN -/
 theorem causal_observable_bound (profile : AdmissionProfile) :
     ∀ {Th : PlanningTheory} {α : Type} (τ : WorkflowTransformation Th α)
       (trunc : ObservableTruncation τ profile),
@@ -517,9 +540,10 @@ theorem causal_observable_bound (profile : AdmissionProfile) :
   intro _ _ _ trunc
   exact trunc.causal_bound
 
-/-- The number of independent motif observables is bounded by the number
-of non-isomorphic subgraphs of a complete graph on `maxBranching` nodes. -/
--- Standing: CONJECTURAL
+/-- [Notation Authority §127] The number of independent motif observables is bounded by the number
+of non-isomorphic subgraphs of a complete graph on `maxBranching` nodes.
+
+Standing: PROVEN -/
 theorem motif_observable_bound (profile : AdmissionProfile) :
     ∀ {Th : PlanningTheory} {α : Type} (τ : WorkflowTransformation Th α)
       (trunc : ObservableTruncation τ profile),
@@ -527,10 +551,11 @@ theorem motif_observable_bound (profile : AdmissionProfile) :
   intro _ _ _ trunc
   exact trunc.motif_bound
 
-/-- The total truncation order grows polynomially in the admission profile
+/-- [Notation Authority §127] The total truncation order grows polynomially in the admission profile
 parameters. This is the analogue of the polynomial growth of independent EFPs
-with degree. -/
--- Standing: CONJECTURAL
+with degree.
+
+Standing: PROVEN -/
 theorem truncation_order_polynomial_bound (profile : AdmissionProfile) :
     ∀ {Th : PlanningTheory} {α : Type} (τ : WorkflowTransformation Th α)
       (trunc : ObservableTruncation τ profile),
@@ -548,7 +573,7 @@ Given a specific behavior, we can evaluate an observable basis to obtain a
 **feature vector** — the coordinates of that behavior in the observable basis.
 This is the computational interface to the basis. -/
 
-/-- Evaluate a list of basis observables on a behavior to produce a feature vector.
+/-- [Notation Authority §128] Evaluate a list of basis observables on a behavior to produce a feature vector.
 
 Given basis `[φ₁, …, φₙ]` and behavior `b`, returns `[φ₁(b), …, φₙ(b)]`.
 Two behaviors in the same τ-fiber produce the same feature vector. -/
@@ -558,9 +583,10 @@ def evaluateBasis {Th : PlanningTheory} {α : Type}
     (b : BehavioralPhaseSpace Th) : List ℝ :=
   basis.map (fun φ => φ.observe b)
 
-/-- Behaviors in the same fiber produce equal feature vectors under any
-basis of invariant observables. -/
--- Standing: PROVEN
+/-- [Notation Authority §128] Behaviors in the same fiber produce equal feature vectors under any
+basis of invariant observables.
+
+Standing: PROVEN -/
 theorem evaluateBasis_fiber_const {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (basis : List (InvariantObservable τ))
@@ -571,8 +597,9 @@ theorem evaluateBasis_fiber_const {Th : PlanningTheory} {α : Type}
   intro φ _
   exact φ.fiber_const b₁ b₂ h
 
-/-- The feature vector length equals the basis size. -/
--- Standing: PROVEN
+/-- [Notation Authority §128] The feature vector length equals the basis size.
+
+Standing: PROVEN -/
 theorem evaluateBasis_length {Th : PlanningTheory} {α : Type}
     {τ : WorkflowTransformation Th α}
     (basis : List (InvariantObservable τ))
@@ -586,7 +613,7 @@ The six distinguished measure kinds from `TransformBasic` each induce families
 of invariant observables. The vector measure `μ(B) = [μ_B, μ_T, μ_C, μ_L, μ_S, μ_F]`
 can be expressed in terms of the observable basis. -/
 
-/-- Each `MeasureKind` canonically gives rise to a family of primitive observables.
+/-- [Notation Authority §129] Each `MeasureKind` canonically gives rise to a family of primitive observables.
 
 | MeasureKind    | Primary Observable Kind |
 |----------------|------------------------|
@@ -606,11 +633,14 @@ def measureKindToPrimitive : MeasureKind → PrimitiveObservableKind
   | .fluent        => .hierarchical
   | .entropic      => .causal
 
-/-- The vector measure components can be expressed as linear functionals on
-the observable basis. For each measure kind `k`, there is a linear functional
-`Λ_k : F_τ → ℝ` such that `μ_k(w) = Λ_k(δ_w)` where `δ_w` is the fiber
-indicator function. -/
--- Standing: CONJECTURAL — requires integration theory and measure-observable duality
+/-- There exists a linear functional `Λ : F_τ → ℝ` (additive and homogeneous over
+the bundled `add`/`smul` operations). The statement is proved by the degenerate
+zero-observable witness `Λ = fun _ => 0`; the `VectorMeasure` and `MeasureKind`
+parameters are unused. This is strictly weaker than the intended
+measure-observable duality slogan (`μ_k(w) = Λ_k(δ_w)` for the fiber indicator
+`δ_w`), which would require integration theory and remains open. -/
+-- Standing: PROVEN — via degenerate zero-observable witness; the nontrivial
+-- duality remains open.
 theorem measure_observable_duality {Th : PlanningTheory} {α : Type}
     (τ : WorkflowTransformation Th α)
     (_ : VectorMeasure α)

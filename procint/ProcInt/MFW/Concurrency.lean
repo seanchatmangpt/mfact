@@ -225,20 +225,31 @@ structure SimpleTemporalNetwork (n : Nat) where
   /-- Bounds are well-ordered. -/
   bounds_wf : ∀ i j, lower i j ≤ upper i j
 
-/-- Temporal serialization entropy: entropy of temporally feasible
-linear extensions only.
-  `H_T(P, N) = log|Lin_T(P, N)|` -/
-opaque temporalSerializationEntropy {n : Nat}
-    (co : CausalOrder n) (stn : SimpleTemporalNetwork n)
-    [DecidableRel co.prec] : ℝ
+/-- An explicit assignment of temporal serialization entropy
+  `H_T(P, N) = log|Lin_T(P, N)|`
+to each causal order and temporal network. Replaces a prior bodyless
+`opaque` (hidden global axiom): consumers must supply the assignment
+as visible data. A faithful construction requires deciding temporal
+feasibility of each linear extension against the network, which is
+not yet formalized. -/
+structure TemporalEntropyAssignment (n : Nat) where
+  /-- The entropy value assigned to a causal order under a temporal
+      network. -/
+  entropy : CausalOrder n → SimpleTemporalNetwork n → ℝ
 
 /-- The temporal restriction gap: how much apparent causal concurrency
-is removed by metric temporal constraints.
-  `H_ser(P) - H_T(P, N) ≥ 0` -/
+is removed by metric temporal constraints, relative to an explicit
+temporal-entropy assignment `E`:
+  `H_ser(P) - H_T(P, N)`
+
+Standing: CONJECTURAL — nonnegativity (`H_ser(P) - H_T(P, N) ≥ 0`)
+requires the temporal-restriction submultiplicativity argument; not
+yet formalized. This def only computes the difference. -/
 noncomputable def temporalRestrictionGap {n : Nat}
+    (E : TemporalEntropyAssignment n)
     (co : CausalOrder n) (stn : SimpleTemporalNetwork n)
     [DecidableRel co.prec] : ℝ :=
-  serializationEntropy co - temporalSerializationEntropy co stn
+  serializationEntropy co - E.entropy co stn
 
 /-! ## Concurrency Width and Antichain Structure
 

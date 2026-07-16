@@ -202,6 +202,22 @@ inductive Powl.WellFormed {α : Type*} : Powl α → Prop
       (hall : ∀ c ∈ children, Powl.WellFormed c) :
       Powl.WellFormed (Powl.po children prec)
 
+/-- Structural submodel relation on POWL models: `m₁` is a submodel of `m₂` when `m₁`
+occurs as `m₂` itself or, recursively, inside one of `m₂`'s children (xor children,
+loop do/redo parts, partial-order children). -/
+inductive Powl.IsSubmodelOf {α : Type*} : Powl α → Powl α → Prop
+  | refl (m : Powl α) : Powl.IsSubmodelOf m m
+  | xorChild {m c : Powl α} {children : List (Powl α)} :
+      c ∈ children → Powl.IsSubmodelOf m c →
+      Powl.IsSubmodelOf m (Powl.xor children)
+  | loopDo {m doP redoP : Powl α} :
+      Powl.IsSubmodelOf m doP → Powl.IsSubmodelOf m (Powl.loop doP redoP)
+  | loopRedo {m doP redoP : Powl α} :
+      Powl.IsSubmodelOf m redoP → Powl.IsSubmodelOf m (Powl.loop doP redoP)
+  | poChild {m c : Powl α} {children : List (Powl α)} {prec : ℕ → ℕ → Prop} :
+      c ∈ children → Powl.IsSubmodelOf m c →
+      Powl.IsSubmodelOf m (Powl.po children prec)
+
 /-- A choice graph for POWL v2 non-block-structured decisions.
 Vertices are workflow alternatives; edges indicate feasible transitions. -/
 structure ChoiceGraph (α : Type) where
@@ -320,14 +336,14 @@ structure HierarchicalPartition (α : Type) where
 structure HierarchicalScaleSystem (α : Type) where
   maxDepth : Nat
   partitionAt : Fin (maxDepth + 1) → HierarchicalPartition α
-  /-- Refinement: each depth-k component decomposes into depth-(k-1)
-      components. Every leaf at depth k-1 belongs to exactly one
-      component at depth k. -/
+  /-- Refinement: every depth-k component occurs as a structural submodel of some
+      component one level up (`Powl.IsSubmodelOf` on the underlying models). This
+      replaces a former vacuous `∃ c_parent ∈ …, True` conclusion, which required
+      only that the coarser partition be nonempty. -/
   refines : ∀ (k : Fin maxDepth),
     ∀ c_child ∈ (partitionAt ⟨k, by omega⟩).components,
-    ∃ c_parent ∈ (partitionAt ⟨k + 1, by omega⟩).components, True
-    -- Standing: CONJECTURAL — the containment relation needs a
-    -- proper "is-submodel-of" predicate on POWLv2Object, not True
+    ∃ c_parent ∈ (partitionAt ⟨k + 1, by omega⟩).components,
+      Powl.IsSubmodelOf c_child.model c_parent.model
 
 /-! ## Pushforward Measure -/
 

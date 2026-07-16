@@ -1,3 +1,5 @@
+_This file governs the nested `procint/` subproject and imposes tighter domain rules than the root AGENTS.md. See `/Users/sac/mfact/AGENTS.md` for the repository-level law._
+
 # Teamwork Architecture: Agents for the Formal Manufacture Pipeline
 
 This document outlines the specialized subagents required to concurrently execute the formal software manufacturing pipeline. Instead of a single "coding agent" attempting an implementation-first loop, this architecture deploys a highly specialized team organized strictly around the Semantic Manufacturing Chain ($L \xrightarrow{\pi} G \xrightarrow{\rho} R$).
@@ -15,6 +17,12 @@ Standing is exactly classified via the Gall state:
 * `BUILD_BROKEN`: The project does not compile.
 * `UNKNOWN`: Standing has not been determined.
 * `UNSUPPORTED`: The capability is outside the admitted theory.
+* `CONJECTURAL`: A stated obligation honestly labeled unproven — a statement, not a result.
+* `PROVEN`: The named declaration carries a complete, sorry-free proof accepted by the Lean kernel.
+
+The first six classify project or subsystem standing; `CONJECTURAL` and `PROVEN` are the
+declaration-level `Standing:` tags enforced by `lake exe lint-style --procint`, consistent
+with the root `AGENTS.md` Standing Law.
 
 ---
 
