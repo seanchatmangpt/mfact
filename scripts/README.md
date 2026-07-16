@@ -40,6 +40,13 @@ file used by the library's own linters.
 
   **Requirements:** `gh` (GitHub CLI) installed and authenticated (`gh auth login`).
 
+- `export_lexicon.py`
+  Deterministically renders `docs/LEXICON.md` from the `[Notation Authority §N]`-tagged
+  declarations in `procint/ProcInt/MFW/*.lean` (docstring + declaration head per tag), ending
+  with a Provenance section (per-file SHA-256 digests + git HEAD) that digest-binds the
+  artifact to its sources. No timestamps: same tree produces the same bytes. Writes only
+  `docs/LEXICON.md`. Usage: `python3 scripts/export_lexicon.py` (from the repository root).
+
 **Tools for manual maintenance**
 - `fix_unused.py`
   Bulk processing of unused variable warnings, replacing them with `_`.
