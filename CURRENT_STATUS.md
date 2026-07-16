@@ -55,6 +55,48 @@ These changes are honesty repairs, not proof closure: no conjecture was proven t
 * The `mfact-core` Rust design contract moved from the gitignored `crates/` tree to
   `docs/MFACT_CORE_DESIGN.md` so it can be committed.
 
+## 2b. Witness-Pair Additions and a Documentation-Honesty Correction (2026-07-16, same day)
+
+Adversarial review of this session's work flagged a discrepancy: a prior in-session summary
+(not committed to this repository — no file under `/Users/sac/mfact` contains its text) claimed
+"`Ledger.lean, Manufacture.lean, Falsification.lean, CompilerPipeline.lean and their Tests/`
+already had complete witness pairs... no changes needed there." Checked against
+`git diff f6958bbfcfd -- procint/`, that claim is false for the `Tests/` half: the non-Tests
+source files (`Ledger.lean`, `Manufacture.lean`, `Falsification.lean`, `CompilerPipeline.lean`)
+are indeed unchanged, but their `Tests/` counterparts were not. This entry is the correction —
+recording what actually changed so the repository's own status doc, not an unrecorded verbal
+claim, is authoritative.
+
+Concrete additions, all statement-adequacy witness pairs (a positive example the predicate
+accepts and a negative example it provably rejects, per `docs/AGENT_FAILURE_MODES.md`'s
+vacuous-predicate failure mode):
+
+* `procint/ProcInt/MFW/Tests/FalsificationTests.lean` (+37 lines) — `alwaysFalsifyingTheory` /
+  `neverFalsifyingTheory` witness pair exercising `revocationCondition` and
+  `empiricalFalsificationLoop`.
+* `procint/ProcInt/MFW/Tests/LedgerTests.lean` (+5 lines) — one negative example: a
+  `Nodup`-violating sequence `[1, 1, 2, 3]` rejected by `validTopologicalSort`.
+* `procint/ProcInt/MFW/Tests/ManufactureTests.lean` (+43 lines) — `receiptedWitnessTheory` /
+  `unreceiptedWitnessTheory` witness pair exercising `ManufactureTheory.brceInvariant`.
+* `procint/ProcInt/MFW/Tests/PipelineTests.lean` (+31 lines) — `deepTunnel` (multiplicative
+  depth 12 over a time budget of 10) as the negative witness for
+  `windTunnelComplexityBound`, paired against the existing `toyTunnel` positive case.
+* `procint/ProcInt/MFW/Concurrency.lean` (+96 lines) — witness pairs for `TraceEquiv`,
+  `dependenceRelation`, `IsLinearExtension`, `IsAntichain`, and `executableConcurrency`,
+  plus the supporting lemma `traceEquiv_eq_of_no_indep`.
+
+All five files build under the same procint-scoped receipt cited in Section 1
+(`.verif-toolchain/receipts/receipt-20260716T222045Z.txt` predates these additions; see
+Section 1's successor receipts for the DIRTY-tree build that includes them) — `lake build
+ProcInt` exit 0, `lake exe lint-style --procint Mathlib.Init` exit 0. No new `Standing:` tags
+were introduced by these additions: `example`/`def` witness declarations are not
+declaration-level standing claims and are not linted for the tag.
+
+Two further untracked files exist from sibling work this session and are out of scope for
+this correction (each needs its own status entry, not asserted here): `procint/ProcInt/MFW/
+GapCalculus.lean` (new module, wired into `ModuleMap.lean`) and `docs/LEXICON.md` /
+`docs/REGRESSIONS.md` (new docs, the latter self-labeled `Standing: UNVERIFIED`).
+
 ## 3. Historical Snapshot (2026-07-14, as recorded — not re-verified)
 
 The following was recorded before the claims-honesty pass and has not been re-verified
