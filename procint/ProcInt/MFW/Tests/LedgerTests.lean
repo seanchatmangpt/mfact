@@ -57,6 +57,11 @@ example : ¬ validTopologicalSort toyDAG [1, 3, 2] := by decide
 /-- A sequence that omits node `3` does not cover the node set, so it is rejected. -/
 example : ¬ validTopologicalSort toyDAG [1, 2] := by decide
 
+-- Witness pair: statement-adequacy check — `validTopologicalSort` accepts `[1, 2, 3]`
+-- (via `toyDerivation` above) and provably rejects `[1, 1, 2, 3]`: duplicating a node id
+-- violates `Nodup`, exercising the one conjunct the negatives above leave untested.
+example : ¬ validTopologicalSort toyDAG [1, 1, 2, 3] := by decide
+
 -- Simple sanity check to ensure the sequence evaluates properly.
 #eval toyDerivation.sequence
 

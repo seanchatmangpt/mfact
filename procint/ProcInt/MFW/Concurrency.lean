@@ -140,6 +140,47 @@ theorem traceEquiv_equivalence {Action : Type} (I : IndependenceRelation Action)
     Equivalence (TraceEquiv I) :=
   ⟨TraceEquiv.refl, fun h => TraceEquiv.symm _ _ h, fun h₁ h₂ => TraceEquiv.trans _ _ _ h₁ h₂⟩
 
+/-- Over an independence relation with no independent pairs, no `swap` step is ever
+available, so trace equivalence collapses to equality of sequences. Supporting lemma for
+the negative statement-adequacy witness below. -/
+theorem traceEquiv_eq_of_no_indep {Action : Type} {I : IndependenceRelation Action}
+    (hI : ∀ a b, ¬ I.independent a b) {s t : List Action}
+    (h : TraceEquiv I s t) : s = t := by
+  induction h with
+  | refl _ => rfl
+  | swap _ a b _ hab => exact absurd hab (hI a b)
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+  | symm _ _ _ ih => exact ih.symm
+
+/-- The total independence relation on `Nat`: every pair of actions commutes. Concrete
+witness datum for the positive `TraceEquiv` example below. -/
+def totalIndepNat : IndependenceRelation Nat where
+  independent := fun _ _ => True
+  symm := fun _ _ h => h
+
+/-- The empty independence relation on `Nat`: no pair of actions commutes. Concrete
+witness datum for the negative `TraceEquiv` example below. -/
+def emptyIndepNat : IndependenceRelation Nat where
+  independent := fun _ _ => False
+  symm := fun _ _ h => h
+
+-- Witness pair: statement-adequacy check — `TraceEquiv` accepts the swap `[0, 1] ~ [1, 0]`
+-- under `totalIndepNat` (the actions are independent) and provably rejects the same
+-- reordering under `emptyIndepNat`, where no swap is ever available.
+example : TraceEquiv totalIndepNat [0, 1] [1, 0] :=
+  TraceEquiv.swap [] 0 1 [] True.intro
+
+example : ¬ TraceEquiv emptyIndepNat [0, 1] [1, 0] := fun h => by
+  simpa using traceEquiv_eq_of_no_indep (fun _ _ hab => hab) h
+
+-- Witness pair: statement-adequacy check — `dependenceRelation` accepts the pair
+-- `(0, 1)` under `emptyIndepNat` (no pair is independent, so every pair is forced
+-- dependent) and provably rejects the same pair under `totalIndepNat` (every pair
+-- commutes, so none is dependent).
+example : dependenceRelation emptyIndepNat 0 1 := fun h => h
+
+example : ¬ dependenceRelation totalIndepNat 0 1 := fun h => h True.intro
+
 /-! ## Causal Partial Order
 
 The POWL partial order is derived from the dependence relation.
@@ -169,6 +210,35 @@ structure CausalOrder (n : Nat) where
 /-- A linear extension of a causal order: a total order compatible with it. -/
 def IsLinearExtension {n : Nat} (co : CausalOrder n) (σ : Fin n → Fin n) : Prop :=
   Function.Bijective σ ∧ ∀ i j, co.prec i j → σ i < σ j
+
+/-- A causal order on `Fin 3` where only `0` strictly precedes `2`; `1` is causally
+incomparable to both. Concrete witness datum for the antichain and linear-extension
+examples below: `{0, 1}` is genuinely concurrent while `{0, 2}` is causally ordered. -/
+def diamondOrder3 : CausalOrder 3 where
+  prec := fun i j => i = 0 ∧ j = 2
+  irrefl := by decide
+  trans := by decide
+
+/-- The permutation of `Fin 3` swapping `0` and `2`, fixing `1`. Concrete witness datum
+for the negative `IsLinearExtension` example below: bijective, but reverses the lone
+forced precedence `0 ≺ 2`. -/
+def reverseFin3 : Fin 3 → Fin 3 := Equiv.swap 0 2
+
+-- Witness pair: statement-adequacy check — `IsLinearExtension` accepts the identity
+-- permutation on `diamondOrder3` (bijective, and preserves the lone precedence `0 ≺ 2`
+-- since `0 < 2`) and provably rejects the swap of `0` and `2` (bijective, but reverses
+-- that precedence: `σ 0 = 2` is not less than `σ 2 = 0`).
+example : IsLinearExtension diamondOrder3 id := by
+  refine ⟨Function.bijective_id, fun i j hij => ?_⟩
+  obtain ⟨hi, hj⟩ := hij
+  subst hi; subst hj
+  decide
+
+example : ¬ IsLinearExtension diamondOrder3 reverseFin3 := by
+  rintro ⟨_, hlin⟩
+  have h := hlin 0 2 ⟨rfl, rfl⟩
+  simp only [reverseFin3, Equiv.swap_apply_left, Equiv.swap_apply_right] at h
+  exact absurd h (by decide)
 
 open Classical in
 /-- Count of linear extensions for a finite causal order.
@@ -270,6 +340,17 @@ multifractal analysis of concurrency.
 /-- An antichain in a causal order: a set of pairwise incomparable events. -/
 def IsAntichain {n : Nat} (co : CausalOrder n) (A : Finset (Fin n)) : Prop :=
   ∀ i ∈ A, ∀ j ∈ A, i ≠ j → ¬ co.prec i j ∧ ¬ co.prec j i
+
+-- Witness pair: statement-adequacy check — `IsAntichain` accepts `{0, 1}` under
+-- `diamondOrder3` (no forced order between `0` and `1`) and provably rejects `{0, 2}`
+-- (`0` causally precedes `2`).
+example : IsAntichain diamondOrder3 ({0, 1} : Finset (Fin 3)) := by
+  unfold IsAntichain diamondOrder3
+  decide
+
+example : ¬ IsAntichain diamondOrder3 ({0, 2} : Finset (Fin 3)) := by
+  unfold IsAntichain diamondOrder3
+  decide
 
 /-- Width of a causal order: the maximum antichain size.
 This is the primary concurrency coordinate. -/
@@ -425,5 +506,20 @@ def executableConcurrency {n : Nat}
     (resourceConc : Fin n → Fin n → Prop) :
     Fin n → Fin n → Prop :=
   fun i j => causalConc i j ∧ temporalConc i j ∧ resourceConc i j
+
+-- Witness pair: statement-adequacy check — `executableConcurrency` accepts a pair where
+-- causal, temporal, and resource concurrency all hold, and provably rejects the same pair
+-- once the resource leg is forced false (executable concurrency requires all three
+-- simultaneously, not a majority).
+example : executableConcurrency (n := 2) (fun _ _ => True) (fun _ _ => True)
+    (fun _ _ => True) 0 1 := by
+  unfold executableConcurrency
+  exact ⟨True.intro, True.intro, True.intro⟩
+
+example : ¬ executableConcurrency (n := 2) (fun _ _ => True) (fun _ _ => True)
+    (fun _ _ => False) 0 1 := by
+  unfold executableConcurrency
+  rintro ⟨_, _, h⟩
+  exact h
 
 end ProcInt.MFW
