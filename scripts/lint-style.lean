@@ -184,6 +184,306 @@ def undocumentedScripts (opts : LinterOptions) : IO Nat := do
       {String.intercalate "," undocumented.toList}"
   return undocumented.size
 
+/-! ## `ProcInt`-scoped checks
+
+The following checks were added after an audit of the `ProcInt.MFW` formalization found
+several recurring problems (dead scratch files checked into the source tree, `opaque`
+declarations quietly standing in for axioms, status labels that drift out of sync with
+actual proof state, "Theorem"-labeled results with no proof obligation, vacuously-`True`
+predicates, and a `[Notation Authority §N]` tag reused across unrelated files). Each check
+here is `defValue := false` by default, so it can never fire against the real Mathlib
+tree; a downstream package (see `procint/lakefile.toml`) opts in explicitly via
+`leanOptions`. Each takes an explicit `root` directory to scan rather than relying on
+Lean's module-resolution machinery, since several of these checks (dead files, `.bak`
+files) aren't about compilable modules in the first place — this mirrors how
+`undocumentedScripts` above scans `scripts/` directly with `System.FilePath.readDir`
+rather than going through `lintModules`. These are line-level text heuristics, in the same
+spirit as the Python-era linters in `lint-style.py`: they favour simple, auditable checks
+over a full parse, and can both miss violations (a check documents its own blind spots)
+and occasionally need a `nolints`-style exception — that tradeoff is acceptable for
+surfacing an accidental regression, not for being a soundness guarantee. -/
+
+/-- Deduplicate a list, keeping first-seen order. -/
+def dedupe [BEq α] (xs : List α) : List α :=
+  xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) []
+
+/-- Recursively collect every `.lean` file under `root`, skipping `.lake` (build/dependency
+output) directories. -/
+partial def findLeanFiles (root : System.FilePath) : IO (Array System.FilePath) := do
+  let mut found := #[]
+  if ← root.isDir then
+    for entry in (← root.readDir) do
+      let path := entry.path
+      if ← path.isDir then
+        if entry.fileName != ".lake" then
+          found := found ++ (← findLeanFiles path)
+      else if path.extension == some "lean" then
+        found := found.push path
+  return found
+
+/-- True if `word` occurs in `s` as a standalone word, not merely as a substring embedded
+inside a larger identifier — e.g. `containsAsWord "structure CentralTheoremLedger" "Theorem"`
+is `false` (it's embedded in `CentralTheoremLedger`), while
+`containsAsWord "The Central Theorem Ledger" "Theorem"` is `true`. Implemented by replacing
+every non-alphanumeric character with a space and checking for an exact token match, so it
+doesn't depend on any particular punctuation around the word. -/
+def containsAsWord (s : String) (word : String) : Bool :=
+  let normalized := String.mk (s.toList.map (fun c => if c.isAlphanum then c else ' '))
+  (normalized.splitOn " ").contains word
+
+/-- Verify that no tracked scratch/draft `.lean` files exist under the project source
+tree. -/
+register_option linter.noTrackedScratchFiles : Bool := { defValue := false }
+
+/-- Recursively collect files under `root` matching this project's scratch/draft naming
+convention: `Scratch*.lean`/`scratch*.lean` anywhere, `test*.lean` outside a directory
+literally named `Tests`, or any `*.bak` file. Skips `.lake`. -/
+partial def findScratchFiles (root : System.FilePath) (inTestsDir : Bool := false) :
+    IO (Array System.FilePath) := do
+  let mut found := #[]
+  if ← root.isDir then
+    for entry in (← root.readDir) do
+      let path := entry.path
+      let name := entry.fileName
+      if ← path.isDir then
+        if name != ".lake" then
+          found := found ++ (← findScratchFiles path (inTestsDir || name == "Tests"))
+      else
+        let isBak := name.endsWith ".bak"
+        let isScratch := (name.startsWith "Scratch" || name.startsWith "scratch") &&
+          name.endsWith ".lean"
+        let isLooseTest := name.startsWith "test" && name.endsWith ".lean" && !inTestsDir
+        if isBak || isScratch || isLooseTest then
+          found := found.push path
+  return found
+
+/-- Verifies that no tracked scratch/draft file (see `findScratchFiles`) exists under
+`root`. Returns the number of violations found. -/
+def noTrackedScratchFiles (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.noTrackedScratchFiles opts do return 0
+  let found ← findScratchFiles root
+  for f in found do
+    IO.println s!"error: {f}: tracked scratch/draft file — delete it, or move it out of \
+      the tracked source tree"
+  return found.size
+
+/-- Flag `axiom` declarations and `opaque` declarations with no `:=` body. -/
+register_option linter.noUnmarkedAxioms : Bool := { defValue := false }
+
+/-- Verifies that no `axiom` declaration, and no single-line `opaque` declaration with no
+`:=` body, appears in any `.lean` file under `root`. An `opaque` with no defining body
+carries the same soundness footprint as an `axiom` but reads as more innocuous — this
+check surfaces both uniformly. This is a line-level heuristic: a multi-line `opaque`
+signature whose `:=` appears on a later line is not caught. Returns the number found. -/
+def noUnmarkedAxioms (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.noUnmarkedAxioms opts do return 0
+  let mut count := 0
+  for f in (← findLeanFiles root) do
+    let lines := ((← IO.FS.readFile f).splitOn "\n").toArray
+    for i in [0:lines.size] do
+      let line := lines[i]!
+      let trimmed := line.trimLeft
+      let isAxiom := trimmed.startsWith "axiom "
+      let isOpaque := trimmed.startsWith "opaque " || trimmed.startsWith "noncomputable opaque "
+      let hasBody := line.contains ":="
+      if isAxiom || (isOpaque && !hasBody) then
+        let kind := if isAxiom then "axiom" else "opaque with no body"
+        IO.println s!"error: {f}:{i + 1}: unmarked assumption ({kind}) — either give it a \
+          real definition or document it as an explicit axiom with justified properties"
+        count := count + 1
+  return count
+
+/-- Find the first index at or after `i` in `lines` that is neither blank nor a plain
+`--`-comment-only line (or `lines.size` if none exists) — skips past a trailing
+line-comment sitting between a docstring and the declaration it documents. -/
+partial def firstNonBlankFrom (lines : Array String) (i : Nat) : Nat :=
+  if h : i < lines.size then
+    let trimmed := (lines[i]'h).trim
+    if trimmed.isEmpty || trimmed.startsWith "--" then firstNonBlankFrom lines (i + 1) else i
+  else
+    lines.size
+
+/-- Concatenate lines starting at `i` up to (excluding) the next blank line or end of
+array. -/
+partial def collectUntilBlank (lines : Array String) (i : Nat) : String :=
+  if h : i < lines.size then
+    if (lines[i]'h).trim.isEmpty then ""
+    else (lines[i]'h) ++ "\n" ++ collectUntilBlank lines (i + 1)
+  else
+    ""
+
+/-- Flag a `theorem`/`example` tagged `Standing: CONJECTURAL` whose proof body contains no
+`sorry`/`admit` — the exact "stale metadata" drift found across several MFW modules,
+where a proof was completed but its status comment was never updated. -/
+register_option linter.staleConjecturalLabel : Bool := { defValue := false }
+
+/-- Verifies no declaration under `root` is tagged `CONJECTURAL` in its doc comment while
+having a complete (no `sorry`/`admit`) `theorem`/`example` proof body. Heuristic: after a
+doc comment containing "CONJECTURAL" closes, if the next non-blank line starts a
+`theorem`/`example`, scan forward until the next blank line and check for `sorry`/`admit`.
+Returns the number found. -/
+def staleConjecturalLabel (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.staleConjecturalLabel opts do return 0
+  let mut count := 0
+  for f in (← findLeanFiles root) do
+    let lines := ((← IO.FS.readFile f).splitOn "\n").toArray
+    let mut sawConjectural := false
+    for i in [0:lines.size] do
+      let line := lines[i]!
+      if containsAsWord line "CONJECTURAL" then
+        sawConjectural := true
+      if sawConjectural && line.contains "-/" then
+        let j := firstNonBlankFrom lines (i + 1)
+        let declLine := if j < lines.size then lines[j]! else ""
+        let trimmedDecl := declLine.trimLeft
+        if trimmedDecl.startsWith "theorem " || trimmedDecl.startsWith "example" then
+          let body := collectUntilBlank lines j
+          if !body.contains "sorry" && !body.contains "admit" then
+            IO.println s!"error: {f}:{j + 1}: tagged CONJECTURAL but the proof body has no \
+              sorry/admit — Standing label likely stale, update it to PROVEN if the proof \
+              is genuinely complete"
+            count := count + 1
+        sawConjectural := false
+  return count
+
+/-- Flag a `def ... : Prop` whose doc comment contains the word "Theorem" — a headline
+result stated as a `def` never carries a proof obligation, which is a quieter way to skip
+a "zero sorry" check than a visible `sorry`. -/
+register_option linter.theoremShapedDef : Bool := { defValue := false }
+
+/-- Concatenate lines starting at `i` through the first line containing `:=` (the
+signature/body boundary), or up to the next blank line / end of array if neither is found
+first — covers a `def`'s signature even when its `: Prop` return type sits on a
+continuation line rather than the `def` line itself. -/
+partial def collectSignature (lines : Array String) (i : Nat) : String :=
+  if h : i < lines.size then
+    let line := lines[i]'h
+    if line.trim.isEmpty then ""
+    else if line.contains ":=" then line
+    else line ++ "\n" ++ collectSignature lines (i + 1)
+  else
+    ""
+
+/-- Verifies no `def` under `root` is documented as a "Theorem" while never being asserted
+via `theorem`/`example`. Heuristic: a doc comment containing "Theorem" immediately
+followed (after it closes) by a `def` whose signature (up to `:=`) contains `: Prop`.
+Returns the number found. -/
+def theoremShapedDef (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.theoremShapedDef opts do return 0
+  let mut count := 0
+  for f in (← findLeanFiles root) do
+    let lines := ((← IO.FS.readFile f).splitOn "\n").toArray
+    let mut sawTheoremWord := false
+    for i in [0:lines.size] do
+      let line := lines[i]!
+      if containsAsWord line "Theorem" then
+        sawTheoremWord := true
+      if sawTheoremWord && line.contains "-/" then
+        let j := firstNonBlankFrom lines (i + 1)
+        let declLine := if j < lines.size then lines[j]! else ""
+        let trimmedDecl := declLine.trimLeft
+        let isDef := trimmedDecl.startsWith "def " || trimmedDecl.startsWith "noncomputable def "
+        let signature := collectSignature lines j
+        if isDef && signature.contains ": Prop" then
+          IO.println s!"error: {f}:{j + 1}: docstring calls this a \"Theorem\" but it is a \
+            `def`, never asserted via `theorem` — no proof obligation exists for this claim"
+          count := count + 1
+        sawTheoremWord := false
+  return count
+
+/-- Flag a `Prop`-valued definition whose entire body is the literal `True` — vacuously
+satisfiable by construction, regardless of what its name/docstring claims it checks. -/
+register_option linter.vacuousPropBody : Bool := { defValue := false }
+
+/-- Verifies no `: ... Prop := True` definition appears under `root`, whether the body sits
+on the same line as `:=` or (matching e.g. `validTopologicalSort`'s pattern) alone on the
+next non-blank line. A vacuous existential nested inside a larger expression is not
+caught. Returns the number found. -/
+def vacuousPropBody (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.vacuousPropBody opts do return 0
+  let mut count := 0
+  for f in (← findLeanFiles root) do
+    let lines := ((← IO.FS.readFile f).splitOn "\n").toArray
+    for i in [0:lines.size] do
+      let trimmed := lines[i]!.trim
+      let sameLine := trimmed.endsWith ":= True" || trimmed.endsWith ":=True"
+      let j := firstNonBlankFrom lines (i + 1)
+      let followingIsTrue := if j < lines.size then lines[j]!.trim == "True" else false
+      let nextLineIsTrue := trimmed.endsWith ":=" && followingIsTrue
+      if sameLine || nextLineIsTrue then
+        IO.println s!"error: {f}:{i + 1}: Prop body is unconditionally `True` — this \
+          definition is vacuously satisfiable and doesn't constrain anything"
+        count := count + 1
+  return count
+
+/-- Flag a `[Notation Authority §N]` tag number that is reused across more than one file.
+Reuse *within* a file (grouping related declarations under one concept number) is this
+project's documented convention; reuse *across* files means two unrelated concepts were
+accidentally assigned the same number. -/
+register_option linter.duplicateNotationAuthorityTag : Bool := { defValue := false }
+
+/-- Verifies every `[Notation Authority §N]` tag number under `root` is confined to a
+single file. Returns the number of tag numbers found reused across files. -/
+def duplicateNotationAuthorityTag (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.duplicateNotationAuthorityTag opts do return 0
+  let marker := "[Notation Authority §"
+  let mut pairs : Array (String × System.FilePath) := #[]
+  for f in (← findLeanFiles root) do
+    let content ← IO.FS.readFile f
+    let mut seenInFile : Array String := #[]
+    for piece in (content.splitOn marker).drop 1 do
+      let tag := (piece.takeWhile Char.isDigit).toString
+      if !tag.isEmpty && !seenInFile.contains tag then
+        seenInFile := seenInFile.push tag
+        pairs := pairs.push (tag, f)
+  let allTags := dedupe (pairs.map Prod.fst).toList
+  let mut count := 0
+  for tag in allTags do
+    let filesForTag := (pairs.filter (·.1 == tag)).map Prod.snd
+    let distinctFiles := dedupe filesForTag.toList
+    if distinctFiles.length > 1 then
+      IO.println s!"error: [Notation Authority §{tag}] used in {distinctFiles.length} \
+        different files: {distinctFiles}"
+      count := count + 1
+  return count
+
+/-- Flag a `Standing:` tag whose value is not one of the eight canonical words from
+AGENTS.md's Standing Law: ALIVE, PARTIAL_ALIVE, BLOCKED, BUILD_BROKEN, UNKNOWN, UNSUPPORTED,
+CONJECTURAL, or PROVEN. Typos, ad-hoc words, or missing values are errors. -/
+register_option linter.invalidStandingTag : Bool := { defValue := false }
+
+/-- Verifies every `Standing:` tag under `root` uses one of the eight canonical vocabulary
+words. Scans each line for `Standing:` followed by whitespace and a word token; validates
+that word against the vocabulary. Returns the number of invalid tags found. -/
+def invalidStandingTag (opts : LinterOptions) (root : System.FilePath) : IO Nat := do
+  unless getLinterValue linter.invalidStandingTag opts do return 0
+  let validWords : Array String := #["ALIVE", "PARTIAL_ALIVE", "BLOCKED", "BUILD_BROKEN",
+    "UNKNOWN", "UNSUPPORTED", "CONJECTURAL", "PROVEN"]
+  let mut count := 0
+  for f in (← findLeanFiles root) do
+    let lines := ((← IO.FS.readFile f).splitOn "\n").toArray
+    for i in [0:lines.size] do
+      let line := lines[i]!
+      if line.contains "Standing:" then
+        -- Extract the part after "Standing:"
+        let parts := line.splitOn "Standing:"
+        if parts.length >= 2 then
+          let afterColon := (parts[1]!.trimAsciiStart).toString
+          -- Split on whitespace and take the first non-empty token
+          let tokens := afterColon.split (· == ' ') |>.toList.map (·.toString) |>.filter (·.length > 0)
+          if tokens.isEmpty then
+            IO.println s!"error: {f}:{i + 1}: Standing tag found but no value follows it"
+            count := count + 1
+          else
+            let word := tokens.head!
+            -- The word extracted from tokens should be clean (split on spaces removes whitespace)
+            if !validWords.contains word then
+              IO.println s!"error: {f}:{i + 1}: Standing tag has invalid value '{word}' \
+                (expected one of: ALIVE, PARTIAL_ALIVE, BLOCKED, BUILD_BROKEN, UNKNOWN, \
+                UNSUPPORTED, CONJECTURAL, PROVEN)"
+              count := count + 1
+  return count
+
 /-- Implementation of the `lint-style` command line program. -/
 def lintStyleCli (args : Cli.Parsed) : IO UInt32 := do
   let opts : LinterOptions := {
@@ -265,10 +565,33 @@ def lintStyleCli (args : Cli.Parsed) : IO UInt32 := do
   catch _ =>
     IO.eprintln s!"warning: nolints file could not be read; treating as empty: {filename}"
     pure #[]
+  -- The `ProcInt`-scoped checks (see the "ProcInt-scoped checks" section above) can't be
+  -- reached via `getLakefileLeanOptions`'s usual `leanOptions` mechanism: `procint/` is a
+  -- separate, unintegrated Lake workspace (it depends on its own pinned copy of Mathlib,
+  -- and doesn't `require` this package), so there is no `lake exe lint-style` invocation
+  -- from *inside* `procint/` that runs *this* executable. Instead, `--procint` forces
+  -- those checks on directly and points them at the `procint` directory relative to this
+  -- executable's own workspace root (i.e. run from here, not from inside `procint/`).
+  let procIntLinterNames : List Lean.Name := [`linter.noTrackedScratchFiles,
+    `linter.noUnmarkedAxioms, `linter.staleConjecturalLabel, `linter.theoremShapedDef,
+    `linter.vacuousPropBody, `linter.duplicateNotationAuthorityTag, `linter.invalidStandingTag]
+  let procIntOpts : LinterOptions :=
+    if args.hasFlag "procint" then
+      { opts with toOptions := procIntLinterNames.foldl (fun o n => o.setBool n true) opts.toOptions }
+    else opts
+  let procIntRoot : System.FilePath := if args.hasFlag "procint" then "procint" else "."
+
   let numberErrors := (← lintModules opts nolints allModuleNames style fix)
     + (← missingInitImports opts).toUInt32 + (← undocumentedScripts opts).toUInt32
     + (← modulesNotUpperCamelCase opts allModuleNames).toUInt32
     + (← modulesOSForbidden opts allModuleNames).toUInt32
+    + (← noTrackedScratchFiles procIntOpts procIntRoot).toUInt32
+    + (← noUnmarkedAxioms procIntOpts procIntRoot).toUInt32
+    + (← staleConjecturalLabel procIntOpts procIntRoot).toUInt32
+    + (← theoremShapedDef procIntOpts procIntRoot).toUInt32
+    + (← vacuousPropBody procIntOpts procIntRoot).toUInt32
+    + (← duplicateNotationAuthorityTag procIntOpts procIntRoot).toUInt32
+    + (← invalidStandingTag procIntOpts procIntRoot).toUInt32
   -- If run with the `--fix` argument, return a zero exit code.
   -- Otherwise, make sure to return an exit code of at most 125,
   -- so this return value can be used further in shell scripts.
@@ -287,6 +610,11 @@ def lintStyle : Cmd := `[Cli|
     github;     "Print errors in a format suitable for github problem matchers\n\
                  otherwise, produce human-readable output"
     fix;        "Automatically fix the style error, if possible"
+    procint;    "Also run the ProcInt-scoped hygiene checks (tracked scratch files, \
+                 unmarked axioms, stale CONJECTURAL labels, theorem-shaped defs, vacuous \
+                 Prop bodies, duplicate Notation Authority tags) against the `procint/` \
+                 directory. Run this from the repository root, not from inside `procint/` \
+                 — see the \"ProcInt-scoped checks\" comment in this file for why."
 
   ARGS:
     ...modules : String; "Which modules, and their imports, will be linted.\n\

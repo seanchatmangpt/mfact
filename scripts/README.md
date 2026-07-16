@@ -134,6 +134,25 @@ file used by the library's own linters.
 
   **Requirements:** `gh` (GitHub CLI) installed and authenticated, `jq` for JSON parsing.
 
+**Verification and receipt generation**
+- `verify-receipt.sh` [LAKE_TARGET]
+  Runs `lake build <target>` and `lake exe lint-style --procint Mathlib.Init`, capturing
+  output and exit codes. Writes a timestamped receipt to `.verif-toolchain/receipts/receipt-*.txt`
+  including git HEAD, git status (CLEAN/DIRTY), command outputs, and a pass/fail summary.
+  The receipt file can be cited as evidence when making ALIVE/PARTIAL_ALIVE standing claims
+  in accordance with `docs/AGENT_FAILURE_MODES.md` and `AGENTS.md`.
+
+  **Usage:**
+  ```bash
+  scripts/verify-receipt.sh              # builds ProcInt (default)
+  scripts/verify-receipt.sh procint      # builds procint
+  scripts/verify-receipt.sh all          # builds all
+  ```
+
+  **Exit code:** 0 if both build and lint succeeded; 1 if either failed.
+
+  **Receipts:** Written to `.verif-toolchain/receipts/` (gitignored; local evidence only).
+
 **Backward-compatibility `set_option` migration tools**
 
 These scripts help with testing Lean PRs that change backward-compatibility option
