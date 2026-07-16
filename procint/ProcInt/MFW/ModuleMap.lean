@@ -11,6 +11,7 @@ import ProcInt.MFW.ExploreExploit
 import ProcInt.MFW.Falsification
 import ProcInt.MFW.CompilerPipeline
 import ProcInt.MFW.Ledger
+import ProcInt.MFW.GapCalculus
 
 /-!
 # ProcInt.MFW — Multi Fractal Workflow
