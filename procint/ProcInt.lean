@@ -57,3 +57,15 @@ import ProcInt.Planning.Pddl
 import ProcInt.Registry.Algorithms
 import ProcInt.Registry.Breeds
 
+-- Not ggen-rendered: the MFW (Multi-Fractal Workflow) subtree, merged in from the
+-- feature/mfw-fixes branch (2026-07-16), predates this repo's ggen catalog integration
+-- for that area. `ModuleMap` transitively imports every core MFW module (TransformBasic,
+-- Concurrency, Kernel, Observability, FiberEntropy, IntrinsicDimension, ObservableBasis,
+-- SpectrumBundle, Manufacture, ExploreExploit, Falsification, CompilerPipeline, Ledger),
+-- so only it, `QLens`, and `Tests` need to be listed here. WARNING: `just render`
+-- regenerates this file from ggen and drops these three lines — re-add them after any
+-- render until MFW has its own ggen source/template (see root AGENTS.md "Known Residual
+-- Obligations"). Confirmed to happen in practice during the 2026-07-16 unification merge.
+import ProcInt.MFW.ModuleMap
+import ProcInt.MFW.QLens
+import ProcInt.MFW.Tests

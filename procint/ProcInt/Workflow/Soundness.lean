@@ -46,7 +46,7 @@ theorem WfNet.Sound.enabled_of_transition {P T : Type} [DecidableEq P] {W : WfNe
   obtain ⟨M, M', hr, hstep⟩ := h.no_dead_transitions t
   exact ⟨M, hr, hstep.1⟩
 
-/-- Crown-jewel statement (van der Aalst 1997, Lemma 8 / Theorem 11): a
+/-- Crown-jewel statement (van der Aalst 1997, Lemma 8 / Thm. 11): a
 workflow net is sound iff its short-circuited net is live and bounded from
 the initial marking `[i]`. Stated here as a `Prop`; the proof is manufactured
 by a dedicated lane. Requires `[Finite T]`: without finitely many transitions

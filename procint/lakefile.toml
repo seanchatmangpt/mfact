@@ -19,6 +19,16 @@ path = "../mfact"
 
 [[lean_lib]]
 name = "ProcInt"
+# Hygiene checks for procint/ProcInt/MFW/ (tracked scratch files, unmarked axioms, stale
+# CONJECTURAL labels, theorem-shaped defs, vacuous Prop bodies, duplicate Notation
+# Authority tags) live in the root repo's scripts/lint-style.lean, not here — `procint/`
+# is a separate, unintegrated Lake workspace (own pinned Mathlib, no `require` on the root
+# package), so a `leanOptions`-based `lake exe lint-style` invocation from *inside* this
+# directory can't reach that executable. Run `lake exe lint-style --procint` from the
+# repository root instead; see that flag's help text and the "ProcInt-scoped checks"
+# section of scripts/lint-style.lean for how it's wired. The rest of procint/ProcInt/
+# (Petri/Workflow/Logs/Conformance/Ocel/Models/Analytics/Planning/Registry) is
+# ggen-rendered from packs/lean-math-pack — see the root AGENTS.md Ledger Law.
 
 [[lean_lib]]
 name = "AxiomAudit"
@@ -29,7 +39,11 @@ roots = ["ProcInt.Release.Quadrature"]
 
 [[lean_lib]]
 name = "Tests"
-roots = ["ProcInt.Tests"]
+# Two disjoint test trees share this one lake target: ProcInt.Tests.* (the ggen-rendered
+# Petri/Workflow/Conformance/Ocel/Models corpus) and ProcInt.MFW.Tests.* (the hand-authored
+# MFW subproject). Splitting them into separate lean_lib targets is a reasonable future
+# cleanup — see root AGENTS.md "Known Residual Obligations" — not required for correctness.
+roots = ["ProcInt.Tests", "ProcInt.MFW.Tests"]
 
 [[lean_lib]]
 name = "PostRelease"

@@ -1,5 +1,33 @@
+# macOS leaves these files everywhere:
+.DS_Store
+# Created by `lake exe cache get` if no home directory is available
+.cache
+# `lake` stores its files here:
 .lake/
 *.olean
+# Python bytecode cache directories
+**/__pycache__/
+*.pyc
+# Progress file from scripts/rm_set_option.py
+scripts/.rm_set_option_progress.jsonl
+# Artifacts from using the devcontainer setup
+.devcontainer/devcontainer-lock.json
+# Vendored/build directories
+/batteries/
+/crates/
+/target/
+/mathlib-temp/
+/mathlib_temp/
+/release/
+/pylab/
+/.agents/
+/.mfact/
+# Scratch/test artifacts
+computable.o
+test.js
+test.wasm
+test_collect*.lean
+
 paper/*.aux
 paper/*.log
 paper/*.out
@@ -11,10 +39,6 @@ paper/*.blg
 # Editor swap files (accidentally tracked once — never again)
 *.swp
 *.swo
-
-# Python bytecode cache (scripts/ is stdlib-only but still emits this)
-__pycache__/
-*.pyc
 
 # Ephemeral cockpit reports (certified status lives in release/)
 .mfact/reports/
