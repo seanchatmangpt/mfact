@@ -1,0 +1,18 @@
+# Hand-authored, unledgered experiment metadata for praxis_graphlaw.
+#
+# Same governance tier as benchmark_plan.md (rslab/README.md tier 1):
+# declared configuration, never generated, never ledgered. Holds the fields
+# collect_praxis_graphlaw.py cannot derive from the committed raw command
+# output (rslab/experiments/praxis_graphlaw/raw/*.txt carries no git-commit
+# line) — the praxis commit and caveats recorded live by the Ticket 018
+# run. Carried forward verbatim from that run's manually-assembled receipt;
+# not invented here.
+
+praxis_commit = "c745c14f646870eb148f3df090f7a8026801cef4"
+
+caveats = [
+    "Harness Diversity: The workspace uses multiple distinct benchmark frameworks (bencher, divan, criterion) simultaneously; comparison of raw performance metrics across these harnesses is not directly supported.",
+    "No Profiling/Flamegraph Tooling: As of this exploration, no profiling or flamegraph tooling exists in the /Users/sac/praxis workspace. The profiler_result.schema.json is provided for future extensions and is currently unpopulated.",
+    "Terminology on Admission Control: 'Transaction-path admission control' is not an existing named class or interface inside the praxis codebase. The nearest structural representations are SHACL/ShEx admission gates and the POWL admission context (bcinr_powl::admit::{admit, AdmissionContext}). Any paper language referring to 'transaction-path admission control' must frame it as a future design objective rather than an implemented feature.",
+    "Warnings: Compile profile warning (non-root package profiles ignored, panic setting ignored for bench profile) and unused code or missing docs warnings in ggen lib.",
+]

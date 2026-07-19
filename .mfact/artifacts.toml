@@ -521,7 +521,7 @@ content_hash = "blake3:d3f6c8e8a0179e73ef5455ed24c51eaf04669ae155c030ed24c794599
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:3f9aa316f2d550dea776e46a50f6aaf06e9e480dca9aa779154b4f24efb917e7"
+content_hash = "blake3:3cdcbdaa47f02e1a5a0d59318a31e46064a0a3834377a6a64a3f30e189ef7e90"
 
 [[artifact]]
 path = "paper/correspondence_status.tex"
@@ -546,3 +546,15 @@ path = "release/docs_report.json"
 producer = "scripts/build_docs.sh"
 sources = ["release/release-manifest.json"]
 content_hash = "blake3:32d79a726b2fda9455d96a06370fb1235e2bb5ecf7d5f9a41ce08b9db16cc3ce"
+
+[[artifact]]
+path = "rslab/receipts/praxis_graphlaw_benchmark_receipt.toml"
+producer = "rslab/scripts/collect_praxis_graphlaw.py"
+sources = ["rslab/experiments/praxis_graphlaw/raw/bench_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/bench_root.txt", "rslab/experiments/praxis_graphlaw/raw/test_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/test_e2e.txt", "rslab/experiments/praxis_graphlaw/raw/toolchain_context.txt", "rslab/experiments/praxis_graphlaw/raw/command_log.txt", "rslab/experiments/praxis_graphlaw/experiment_meta.toml", "rslab/schemas/benchmark_result.schema.json"]
+content_hash = "blake3:ae29dda61371cfde4d909d4e191f89bb848968c87418f2ca518838452b6a9a5a"
+
+[[artifact]]
+path = "rslab/paper_fragments/praxis_graphlaw_evidence.tex"
+producer = "rslab/scripts/render_paper_fragments.py"
+sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml"]
+content_hash = "blake3:4951fec94d80e46c8bfa16f9b19475f4ff2d756549097f345d42f7b60673cc78"

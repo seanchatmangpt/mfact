@@ -6,5 +6,7 @@ manifest_version = "1.0.0"
 
 [[experiments]]
 id = "praxis_graphlaw"
-status = "declared"
+status = "extracted"
 plan = "experiments/praxis_graphlaw/benchmark_plan.md"
+receipt = "receipts/praxis_graphlaw_benchmark_receipt.toml"
+fragment = "paper_fragments/praxis_graphlaw_evidence.tex"

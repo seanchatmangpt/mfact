@@ -609,14 +609,46 @@ cannot fail certifies nothing.
 \section{praxis-graphlaw: Executable Law-State Evaluation}
 \label{sec:praxis-graphlaw}
 
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+praxis-graphlaw is the executable law-state evaluation engine in the
+sibling \texttt{praxis} workspace: a Rust crate that evaluates SHACL,
+ShEx, N3 forward-chaining, and Datalog dialects against RDF graphs, and
+exposes an admission context (\texttt{bcinr\_powl::admit}) that gates
+graph mutation on those checks. It is a distinct manufacturing rail from
+\textsf{procint} (Section~\ref{sec:procint}): where \textsf{procint}
+formalizes process-mining semantics in Lean and admits theorems through
+the kernel, praxis-graphlaw executes law-state checks in Rust and is not
+admitted through any proof obligation. The two rails are related only by
+citation --- this paper reports both, but neither certifies the other.
+\textsf{mfact} does not claim, and this paper does not assert, that
+praxis-graphlaw's SHACL/ShEx/N3/Datalog evaluation is formally verified;
+its correctness evidence is the conformance and end-to-end admission test
+suite reported in Section~\ref{sec:rslab_benchmark}, receipted through
+the rslab rail described next.
 
 \section{rslab: Empirical Evidence Rail}
 \label{sec:rslab}
 
-rslab is not a proof engine. rslab is an empirical evidence rail.
-
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+rslab is not a proof engine. rslab is an empirical evidence rail. Its
+doctrine (verbatim from \texttt{rslab/README.md}) separates three tiers:
+praxis executes; rslab measures, normalizes, schemas, receipts, and
+renders; \textsf{mfact} admits formal standing. Raw command output from a
+praxis run ($O$) is not itself evidence; a receipt-building script
+(\texttt{rslab/scripts/collect\_praxis\_graphlaw.py}) schema-validates
+it, hashes every raw file with BLAKE3, and records the toolchain and
+commit under test, producing $O^*$ --- schema-validated, receipted output
+conforming to \texttt{rslab/schemas/benchmark\_result.schema.json}. A
+second script (\texttt{rslab/scripts/render\_paper\_fragments.py})
+renders LaTeX paper fragments ($A$) from that receipt alone,
+re-verifying every raw-file hash before rendering and refusing
+(\texttt{ARTIFACT\_DRIFT\_REFUSED}) on any mismatch. Both scripts and
+their outputs are ledgered in \texttt{.mfact/artifacts.toml} and covered
+by \texttt{just regen-check}, so a stale or hand-edited fragment fails
+the same drift gate as any \textsf{procint} artifact. rslab evidence
+follows its own status ladder (declared $<$ extracted $<$ stated $<$
+proven) which is deliberately never conflated with \textsf{procint}'s
+kernel-checked proven status: the praxis-graphlaw evidence reported here
+is \emph{extracted} --- observed once, receipted, and reproducible from
+the committed raw output --- not proven.
 
 \section{Use of Generative AI Tools}
 \label{sec:ai-disclosure}
@@ -750,7 +782,33 @@ symbol) each cause a typed refusal.
 \subsection{praxis/rslab Benchmark Evidence}
 \label{sec:rslab_benchmark}
 
-This section is completed under Ticket 020, once Ticket 019's rslab fragments exist to cite.
+The praxis-graphlaw experiment (\texttt{rslab/experiments/praxis\_graphlaw})
+is the first rslab instance. Table~\ref{tab:rslab-tests} reports its
+crate-level conformance suite and cross-crate end-to-end admission-gate
+suite (denial, SHACL-violation, N3-materialization ordering, and
+determinism cases); Table~\ref{tab:rslab-benches} reports the benchmark
+suites --- \texttt{bencher}, \texttt{criterion}, and \texttt{divan}
+harnesses --- exercised across the crate and workspace root. Both tables
+are rendered by \texttt{rslab/scripts/render\_paper\_fragments.py} from
+\texttt{rslab/receipts/praxis\_graphlaw\_benchmark\_receipt.toml}; no
+cell is hand-typed. Three caveats apply, receipted alongside the evidence
+and reproduced here for completeness: (1) profiling/flamegraph tooling
+did not exist in the praxis workspace at collection time, so
+\texttt{profiler\_result.schema.json} remains unpopulated; (2)
+``transaction-path admission control'' is not an implemented interface in
+praxis-graphlaw --- the nearest existing structure is the SHACL/ShEx
+admission gate and \texttt{bcinr\_powl}'s admission context, and any
+future work under that name is a design objective, not a shipped
+feature; (3) the benchmark harnesses report incompatible timing units and
+sampling methodologies, so no cross-harness speed comparison is drawn
+from these tables.
+
+\ifreleasebuild
+  \input{praxis_graphlaw_evidence}
+\else
+  \InputIfFileExists{praxis_graphlaw_evidence}{}{%
+  \begin{center}\itshape Draft build: praxis\_graphlaw\_evidence.tex missing.\end{center}}
+\fi
 
 \section{Falsifier and Valid Objection Surface}
 \label{sec:falsifier}

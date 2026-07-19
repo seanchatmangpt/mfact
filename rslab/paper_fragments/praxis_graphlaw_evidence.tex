@@ -1,0 +1,35 @@
+% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
+% Regenerate: python3 rslab/scripts/collect_praxis_graphlaw.py && python3 rslab/scripts/render_paper_fragments.py
+% Source: rslab/receipts/praxis_graphlaw_benchmark_receipt.toml (EXTRACTED tier;
+% empirical evidence, not a Lean proof — see rslab/README.md doctrine).
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Command} & \textbf{Duration (s)} & \textbf{Passed} & \textbf{Failed} \\
+\midrule
+\texttt{cargo test -p praxis-graphlaw} & 11.06 & 380 & 0 \\
+\texttt{cargo test -p ggen --test graphlaw\_e2e} & 9.83 & 5 & 0 \\
+\midrule
+\textbf{Total} & & \textbf{385} & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\caption{praxis-graphlaw conformance and end-to-end admission test counts, extracted from the Ticket~018 raw command output and receipted by \texttt{rslab/scripts/collect\_praxis\_graphlaw.py} (commit \texttt{c745c14f6468}). EXTRACTED-tier empirical evidence, not a Lean proof obligation.}
+\label{tab:rslab-tests}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Command} & \textbf{Duration (s)} & \textbf{Benchmarks measured} \\
+\midrule
+\texttt{cargo bench -p praxis-graphlaw} (4 bench files) & 456.67 & 24 \\
+\texttt{cargo bench} (3 bench files) & 379.23 & 14 \\
+\midrule
+\textbf{Total} & & \textbf{38} \\
+\bottomrule
+\end{tabular}
+\caption{praxis-graphlaw benchmark suite coverage: per-benchmark output lines counted per harness (\texttt{bencher}/libtest \texttt{bench:} lines, \texttt{criterion} \texttt{time:} blocks, \texttt{divan} leaf rows); per-harness timings are not directly comparable, see receipted caveats. Per-benchmark timing detail lives in the receipted raw output, not reproduced here.}
+\label{tab:rslab-benches}
+\end{table}
