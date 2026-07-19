@@ -73,7 +73,7 @@ dependencies, fixtures, citations, and registry surfaces is projected
 through SPARQL-in-Tera templates by \textsf{ggen}, then admitted or
 refused by Lean/Lake. Every failed admission is a typed refusal rather
 than a silent downgrade; every admitted declaration is recorded with its
-hash, axiom footprint, fixture status, and proven/stated standing. The
+content hash, axiom footprint, fixture status, and proven/stated standing. The
 contribution is not merely that \textsf{procint} exists; it is that
 \textsf{procint} is the first manufactured vertical of MathProofOps, and
 \textsf{mfact} is the Lean/Lake manufacturing apparatus that makes this
@@ -115,7 +115,7 @@ manufacturing asks a different question: what must be standardized so that
 formal domains can be produced as interchangeable parts? In
 \textsf{mfact}, the interchangeable part is not merely a Lean declaration.
 It is a declaration plus provenance, admission status, axiom footprint,
-refusal mode, hash, manifest position, and replay path. A theorem without
+refusal mode, content hash, manifest position, and replay path. A theorem without
 this surrounding receipt is hand-fitted metal; an admitted declaration
 with its release evidence is an interchangeable mathematical part. The
 manufactured object is not syntax --- it is \emph{standing}.
@@ -153,9 +153,9 @@ Our position is that the two concerns should be mechanically separated:
 \end{itemize}
 
 We call this discipline \emph{mathematical manufacturing}: the pipeline is
-the product as much as the library is. The statement--proof split, the typed
-refusals, and the manifest are what make an overnight, largely unattended
-run reportable at all.
+the product as much as the library is. The statement--proof split enforced
+by the Lean kernel, the typed refusals, and the manifest are what make an
+overnight, largely unattended run reportable at all.
 
 \paragraph{Scope.} This paper does not claim to formalize all of process
 intelligence completely, nor does it claim the manufacturing pipeline is
@@ -431,7 +431,7 @@ with hashes, axiom sets, fixture results, and the proven/stated status of
 each declaration. A \texttt{CertifiedRelease} pairs a manifest with its
 audit obligations. \texttt{ValidObjection R} is a closed inductive family
 whose constructors are the only admissible objection forms against a
-release \texttt{R} (an unaudited theorem, a missing hash, an unauthorized
+release \texttt{R} (an unaudited theorem, a missing content hash, an unauthorized
 axiom, a failing fixture); each constructor demands evidence. The
 per-release theorem
 \begin{center}
