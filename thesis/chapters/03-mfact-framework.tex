@@ -1,0 +1,400 @@
+\chapter{The mfact Manufacturing Framework}
+\label{ch:mfact}
+\label{sec:mfact}
+
+Chapter~\ref{ch:background} situated this thesis against Lean's ecosystem
+and the wider LLM-assisted-proving literature. This chapter turns to the
+apparatus the thesis actually builds: \textsf{mfact}, the Lean~4 layer
+that gives the manufacturing pipeline's epistemics --- candidate,
+refusal, admission, manifest, certified release, valid objection --- a
+first-class typed representation rather than leaving them as informal
+convention. As paper/main.tex states it, \textsf{mfact} is deliberately
+small: seven modules and a command-line interface. It is not the whole
+system. It is the Lean/Lake standing apparatus that sits inside a larger
+standing-manufacturing graph whose other rails (process evidence,
+benchmark evidence, correspondence evidence, publication evidence) are
+developed in later chapters. This chapter develops, in order, the
+governing law the whole pipeline answers to; the typed vocabulary of
+candidates and refusals; admission with a covers proof; the manifest,
+certified release, and closed-objection theorem; the ledger law that
+locates authority in a machine-checkable ledger rather than in file
+paths or naming conventions; and the agent actuation constitution that
+governs how any producer --- human or machine --- is permitted to touch
+this apparatus.
+
+\section{The Receipted Manufacturing Law}
+\label{sec:mfact-receipted-law}
+
+The governing law of the pipeline, stated once in
+Chapter~\ref{ch:intro} and elaborated here, is
+\[
+A = \mu_B(O^*_B), \qquad R_B = \mathrm{receipt}(A).
+\]
+Every symbol names a distinct, checkable object rather than a stage of
+prose. $B$ is the declared boundary: the Lean packages, the declaration
+catalog, the manifest schema, and the audited theorem set that together
+fix what counts as ``inside'' for a given release. $O$ is raw
+observation --- candidate output from a human editor, a language model,
+a ggen template, or a repository fragment, with no standing of its own.
+$O^*_B$ is admitted observation inside $B$: typed, kernel-checked,
+bounded, and replayable, the only class of observation the manufacturing
+transform $\mu_B$ is permitted to consume. $\mu_B$ is the lawful
+manufacturing transform itself --- ggen rendering, Lean kernel
+admission, the Lake build, and the axiom/sorry audit, all parameterized
+by the boundary $B$ they operate inside. $A$ is the resulting artifact
+with standing: an admitted theorem, a module, a manifest entry, a
+release. $R_B$ is the receipt --- the build log, the manifest hash, the
+axiom audit output, the negative-fixture result, the replay evidence ---
+that proves $A$ is a genuine consequence of $\mu_B$ acting on $O^*_B$,
+rather than merely an assertion made about $A$ after the fact. The
+asymmetry this equation encodes is the one already stated in
+Chapter~\ref{ch:intro}: raw generated output is $O$, never $O^*$, until
+it has passed through an admission step; manufacture produces the
+artifact, the receipt proves the consequence relation held, and replay
+proves the receipt was non-ornamental --- that a third party, not just
+the original run, can recompute the same result. As paper/main.tex puts
+it, the pipeline exists to refuse the gap between contact and
+consequence.
+
+Within this law the manufacturing graph distinguishes four kinds of
+evidence, each answering to a different admission boundary rather than
+being an interchangeable substitute for the others: \emph{formal}
+evidence (Lean theorems and their axiom audits, the subject of this
+chapter and Chapter~\ref{ch:procint}); \emph{operational} evidence (the
+praxis-graphlaw benchmark and its execution validation via rslab,
+Chapter~\ref{ch:empirical}); \emph{correspondence} evidence
+(Aeneas-extracted implementation image related to admitted \textsf{procint}
+semantics, Chapter~\ref{ch:correspondence}); and \emph{publication}
+evidence (generated paper fragments and manifests, of which this
+thesis's own numeric claims are themselves instances). The
+\texttt{final\_status.tex} fragment below reports the current release's
+standing across several of these evidence kinds at once, rendered
+directly from the manifest rather than typed here.
+
+\begin{table}[h]
+\centering
+\input{../paper/final_status}
+\caption{Current release standing, rendered from the manifest via \texttt{final\_status.tex}.}
+\label{tab:mfact-final-status}
+\end{table}
+
+In this architecture ggen is not a code generator in the ordinary sense.
+It is the projection half of $\mu_B$: it maps a declared obligation
+graph into candidate Lean surfaces. The Lean kernel supplies the
+admission half. Projection without admission confers no standing;
+admission without a projection mechanism does not scale to a
+several-hundred-declaration corpus. Neither half is optional, and
+neither half does the other's job --- a point returned to below when
+Section~\ref{sec:mfact-ledger} distinguishes what a template may render
+from what only kernel admission may certify.
+
+\paragraph{Rice's boundary and manufactured decidability.} Rice's
+theorem bars a nontrivial semantic decision procedure over arbitrary
+programs, and the manufacturing law does not evade this boundary; it
+changes the object of judgment. The pipeline does not decide the
+semantic correctness of an arbitrary generated artifact considered in
+isolation. It decides whether a bounded candidate has been admitted by a
+specific Lean kernel, under a declared axiom policy, with a complete
+manifest receipt --- a decidable question that replaces an undecidable
+one rather than answering it. Undecidability is fenced, not defeated,
+and the standing this apparatus manufactures is standing \emph{inside
+that fence}, a scope this chapter and Chapter~\ref{ch:discussion} both
+return to when discussing what the pipeline does not claim.
+
+\paragraph{Status is algebra, not prose.} The release distinguishes a
+closed vocabulary of standing values --- \textsc{Declared},
+\textsc{Extracted}, \textsc{Stated}, \textsc{Proven}, \textsc{Refused},
+\textsc{Blocked}, \textsc{BuildBroken}, \textsc{Unknown},
+\textsc{Unsupported}, and \textsc{Alive} --- and no transition between
+them is implicit or inferred from surrounding prose. \textsc{Extracted}
+is not proof; \textsc{Unknown} is not admitted; \textsc{Unsupported} is
+not the same refusal as \textsc{Refused}. A candidate artifact, whatever
+its origin, remains exactly that --- a candidate --- until an explicit
+admission step assigns it one of these values, and the repository's
+broader status taxonomy (\textsc{Alive}, \textsc{Partial\_Alive},
+\textsc{Blocked}, \textsc{Blocked\_External}, \textsc{Build\_Broken},
+\textsc{Refused}, \textsc{Pending\_External\_Actuation}, \textsc{Valid},
+\textsc{Unsupported}, \textsc{Planned}, \textsc{Stated},
+\textsc{Replay\_Not\_Run}, \textsc{In\_Progress}, per AGENTS.md) refines
+this same discipline at the level of whole packets and reports, not just
+individual theorems.
+
+\section{Candidates and the Typed Refusal Family}
+\label{sec:mfact-candidates}
+
+A \texttt{Candidate} in \textsf{mfact} is content plus provenance ---
+producer identity and a content hash --- reflecting that every producer,
+human or automated, is untrusted by construction with respect to the
+formal corpus; nothing about a candidate's origin changes what it is
+permitted to do. A failed admission is not represented as an untyped
+error string but as a value of a closed inductive type,
+\texttt{Refusal}, whose constructors --- \texttt{kernelRejected},
+\texttt{sorryPresent}, \texttt{unauthorizedAxiom},
+\texttt{missingEvidence}, \texttt{malformedModel},
+\texttt{invalidFixture} --- name specific, checkable failure modes.
+Because the type is closed and carries no default case, an unrecognized
+failure is itself required to be classified as a refusal rather than
+silently passed through; there is no code path by which a candidate can
+fail to be admitted without producing a typed, loggable, re-queueable
+record of why.
+
+This same discipline is carried into the repository's engineering
+practice at a coarser grain, as a vocabulary of typed refusals a human
+or agent contributor invokes when a proposed change would confer
+standing without a corresponding admission step:
+\texttt{HAND\_CODED\_GENERATED\_OUTPUT} (a generated artifact was
+hand-edited directly), \texttt{GENERATED\_OUTPUT\_DRIFT} (a rendered
+file no longer matches its declared source), \texttt{MISSING\_GGEN\_SOURCE}
+and \texttt{MISSING\_GGEN\_TEMPLATE} (an artifact is ledgered as
+generated but its producing source or template cannot be found),
+\texttt{ORPHAN\_GENERATED\_FILE} and \texttt{UNREGISTERED\_PAPER\_FRAGMENT}
+(a file carries the shape of a generated or paper artifact but is absent
+from the ledger), \texttt{UNSUPPORTED\_STANDING\_CLAIM} and
+\texttt{STATED\_PROMOTED\_TO\_PROVEN} (a claim exceeds its evidence, or a
+status transition happened without the checked guard that must license
+it), \texttt{MANUAL\_RELEASE\_COUNT} and \texttt{MANUAL\_RELEASE\_HASH}
+(a release number or hash was typed by hand instead of read from a
+generated fragment), and \texttt{RECEIPT\_RECURSION\_REFUSED} (an
+operation would mutate the identity of a release it is supposed to be
+reporting on, discussed further in
+Section~\ref{sec:mfact-core-identity}). A further code,
+\texttt{SOURCE\_CHANGE\_ASSERTION\_UNSUPPORTED}, is planned to require
+that any claim of a changed source ship with an actual changed
+source, template, or TTL fragment in the same commit, not a bare
+assertion that a change occurred. Section~\ref{sec:ai-guardrail-audit} of
+Chapter~\ref{ch:ai-development} discusses two refusal codes specific to
+one family of deliberately unfinished theorems ---
+\texttt{COUNTERMODEL\_PROMOTION\_REFUSED} and its associated guard name,
+\texttt{countermodel\_not\_promoted} --- as an instance of this same
+family, added in direct response to an audited failure rather than
+speculatively.
+
+\section{Admission with a Covers Proof}
+\label{sec:mfact-admission}
+
+The move from candidate to artifact is not a boolean flag but a bundled
+record. An \texttt{Admission} gathers the evidence for one candidate:
+the kernel acceptance record, the sorry census, the axiom-audit output,
+and a \texttt{covers} field --- a proof term witnessing that the
+collected evidence entries jointly cover the obligations the admission
+gate imposes. This last field is the structural device that prevents an
+admission from being assembled with a silently missing check: the type
+of \texttt{covers} forces every required obligation to be discharged by
+some evidence entry before an \texttt{Admission} value can be
+constructed at all, so ``we forgot to check the axiom footprint'' is not
+a runtime bug this framework can express, only a compile-time
+impossibility. The gate function, \texttt{admit}, is total: applied to a
+candidate it returns either an \texttt{Admission} or a \texttt{Refusal},
+with no third outcome such as a pending or ambiguous state. Totality
+here is doing real epistemic work --- it is what makes ``the candidate
+was neither admitted nor refused'' an unrepresentable claim rather than
+merely a discouraged one.
+
+\section{Manifest, Certified Release, and the Closed Objection Family}
+\label{sec:mfact-manifest}
+
+A \texttt{Manifest}, serializable to JSON, lists artifacts together with
+their content hashes, axiom sets, fixture results, and the proven or
+stated status of each declaration --- the object rendered, for this
+release, into Table~\ref{tab:mfact-final-status} above and into the
+per-declaration ladder discussed further in Chapter~\ref{ch:empirical}.
+A \texttt{CertifiedRelease} pairs a manifest with its audit obligations.
+Against a release \texttt{R}, \texttt{ValidObjection R} is a closed
+inductive family whose constructors are the \emph{only} admissible forms
+an objection to \texttt{R} may take --- an unaudited theorem, a missing
+content hash, an unauthorized axiom, a failing fixture --- and each
+constructor demands its own evidence to be instantiated, so an objection
+cannot itself be raised without being checkable. The per-release theorem
+\begin{center}
+\texttt{theorem no\_valid\_objection : IsEmpty (ValidObjection R)}
+\end{center}
+is discharged by refuting each constructor of \texttt{ValidObjection}
+against the corresponding checked field of \texttt{R}: there is no
+unaudited theorem because the audit ran, no missing hash because the
+manifest is complete, and so on for each constructor in turn. For the
+release this thesis reports, the theorem is proven and, per
+\texttt{\#print axioms}, depends on no axioms at all --- not even the
+three standard Lean/Mathlib axioms (\texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}) that most of
+\textsf{procint}'s own theorems carry. This is deliberately the
+strongest possible case in the release: the framework's own
+closed-objection theorem is proven from definitional unfolding alone.
+The theorem's scope is exactly its constructors, and this thesis is
+careful not to overstate it: \texttt{no\_valid\_objection} says the
+\emph{enumerated} objection forms are refuted against this release's
+checked fields, not that the release is beyond all possible criticism,
+including criticism outside the closed family's four constructors (for
+example, a citation-fidelity objection of the kind STANDING.md
+explicitly flags as outside this pipeline's scope in its own Scope
+section --- a limitation returned to in Chapter~\ref{ch:discussion}).
+
+\subsection{The Boundary of Present Standing}
+\label{sec:mfact-boundary}
+
+Because status is algebra and not prose, this framework is also
+positioned to state precisely, rather than gesture at, what remains
+outside \textsc{Proven} in the current catalog. Of the current release's
+\StatedCount{} stated declarations, two categories are worth naming
+explicitly because they have opposite epistemic character. Five
+declarations in the workflow countermodel family ---
+\texttt{crownCounter\_reaches\_mid}, \texttt{crownCounter\_reaches\_final},
+\texttt{crownCounter\_sound}, \texttt{crownCounter\_not\_bounded}, and
+\texttt{WfNet.infinite\_transition\_countermodel\_sound\_not\_bounded} ---
+are \emph{deliberately and permanently} stated: they witness why the
+crown-jewel soundness equivalence (discussed in
+Chapter~\ref{ch:procint}) requires the hypothesis \texttt{[Finite T]},
+by exhibiting a workflow net with infinitely many transitions that is
+sound but whose short-circuited net is unbounded. These are not
+unfinished proof obligations queued for future work; they are a negative
+witness, and Chapter~\ref{ch:ai-development} describes the mechanical
+guard that refuses any attempt to promote them to proven standing. By
+contrast, exactly one declaration in the current \TotalDecls-declaration
+catalog is genuinely open proof work:
+\texttt{ProcInt.BranchingProcess.isUnfoldingOf\_statement}, an
+unfolding-correctness statement tracked separately in
+\texttt{research/wfnet/obligations.toml} as obligation order~3
+(\texttt{unfolding\_correctness}). Its statement, as recorded in
+\texttt{packs/lean-math-pack/fragments/petriext.ttl}, attributes the
+homomorphism condition it formalizes to Engelfriet's 1991 treatment of
+branching-process unfoldings\footnote{The declaration's docstring reads,
+verbatim: ``a branching process is a legal unfolding of net N when its
+occurrence net is acyclic, has no backward conflict, and the labeling
+respects the pre/post structure of N on singleton arcs (Engelfriet 1991,
+Def.~3.1 homomorphism condition, specialized to ordinary nets).'' No
+bibliographic entry for this attribution exists in \texttt{paper/refs.bib};
+this thesis reports the attribution as the source states it, in a
+footnote rather than as a \texttt{\textbackslash cite}, rather than
+inventing a bibtex record to close the gap.}. This distinction --- a
+deliberately closed negative witness versus a single, honestly reported
+open item --- is itself an instance of the status algebra this section
+opened with: neither is described here as a gap in the ordinary sense,
+because only one of the two actually is one.
+
+\section{The Ledger Law: Authority from the Manifest, Not the Path}
+\label{sec:mfact-ledger}
+
+A recurring temptation in a manufactured-artifact repository is to infer
+a file's authority from where it lives or how it is named --- a
+\texttt{generated/} directory, a header comment reading ``DO NOT
+EDIT.'' This repository's ledger law rejects that inference explicitly.
+There are, in its own words, no generated files; there are only
+artifacts with receipts, and every repository file is first-class at its
+canonical path. Authority comes from the artifact ledger,
+\texttt{.mfact/artifacts.toml}, and from nowhere else. Concretely, this
+has two directions of consequence. If a file is ledgered as produced by
+ggen or a builder script, it may not be patched directly as a final
+solution to a problem it exhibits: the sources or templates that produce
+it must be modified, the file re-rendered, and \texttt{just regen-check}
+must pass again before the edit is considered done --- an unreplayable
+hand-edit to a ledgered file is \texttt{ARTIFACT\_DRIFT\_REFUSED}
+regardless of how small or how obviously correct the hand-edit looked.
+If, conversely, a file is \emph{not} ledgered but nonetheless carries
+release standing, counts, audit status, or certification data, it is
+classified as \texttt{ORPHAN\_ARTIFACT\_REFUSED}: the task is to either
+ledger it properly or refuse to proceed, never to let an unregistered
+file quietly carry standing.
+
+Two surfaces are explicitly and permanently excluded from this ledger,
+by design rather than by omission: \texttt{procint/Playground/**}, a
+hand-authored Lean demonstration surface that is never ggen-rendered and
+carries no standing claims of its own, and \texttt{pylab/**}, the
+analogous hand-authored Python research surface. Both are developed at
+length in Chapter~\ref{ch:ai-development}, which also describes a
+mechanized scanner, itself living in \texttt{pylab/}, whose job is to
+detect exactly the two ledger-law violations named in this section ---
+drifted ledgered artifacts and unledgered orphans --- as a read-only,
+repeatable check rather than a one-time manual audit.
+
+\section{The Agent Actuation Constitution}
+\label{sec:mfact-actuation}
+
+Because candidates in this repository include agent-produced patches at
+every layer --- TTL fragments, ggen templates, builder scripts, and this
+thesis's own prose --- the repository constrains not just what may be
+edited but how any change is permitted to take effect. Agents actuate
+only through \texttt{just} recipes; raw invocations of \texttt{lake},
+\texttt{ggen}, \texttt{mfact}, or git as a final actuation path are
+disallowed unless a recipe or a doctor report explicitly instructs
+otherwise for debugging. If a task requires an actuation path that does
+not yet exist as a recipe, the constitution requires adding the recipe
+first and only then using it, rather than reaching for the underlying
+tool directly. This is not merely a style preference: a raw command
+invoked outside its recipe bypasses whatever bookkeeping the recipe
+performs around it (writing an ephemeral report, checking a
+precondition, chaining a dependent step), reintroducing exactly the kind
+of untracked side effect the ledger law in
+Section~\ref{sec:mfact-ledger} exists to prevent.
+
+The recipe surface itself is split into two classes with different
+mutation rights. Diagnostic recipes --- \texttt{status}, \texttt{next},
+\texttt{doctor}, \texttt{trace}, \texttt{why}, \texttt{theorem-status},
+\texttt{proof-blockers}, \texttt{fixtures}, \texttt{docs-check} --- are
+read-only: none of them may dirty the working tree, and none of their
+output is itself a certified artifact. Only \texttt{report-write},
+\texttt{check}, and \texttt{release} write the ephemeral cockpit reports
+under \texttt{.mfact/reports/latest.*}, and these reports are themselves
+gitignored and never ledgered --- they are a working surface for the
+agent driving the recipe, not a standing claim. Certified status, by
+contrast, lives only in the \texttt{release/} artifacts produced by the
+manufacturing recipes proper: \texttt{render}, \texttt{build},
+\texttt{audit}, \texttt{manifest}, \texttt{certify}, and
+\texttt{standing-quadrature}. A completed task's report is required to
+name the specific recipes it ran, not an ad hoc shell history, so that
+the report itself is reconstructible from the recipe names alone.
+
+\section{Core Release Identity and Recursion Refusal}
+\label{sec:mfact-core-identity}
+
+The manufacturing law of Section~\ref{sec:mfact-receipted-law} applies
+recursively: the paper and this thesis are themselves artifacts of the
+pipeline they describe, and their own claims must be receipted rather
+than asserted. This creates a specific hazard the framework must guard
+against explicitly. The core v26.7.7 release is frozen at tag
+\texttt{\ReleaseTag}, with a manifest fold hash, a proven-declaration
+count, and a total-declaration count fixed at that tagged commit ---
+values this thesis reports throughout via the \texttt{release\_macros}
+fragment rather than by typing them by hand. Post-release work,
+including work on this thesis and on the correspondence and evaluation
+material of later chapters, must not mutate the identity of the core
+certified release it reports on. If an operation would change the core
+fold hash, the proven count, the declaration count, or the manifest
+itself, the constitution requires one of two outcomes and forbids the
+third: either refuse the operation as
+\texttt{RECEIPT\_RECURSION\_REFUSED}, or promote it explicitly into a
+new core certification cycle with new manifest values recorded under a
+new identity. What is not permitted is a silent third option in which
+the core identity shifts underneath an unchanged tag. Post-release
+witnesses such as \texttt{ProcInt.Release.PostRelease} are counted
+separately, as \texttt{POST\_RELEASE\_WITNESSES}, and are never folded
+into the core proven count; the core tag itself is pinned to the core
+release commit and is not moved by later packet work, which receives its
+own tags and its own packet hashes. \texttt{just certify} and
+\texttt{just release} are required to verify that the release commit is
+an ancestor of, or equal to, the certified tag before reporting a
+passing \texttt{CERTIFIED\_RELEASE} status; a tag that predates the
+currently rendered artifacts is treated as
+\texttt{RECEIPT\_RECURSION\_REFUSED}, not filed away as a historical
+curiosity to be noted and passed over. Chapter~\ref{ch:ai-development}
+describes the mechanized check that implements this ancestry
+verification and traces it to the specific 2026-07-07 audit finding that
+motivated adding it.
+
+\section{Summary}
+
+This chapter has developed \textsf{mfact} as the typed apparatus that
+makes the pipeline's receipted manufacturing law operational: candidates
+and refusals as closed data types with no silent failure path;
+admission as a total function whose \texttt{covers} proof makes an
+incomplete check unrepresentable; the manifest, certified release, and
+closed \texttt{ValidObjection} family as the objects a
+\texttt{no\_valid\_objection} theorem is proven against, scoped exactly
+to its enumerated constructors; the ledger law that locates authority in
+\texttt{.mfact/artifacts.toml} rather than in file paths, headers, or
+naming conventions; the agent actuation constitution that confines any
+producer's actuation to named, classified \texttt{just} recipes; and the
+core release identity's protection against self-referential mutation.
+Chapter~\ref{ch:procint} now turns to the first substantial artifact
+this apparatus was used to manufacture: \textsf{procint}, and in
+particular the workflow-net soundness development whose crown-jewel
+theorem and deliberate countermodel were introduced only by name in
+Section~\ref{sec:mfact-boundary} above.

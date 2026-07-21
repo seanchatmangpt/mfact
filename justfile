@@ -281,6 +281,14 @@ paper:
 [group('paper')]
 paper-check: prose-lint paper
 
+# Rebuild the thesis-length monograph (thesis/thesis.pdf). Hand-authored
+# narrative under thesis/, never ggen-rendered or ledgered; reuses the
+# paper's own generated fragments and bibliography by relative \input.
+[group('paper')]
+thesis:
+    cd thesis && latexmk -pdf -interaction=nonstopmode thesis.tex > /dev/null
+    @echo "thesis: thesis.pdf rebuilt"
+
 # Write the ephemeral cockpit report (.mfact/reports/latest.*) — the only diagnostic allowed to.
 [group('cockpit')]
 report-write:

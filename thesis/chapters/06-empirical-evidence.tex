@@ -1,0 +1,192 @@
+\chapter{Empirical Evidence: praxis-graphlaw and rslab}
+\label{ch:empirical}
+
+Chapter~\ref{ch:procint} and Chapter~\ref{ch:correspondence} developed
+two manufacturing rails whose evidence is, in the end, a Lean~4 term
+checked by the kernel: a declaration either type-checks against its
+stated proposition under the authorized axiom set, or it does not. This
+chapter turns to a rail of a structurally different kind, one that
+produces no kernel term at all. praxis-graphlaw is a Rust crate in the
+sibling \texttt{praxis} workspace, and rslab is the evidence pipeline
+that turns its raw command output into receipted, citable measurement.
+Neither rail is a proof engine, and neither is presented in this thesis,
+or in \texttt{paper/main.tex}, as one. The purpose of this chapter is to
+state precisely what kind of evidence praxis-graphlaw and rslab do
+produce, how that evidence is receipted, and why it is kept apart from
+\textsf{procint}'s kernel-checked standing rather than blended into it.
+
+\section{praxis-graphlaw: Executable Law-State Evaluation}
+\label{sec:emp-praxis-graphlaw}
+
+praxis-graphlaw is the executable law-state evaluation engine living in
+the sibling \texttt{praxis} Rust workspace. It evaluates SHACL, ShEx, N3
+forward-chaining, and Datalog dialects against RDF graphs, and exposes an
+admission context, \texttt{bcinr\_powl::admit}, that gates graph mutation
+on the outcome of those checks: a mutation is admitted only if the
+relevant law-state evaluation passes. \texttt{.agents/explorer\_step3/handoff.md}
+records the workspace \texttt{praxis} sits in as a Cargo workspace of
+eleven further crates alongside \texttt{praxis-graphlaw} itself ---
+\texttt{agent8}, \texttt{ggen}, \texttt{chatman-common},
+\texttt{praxis-core}, \texttt{praxis-proposer}, \texttt{praxis-retrofit},
+\texttt{rust-fable-testbed}, \texttt{powl2-decompose},
+\texttt{pddl-index}, and \texttt{praxis-synthesis},
+\texttt{praxis-lean} --- of which \texttt{ggen} is the same rendering
+engine this thesis's \textsf{mfact} rail invokes to project the
+\textsf{procint} catalog into Lean source (Chapter~\ref{ch:mfact}), and
+\texttt{praxis-lean} names the crate in that workspace nearest to a Lean
+integration surface, though this chapter's evidence concerns
+\texttt{praxis-graphlaw} specifically, not that surface.
+
+praxis-graphlaw is, in the vocabulary this thesis has used throughout, a
+distinct manufacturing rail from \textsf{procint}. Where \textsf{procint}
+formalizes process-mining semantics as Lean propositions and admits
+theorems about them through the kernel (Chapter~\ref{ch:procint}),
+praxis-graphlaw \emph{executes} law-state checks at runtime in Rust; it
+is not admitted through any proof obligation, and no claim in this thesis
+treats a passing SHACL, ShEx, N3, or Datalog evaluation as a
+kernel-checked fact about the evaluator's own correctness. The two rails
+are related only by citation: this chapter, following \texttt{paper/main.tex},
+reports both, but neither certifies the other. In particular,
+\textsf{mfact} does not claim, and this thesis does not assert, that
+praxis-graphlaw's SHACL/ShEx/N3/Datalog evaluation logic is formally
+verified in the sense Chapter~\ref{ch:mfact} and Chapter~\ref{ch:procint}
+use that phrase for \textsf{procint} declarations. Its correctness
+evidence is empirical: the conformance and end-to-end admission-gate test
+suite receipted through the rslab rail described next, together with a
+benchmark suite whose caveats are reported alongside the numbers rather
+than smoothed over (Section~\ref{sec:emp-caveats}).
+
+\emph{One further use of the word ``receipt'' recurs in this workspace and
+is worth disambiguating up front.} \texttt{bcinr\_powl}'s admission
+context governs a single graph-mutation decision at runtime, inside
+praxis-graphlaw's own process; it is not the release-manifest receipt
+chain of Chapter~\ref{ch:mfact}, and a passing admission decision inside
+\texttt{bcinr\_powl} confers no \textsf{mfact} standing on anything.
+
+\section{rslab: An Empirical Evidence Rail, Not a Proof Engine}
+\label{sec:emp-rslab}
+
+rslab's own doctrine, stated verbatim in \texttt{rslab/README.md} and
+reproduced in \texttt{paper/main.tex}, separates three tiers of activity
+that this thesis's manufacturing vocabulary keeps distinct throughout:
+praxis \emph{executes}; rslab \emph{measures, normalizes, schemas,
+receipts, and renders}; \textsf{mfact} \emph{admits formal standing}.
+Each verb names a different kind of transform, and none substitutes for
+another. rslab's role is specifically the middle one: it does not run
+praxis-graphlaw's code and it does not decide \textsf{procint}'s
+kernel-admitted status; it takes praxis's raw command output and turns it
+into something a reader can trust was not hand-typed or silently edited
+after the fact.
+
+Concretely, this happens in two receipted steps. Raw command output from
+a praxis run, $O$ in this thesis's $R_B \vdash A = \mu(O^*_B)$ vocabulary
+(Chapter~\ref{ch:mfact}), is not itself evidence in rslab's doctrine: a
+collection script, \texttt{rslab/scripts/collect\_praxis\_graphlaw.py},
+schema-validates the raw output, hashes every raw file with BLAKE3, and
+records the toolchain and the commit under test, producing $O^*$ ---
+schema-validated, receipted output conforming to
+\texttt{rslab/schemas/benchmark\_result.schema.json}. A second script,
+\texttt{rslab/scripts/render\_paper\_fragments.py}, renders the LaTeX
+paper fragments reported in this chapter from that receipt alone,
+re-verifying every raw-file hash before rendering and refusing with
+\texttt{ARTIFACT\_DRIFT\_REFUSED} on any mismatch between the receipted
+hash and the file on disk. Both scripts, and the fragments they produce,
+are ledgered in \texttt{.mfact/artifacts.toml} and covered by
+\texttt{just regen-check}: a stale or hand-edited rslab fragment fails
+the identical drift gate that a hand-edited \textsf{procint} module or
+release fragment would fail (Chapter~\ref{ch:mfact}). The receipt
+discipline that Chapter~\ref{ch:mfact} developed for kernel-admitted
+theorems is, in this narrower sense, reused for empirical measurement:
+what changes between the two rails is not whether there is a receipt, but
+what the receipt is a receipt \emph{of}.
+
+\subsection{The declared \texorpdfstring{$<$}{<} extracted \texorpdfstring{$<$}{<} stated \texorpdfstring{$<$}{<} proven ladder}
+\label{sec:emp-ladder}
+
+rslab evidence follows its own status ladder --- declared $<$ extracted
+$<$ stated $<$ proven --- and \texttt{paper/main.tex} is explicit that
+this ladder is \emph{deliberately never conflated} with \textsf{procint}'s
+kernel-checked proven status. A \textsf{procint} declaration reaches
+``proven'' only by passing kernel admission and the axiom audit
+(Chapter~\ref{ch:procint}); an rslab measurement reaches the top of its
+own ladder by a different route entirely, one this chapter does not
+attempt to force into equivalence with the first. The praxis-graphlaw
+evidence reported in this chapter sits at the \emph{extracted} rung: it
+has been observed once, receipted by BLAKE3 hash and toolchain/commit
+record, and is reproducible from the committed raw output --- but it is
+not \emph{proven} in either rslab's own sense (which would require
+further, currently absent, argument that the measurement is stable or
+representative beyond the single receipted run) or in \textsf{procint}'s
+kernel-checked sense (which the ladder does not even purport to reach,
+since no Lean statement is at stake). Keeping the ladder and its labels
+separate from \textsf{procint}'s proven/stated split is not a stylistic
+choice; it is the same discipline Chapter~\ref{ch:mfact} argues for
+generally, applied to a domain --- empirical software measurement ---
+where the relevant admission criterion is receipted reproducibility
+rather than kernel type-checking, and where collapsing the two would
+silently borrow a proof-strength claim the evidence does not support.
+
+\section{Benchmark Evidence}
+\label{sec:emp-benchmark}
+
+The praxis-graphlaw experiment, \texttt{rslab/experiments/praxis\_graphlaw},
+is rslab's first instance of this pipeline. Two tables are rendered by
+\texttt{rslab/scripts/render\_paper\_fragments.py} from
+\texttt{rslab/receipts/praxis\_graphlaw\_benchmark\_receipt.toml}: a
+conformance and cross-crate end-to-end admission-gate suite (covering
+denial, SHACL-violation, N3-materialization ordering, and determinism
+cases), and a benchmark suite spanning the \texttt{bencher},
+\texttt{criterion}, and \texttt{divan} harnesses exercised across the
+crate and the workspace root. No cell in either table is hand-typed;
+both are regenerated from the same receipted raw output that
+\texttt{collect\_praxis\_graphlaw.py} hashed and schema-validated.
+
+\input{../rslab/paper_fragments/praxis_graphlaw_evidence}
+
+\subsection{Receipted Caveats}
+\label{sec:emp-caveats}
+
+Three caveats travel with this evidence, receipted alongside it rather
+than reported separately, and this chapter reproduces them rather than
+softening them. First, profiling and flamegraph tooling did not exist in
+the praxis workspace at collection time, so
+\texttt{profiler\_result.schema.json} remains unpopulated; no
+per-call-site cost breakdown is claimed here. Second,
+``transaction-path admission control'' is not an implemented interface
+in praxis-graphlaw as collected: the nearest existing structure is the
+SHACL/ShEx admission gate together with \texttt{bcinr\_powl}'s admission
+context described in Section~\ref{sec:emp-praxis-graphlaw}, and any
+future work under the ``transaction-path'' name is a design objective
+recorded for later work, not a shipped feature this chapter reports
+evidence for. Third, the three benchmark harnesses report timings under
+incompatible units and sampling methodologies, so this chapter, like
+\texttt{paper/main.tex}, draws no cross-harness speed comparison from the
+rendered table; the table reports coverage (which harnesses ran, how
+many benchmarks each measured) rather than a single ranked performance
+claim.
+
+\section{Why the Rails Stay Separate}
+\label{sec:emp-why-separate}
+
+It is worth stating plainly why this chapter does not attempt to fold
+praxis-graphlaw's 385 passing conformance and admission-gate cases (see
+the rendered table above) into anything resembling \textsf{procint}'s
+kernel-admitted theorem count. The two numbers answer different
+questions under different admission criteria. A \textsf{procint} theorem
+count answers: how many propositions has the Lean kernel accepted, under
+a fixed and auditable axiom set, as inhabited by a checked term
+(Chapter~\ref{ch:procint}, Chapter~\ref{ch:evaluation})? A
+praxis-graphlaw test count answers: how many test cases, executed once
+under a recorded toolchain and commit, returned the expected pass/fail
+outcome, with that single run's raw output receipted so a later party
+can check it was not altered after collection? The second question is a
+legitimate and useful one, and rslab's receipt discipline gives an
+honest answer to it. But it is not the first question, and reporting
+both in the same paper --- as \texttt{paper/main.tex} does, and as this
+thesis does here --- is only honest if the reader is never left to infer
+that a receipted test-suite pass count carries the same epistemic weight
+as a kernel-admitted proof. That is the discipline this chapter has tried
+to preserve: praxis executes, rslab receipts what it measures, and
+\textsf{mfact} alone admits formal standing, with the boundary between
+the third activity and the first two kept visible rather than blurred by
+shared vocabulary.

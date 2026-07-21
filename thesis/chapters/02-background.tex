@@ -1,0 +1,248 @@
+\chapter{Background and Related Work}
+\label{ch:background}
+
+This chapter surveys the four bodies of work this thesis draws on and
+positions itself against: the Lean~4 ecosystem and its formal-library
+practice; Petri-net and workflow-net soundness theory together with the
+process-mining literature it feeds; the growing landscape of
+LLM-assisted and automated theorem proving; and Rust verification and
+extraction. It closes with an explicit statement of the gap between
+these tracks that motivates this thesis's contribution.
+
+\section{Lean 4 and Its Ecosystem}
+
+Lean~4 itself, as a dependently typed theorem prover and programming
+language with an elaboration and tactic framework distinct from Lean~3,
+is described by de Moura and Ullrich~\cite{moura2021lean4}. The design
+choice most relevant to this thesis is that Lean~4's kernel is small and
+independently re-implementable: Lean4Lean, an independent kernel-in-Lean
+typechecker, has been used to re-verify the reference kernel's behavior
+and, in doing so, located and helped fix a soundness bug in the
+reference implementation~\cite{lean4lean2024}. This matters for the
+manufacturing pipeline described in this thesis because the pipeline's
+own trust boundary is explicitly drawn \emph{above} the kernel: the
+pipeline does not attempt to re-verify or extend kernel soundness, it
+relies on the kernel as an already-scrutinized primitive and confines its
+own apparatus (candidates, refusals, admissions, manifests) to the layer
+of process around kernel calls.
+
+Mathlib~\cite{mathlib2020} is the reference point for what a
+large-scale, collaboratively maintained Lean formal library looks like in
+practice: its quality regime is human review plus continuous
+integration, applied uniformly across a very large and heterogeneous
+contributor base. \textsf{procint} depends on Mathlib for its background
+mathematics (finite types, order structures, and the like), but does not
+attempt to replicate Mathlib's review-based quality regime; instead it
+substitutes a mechanically checked admission gate for human review as the
+primary standing-conferring step, a substitution this thesis argues is
+appropriate specifically because \textsf{procint}'s corpus is
+manufactured from a declared, machine-readable obligation graph rather
+than authored freely.
+
+CSLib~\cite{cslib2026} extends the Lean ecosystem toward computer
+science proper --- labeled transition systems, traces, and bisimulation
+among its concerns --- and \textsf{procint} builds directly on this layer
+for parts of its semantics, in particular where process behavior is
+described via transition and trace structures rather than purely via
+algebraic Petri-net state equations. The presence of a computer-science
+library alongside Mathlib's predominantly mathematical corpus is itself
+evidence that Lean's applicability is already understood to extend past
+pure mathematics; \textsf{procint} extends that applicability further,
+into a domain --- process intelligence --- that neither Mathlib nor
+CSLib targets directly.
+
+\section{Petri Nets, Workflow-Net Soundness, and Process Mining}
+
+The structural theory of Petri nets that \textsf{procint}'s
+\texttt{ProcInt.Petri} namespace formalizes --- the state equation,
+place and transition invariants, boundedness, and liveness --- follows
+Murata's survey~\cite{murata1989}, still the standard reference
+articulation of these properties and their relationships (for instance,
+that liveness implies deadlock-freedom but not conversely).
+
+Workflow nets, and the soundness property this thesis's crown-jewel
+theorem addresses, are due to van der Aalst~\cite{vanderaalst1997}. The
+specific result \textsf{procint} formalizes is van der Aalst's Lemma~8:
+for a workflow net with a single source place, a single sink place, and
+every node on some path from source to sink, soundness is equivalent to
+liveness and boundedness of the net's short-circuited variant (the net
+obtained by adding a transition from the sink back to the source). This
+equivalence is exactly the theorem this thesis refers to throughout as
+the crown-jewel theorem; Chapter~\ref{ch:procint} gives its Lean
+statement and admission status in detail. The subsequent decidability
+and classification landscape for workflow-net soundness --- which
+soundness variants are decidable, and under what net restrictions --- is
+surveyed in~\cite{vanderaalst2011soundness}, and the broader process
+mining setting these soundness notions serve (discovery, conformance,
+enhancement) is presented as a textbook treatment
+in~\cite{vanderaalst2011pm}.
+
+\textsf{procint}'s conformance-checking layer, which relates a process
+model to observed event-log behavior via alignments, moves, and cost,
+follows Carmona et al.'s treatment of conformance
+checking~\cite{carmona2018}, which frames alignment-based techniques as
+the technically preferred (if computationally heavier) alternative to
+naive token-replay methods. Object-centric event data --- where a single
+event may relate to several objects of possibly different types, rather
+than to a single case identifier --- follows the OCEL~2.0
+specification~\cite{ocel2}, and \textsf{procint}'s \texttt{ProcInt.Ocel}
+namespace formalizes the entity-to-entity and object-to-object relations,
+flattening, and lifecycle notions that specification defines.
+Object-centric Petri nets, the net-level counterpart to object-centric
+event logs, follow~\cite{ocpn2020}. Partially ordered process models,
+formalized alongside process trees, DFGs, causal nets, BPMN, and Declare
+in \textsf{procint}'s \texttt{ProcInt.Models} namespace, follow the POWL
+language of Kourani and van Zelst~\cite{powl2023}.
+
+To the best of a bounded search of the Lean, Coq, and Isabelle/AFP
+library indexes conducted for this project (a negative search result,
+not a proof of absence), none of workflow-net soundness, alignment-based
+conformance, or OCEL had a prior public mechanization in a proof
+assistant at the time \textsf{procint} was manufactured. A separate,
+internal literature scan conducted for this project and recorded in this
+repository's own research notes (\texttt{research-papers/README.md})
+reaches a related but distinct observation: across the papers that scan
+surveyed, process mining and formal (theorem-prover) verification have
+historically progressed along near-parallel tracks, with comparatively
+few works that bridge the two --- the scan's own phrasing is that the two
+areas ``operate in parallel'' with essentially no bridge papers located.
+That internal document is a project research note rather than a
+peer-reviewed source, and this thesis treats its finding accordingly, as
+a motivating internal observation rather than as a citable external
+claim; but it is consistent with, and independently arrived at from, the
+absence this thesis reports from the Lean/Coq/Isabelle index search
+above.
+
+\section{LLM-Assisted and Automated Theorem Proving}
+
+A substantial and fast-moving literature addresses how language models
+and automated provers can assist, rather than replace, interactive
+theorem proving in systems like Lean. Two architectural patterns
+recur. The first is in-process integration, where a language model is
+called directly from within the tactic framework via a foreign-function
+boundary, as in Lean Copilot~\cite{leancopilot2024}. The second is
+external bridging to dedicated automated theorem provers or solvers
+outside the interactive session, as in Lean-auto~\cite{leanauto2025},
+which interfaces Lean~4 with external ATPs. \textsf{mfact} adopts neither
+pattern as a trust mechanism: whatever automation --- language-model or
+otherwise --- is used to produce a candidate declaration or proof
+script, the candidate is untrusted data with respect to the pipeline's
+own trust boundary, admitted only through the gate developed in
+Chapter~\ref{ch:mfact}. This is a deliberate design choice rather than an
+oversight of the in-process/external-bridge distinction: from the
+pipeline's point of view, an in-process copilot suggestion and an
+external solver's output are the same kind of object, a candidate, and
+neither is privileged relative to a template-rendered or a
+hand-authored one.
+
+Search-based and learning-based automated proving more broadly is
+represented by HOList~\cite{holist2019}, an environment for machine
+learning applied to higher-order theorem proving, and by HyperTree Proof
+Search~\cite{hypertree2022}, which frames proof search itself as a
+tree-search problem amenable to neural guidance. TheoremLlama~\cite{theoremllama2024}
+and APOLLO~\cite{apollo2025} represent, respectively, adapting a
+general-purpose LLM into a Lean~4-specialized prover and orchestrating
+collaboration between an LLM and Lean's own checking loop toward more
+advanced formal reasoning. Infrastructure supporting these efforts
+includes premise and declaration search over existing libraries, as in
+LeanExplore~\cite{leanexplore2025}, and large synthetic theorem corpora
+generated by exploring state-transition graphs, as
+in~\cite{mathlib4dataset2025}. \textsf{procint} does not currently have
+the problems this infrastructure addresses: its statement corpus is
+curated from a declared RDF/Turtle catalog rather than mined from an
+existing library or synthesized at scale, so premise search over a large
+undifferentiated corpus and synthetic-theorem generation are, for this
+project's current scope, orthogonal concerns rather than adjacent
+solutions.
+
+Two further strands bear directly on this thesis's central claim that
+kernel admission alone is an insufficient standard for LLM-produced
+formal content. Programming Language Confusion~\cite{langconfusion2025}
+documents that code-generating LLMs can fail to keep target languages
+straight even when producing superficially well-formed output, an
+instance of the broader concern that syntactic plausibility and semantic
+fidelity can diverge under automated generation. Work on understanding
+and improving automated proof synthesis for interactive theorem
+provers~\cite{tacticexpertalign2026} studies exactly the alignment
+between what a synthesized tactic sequence proves and what a human
+intended it to prove. Most directly, Meek et al.~\cite{meek2026formalizing}
+formalize numerical analysis using a coding-agent pipeline and audit its
+output for quality beyond kernel acceptance, documenting concretely that
+compilation success can mask an incompletely stated multi-part theorem,
+a silently added weakening hypothesis, or an unannounced parameter
+restriction. Meek et al. is the closest prior work to \textsf{mfact} in
+problem framing, and this thesis differs from it in mechanism rather
+than diagnosis, as elaborated in the Research Gap section below.
+
+\section{Rust Verification and Extraction}
+
+The correspondence rail developed in Chapter~\ref{ch:correspondence}
+extracts a bounded Rust implementation core into a Lean-facing semantic
+image via Aeneas~\cite{ho2022aeneas}, a tool for Rust verification by
+functional translation, whose Charon front end~\cite{protzenko2024charon}
+separates Rust syntax recovery from the semantic translation step
+proper. Aeneas is designed to target whole Rust programs under a full
+memory model; this thesis's use of it is narrower, applied to a single,
+dependency-free arithmetic module, and --- consistent with the
+untrusted-producer discipline argued for throughout this thesis ---
+extraction's output is treated as a candidate Lean statement, never as a
+proof: standing for a correspondence claim still requires kernel
+admission of a hand-authored correspondence theorem stated over the
+extracted declaration, not merely a same-shaped statement over
+independently hand-written types. Chapter~\ref{ch:correspondence}
+returns to this point in more mechanical detail, including the guard
+that blocks a correspondence obligation from reporting proven status
+while its extraction binding remains incomplete.
+
+\section{Research Gap}
+
+Taken individually, none of the tracks surveyed above addresses the
+problem this thesis targets. The Lean ecosystem (Mathlib, CSLib,
+Lean~4Lean) supplies library scale, computer-science-relevant semantics
+infrastructure, and an independently checked kernel, but its standard
+quality regime is human review, not a mechanically checked admission
+pipeline applied uniformly to agent-, template-, and human-produced
+candidates alike. The Petri-net, workflow-net, and process-mining
+literature supplies the mathematical canon --- soundness, alignments,
+OCEL --- that this thesis's first manufactured vertical formalizes, but
+that literature is, per both this project's own bounded library-index
+search and its internal research scan, essentially disjoint from formal
+verification practice: process mining and theorem proving have
+progressed as near-parallel tracks with few bridge works, so no existing
+mechanization supplies workflow-net soundness or OCEL as a Lean~4 target
+to build on or compare against directly. The LLM-assisted and automated
+theorem-proving literature supplies both the capability this thesis takes
+as its starting condition (agents and models can produce plausible formal
+candidates) and, in Meek et al.~\cite{meek2026formalizing} particularly, a
+sharp diagnosis of the resulting risk, but that diagnosis is delivered as
+a post-hoc semantic audit layered over agent output after the fact, not
+as a typed, structurally enforced pipeline that a candidate must pass
+through before a standing claim can be recorded at all. The Rust
+verification and extraction literature (Aeneas, Charon) supplies a
+mechanism for turning implementation code into a proof-facing semantic
+object, but does not by itself address how the resulting extracted
+statement's standing, or the standing of any hand-authored correspondence
+theorem built on it, should be tracked, gated, or receipted over time.
+
+The gap this thesis addresses sits at the intersection of these tracks:
+a domain formalization effort (process intelligence) that (a) has, to
+this project's search, no prior proof-assistant mechanization to inherit
+conventions from; (b) is produced with substantial LLM and agent
+assistance, and therefore inherits the standing problem Meek et al.
+diagnose; and (c) is manufactured, rather than hand-authored, from a
+declared obligation graph, so that the standing problem must be solved
+structurally --- as a typed admission pipeline with typed refusals,
+manifests, and replayable receipts --- rather than remedied afterward by
+a separate audit pass. Where Meek et al.'s audit is a quality assessment
+performed \emph{over} already-produced agent output, this thesis's
+contribution, \textsf{mfact}, is a pipeline in which candidates,
+refusals, and admissions are themselves Lean data types, so that the
+proven/stated distinction is enforced by a release gate rather than
+estimated after the fact. The two approaches are, as
+paper/main.tex's Related Work section observes, complementary rather
+than competing: the residual risk that a kernel-admitted statement is
+nonetheless a faithless or vacuous rendering of its informal target is
+exactly the risk a semantic audit like Meek et al.'s is suited to catch,
+and exactly the risk this thesis's pipeline, by design, does not claim
+to eliminate. Chapter~\ref{ch:discussion} returns to this residual risk
+directly, rather than treating kernel admission as a substitute for it.

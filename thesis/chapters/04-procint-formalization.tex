@@ -1,0 +1,348 @@
+\chapter{procint: Process Intelligence as Process Law}
+\label{ch:procint}
+\label{sec:procint}
+
+Chapter~\ref{ch:mfact} developed \textsf{mfact} as a content-neutral
+admission apparatus: candidates, typed refusals, admissions with covers
+proofs, manifests, and the closed family of valid objections say nothing,
+by themselves, about what is being admitted. This chapter turns to the
+first domain manufactured through that apparatus: \textsf{procint}, a
+Lean~4 formalization of process-intelligence semantics --- Petri nets,
+workflow nets and their soundness property, alignment-based conformance
+checking, and OCEL~2.0 object-centric event logs. \textsf{procint} is not
+a demonstration corpus assembled to exercise \textsf{mfact}; it is the
+substrate the rest of this thesis's empirical claims are about, and its
+declaration catalog, drafted across independent LLM-assisted lanes and
+admitted only through kernel testing, is exactly the kind of
+manufactured-not-authored content the mfact gate exists to police. As
+the accompanying paper's ``procint: Process Intelligence as Process Law''
+section puts it, process
+intelligence in this sense does not mean dashboarding over event logs; it
+means a mathematical substrate for deciding, replaying, and explaining
+process standing --- what happened, what was admitted, what was refused,
+which object relations were involved, which conformance obligations
+passed, and which receipts authorize the resulting claim.
+
+\textsf{procint} depends on Mathlib~\cite{mathlib2020} for its background
+mathematics and on CSLib~\cite{cslib2026} for transition-system and trace
+infrastructure, and is organized into namespaces that separate concerns
+cleanly along the process-intelligence canon: \texttt{ProcInt.Foundations}
+for metrics, identifiers, and labeled transition systems;
+\texttt{ProcInt.Petri} for nets, firing, reachability, the state
+equation, invariants, boundedness, liveness, object-centric Petri nets,
+stochastic nets, and unfoldings; \texttt{ProcInt.Workflow} for workflow
+nets, the short-circuit construction, and soundness; \texttt{ProcInt.Logs}
+for events, traces with monotone timestamps, event logs, and XES;
+\texttt{ProcInt.Models} for process trees, POWL, directly-follows graphs,
+causal nets, BPMN, and Declare; \texttt{ProcInt.Conformance} for moves,
+alignments, cost, fitness, and token replay; \texttt{ProcInt.Ocel} for
+OCEL~2.0 events, objects, event-to-object and object-to-object relations,
+flattening, and lifecycles; \texttt{ProcInt.Ocpq} for object-centric
+process queries; \texttt{ProcInt.Analytics} for temporal, causal,
+correlational, cube, and streaming analytics; and \texttt{ProcInt.Registry}
+for the cross-product algorithm and model-breed registries that are
+themselves data-driven rows of the same declaration graph rather than
+hand-written tables. This chapter takes the workflow-net soundness
+development as its center of gravity, because it is where the corpus's
+single crown-jewel theorem lives, but treats the surrounding layers ---
+Petri semantics beneath it, conformance and OCEL~2.0 beside it --- with
+enough precision to support the canon-coverage claims the accompanying
+paper's canon-status table makes.
+
+\section{Petri Net Semantics}
+\label{sec:procint-petri}
+
+The base layer of \textsf{procint}'s process semantics follows Murata's
+survey treatment of Petri nets~\cite{murata1989}, formalized directly
+rather than via an intermediate encoding. A net is places, transitions,
+and weighted flow over finite types, and a marking is a finitely
+supported function \(M : P \to_{f} \mathbb{N}\) rather than a bare
+function into the naturals; representing markings as \texttt{Finsupp}
+values, Mathlib's finitely supported function type, does two things at
+once. First, it unifies the weighted-net and colored-net cases: a
+weighted marking is a \texttt{Finsupp} into \(\mathbb{N}\), and richer
+codomains extend the same representation without a second definitional
+layer. Second, it gives the whole marking algebra --- firing, the state
+equation \(M' = M + A^{\mathsf T}u\) relating a reached marking to the
+initial marking via the incidence matrix \(A\) and a firing-count vector
+\(u\), and place/transition invariants --- as lemmas already available
+over \texttt{Finsupp} in Mathlib, with truncated subtraction standing in
+for the natural-number semantics of ``consume what is present.'' This
+representational choice recurs later in this chapter: the same
+truncated-subtraction discipline is what the crown-jewel theorem's
+countermodel exploits, and what the correspondence rail of
+Chapter~\ref{ch:correspondence} has to reconcile against Rust's own
+saturating arithmetic.
+
+Firing, reachability, boundedness, and liveness are defined over this
+marking algebra in \texttt{ProcInt.Petri} and reused, rather than
+redefined, by the workflow-net layer above it and by the object-centric
+Petri net (OCPN) and stochastic-net extensions that follow
+the accompanying paper's canon-status table's ``formalized''/``seed
+instance'' distinction: the
+core marking, firing, and invariant theory is formalized in full, while
+OCPN and stochastic nets carry seed instances built on top of it rather
+than independent full developments.
+
+\section{Workflow Nets and the Soundness Property}
+\label{sec:procint-wfnet}
+
+A \texttt{WfNet} carries a Petri net as a field --- composition, not
+inheritance by extension --- together with the source-place, sink-place,
+and connectivity conditions of van der Aalst's Definition~6--7
+\cite{vanderaalst1997}: a single source place with no input transitions, a
+single sink place with no output transitions, and every node on some path
+from source to sink. This composition-over-extension choice keeps the
+underlying Petri net's marking algebra directly reusable rather than
+re-derived under a workflow-specific wrapper.
+
+The classical soundness property of a workflow net is usually stated as
+one conjunction: from the initial marking, the final marking is always
+reachable (option to complete); when the final marking is reached, no
+tokens remain elsewhere (proper completion); and every transition can
+still fire from some reachable marking (no dead transitions). Following
+the observation that these three clauses are logically independent of one
+another, \textsf{procint} does not encode soundness as a single
+conjunction-shaped definition. Instead it states option-to-complete,
+proper-completion, and no-dead-transitions as three separately named
+predicates, with \texttt{Sound} defined as their explicit conjunction.
+This keeps partial results honest in a literal, checkable sense: a lemma
+that establishes one clause is stated, and can be cited, about exactly
+that clause, and the fact that \S\ref{sec:procint-crown} below can report
+\texttt{PROVEN\_SUPPORT} status for two of the three clauses separately
+from the equivalence that uses all three depends directly on this
+decomposition.
+
+\section{The Crown-Jewel Theorem}
+\label{sec:procint-crown}
+
+The single most load-bearing result in the \textsf{procint} corpus is van
+der Aalst's soundness characterization, Lemma~8 of
+\cite{vanderaalst1997}: for a workflow net satisfying the source/sink/
+connectivity conditions above, \texttt{Sound} holds of the net if and only
+if the short-circuited net --- the net obtained by adding a transition
+from the sink place back to the source place, folding the ``process
+completes and a new instance may start'' behavior into an ordinary
+liveness-and-boundedness question --- is both live (every transition can
+recur from every reachable marking) and bounded (the reachable marking
+set is finite). \textsf{procint} calls this the crown-jewel theorem
+because the release's Standing Quadrature and manifest apparatus
+(Chapter~\ref{ch:empirical}) is organized around it as the single result
+whose kernel-admitted status the release most directly advertises, and
+because it is the result that most clearly demonstrates the pipeline
+producing a theorem whose informal target predates the pipeline by three
+decades, rather than a theorem invented to be easy to formalize.
+
+\begin{theorem}[Crown-jewel soundness equivalence, informal statement]
+\label{thm:crown-informal}
+Let \(W\) be a workflow net over a finite transition type \(T\) satisfying
+the source, sink, and on-path connectivity conditions of van der Aalst's
+Definition~6--7. Then \(W\) is sound if and only if the short-circuited
+net \(W^{sc}\) is live and bounded.
+\end{theorem}
+
+The obligation ladder recorded in the repository's crown research
+tracking (\texttt{research/wfnet/obligations.toml}) states the run's
+standing toward this theorem as four ordered obligations. Order~0 is the
+equivalence itself, annotated \emph{``the crown equivalence itself (van
+der Aalst 1997, Lemma~8)''} and carrying status \texttt{PROVEN}. Orders~1
+and~2, \emph{``soundness implies the final marking is reachable''} and
+\emph{``soundness implies every transition can fire,''} carry status
+\texttt{PROVEN\_SUPPORT}: they are the proper-completion and
+no-dead-transitions directions of the soundness decomposition from
+\S\ref{sec:procint-wfnet}, each proven separately and feeding the
+equivalence rather than duplicating it. Order~3, discussed on its own in
+\S\ref{sec:procint-open} below, is the one obligation in this ladder ---
+and, as \S\ref{sec:procint-open} details, in the entire declaration
+catalog --- that remains \texttt{STATED} rather than \texttt{PROVEN}. The
+\texttt{[crown]} block of the same file records the release-level
+judgment, \texttt{status = "PROVEN"}, computed the same way every other
+status claim in this thesis is computed: by grepping the admitted TTL
+declaration catalog for the relevant declarations' recorded status, never
+by hand-asserting the release's headline claim. The generated fragment
+\texttt{crown\_jewel\_status.tex} (quoted in full in
+Chapter~\ref{ch:ai-development})
+reports this same ground-truth classification directly from
+\texttt{ProcInt.crownJewel\_status}, so this chapter's prose claim and the
+release's generated claim are, structurally, the same read of the same
+underlying value rather than two independently maintained assertions that
+could drift apart.
+
+\subsection{The \texttt{[Finite T]} Hypothesis and Its Countermodel}
+\label{sec:procint-finite-t}
+
+Theorem~\ref{thm:crown-informal} as stated above is not unconditionally
+true of van der Aalst's original formulation once the transition set is
+allowed to be infinite, and \textsf{procint}'s Lean statement of the
+crown-jewel theorem is correspondingly narrower than the informal
+statement: it carries an explicit \texttt{[Finite T]} instance hypothesis
+on the transition type. This hypothesis is not a formalization
+convenience adopted for proof-engineering ease; it is necessary, and the
+repository carries a Lean-admitted witness proving that it is necessary
+rather than merely asserting so in prose.
+
+The witness is a purpose-built counterexample net, assembled in five
+stages across the \texttt{Workflow.Countermodel} module (declared in
+\texttt{packs/lean-math-pack/fragments/workflow\_countermodel.ttl}, module
+order 34) and structured around a place type
+\texttt{CrownCounterPlace} (an input place \texttt{i}, a queue place
+\texttt{q}, an output place \texttt{o}, and a countably infinite family of
+counter places \texttt{c n}) together with a transition type
+\texttt{CrownCounterTransition := ℕ ⊕ ℕ}, one summand for an
+\emph{absorb} transition at each index \(n\) and one for a matching
+\emph{emit} transition. Absorb transition \(n\) consumes one token from
+\texttt{i} and produces \(n\) tokens into \texttt{q} together with one
+token into \texttt{c n}; emit transition \(n\) consumes those \(n\) tokens
+from \texttt{q} and the one token from \texttt{c n}, and produces one
+token into \texttt{o}. Because \(\mathbb{N} \oplus \mathbb{N}\) is
+infinite --- witnessed directly by the instance declaration
+\texttt{infinite\_CrownCounterTransition} --- this net has infinitely many
+transitions, one absorb/emit pair per natural number, and can therefore
+never satisfy \texttt{[Finite T]}.
+
+The construction is engineered so that this infinite net is nonetheless
+sound while its short-circuit is unbounded, the exact combination the
+crown-jewel equivalence rules out under \texttt{[Finite T]}. Five
+declarations carry this argument: \texttt{crownCounter\_reaches\_mid} and
+\texttt{crownCounter\_reaches\_final} establish the reachability facts the
+soundness argument needs; \texttt{crownCounter\_sound} establishes that
+the net satisfies all three soundness clauses of
+\S\ref{sec:procint-wfnet}; \texttt{crownCounter\_not\_bounded} establishes
+that for every bound \(k\), some reachable marking of the short-circuit
+violates it, because absorbing at index \(n\) drives \(n\) tokens into
+\texttt{q} for arbitrarily large \(n\); and the main theorem,
+\texttt{WfNet.infinite\_transition\_countermodel\_sound\_not\_bounded},
+assembles these into the conjunction \(\mathrm{Infinite}\,
+\text{CrownCounterTransition} \land \exists\, W,\, W.\mathrm{Sound}
+\land \lnot \exists\, k,\, W.\mathrm{shortCircuit}.\mathrm{Bounded}\,
+W.\mathrm{initialMarking}\,k\).
+
+These five declarations are recorded in the catalog with \texttt{status
+"stated"}, and this is a deliberate, permanent classification rather than
+an unfinished proof obligation awaiting a future lane. The countermodel's
+job is to witness a negative fact --- that the equivalence fails outside
+\texttt{[Finite T]} --- and the repository's guardrails treat promoting
+these five declarations to a proven, axiom-audited status as a specific
+failure mode to be mechanically blocked rather than merely discouraged:
+a countermodel family that quietly acquired \texttt{PROVEN} status would
+misrepresent what the family is for. The corresponding refusal vocabulary
+--- \texttt{WFNET\_INFINITE\_TRANSITION\_COUNTERMODEL} as the status key
+for this theorem family, \texttt{countermodel\_not\_promoted} as the guard
+name, and \texttt{COUNTERMODEL\_PROMOTION\_REFUSED} as the refusal fired
+if a promotion is attempted --- exists precisely so that this
+countermodel's status cannot silently drift from ``deliberate negative
+witness'' to ``forgotten stub.'' Read correctly, then, these five
+declarations are not a gap in the crown-jewel development; they are part
+of its statement, in the same sense that a theorem's hypotheses are part
+of its statement. \texttt{[Finite T]} is not a hedge adopted for proof
+convenience --- it is exactly the hypothesis the countermodel shows is
+required, made visible in the formal statement rather than left implicit
+in prose the way an informal restatement of Lemma~8 might leave it.
+
+\section{Conformance Checking and Alignments}
+\label{sec:procint-conformance}
+
+\textsf{procint}'s conformance-checking layer, \texttt{ProcInt.Conformance},
+follows Carmona et al.'s alignment-based treatment of conformance checking
+\cite{carmona2018} in preference to naive token-replay diagnostics.
+Alignments relate an observed trace to a model run via four move kinds:
+synchronous moves where the log and the model agree, log-only moves,
+model-only moves, and silent (\(\tau\)) moves; a cost function over moves
+induces optimal alignments as the alignments of least total cost. Fitness
+--- the conformance metric this thesis returns to in
+Chapter~\ref{ch:correspondence}, where it is the quantity a Rust-extracted
+implementation and a hand-authored Lean model are related over --- is
+represented as a \texttt{Between01} value by construction, so that the
+boundedness of the metric (fitness always lies in \([0,1]\)) is a
+type-level fact enforced by the representation itself rather than a
+theorem that has to be separately proven and could, in principle, have
+been forgotten.
+
+\section{OCEL 2.0 Coverage}
+\label{sec:procint-ocel}
+
+Object-centric event logs follow the OCEL~2.0 specification
+\cite{ocel2}, Definitions~1--2, in \texttt{ProcInt.Ocel}: typed events and
+typed objects, event-to-object and object-to-object relations carrying
+qualifiers, and attribute maps over both events and objects. Flattening
+onto a classical, single-case-notion event log, and object lifecycle
+extraction, are represented as derived operations over this base
+representation rather than as independently axiomatized structures, so
+that a flattening result is a theorem about the OCEL~2.0 representation
+rather than an assumption stated separately about a flattened log.
+Object-centric Petri nets, the net-level counterpart of object-centric
+event data, follow~\cite{ocpn2020} and are formalized, per
+the accompanying paper's canon-status table, as a seed instance built
+on the Petri semantics of \S\ref{sec:procint-petri} rather than as a full
+independent development at the same depth as the workflow-net soundness
+theory.
+
+\section{The One Open Obligation: Unfolding Correctness}
+\label{sec:procint-open}
+
+Of the \TotalDecls\ declarations recorded in the catalog at the time of
+the release described by \texttt{release\_macros.tex},
+exactly one is genuinely open proof
+work rather than a completed theorem, a definition, a test oracle, or a
+deliberately stated negative witness of the kind discussed in
+\S\ref{sec:procint-finite-t}: order-3 of the crown obligation ladder,
+\texttt{ProcInt.BranchingProcess.isUnfoldingOf\_statement}, tracked in
+\texttt{research/wfnet/obligations.toml} under the name
+\texttt{unfolding\_correctness} with status \texttt{STATED} and annotated
+\emph{``branching-process unfolding statement (separate stated lane).''}
+This is worth stating plainly rather than folding into the crown-jewel
+narrative above, because it is a different kind of incompleteness from
+the countermodel family: the countermodel is deliberately, permanently
+stated as a negative witness that should never be promoted; the unfolding
+statement is stated because the corresponding proof has not yet been
+produced, and promoting it to \texttt{proven} remains an open task for a
+future lane, not a status this repository's guardrails forbid in
+principle.
+
+The declaration, recorded in module \texttt{Petri.Unfolding} in
+\texttt{packs/lean-math-pack/fragments/petriext.ttl}, states --- but does
+not yet prove --- what it means for a branching process to be a legal
+unfolding of a Petri net \(N\): given a branching process \(B\) over
+places \(P\), transitions \(T\), condition labels \(C\), and events \(E\),
+\(B\) is an unfolding of \(N\) exactly when \(B\)'s occurrence net is
+acyclic, has no backward conflict, and its event/condition labeling
+respects \(N\)'s pre- and post-set structure on singleton arcs:
+\begin{center}
+\begin{tabular}{l}
+\(B.\mathrm{occ.Acyclic} \;\land\; B.\mathrm{occ.NoBackwardConflict}\)\\
+\(\land\; (\forall\, e\, c,\; c \in B.\mathrm{occ.preC}\,e \to N.\mathrm{pre}\,(B.\mathrm{eventTrans}\,e)\,(B.\mathrm{condPlace}\,c) \neq 0)\)\\
+\(\land\; (\forall\, e\, c,\; c \in B.\mathrm{occ.postC}\,e \to N.\mathrm{post}\,(B.\mathrm{eventTrans}\,e)\,(B.\mathrm{condPlace}\,c) \neq 0)\)
+\end{tabular}
+\end{center}
+The declaration's own doc comment attributes the homomorphism condition
+this statement specializes --- to ordinary nets, on singleton arcs --- to
+Engelfriet's Definition~3.1 characterization of branching-process
+unfoldings (Engelfriet 1991), as the source fragment states it directly.
+No bibliographic entry for this attribution exists in this thesis's
+reference list, and none is added here: inventing a bibtex record for a
+citation that appears only as an in-source doc-comment attribution, absent
+independent verification of its bibliographic details, would be exactly
+the kind of fabrication this thesis's own manufacturing discipline is
+designed to refuse elsewhere in the pipeline, and prose is not exempt
+from that discipline merely because it is prose rather than a TTL
+declaration. The attribution is therefore reported here as the source
+states it --- an in-repository doc comment, not a peer-reviewed citation
+this thesis independently verifies --- and readers who need the primary
+source should consult the branching-process unfolding literature
+directly rather than treat the name and year given here as a full
+bibliographic record.
+
+Because \texttt{isUnfoldingOf\_statement} is a \texttt{def} of type
+\texttt{Prop} rather than a \texttt{theorem} with a completed proof term,
+it participates in the corpus the way any stated-but-undischarged
+statement does: it is visible in the declaration catalog, it is counted
+among the \StatedCount\ stated declarations reported in
+Table~\ref{tab:corpus} of \texttt{release\_macros.tex}, and it is excluded from the
+\KernelTheorems\ kernel-admitted, axiom-audited theorems the release
+advertises as proven. Its presence in the catalog at \texttt{STATED}
+status, rather than its silent omission, is itself part of what this
+thesis means by an honest, receipted release: a formalization effort that
+reports only its completed theorems and omits its open statements would
+overstate its own standing, and the manifest-and-quadrature apparatus of
+Chapter~\ref{ch:empirical} is built specifically to make that kind of
+omission structurally visible rather than merely discouraged in review.
