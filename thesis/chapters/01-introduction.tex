@@ -1,0 +1,210 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{The Problem: Contact Is Not Consequence}
+
+Formal verification has always separated the act of writing a proof from
+the act of the kernel accepting it. What has changed in the last several
+years is who, or what, is doing the writing. Large language models and
+autonomous coding agents can now produce syntactically plausible Lean~4
+declarations, tactic scripts, and entire modules on request. This
+capability is genuinely useful, and the manufacturing system described in
+this thesis was itself built with substantial LLM and agent assistance.
+But it raises a question that the Lean kernel alone does not settle:
+\emph{what standing does generated material have before, during, and
+after it is admitted?}
+
+Kernel acceptance is a strong guarantee of one specific thing: that a term
+inhabits its stated type. It is not a guarantee that the stated type is
+the intended one, that a multi-part statement was not silently weakened,
+that a proof obligation was not narrowed by an extra hypothesis, or that
+the artifact as a whole is a faithful rendering of some target
+mathematical theory. Meek et al.~\cite{meek2026formalizing} catalog
+exactly these failure modes in an agent-driven numerical-analysis
+pipeline: compilation success can coexist with an added weakening
+hypothesis, an incompletely stated multi-part theorem, or a parameter
+restriction that trivializes the intended claim. None of these failures
+are kernel failures. They are failures of the surrounding process --- the
+part of the pipeline that decides which candidate gets typed, checked,
+and recorded in the first place.
+
+This repository's governing position is that an LLM, an agent, a
+template engine, or a human editor is, with respect to the formal
+corpus, an \emph{untrusted candidate producer}. AGENTS.md states this as
+the repository's Prime Directive: ``This repository is a mathematical
+manufacturing system. Do not hand-code manufactured outputs. Claude is an
+untrusted candidate producer. Claude may propose changes to source
+declarations, templates, fixtures, tests, and hand-authored prose. Claude
+may not confer standing by directly editing generated artifacts.'' The
+directive is deliberately mechanical rather than aspirational: it names
+which files may be hand-edited (source declaration catalogs in Turtle,
+projection templates, builder scripts, stable prose) and which may not
+(rendered Lean modules, ledgered paper fragments, release manifests,
+release hashes, and counts). The asymmetry is the point. A candidate
+producer --- human or machine --- may contact the system at many points,
+but contact does not by itself create a standing claim. Only a declared,
+mechanically checked admission path can do that.
+
+Put in the vocabulary this thesis adopts throughout: the standing law is
+\[
+R_B \;\vdash\; A = \mu(O^*_B),
+\]
+read inside a declared boundary~$B$: an artifact~$A$ with standing is the
+lawful manufacturing transform~$\mu$ applied to admitted observations
+$O^*_B$, and the receipt~$R_B$ is what makes that consequence checkable
+rather than merely asserted. Raw candidate output --- a draft theorem
+statement, a proposed tactic script, a hand-typed release count --- is
+$O$, not $O^*$; it acquires no standing until it passes through the
+admission gate that produces $O^*_B$. This separates \emph{contact}
+(a candidate producer touching the corpus) from \emph{consequence} (a
+kernel-checked, receipted, replayable change of standing). The remainder
+of this thesis is an account of what it takes to make that separation
+operational at the scale of a several-hundred-declaration formal
+library, rather than as a slogan.
+
+\section{Thesis Statement}
+
+This thesis argues that formal artifacts produced with the assistance of
+untrusted candidate producers can be given a disciplined, replayable
+notion of \emph{standing} by treating formalization itself as a
+manufacturing pipeline rather than as a sequence of ad hoc edits. The
+pipeline has five stages, each of which produces or checks a distinct
+kind of evidence rather than merely restating the previous stage's
+output:
+
+\begin{enumerate}
+\item \textbf{Source declaration.} A domain's obligation graph --- the
+  structures, theorem surfaces, module dependencies, fixtures, and
+  citations a formal library must cover --- is curated as an RDF/Turtle
+  catalog rather than written directly as Lean source. The catalog is the
+  place where scope, naming, and status (``stated'' versus a status that
+  a passing guard may promote toward ``proven'') are declared.
+\item \textbf{ggen projection.} The declaration catalog is projected
+  through SPARQL-in-Tera templates into candidate Lean~4 modules. This
+  projection step is not itself an admission step: its output is a
+  candidate, carrying provenance and a content hash, with no standing of
+  its own.
+\item \textbf{Lean kernel admission.} The projected modules are compiled
+  under a pinned toolchain. Kernel acceptance, a \texttt{sorry} census,
+  and an axiom audit together decide whether a candidate becomes an
+  admitted, checked declaration --- and every failure mode is a typed
+  refusal rather than a silently absorbed error.
+\item \textbf{mfact certification.} A release manifest aggregates the
+  admitted corpus's hashes, axiom footprints, fixture results, and
+  proven/stated status into a single, machine-checkable object, closed
+  against a declared vocabulary of admissible objections.
+\item \textbf{Replayable receipt.} The manifest, the axiom audit log, and
+  the negative fixtures together constitute a receipt: evidence that a
+  claimed artifact is a genuine consequence of the pipeline, checkable
+  again by a third party rather than trusted on the strength of the
+  first run.
+\end{enumerate}
+
+This thesis further argues that this discipline is not confined to
+abstract pipeline design: it is exercised on a substantial first
+manufactured vertical, \textsf{procint}, a Lean~4 library for process
+intelligence --- Petri nets, workflow-net soundness, event logs and
+alignment-based conformance, and OCEL-style object-centric event
+data --- manufactured from the declared obligation graph rather than
+hand-written declaration by declaration. Process intelligence is chosen
+not because it is the terminus of the method but because, as
+paper/main.tex's Scope paragraph is explicit in stating, its public
+objects (events, traces, transitions, guards, conformance obligations)
+already carry mathematical structure suitable for this kind of projection
+and admission, making it a demonstration vertical for a method the thesis
+argues is field-independent in its structure, if not in this document's
+empirical coverage.
+
+\section{Contributions}
+
+This thesis makes the following contributions, each developed in a later
+chapter:
+
+\begin{enumerate}
+\item \textbf{A typed admission discipline for formal artifacts
+  (\emph{mathematical manufacturing}).} Generated output, human patches,
+  templates, and agent proposals are all treated uniformly as
+  candidates; standing is acquired only through an explicit, fail-closed
+  admission gate --- kernel acceptance, a zero-\texttt{sorry} census, an
+  axiom audit against an authorized set, negative fixtures, and manifest
+  completeness (Chapter~\ref{ch:background}, Chapter~\ref{ch:mfact}).
+\item \textbf{\textsf{mfact}, a Lean~4 manufacturing framework} that
+  reifies candidates, refusals, admissions, manifests, certified
+  releases, and objections as first-class typed values rather than as
+  informal process conventions, and that discharges a per-release
+  ``no valid objection'' theorem against a closed inductive family of
+  admissible objection forms (Chapter~\ref{ch:mfact}).
+\item \textbf{\textsf{procint}, the first manufactured vertical}: a
+  process-intelligence formalization covering Petri nets, workflow-net
+  soundness (including the crown-jewel soundness equivalence, proven
+  under a \texttt{[Finite T]} hypothesis, and a deliberately unbounded
+  countermodel witnessing why that hypothesis cannot be dropped), event
+  logs, alignment-based conformance, and OCEL~2.0 object-centric logs,
+  together with an account of the exactly one declaration in the current
+  \TotalDecls-declaration catalog that remains genuine open proof work
+  (Chapter~\ref{ch:procint}).
+\item \textbf{A correspondence rail from extracted implementation to
+  admitted semantics}, using Aeneas/Charon to extract a bounded Rust core
+  into a proof-facing image and relating that image to admitted
+  \textsf{procint} semantics under a declared, kernel-checked abstraction
+  function, rather than by prose or convention alone
+  (Chapter~\ref{ch:correspondence}).
+\item \textbf{A manifest-generated, kernel-closed evaluation}: the
+  paper's own numeric claims are rendered from the release manifest, not
+  asserted in prose, and closed by a kernel-checked Standing Quadrature
+  witness that refuses the release if the declaration catalog, the
+  admitted corpus, and the manifest ever diverge (Chapter~\ref{ch:empirical},
+  Chapter~\ref{ch:evaluation}).
+\item \textbf{An account of the pipeline's own construction} by agentic
+  and LLM-assisted development, examined under the same untrusted-producer
+  discipline the pipeline enforces on its mathematical content
+  (Chapter~\ref{ch:ai-development}).
+\end{enumerate}
+
+\section{Scope and Non-Claims}
+
+Consistent with the Scope paragraph of the accompanying paper, this
+thesis does not claim to formalize process intelligence in its entirety,
+nor does it claim the manufacturing pipeline's benefits transfer to every
+formal domain without further work; the generalization argument
+(Chapter~\ref{ch:discussion}) is presented as a structural analogy backed
+by one worked vertical, not as an empirical result over multiple
+verticals. It does not claim that generated mathematics is correct by
+virtue of being generated, or that kernel admission settles the harder
+semantic question of whether an admitted statement is a faithful
+rendering of its informal target --- a residual risk this thesis returns
+to explicitly, following Meek et al.'s diagnosis, in
+Chapter~\ref{ch:discussion}. It does not claim that every declaration in
+the corpus is proven: the release manifest itself distinguishes
+kernel-admitted, axiom-audited theorems from declarations whose formal
+statement exists but whose proof obligation remains open, and this
+thesis is careful to preserve that distinction rather than to elide it in
+narrative prose. Where a number is asserted --- a declaration count, a
+theorem count, a hash --- it is drawn from a rendered, ledgered fragment
+of the release manifest rather than typed by hand into this document.
+
+\section{Roadmap}
+
+The remaining chapters develop the contributions above in the following
+order. Chapter~\ref{ch:background} situates this work against the Lean~4
+ecosystem, Petri-net and workflow-net theory, the process-mining
+literature, LLM-assisted theorem proving, and Rust verification and
+extraction, closing with an explicit statement of the research gap this
+thesis addresses. Chapter~\ref{ch:mfact} develops the \textsf{mfact}
+framework itself: candidates, typed refusals, admissions with covers
+proofs, manifests, certified releases, and the closed family of valid
+objections. Chapter~\ref{ch:procint} presents \textsf{procint} as the
+first manufactured vertical, including its module architecture, the
+workflow-net soundness development, and the deliberate countermodel that
+bounds the crown-jewel theorem's scope. Chapter~\ref{ch:correspondence}
+develops the Aeneas/Charon correspondence rail between extracted Rust
+implementation and admitted process semantics. Chapter~\ref{ch:empirical}
+reports the manifest-generated evaluation and the Standing Quadrature
+closure argument in detail, and Chapter~\ref{ch:ai-development} turns the
+thesis's own untrusted-producer discipline onto the agentic process that
+built the pipeline. Chapter~\ref{ch:evaluation} consolidates the
+quantitative release evidence referenced throughout the thesis into a
+single evaluation treatment, and Chapter~\ref{ch:discussion} discusses
+limitations, the residual semantic-faithfulness risk, and the
+generalization argument to ontology-bearing fields beyond process
+intelligence. Chapter~\ref{ch:conclusion} closes the thesis.

@@ -1,0 +1,110 @@
+\documentclass[11pt,oneside]{report}
+
+% Thesis-length technical monograph assembled from the same source tree as
+% paper/main.tex (the arXiv submission). This document is a synthesized
+% internal artifact, not a work submitted to, or examined by, any degree-
+% granting institution -- see the title-page note below. It reuses the
+% paper's ggen/builder-rendered fragments by \input rather than restating
+% any release standing number by hand, per this repository's own
+% manufacturing law (AGENTS.md): nothing here is asserted in prose.
+
+\usepackage[margin=1.15in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tocloft}
+\usepackage{newunicodechar}
+
+% The chapters quote Lean source fragments that use Unicode math notation
+% directly (mathlib/procint convention); map the symbols that appear to
+% their standard LaTeX math-mode equivalents so pdflatex can typeset them.
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{⊕}{\ensuremath{\oplus}}
+
+\lstdefinelanguage{lean}{
+  keywords={structure, inductive, theorem, def, lemma, instance, namespace,
+            end, import, where, by, fun, match, with, deriving},
+  sensitive=true,
+  comment=[l]{--},
+  morestring=[b]",
+}
+\lstset{
+  language=lean,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape\color{gray},
+  columns=fullflexible,
+  breaklines=true,
+  frame=single,
+  framerule=0.3pt,
+  xleftmargin=1em,
+}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+% Release-mode guard, matching paper/main.tex's convention: release builds
+% hard-fail on missing rendered fragments. There are no generated files --
+% only artifacts with receipts: authority comes from .mfact/artifacts.toml,
+% not from paths or headers. Volatile standing claims live only in
+% ledgered, ggen-rendered fragments, \input exactly once here.
+\newif\ifreleasebuild
+\releasebuildtrue
+\input{../paper/release_macros}
+
+\title{\Large Receipted Mathematical Manufacturing for Process Intelligence\\[0.3em]
+\large A Thesis-Length Account of the mfact/procint Pipeline}
+\author{Synthesized from the \texttt{mfact} repository\\(release tag \ReleaseTag)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+\vspace{-2em}
+\begin{center}
+\begin{minipage}{0.85\textwidth}
+\small\itshape
+\noindent Note on this document. This is a synthesized, thesis-length
+technical monograph assembled from the \texttt{mfact} repository's own
+source material (its LaTeX paper, doctrine documents, Lean declaration
+catalog, and generated release fragments) together with agent-drafted
+expository prose grounded in those sources. It has not been submitted to,
+or examined by, any university or degree-granting body, and no academic
+degree is claimed on its behalf. Its standing claims are exactly the
+claims already certified by the repository's own manufacturing pipeline
+(see Chapter~\ref{ch:mfact}); this document adds exposition, not standing.
+\end{minipage}
+\end{center}
+\clearpage
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\include{chapters/01-introduction}
+\include{chapters/02-background}
+\include{chapters/03-mfact-framework}
+\include{chapters/04-procint-formalization}
+\include{chapters/05-correspondence-rail}
+\include{chapters/06-empirical-evidence}
+\include{chapters/07-ai-assisted-development}
+\include{chapters/08-evaluation}
+\include{chapters/09-discussion-limitations-future-work}
+\include{chapters/10-conclusion}
+
+\bibliographystyle{plain}
+\bibliography{../paper/refs}
+
+\end{document}

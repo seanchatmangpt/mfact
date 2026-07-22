@@ -48,6 +48,17 @@ for path, producer, sources in [
      ['release/release-manifest.json']),
     ('release/docs_report.json', 'scripts/build_docs.sh',
      ['release/release-manifest.json']),
+    ('rslab/receipts/praxis_graphlaw_benchmark_receipt.toml', 'rslab/scripts/collect_praxis_graphlaw.py',
+     ['rslab/experiments/praxis_graphlaw/raw/bench_graphlaw.txt',
+      'rslab/experiments/praxis_graphlaw/raw/bench_root.txt',
+      'rslab/experiments/praxis_graphlaw/raw/test_graphlaw.txt',
+      'rslab/experiments/praxis_graphlaw/raw/test_e2e.txt',
+      'rslab/experiments/praxis_graphlaw/raw/toolchain_context.txt',
+      'rslab/experiments/praxis_graphlaw/raw/command_log.txt',
+      'rslab/experiments/praxis_graphlaw/experiment_meta.toml',
+      'rslab/schemas/benchmark_result.schema.json']),
+    ('rslab/paper_fragments/praxis_graphlaw_evidence.tex', 'rslab/scripts/render_paper_fragments.py',
+     ['rslab/receipts/praxis_graphlaw_benchmark_receipt.toml']),
 ]:
     lines += ['[[artifact]]', f'path = "{path}"', f'producer = "{producer}"',
               f'sources = {json.dumps(sources)}',
@@ -56,4 +67,4 @@ for path, producer, sources in [
 os.makedirs(os.path.join(ROOT, '.mfact'), exist_ok=True)
 out = os.path.join(ROOT, '.mfact/artifacts.toml')
 open(out, 'w').write('\n'.join(lines))
-print(f'{out}: {len(outputs) + 8} artifacts ledgered')
+print(f'{out}: {sum(1 for l in lines if l == "[[artifact]]")} artifacts ledgered')

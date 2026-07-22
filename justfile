@@ -86,6 +86,14 @@ manifest:
 eval-tex:
     python3 scripts/build_evaluation_tex.py
 
+# rslab normalization pair: receipt the praxis-graphlaw raw evidence (Ticket
+# 018), then render the paper fragments that cite it. Also invoked inline by
+# regen-check so the ledger's producer field is covered there directly.
+[group('manufacture')]
+rslab-fragments:
+    python3 rslab/scripts/collect_praxis_graphlaw.py
+    python3 rslab/scripts/render_paper_fragments.py
+
 # Certify the release: exit 0 iff all gates pass.
 [group('manufacture')]
 certify: build audit
@@ -128,7 +136,7 @@ quadrature-negative-controls:
 # Package the paper for arXiv (no submission).
 [group('paper')]
 arxiv-package:
-    cd paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && COPYFILE_DISABLE=1 tar czf arxiv-submission.tar.gz -C .. README_REPRODUCIBILITY.md -C paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex publication_status.tex replay_status.tex
+    cd paper && TEXINPUTS=../rslab/paper_fragments: latexmk -pdf -interaction=nonstopmode main.tex > /dev/null && COPYFILE_DISABLE=1 tar czf arxiv-submission.tar.gz -C .. README_REPRODUCIBILITY.md -C paper main.tex main.bbl refs.bib release_macros.tex evaluation.tex quadrature.tex final_status.tex availability.tex conclusion.tex crown_jewel_status.tex publication_status.tex replay_status.tex -C ../rslab/paper_fragments praxis_graphlaw_evidence.tex
     @tar tzf paper/arxiv-submission.tar.gz
 
 # Print the standing report (STANDING.md).
@@ -144,6 +152,8 @@ regen-check:
     python3 scripts/build_quadrature.py > /dev/null
     rm -f ggen.lock
     ggen sync run > /dev/null
+    python3 rslab/scripts/collect_praxis_graphlaw.py > /dev/null
+    python3 rslab/scripts/render_paper_fragments.py > /dev/null
     python3 scripts/build_ledger.py > /dev/null
     git diff --exit-code -- $(grep '^path = ' .mfact/artifacts.toml | cut -d'"' -f2 | grep -v 'standing.env\|artifacts.toml' | sort -u | tr '\n' ' ') || (echo "REFUSED: ARTIFACT_DRIFT_REFUSED — unreplayable edit or stale render detected above" && exit 1)
     @echo "regen-check: all ledgered artifacts reproducible from source"
@@ -264,12 +274,20 @@ verif-status:
 # Rebuild the paper PDF (paper/main.pdf).
 [group('paper')]
 paper:
-    cd paper && latexmk -pdf -interaction=nonstopmode main.tex > /dev/null
+    cd paper && TEXINPUTS=../rslab/paper_fragments: latexmk -pdf -interaction=nonstopmode main.tex > /dev/null
     @echo "paper: main.pdf rebuilt"
 
 # Lint hand-authored prose for volatile standing claims, then rebuild the paper.
 [group('paper')]
 paper-check: prose-lint paper
+
+# Rebuild the thesis-length monograph (thesis/thesis.pdf). Hand-authored
+# narrative under thesis/, never ggen-rendered or ledgered; reuses the
+# paper's own generated fragments and bibliography by relative \input.
+[group('paper')]
+thesis:
+    cd thesis && latexmk -pdf -interaction=nonstopmode thesis.tex > /dev/null
+    @echo "thesis: thesis.pdf rebuilt"
 
 # Write the ephemeral cockpit report (.mfact/reports/latest.*) — the only diagnostic allowed to.
 [group('cockpit')]
