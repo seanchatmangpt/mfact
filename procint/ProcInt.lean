@@ -35,6 +35,7 @@ import ProcInt.Models.Powl
 import ProcInt.Models.ChoiceGraph
 import ProcInt.Models.Dfg
 import ProcInt.Models.CausalNet
+import ProcInt.Models.CausalNetClamp
 import ProcInt.Models.Bpmn
 import ProcInt.Models.Declare
 import ProcInt.Analytics.Temporal
