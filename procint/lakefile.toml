@@ -52,3 +52,11 @@ roots = ["ProcInt.Release.PostRelease"]
 [[lean_lib]]
 name = "Playground"
 roots = ["ProcInt.Playground"]
+
+[[lean_lib]]
+name = "GallCheckpoint026"
+# Hand-authored for W4PM-LEAN-GALL-026 (wasm4pm receipts). Not ggen-rendered, not part
+# of the ProcInt.lean topological import index, so this target lets `lake build
+# GallCheckpoint026` compile HeuristicMiner.lean and InductiveMinerSoundness.lean
+# without hand-editing the ggen-rendered ProcInt.lean root import file.
+roots = ["ProcInt.HeuristicMiner", "ProcInt.InductiveMinerSoundness"]
