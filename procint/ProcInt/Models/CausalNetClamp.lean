@@ -50,10 +50,10 @@ theorem clampedMeasure_add_swap_eq_abs (ab ba : ℕ) :
   have hswap : dependencyMeasure ba ab = - dependencyMeasure ab ba :=
     dependencyMeasure_antisymm ba ab
   rw [hswap]
-  rcases le_or_lt 0 (dependencyMeasure ab ba) with h | h
+  rcases le_total 0 (dependencyMeasure ab ba) with h | h
   · rw [max_eq_left h, max_eq_right (by linarith), abs_of_nonneg h]
     ring
-  · rw [max_eq_right (le_of_lt h), max_eq_left (by linarith), abs_of_neg h]
+  · rw [max_eq_right h, max_eq_left (by linarith), abs_of_nonpos h]
     ring
 
 /-- What is lost through the clamp, exactly: the two clamped directions can never
@@ -71,10 +71,10 @@ theorem clampedMeasure_mul_swap_eq_zero (ab ba : ℕ) :
   have hswap : dependencyMeasure ba ab = - dependencyMeasure ab ba :=
     dependencyMeasure_antisymm ba ab
   rw [hswap]
-  rcases le_or_lt 0 (dependencyMeasure ab ba) with h | h
+  rcases le_total 0 (dependencyMeasure ab ba) with h | h
   · rw [max_eq_right (by linarith : - dependencyMeasure ab ba ≤ 0)]
     ring
-  · rw [max_eq_right (le_of_lt h)]
+  · rw [max_eq_right h]
     ring
 
 /-- Symmetric counts clamp to zero on both sides (special case of both theorems
