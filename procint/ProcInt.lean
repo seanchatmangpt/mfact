@@ -38,6 +38,7 @@ import ProcInt.Models.CausalNet
 import ProcInt.Models.CausalNetClamp
 import ProcInt.Models.Bpmn
 import ProcInt.Models.Declare
+import ProcInt.Models.SocialNetwork
 import ProcInt.Analytics.Temporal
 import ProcInt.Analytics.Causality
 import ProcInt.Analytics.Correlation
