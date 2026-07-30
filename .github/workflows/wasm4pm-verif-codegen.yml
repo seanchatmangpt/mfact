@@ -1,0 +1,59 @@
+name: wasm4pm verification codegen
+
+on:
+  push:
+    branches:
+      - agent/wasm4pm-procint-d1
+  pull_request:
+    branches: [main]
+    paths:
+      - "ggen.toml"
+      - "packs/lean-math-pack/fragments/verif.ttl"
+      - "packs/lean-math-pack/templates/*verif*"
+      - "packs/lean-math-pack/templates/corr_module.lean.tmpl"
+      - "scripts/verif_materialize.sh"
+      - "scripts/test_verif_codegen_contract.py"
+      - ".github/workflows/wasm4pm-verif-codegen.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wasm4pm-verif-codegen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test_verif_codegen_contract.py
+
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ed625aeecce7c412db4a022e67cda5bdc6068083
+          path: .tools/ggen
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build pinned ggen CLI
+        run: cargo build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+      - name: Render verifier projection
+        run: .tools/ggen/target/debug/ggen sync --manifest ggen.toml
+      - name: Verify generated ownership
+        run: |
+          python3 scripts/test_verif_codegen_contract.py
+          test -f dist/verif/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean
+          test -f dist/verif/lean/Wasm4pmVerify/Abs.lean
+          test -f dist/verif/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
+          ! grep -R "obligationStatement" dist/verif/lean/Wasm4pmVerify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wasm4pm-verifier-projection
+          path: dist/verif/lean/Wasm4pmVerify
