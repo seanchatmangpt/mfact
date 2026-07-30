@@ -15,7 +15,7 @@ rdfs = "http://www.w3.org/2000/01/rdf-schema#"
 xsd = "http://www.w3.org/2001/XMLSchema#"
 
 [packs]
-lean-math-pack = { path = "packs/lean-math-pack" }
+lean-math-pack = { path = "packs/lean-math-pack", extra_ontologies = ["packs/lean-math-pack/fragments/verif.ttl"] }
 quadrature-pack = { path = "packs/quadrature-pack" }
 post-release-pack = { path = "packs/post-release-pack" }
 
