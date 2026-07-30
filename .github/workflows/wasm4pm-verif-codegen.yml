@@ -47,7 +47,7 @@ jobs:
       - name: Build pinned ggen CLI
         run: cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
       - name: Render verifier projection
-        run: .tools/ggen/target/debug/ggen sync --manifest ggen.toml
+        run: .tools/ggen/target/debug/ggen sync run
       - name: Verify generated ownership
         run: |
           python3 scripts/test_verif_codegen_contract.py
