@@ -14,15 +14,15 @@
 verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
   verif:corrOrder 1 ;
   verif:corrName "token_replay_counts_corr" ;
-  verif:rustSymbol "wasm4pm_core::conformance_counts::ReplayCounts::fitness_ratio" ;
+  verif:rustSymbol "wasm4pm_core::conformance_counts::ReplayCounts::exact_fitness" ;
   verif:rustFile "wasm4pm-core/src/conformance_counts.rs" ;
   verif:leanDecl "ProcInt.ReplayCounts" ;
   verif:aeneasModule "Wasm4pmVerify.Generated.Wasm4pmCore" ;
   verif:aeneasDecl "ReplayCounts" ;
   verif:proofPattern "ReplayCountsExactFitness" ;
   verif:implementationType "ReplayCounts" ;
-  verif:implementationFunction "fitness" ;
+  verif:implementationFunction "exactFitness" ;
   verif:carrierName "replayCountsCarrier" ;
   verif:specFunction "ProcInt.fitness" ;
-  verif:sourceCommit "cb49ef4cc3bbad37d0497e7c88ec9e443f4b95f2" ;
-  verif:note "D1 exact token-replay fitness. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
+  verif:sourceCommit "96dcfd90a8478cb35f9d6f11f74c2de0e70e5601" ;
+  verif:note "D1 total exact token-replay fitness. Rust stores the two rational halves separately so every lawful u64 count tuple is representable without a 129-bit combined denominator. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
