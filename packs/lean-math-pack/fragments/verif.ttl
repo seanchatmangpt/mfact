@@ -24,5 +24,5 @@ verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
   verif:implementationFunction "exactFitness" ;
   verif:carrierName "replayCountsCarrier" ;
   verif:specFunction "ProcInt.fitness" ;
-  verif:sourceCommit "c49b42a018adef455eb9f7149b5301549c612d36" ;
-  verif:note "D1 total exact token-replay fitness. Rust stores the two rational halves separately so every lawful u64 count tuple is representable without a 129-bit combined denominator. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
+  verif:sourceCommit "bec4087ad8a91d314e07d03b04303a215a4722a3" ;
+  verif:note "D1 total exact token-replay fitness. Rust stores the two rational halves separately so every lawful u64 count tuple is representable without a 129-bit combined denominator, and keeps the exact-rational constructors private so denominator invariants cannot be forged. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
