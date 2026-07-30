@@ -13,7 +13,7 @@ TEMPLATES = [
     ROOT / "packs/lean-math-pack/templates/verif_abs.lean.tmpl",
     ROOT / "packs/lean-math-pack/templates/corr_module.lean.tmpl",
 ]
-SOURCE_COMMIT = "96dcfd90a8478cb35f9d6f11f74c2de0e70e5601"
+SOURCE_COMMIT = "c49b42a018adef455eb9f7149b5301549c612d36"
 
 
 def refuse(condition: bool, code: str) -> None:
