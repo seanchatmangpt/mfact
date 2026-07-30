@@ -41,9 +41,11 @@ jobs:
           repository: seanchatmangpt/ggen
           ref: ed625aeecce7c412db4a022e67cda5bdc6068083
           path: .tools/ggen
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
       - name: Build pinned ggen CLI
-        run: cargo build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+        run: cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
       - name: Render verifier projection
         run: .tools/ggen/target/debug/ggen sync --manifest ggen.toml
       - name: Verify generated ownership
