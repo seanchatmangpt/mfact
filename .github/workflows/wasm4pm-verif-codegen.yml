@@ -52,7 +52,11 @@ jobs:
             .tools/ggen/target
           key: ggen-cli-${{ runner.os }}-nightly-2026-06-22-ed625aeecce7c412db4a022e67cda5bdc6068083
       - name: Build pinned ggen CLI
-        run: cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+        run: |
+          if [ ! -x .tools/ggen/target/debug/ggen ]; then
+            cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+          fi
+          .tools/ggen/target/debug/ggen --version
       - uses: actions/upload-artifact@v4
         with:
           name: pinned-ggen-cli
