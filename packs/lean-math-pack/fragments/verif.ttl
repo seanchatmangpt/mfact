@@ -24,5 +24,5 @@ verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
   verif:implementationFunction "fitness" ;
   verif:carrierName "replayCountsCarrier" ;
   verif:specFunction "ProcInt.fitness" ;
-  verif:sourceCommit "9f3dd794a5a074d4e379dfadf8b856e555327c12" ;
+  verif:sourceCommit "cb49ef4cc3bbad37d0497e7c88ec9e443f4b95f2" ;
   verif:note "D1 exact token-replay fitness. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
