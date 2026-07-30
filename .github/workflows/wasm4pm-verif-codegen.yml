@@ -55,6 +55,17 @@ jobs:
           test -f dist/verif/lean/Wasm4pmVerify/Abs.lean
           test -f dist/verif/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
           ! grep -R "obligationStatement" dist/verif/lean/Wasm4pmVerify
+      - name: Exercise materialization without overwriting kernel files
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y b3sum
+          mkdir -p /tmp/wasm4pm/verify/lean/Wasm4pmVerify
+          printf 'sentinel\n' > /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Kernel.lean
+          WASM4PM_COMPAT_DIR=/tmp/wasm4pm bash scripts/verif_materialize.sh
+          grep -qx 'sentinel' /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Kernel.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Abs.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
       - uses: actions/upload-artifact@v4
         with:
           name: wasm4pm-verifier-projection
