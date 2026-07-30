@@ -15,6 +15,7 @@ sparql:
 force: true
 skip_empty: true
 ---
+{% for row in obligation %}
 -- RENDERED by `ggen sync` from the mfact verification catalog.
 -- Do not edit by hand.
 import ProcInt.Conformance.TokenReplay
@@ -23,8 +24,8 @@ import Wasm4pmVerify.Generated.Wasm4pmCore
 
 namespace Wasm4pmVerify
 
-{% if proofPattern == "ReplayCountsExactFitness" %}
-def {{ carrierName }} :
+{% if row.proofPattern == "ReplayCountsExactFitness" %}
+def {{ row.carrierName }} :
     Carrier Generated.ReplayCounts ProcInt.ReplayCounts where
   WF counts :=
     counts.missing ≤ counts.consumed ∧
@@ -41,3 +42,4 @@ def {{ carrierName }} :
 {% endif %}
 
 end Wasm4pmVerify
+{% endfor %}
