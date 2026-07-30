@@ -15,9 +15,9 @@ rdfs = "http://www.w3.org/2000/01/rdf-schema#"
 xsd = "http://www.w3.org/2001/XMLSchema#"
 
 [packs]
-lean-math-pack = { path = "/Users/sac/mfact/packs/lean-math-pack" }
-quadrature-pack = { path = "/Users/sac/mfact/packs/quadrature-pack" }
-post-release-pack = { path = "/Users/sac/mfact/packs/post-release-pack" }
+lean-math-pack = { path = "packs/lean-math-pack" }
+quadrature-pack = { path = "packs/quadrature-pack" }
+post-release-pack = { path = "packs/post-release-pack" }
 
 [templates]
 dir = "templates"
