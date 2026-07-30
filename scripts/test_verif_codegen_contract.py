@@ -14,6 +14,12 @@ TEMPLATES = [
     ROOT / "packs/lean-math-pack/templates/verif_abs.lean.tmpl",
     ROOT / "packs/lean-math-pack/templates/corr_module.lean.tmpl",
 ]
+GENERATED_ROOT = ROOT / "dist/verif/lean/Wasm4pmVerify"
+ALLOWED_GENERATED_LEAN = {
+    Path("Generated/Wasm4pmCore.lean"),
+    Path("Abs.lean"),
+    Path("Corr/TokenReplayCounts.lean"),
+}
 SOURCE_COMMIT = "bec4087ad8a91d314e07d03b04303a215a4722a3"
 VERIF_ONTOLOGY = "packs/lean-math-pack/fragments/verif.ttl"
 
@@ -53,6 +59,19 @@ def main() -> int:
         output = output_lines[0]
         refuse(output in outputs, f"DUPLICATE_OUTPUT_OWNER:{output}")
         outputs.add(output)
+
+    if GENERATED_ROOT.is_dir():
+        generated = {
+            path.relative_to(GENERATED_ROOT)
+            for path in GENERATED_ROOT.rglob("*.lean")
+            if path.is_file()
+        }
+        unexpected = sorted(generated - ALLOWED_GENERATED_LEAN)
+        refuse(
+            bool(unexpected),
+            "LEGACY_CORRESPONDENCE_OUTPUT_REFUSED:"
+            + ",".join(str(path) for path in unexpected),
+        )
 
     materializer = (ROOT / "scripts/verif_materialize.sh").read_text(encoding="utf-8")
     refuse("SRC_ROOT" not in materializer, "PARTIAL_TREE_MATERIALIZER_REFUSED")
