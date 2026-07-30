@@ -1,7 +1,7 @@
 ---
 to: "dist/verif/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean"
 sparql:
-  obligations: |
+  obligation: |
     PREFIX verif: <https://mfact.dev/verif#>
     SELECT ?corrName ?rustSymbol ?rustFile ?leanDecl ?proofPattern ?carrierName
            ?implementationFunction ?sourceCommit
@@ -17,20 +17,21 @@ sparql:
          verif:sourceCommit ?sourceCommit .
     }
     ORDER BY ?corrName
+    LIMIT 1
 force: true
 skip_empty: true
 ---
 -- RENDERED by `ggen sync` from the mfact verification catalog.
 -- Candidate Lean: admitted only by `lake build`. Do not edit by hand.
--- Rust target: {{ obligations[0].rustSymbol }}
--- Rust source: {{ obligations[0].rustFile }} @ {{ obligations[0].sourceCommit }}
--- Proof pattern: {{ obligations[0].proofPattern }}
+-- Rust target: {{ rustSymbol }}
+-- Rust source: {{ rustFile }} @ {{ sourceCommit }}
+-- Proof pattern: {{ proofPattern }}
 import ProcInt.Conformance.TokenReplay
 import Wasm4pmVerify.Abs
 
 namespace Wasm4pmVerify.Corr
 
-{% if obligations[0].proofPattern == "ReplayCountsExactFitness" %}
+{% if proofPattern == "ReplayCountsExactFitness" %}
 /-- The generated D1 implementation image and ProcInt use the same exact fitness law. -/
 theorem token_replay_counts_corr
     (counts : Generated.ReplayCounts)
