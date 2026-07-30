@@ -31,9 +31,20 @@ structure ReplayCounts where
   missing : ℕ
   remaining : ℕ
 
+def fitnessComponent (total deviation : ℕ) : ℚ :=
+  (1 - (deviation : ℚ) / (total : ℚ)) / 2
+
+structure ExactFitness where
+  consumedComponent : ℚ
+  producedComponent : ℚ
+
+def exactFitness (counts : ReplayCounts) : ExactFitness :=
+  { consumedComponent := fitnessComponent counts.consumed counts.missing
+    producedComponent := fitnessComponent counts.produced counts.remaining }
+
 def fitness (counts : ReplayCounts) : ℚ :=
-  (1 - (counts.missing : ℚ) / (counts.consumed : ℚ)) / 2 +
-    (1 - (counts.remaining : ℚ) / (counts.produced : ℚ)) / 2
+  let exact := exactFitness counts
+  exact.consumedComponent + exact.producedComponent
 {% else %}
 #error "UNSUPPORTED_IMPLEMENTATION_MODEL_PATTERN"
 {% endif %}
