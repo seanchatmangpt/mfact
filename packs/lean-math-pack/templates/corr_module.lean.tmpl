@@ -4,7 +4,7 @@ sparql:
   a_obligations: |
     PREFIX verif: <https://mfact.dev/verif#>
     SELECT ?corrName ?corrOrder ?rustSymbol ?rustFile ?leanDecl ?aeneasModule
-           ?aeneasDecl ?status ?obligationStatement
+           ?aeneasDecl ?status ?importsBlock ?obligationStatement
     WHERE {
       ?o a verif:CorrespondenceObligation ;
          verif:corrName ?corrName ;
@@ -15,6 +15,7 @@ sparql:
          verif:aeneasModule ?aeneasModule ;
          verif:aeneasDecl ?aeneasDecl ;
          verif:status ?status ;
+         verif:importsBlock ?importsBlock ;
          verif:obligationStatement ?obligationStatement .
     }
     ORDER BY ?corrOrder
@@ -46,12 +47,7 @@ skip_empty: true
 -- Correspondence target : {{ rustSymbol }} ({{ rustFile }}) <-> {{ leanDecl }}
 -- Aeneas image          : {{ aeneasModule }}.{{ aeneasDecl }}
 -- Rendered status        : {{ status }}
-import Mathlib
-import ProcInt.Conformance.TokenReplay
-import Wasm4pmVerify.Abs
-import Wasm4pmVerify.Generated.Wasm4pmCore
-
-open Aeneas Aeneas.Std Result ControlFlow Error Wasm4pmVerify.Generated
+{{ importsBlock }}
 
 namespace Wasm4pmVerify.Corr
 

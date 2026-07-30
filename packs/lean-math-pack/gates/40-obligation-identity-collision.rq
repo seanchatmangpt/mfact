@@ -1,0 +1,24 @@
+# MESSAGE: Two or more verif:CorrespondenceObligation individuals share a
+# MESSAGE: verif:corrOrder or a verif:corrName.
+# MESSAGE: corrName drives the rendered filename
+# MESSAGE: (dist/verif/lean/Wasm4pmVerify/Corr/{{ corrName }}.lean), so a collision
+# MESSAGE: means two obligations racing for one output path; corrOrder drives
+# MESSAGE: deterministic render order, so a collision makes that order ambiguous.
+# MESSAGE: Remediation: give each obligation a unique corrName and corrOrder in
+# MESSAGE: fragments/verif.ttl.
+#
+# ggen independently refuses duplicate resolved write targets (FM-WRITE-008), but
+# that fires only after rendering and reports a path, not a cause. This gate
+# refuses at Stage 2b with the offending identity named.
+
+PREFIX verif: <https://mfact.dev/verif#>
+
+SELECT ?collidingProperty ?value (COUNT(DISTINCT ?obligation) AS ?obligationCount)
+WHERE {
+  ?obligation a verif:CorrespondenceObligation ;
+              ?collidingProperty ?value .
+  FILTER(?collidingProperty IN (verif:corrOrder, verif:corrName))
+}
+GROUP BY ?collidingProperty ?value
+HAVING (COUNT(DISTINCT ?obligation) > 1)
+ORDER BY ?collidingProperty ?value

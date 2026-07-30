@@ -1,0 +1,95 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ── Family: indexed imports (root-index membership without file rendering) ────
+# Splits two concepts that procint:Module previously conflated:
+#
+#   procint:Module        — ggen renders this module's .lean FILE from
+#                           procint:Decl leanCode literals, AND lists it in the
+#                           root index ProcInt.lean.
+#   procint:IndexedImport — appears in the root index only; the .lean file is
+#                           authored somewhere else and ggen must NOT overwrite it.
+#
+# Before this class existed, index.lean.tmpl hardcoded `import
+# ProcInt.Registry.Algorithms` and `import ProcInt.Registry.Breeds` as literal
+# template lines — domain constants inside a template. They could not be
+# procint:Module individuals because their files are rendered by dedicated
+# templates (registry_algorithms.lean.tmpl / registry_breeds.lean.tmpl), so
+# declaring them as Modules would have made module.lean.tmpl clobber those files.
+#
+# The MFW entries were worse: they were hand-appended to the generated
+# ProcInt.lean along with a comment warning that `just render` "regenerates this
+# file from ggen and drops these three lines — re-add them after any render."
+# Declaring them here removes the need for that manual re-add, and with it the
+# comment. Confirmed empirically: running `ggen sync` in this repo did drop them.
+
+procint:IndexedImport a owl:Class ;
+  rdfs:label "Indexed import" ;
+  rdfs:comment """A Lean module that belongs in the root import index but whose file is
+authored outside module.lean.tmpl — either by a dedicated ggen template or by hand. Carries
+procint:moduleId and procint:order exactly like procint:Module so index.lean.tmpl can UNION
+the two classes and sort them together.""" .
+
+# ── Rendered by dedicated templates, not by module.lean.tmpl ────────────────
+
+procint:Idx_Registry_Algorithms a procint:IndexedImport ;
+  procint:moduleId "Registry.Algorithms" ;
+  procint:order 200 ;
+  rdfs:comment "Rendered by registry_algorithms.lean.tmpl from pi:ProcessIntelligenceAlgorithm individuals." .
+
+procint:Idx_Registry_Breeds a procint:IndexedImport ;
+  procint:moduleId "Registry.Breeds" ;
+  procint:order 201 ;
+  rdfs:comment "Rendered by registry_breeds.lean.tmpl from compat:CognitionBreed individuals." .
+
+# ── Hand-authored subtrees ggen must not overwrite ──────────────────────────
+# The MFW (Multi-Fractal Workflow) subtree was merged from feature/mfw-fixes
+# (2026-07-16) and predates this repo's ggen catalog integration for that area.
+# ModuleMap transitively imports every core MFW module, so only these three need
+# listing. They stay IndexedImport until MFW has its own ggen source/template.
+
+procint:Idx_MFW_ModuleMap a procint:IndexedImport ;
+  procint:moduleId "MFW.ModuleMap" ;
+  procint:order 202 ;
+  rdfs:comment "Hand-authored. Transitively imports the core MFW modules." .
+
+procint:Idx_MFW_QLens a procint:IndexedImport ;
+  procint:moduleId "MFW.QLens" ;
+  procint:order 203 ;
+  rdfs:comment "Hand-authored MFW module, not reached transitively by ModuleMap." .
+
+procint:Idx_MFW_Tests a procint:IndexedImport ;
+  procint:moduleId "MFW.Tests" ;
+  procint:order 204 ;
+  rdfs:comment "Hand-authored MFW test module." .
+
+# ── Lean written directly into generated files by earlier work ───────────────
+# These two modules' .lean files were authored by hand during the
+# W4PM-LEAN-GALL checkpoint program (024 CausalNetClamp, 030b SocialNetwork) and
+# their imports were hand-inserted into the generated ProcInt.lean. Because the
+# Lean bodies live only on disk and never entered the ontology, `ggen sync`
+# dropped both imports — verified in this session.
+#
+# Declaring them IndexedImport restores the imports and stops ggen from
+# overwriting the files. This is a HOLDING position, not the end state: the
+# correct fix is to promote each to a procint:Module whose procint:Decl
+# individuals carry the Lean as leanCode literals, so the mathematics lives in
+# the ontology like every other declaration. Tracked as follow-up.
+#
+# The order values deliberately tie with their neighbours (CausalNet is 66,
+# Declare is 68) because index.lean.tmpl sorts `ORDER BY ?order ?moduleId`:
+# "Models.CausalNet" < "Models.CausalNetClamp" and "Models.Declare" <
+# "Models.SocialNetwork", so each lands immediately after its neighbour without
+# renumbering any existing module.
+
+procint:Idx_Models_CausalNetClamp a procint:IndexedImport ;
+  procint:moduleId "Models.CausalNetClamp" ;
+  procint:order 66 ;
+  rdfs:comment "Hand-authored by W4PM-LEAN-GALL-024 (clampedMeasure and its algebra). Should become a procint:Module." .
+
+procint:Idx_Models_SocialNetwork a procint:IndexedImport ;
+  procint:moduleId "Models.SocialNetwork" ;
+  procint:order 68 ;
+  rdfs:comment "Hand-authored by W4PM-LEAN-GALL-030b (handover / working-together edge characterisations). Should become a procint:Module." .

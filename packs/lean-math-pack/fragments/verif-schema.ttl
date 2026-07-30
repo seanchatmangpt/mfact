@@ -1,0 +1,171 @@
+@prefix procint: <https://mfact.dev/procint#> .
+@prefix verif: <https://mfact.dev/verif#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# ── Family: verif schema (vocabulary for the correspondence factory) ─────────
+# Declares the class, properties, and status ladder that fragments/verif.ttl's
+# individuals instantiate. Before this fragment existed the verif: vocabulary
+# was used but never declared, so a misspelled predicate on an obligation made
+# the consuming SPARQL WHERE conjunction simply fail to match; `skip_empty:
+# true` then dropped the rendered file and nothing complained. The gates in
+# packs/lean-math-pack/gates/ query these declarations to refuse malformed
+# obligations at sync time instead.
+#
+# Every property below is hand-authored on the obligation EXCEPT verif:status,
+# which is builder-derived and lives only in verif-status.generated.ttl.
+#
+# Properties carrying `verif:requiredOnObligation true` are mandatory. That
+# marker exists so gates/10-obligation-required-predicates.rq can stay generic:
+# it reads requiredness out of this schema rather than hardcoding a name list,
+# so adding a required property here automatically extends the gate.
+
+verif:requiredOnObligation a owl:DatatypeProperty ;
+  rdfs:label "required on obligation" ;
+  rdfs:comment """Marks a property as mandatory on every verif:CorrespondenceObligation.
+Read by gates/10-obligation-required-predicates.rq. Requiredness is domain knowledge, so it
+is declared here rather than encoded in the gate query.""" ;
+  rdfs:range xsd:boolean .
+
+verif:CorrespondenceObligation a owl:Class ;
+  rdfs:label "Correspondence obligation" ;
+  rdfs:comment """A stated, kernel-admitted refinement obligation between an extracted
+wasm4pm-core Rust image (Charon/Aeneas, Lean backend) and a hand-authored procint semantic
+object under an abstraction function. This is NOT "Aeneas proves the Rust automatically" —
+it is a correspondence between an extracted image and a Lean model, discharged by a real
+proof and admitted only by `lake build` plus an axiom check.""" .
+
+# ── Identity and ordering ───────────────────────────────────────────────────
+
+verif:corrName a owl:DatatypeProperty ;
+  rdfs:label "correspondence name" ;
+  rdfs:comment "Stable identifier; drives the rendered Lean module's filename and theorem name." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:corrOrder a owl:DatatypeProperty ;
+  rdfs:label "correspondence order" ;
+  rdfs:comment "Deterministic render order (the D-number of the plan's Part D ordering). Must be unique." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:integer ;
+  verif:requiredOnObligation true .
+
+# ── The Rust side of the correspondence ─────────────────────────────────────
+
+verif:rustSymbol a owl:DatatypeProperty ;
+  rdfs:label "Rust symbol" ;
+  rdfs:comment "Fully-qualified path of the Rust item whose extracted image is under obligation." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:rustFile a owl:DatatypeProperty ;
+  rdfs:label "Rust source file" ;
+  rdfs:comment "Path, relative to the wasm4pm-compat root, of the file Charon extracts." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+# ── The extracted-image side ────────────────────────────────────────────────
+
+verif:aeneasModule a owl:DatatypeProperty ;
+  rdfs:label "Aeneas module" ;
+  rdfs:comment "Lean module Aeneas emits the extracted image into." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:aeneasDecl a owl:DatatypeProperty ;
+  rdfs:label "Aeneas declaration" ;
+  rdfs:comment "Declaration name within the Aeneas-generated module." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+# ── The Lean-model side ─────────────────────────────────────────────────────
+
+verif:leanDecl a owl:DatatypeProperty ;
+  rdfs:label "procint Lean declaration" ;
+  rdfs:comment """The hand-authored procint declaration the extracted image must correspond to.
+Must join a procint:Decl's procint:declName — gates/20-correspondence-dangling.rq refuses
+any value that does not, replacing the filesystem grep in scripts/build_verif.py.""" ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:importsBlock a owl:DatatypeProperty ;
+  rdfs:label "imports block" ;
+  rdfs:comment """Verbatim Lean import prologue for this obligation's rendered module. Mirrors
+procint:importsBlock. Exists so corr_module.lean.tmpl carries no obligation-specific import
+list of its own: before this property, the template hardcoded D1's four imports, so every
+later obligation would have inherited imports it does not want.""" ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:obligationStatement a owl:DatatypeProperty ;
+  rdfs:label "obligation statement" ;
+  rdfs:comment """The complete Lean theorem, statement and proof, discharging this obligation.
+This is the irreducible per-obligation cost: it is mathematics and does not become generic.
+Everything around it — rendering, validation, actuation, status, receipts — does.""" ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:note a owl:DatatypeProperty ;
+  rdfs:label "note" ;
+  rdfs:comment "Prose rationale: what the abstraction function assumes, and which deltas are deliberate." ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string .
+
+# ── Status: builder-derived, never hand-authored ─────────────────────────────
+
+verif:status a owl:DatatypeProperty ;
+  rdfs:label "status" ;
+  rdfs:comment """Ladder position, derived from observed charon/aeneas/lake evidence and
+asserted ONLY in fragments/verif-status.generated.ttl. Hand-setting it in verif.ttl is a
+category error: the whole point of the ladder is that standing follows evidence. Must be one
+of the verif:statusName values below — gates/30-status-unknown.rq refuses anything else.""" ;
+  rdfs:domain verif:CorrespondenceObligation ;
+  rdfs:range xsd:string ;
+  verif:requiredOnObligation true .
+
+verif:ObligationStatus a owl:Class ;
+  rdfs:label "Obligation status" ;
+  rdfs:comment """One rung of the DECLARED -> EXTRACTED -> STATED -> PROVEN ladder, reified so
+the ordering is queryable. This replaces the status_order dictionary hardcoded in
+scripts/build_verif.py: the ranking is domain knowledge and therefore belongs in TTL, where a
+gate can compare an asserted status against the rank its evidence supports.""" .
+
+verif:statusName a owl:DatatypeProperty ;
+  rdfs:label "status name" ;
+  rdfs:domain verif:ObligationStatus ;
+  rdfs:range xsd:string .
+
+verif:statusRank a owl:DatatypeProperty ;
+  rdfs:label "status rank" ;
+  rdfs:comment "Monotone rank; a higher rank may never be asserted than the evidence supports." ;
+  rdfs:domain verif:ObligationStatus ;
+  rdfs:range xsd:integer .
+
+verif:StatusDeclared a verif:ObligationStatus ;
+  verif:statusName "DECLARED" ;
+  verif:statusRank 0 ;
+  rdfs:comment "The obligation is stated in the ontology. No extraction evidence yet." .
+
+verif:StatusExtracted a verif:ObligationStatus ;
+  verif:statusName "EXTRACTED" ;
+  verif:statusRank 1 ;
+  rdfs:comment "Charon/Aeneas produced an image; a pipeline receipt exists." .
+
+verif:StatusStated a verif:ObligationStatus ;
+  verif:statusName "STATED" ;
+  verif:statusRank 2 ;
+  rdfs:comment "The correspondence theorem elaborates: `lake build` exits 0." .
+
+verif:StatusProven a verif:ObligationStatus ;
+  verif:statusName "PROVEN" ;
+  verif:statusRank 3 ;
+  rdfs:comment "`#print axioms` shows no sorryAx: the proof is closed under the trusted axiom set." .

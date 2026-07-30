@@ -1,0 +1,22 @@
+# MESSAGE: A verif:CorrespondenceObligation is missing a predicate that
+# MESSAGE: fragments/verif-schema.ttl marks `verif:requiredOnObligation true`.
+# MESSAGE: Without this gate the omission is SILENT: the consuming SPARQL WHERE
+# MESSAGE: conjunction in corr_module.lean.tmpl simply fails to match, and
+# MESSAGE: `skip_empty: true` then drops the rendered Lean file with no error.
+# MESSAGE: Remediation: add the reported predicate to the reported obligation in
+# MESSAGE: fragments/verif.ttl — or, if it is genuinely optional, remove its
+# MESSAGE: verif:requiredOnObligation marker from the schema.
+#
+# Generic by construction: this query hardcodes no property names. It reads
+# requiredness out of the schema, so declaring a new required property in
+# verif-schema.ttl automatically extends this gate's coverage.
+
+PREFIX verif: <https://mfact.dev/verif#>
+
+SELECT ?obligation ?missingPredicate
+WHERE {
+  ?obligation a verif:CorrespondenceObligation .
+  ?missingPredicate verif:requiredOnObligation true .
+  FILTER NOT EXISTS { ?obligation ?missingPredicate ?anyValue }
+}
+ORDER BY ?obligation ?missingPredicate

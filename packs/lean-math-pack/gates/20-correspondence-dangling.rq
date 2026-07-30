@@ -1,0 +1,26 @@
+# MESSAGE: A verif:CorrespondenceObligation names a verif:leanDecl that does not
+# MESSAGE: resolve to any procint:Decl's procint:declName. The obligation claims a
+# MESSAGE: correspondence to a Lean declaration that this ontology does not define,
+# MESSAGE: so the rendered theorem could not possibly elaborate.
+# MESSAGE: Remediation: fix the verif:leanDecl value, or declare the missing
+# MESSAGE: procint:Decl with a matching procint:declName.
+#
+# Replaces CORRESPONDENCE_DANGLING_REFUSED in scripts/build_verif.py, and is
+# strictly stronger: that check grepped the filesystem for a declaration name,
+# which passes on any textual occurrence (a comment, a docstring, an unrelated
+# module). This joins the admitted graph, so it passes only when a real
+# procint:Decl individual declares that exact name.
+
+PREFIX verif: <https://mfact.dev/verif#>
+PREFIX procint: <https://mfact.dev/procint#>
+
+SELECT ?obligation ?danglingLeanDecl
+WHERE {
+  ?obligation a verif:CorrespondenceObligation ;
+              verif:leanDecl ?danglingLeanDecl .
+  FILTER NOT EXISTS {
+    ?decl a procint:Decl ;
+          procint:declName ?danglingLeanDecl .
+  }
+}
+ORDER BY ?obligation

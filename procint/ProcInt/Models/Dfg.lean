@@ -200,4 +200,5 @@ theorem endActivities_singleton_self [DecidableEq α] (a : α) (rest : List α) 
     endActivities [rest ++ [a]] a = 1 := by
   simp [endActivities, traceEnd]
 
+
 end ProcInt

@@ -1,0 +1,24 @@
+# MESSAGE: A verif:CorrespondenceObligation carries a verif:status that is not one
+# MESSAGE: of the verif:ObligationStatus rungs declared in verif-schema.ttl
+# MESSAGE: (DECLARED / EXTRACTED / STATED / PROVEN).
+# MESSAGE: Remediation: verif:status is builder-derived. Do not hand-edit it in
+# MESSAGE: fragments/verif.ttl — it is asserted only in
+# MESSAGE: fragments/verif-status.generated.ttl from observed evidence. A bad value
+# MESSAGE: here means either a typo in the generated fragment or an attempt to
+# MESSAGE: hand-set standing, which the ladder exists to prevent.
+#
+# The rung set is read from the ontology, not hardcoded here, so adding a rung to
+# verif-schema.ttl automatically widens what this gate accepts.
+
+PREFIX verif: <https://mfact.dev/verif#>
+
+SELECT ?obligation ?unknownStatus
+WHERE {
+  ?obligation a verif:CorrespondenceObligation ;
+              verif:status ?unknownStatus .
+  FILTER NOT EXISTS {
+    ?rung a verif:ObligationStatus ;
+          verif:statusName ?unknownStatus .
+  }
+}
+ORDER BY ?obligation

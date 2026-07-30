@@ -21,6 +21,19 @@ verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
   verif:leanDecl "ProcInt.ReplayCounts" ;
   verif:aeneasModule "Wasm4pmVerify.Generated" ;
   verif:aeneasDecl "ReplayCounts" ;
+  # The Lean import prologue for this obligation's rendered module. Lives here,
+  # not in corr_module.lean.tmpl, because it varies per obligation: D1 needs
+  # ProcInt.Conformance.TokenReplay, but an obligation about (say) alignments
+  # would need ProcInt.Conformance.Moves instead. While these four lines were
+  # hardcoded in the template, every future obligation would have silently
+  # inherited D1's imports. Mirrors procint:importsBlock, which solves the same
+  # problem for procint:Module individuals.
+  verif:importsBlock """import Mathlib
+import ProcInt.Conformance.TokenReplay
+import Wasm4pmVerify.Abs
+import Wasm4pmVerify.Generated.Wasm4pmCore
+
+open Aeneas Aeneas.Std Result ControlFlow Error Wasm4pmVerify.Generated""" ;
   # verif:status is NOT asserted here — it is a builder-derived field, owned
   # exclusively by scripts/build_verif.py, which emits it into the sibling
   # generated fragment fragments/verif-status.generated.ttl (same subject
