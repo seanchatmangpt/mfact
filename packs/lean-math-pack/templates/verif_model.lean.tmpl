@@ -16,15 +16,16 @@ sparql:
 force: true
 skip_empty: true
 ---
+{% for row in obligation %}
 -- RENDERED by `ggen sync` from the mfact verification catalog.
 -- Deterministic Lean-facing model; this is not an Aeneas extraction.
--- Rust target: {{ rustSymbol }}
--- Rust source: {{ rustFile }} @ {{ sourceCommit }}
+-- Rust target: {{ row.rustSymbol }}
+-- Rust source: {{ row.rustFile }} @ {{ row.sourceCommit }}
 import Mathlib
 
 namespace Wasm4pmVerify.Generated
 
-{% if proofPattern == "ReplayCountsExactFitness" %}
+{% if row.proofPattern == "ReplayCountsExactFitness" %}
 structure ReplayCounts where
   produced : ℕ
   consumed : ℕ
@@ -50,3 +51,4 @@ def fitness (counts : ReplayCounts) : ℚ :=
 {% endif %}
 
 end Wasm4pmVerify.Generated
+{% endfor %}
