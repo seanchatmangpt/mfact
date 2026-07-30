@@ -1,60 +1,66 @@
 ---
-to: "dist/verif/lean/Wasm4pmVerify/Corr/{{ corrName }}.lean"
+to: "dist/verif/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean"
 sparql:
-  a_obligations: |
+  obligations: |
     PREFIX verif: <https://mfact.dev/verif#>
-    SELECT ?corrName ?corrOrder ?rustSymbol ?rustFile ?leanDecl ?aeneasModule
-           ?aeneasDecl ?status ?obligationStatement
+    SELECT ?corrName ?rustSymbol ?rustFile ?leanDecl ?proofPattern ?carrierName
+           ?implementationFunction ?sourceCommit
     WHERE {
       ?o a verif:CorrespondenceObligation ;
          verif:corrName ?corrName ;
-         verif:corrOrder ?corrOrder ;
          verif:rustSymbol ?rustSymbol ;
          verif:rustFile ?rustFile ;
          verif:leanDecl ?leanDecl ;
-         verif:aeneasModule ?aeneasModule ;
-         verif:aeneasDecl ?aeneasDecl ;
-         verif:status ?status ;
-         verif:obligationStatement ?obligationStatement .
+         verif:proofPattern ?proofPattern ;
+         verif:carrierName ?carrierName ;
+         verif:implementationFunction ?implementationFunction ;
+         verif:sourceCommit ?sourceCommit .
     }
-    ORDER BY ?corrOrder
+    ORDER BY ?corrName
 force: true
 skip_empty: true
 ---
--- RENDERED by `ggen sync` from the verif correspondence catalog (lean-math-pack,
--- packs/lean-math-pack/fragments/verif.ttl). Candidate Lean: admitted only by
--- `lake build` in the wasm4pm-compat verify/lean package. Do not edit by
--- hand: candidates enter through the ontology, never here.
---
--- KNOWN DEVIATION from the correspondence-factory plan: the plan targets
--- /Users/sac/wasm4pm-compat/verify/lean/Wasm4pmVerify/Corr/ directly
--- (cross-repo absolute write). The installed ggen (26.7.4) hard-refuses
--- absolute or ".."-traversing `to:` paths (error FM-WRITE-002: "path must
--- be relative"; no config escape hatch found). This file therefore renders
--- into dist/verif/lean/Wasm4pmVerify/Corr/ inside mfact; materializing it
--- into wasm4pm-compat's verify/lean tree requires an explicit copy step
--- (not wired into any `just` recipe yet — out of scope for this phase).
---
--- Status ladder (builder-derived, never hand-set past DECLARED):
---   DECLARED -> EXTRACTED -> STATED -> PROVEN
--- Rendering this file does NOT promote status; only scripts/build_verif.py may
--- advance verif:status, from observed charon/aeneas/lake evidence. This is NOT
--- a claim that Aeneas proves the Rust automatically — it is one stated
--- refinement obligation between an extracted Rust image and an existing
--- procint semantic object.
---
--- Correspondence target : {{ rustSymbol }} ({{ rustFile }}) <-> {{ leanDecl }}
--- Aeneas image          : {{ aeneasModule }}.{{ aeneasDecl }}
--- Rendered status        : {{ status }}
-import Mathlib
+-- RENDERED by `ggen sync` from the mfact verification catalog.
+-- Candidate Lean: admitted only by `lake build`. Do not edit by hand.
+-- Rust target: {{ obligations[0].rustSymbol }}
+-- Rust source: {{ obligations[0].rustFile }} @ {{ obligations[0].sourceCommit }}
+-- Proof pattern: {{ obligations[0].proofPattern }}
 import ProcInt.Conformance.TokenReplay
 import Wasm4pmVerify.Abs
-import Wasm4pmVerify.Generated.Wasm4pmCore
-
-open Aeneas Aeneas.Std Result ControlFlow Error Wasm4pmVerify.Generated
 
 namespace Wasm4pmVerify.Corr
 
-{{ obligationStatement }}
+{% if obligations[0].proofPattern == "ReplayCountsExactFitness" %}
+/-- The generated D1 implementation image and ProcInt use the same exact fitness law. -/
+theorem token_replay_counts_corr
+    (counts : Generated.ReplayCounts)
+    (h : replayCountsCarrier.WF counts) :
+    ProcInt.fitness (replayCountsCarrier.toSpec counts h) =
+      Generated.fitness counts := by
+  rfl
+
+/-- The D1 image inherits ProcInt's unit-interval proof through the carrier map. -/
+theorem token_replay_counts_bounds
+    (counts : Generated.ReplayCounts)
+    (h : replayCountsCarrier.WF counts) :
+    0 ≤ Generated.fitness counts ∧ Generated.fitness counts ≤ 1 := by
+  have hs := ProcInt.fitness_mem_unitInterval
+    (replayCountsCarrier.toSpec counts h)
+  simpa [token_replay_counts_corr counts h] using hs
+
+/-- A replay with no missing or remaining tokens has exact fitness one. -/
+theorem token_replay_counts_perfect
+    (counts : Generated.ReplayCounts)
+    (h : replayCountsCarrier.WF counts)
+    (hm : counts.missing = 0)
+    (hr : counts.remaining = 0) :
+    Generated.fitness counts = 1 := by
+  rw [← token_replay_counts_corr counts h]
+  apply ProcInt.fitness_perfect
+  · exact hm
+  · exact hr
+{% else %}
+#error "UNSUPPORTED_CORRESPONDENCE_PATTERN"
+{% endif %}
 
 end Wasm4pmVerify.Corr
