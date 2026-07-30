@@ -13,6 +13,7 @@ TEMPLATES = [
     ROOT / "packs/lean-math-pack/templates/verif_abs.lean.tmpl",
     ROOT / "packs/lean-math-pack/templates/corr_module.lean.tmpl",
 ]
+SOURCE_COMMIT = "cb49ef4cc3bbad37d0497e7c88ec9e443f4b95f2"
 
 
 def refuse(condition: bool, code: str) -> None:
@@ -29,7 +30,7 @@ def main() -> int:
         "PROOF_PATTERN_MISSING",
     )
     refuse(
-        'verif:sourceCommit "9f3dd794a5a074d4e379dfadf8b856e555327c12"' not in catalog,
+        f'verif:sourceCommit "{SOURCE_COMMIT}"' not in catalog,
         "SOURCE_COMMIT_UNPINNED",
     )
 
