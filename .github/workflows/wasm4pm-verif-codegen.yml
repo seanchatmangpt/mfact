@@ -1,0 +1,106 @@
+name: wasm4pm verification codegen
+
+on:
+  push:
+    branches:
+      - agent/wasm4pm-procint-d1
+  pull_request:
+    branches: [main]
+    paths:
+      - "ggen.toml"
+      - "ggen.lock"
+      - "packs/lean-math-pack/fragments/verif.ttl"
+      - "packs/lean-math-pack/templates/*verif*"
+      - "packs/lean-math-pack/templates/corr_module.lean.tmpl"
+      - "scripts/verif_materialize.sh"
+      - "scripts/test_verif_codegen_contract.py"
+      - ".github/workflows/wasm4pm-verif-codegen.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wasm4pm-verif-codegen-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/test_verif_codegen_contract.py
+
+  build-ggen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ed625aeecce7c412db4a022e67cda5bdc6068083
+          path: .tools/ggen
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            .tools/ggen/target
+          key: ggen-cli-${{ runner.os }}-nightly-2026-06-22-ed625aeecce7c412db4a022e67cda5bdc6068083
+      - name: Build pinned ggen CLI
+        run: |
+          if [ ! -x .tools/ggen/target/debug/ggen ]; then
+            cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+          fi
+          .tools/ggen/target/debug/ggen --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pinned-ggen-cli
+          path: .tools/ggen/target/debug/ggen
+
+  render:
+    needs: build-ggen
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: pinned-ggen-cli
+          path: .tools/ggen-bin
+      - name: Render verifier projection
+        run: |
+          chmod +x .tools/ggen-bin/ggen
+          .tools/ggen-bin/ggen sync run
+      - name: Verify generated ownership
+        run: |
+          python3 scripts/test_verif_codegen_contract.py
+          test -f dist/verif/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean
+          test -f dist/verif/lean/Wasm4pmVerify/Abs.lean
+          test -f dist/verif/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
+          ! grep -R "obligationStatement" dist/verif/lean/Wasm4pmVerify
+      - name: Exercise materialization without overwriting kernel files
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y b3sum
+          mkdir -p /tmp/wasm4pm/verify/lean/Wasm4pmVerify
+          printf 'sentinel\n' > /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Kernel.lean
+          WASM4PM_COMPAT_DIR=/tmp/wasm4pm bash scripts/verif_materialize.sh
+          grep -qx 'sentinel' /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Kernel.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Abs.lean
+          test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wasm4pm-verifier-projection
+          path: dist/verif/lean/Wasm4pmVerify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ggen-lock-candidate
+          path: ggen.lock
+      - name: Refuse uncommitted lock drift
+        run: git diff --exit-code -- ggen.lock

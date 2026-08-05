@@ -1,0 +1,54 @@
+---
+to: "dist/verif/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean"
+sparql:
+  obligation: |
+    PREFIX verif: <https://mfact.dev/verif#>
+    SELECT ?proofPattern ?rustSymbol ?rustFile ?sourceCommit
+    WHERE {
+      ?o a verif:CorrespondenceObligation ;
+         verif:proofPattern ?proofPattern ;
+         verif:rustSymbol ?rustSymbol ;
+         verif:rustFile ?rustFile ;
+         verif:sourceCommit ?sourceCommit .
+    }
+    ORDER BY ?rustSymbol
+    LIMIT 1
+force: true
+skip_empty: true
+---
+{% for row in obligation %}
+-- RENDERED by `ggen sync` from the mfact verification catalog.
+-- Deterministic Lean-facing model; this is not an Aeneas extraction.
+-- Rust target: {{ row.rustSymbol }}
+-- Rust source: {{ row.rustFile }} @ {{ row.sourceCommit }}
+import Mathlib
+
+namespace Wasm4pmVerify.Generated
+
+{% if row.proofPattern == "ReplayCountsExactFitness" %}
+structure ReplayCounts where
+  produced : ℕ
+  consumed : ℕ
+  missing : ℕ
+  remaining : ℕ
+
+def fitnessComponent (total deviation : ℕ) : ℚ :=
+  (1 - (deviation : ℚ) / (total : ℚ)) / 2
+
+structure ExactFitness where
+  consumedComponent : ℚ
+  producedComponent : ℚ
+
+def exactFitness (counts : ReplayCounts) : ExactFitness :=
+  { consumedComponent := fitnessComponent counts.consumed counts.missing
+    producedComponent := fitnessComponent counts.produced counts.remaining }
+
+def fitness (counts : ReplayCounts) : ℚ :=
+  let exact := exactFitness counts
+  exact.consumedComponent + exact.producedComponent
+{% else %}
+#error "UNSUPPORTED_IMPLEMENTATION_MODEL_PATTERN"
+{% endif %}
+
+end Wasm4pmVerify.Generated
+{% endfor %}

@@ -3,49 +3,26 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 # ── Family: verif (correspondence factory pilot) ────────────────────────────
-# Correspondence obligations between the extracted wasm4pm-core Rust image
-# (Charon/Aeneas, Lean backend) and existing procint semantic objects. This is
-# NOT "Aeneas proves the Rust automatically" — it is a stated, kernel-admitted
-# refinement obligation between an extracted image and a hand-authored Lean
-# model. Status ladder (builder-derived, never hand-set past DECLARED):
-# DECLARED -> EXTRACTED -> STATED -> PROVEN. See
-# /Users/sac/.claude/plans/ok-so-which-should-toasty-axolotl.md Part C/D.
+# Correspondence obligations between a bounded wasm4pm-core implementation
+# image and existing procint semantic objects. Target-specific Lean is projected
+# by ggen proof patterns; theorem bodies do not live in this declaration graph.
+# Aeneas extraction remains a separate observed gate. Status ladder is builder
+# derived and never asserted here: DECLARED -> EXTRACTED -> STATED -> PROVEN.
 
 # ═══ D1: token-replay counts ═══
 
 verif:Obl_token_replay_counts_corr a verif:CorrespondenceObligation ;
   verif:corrOrder 1 ;
   verif:corrName "token_replay_counts_corr" ;
-  verif:rustSymbol "wasm4pm_core::conformance_counts" ;
+  verif:rustSymbol "wasm4pm_core::conformance_counts::ReplayCounts::exact_fitness" ;
   verif:rustFile "wasm4pm-core/src/conformance_counts.rs" ;
   verif:leanDecl "ProcInt.ReplayCounts" ;
-  verif:aeneasModule "Wasm4pmVerify.Generated" ;
+  verif:aeneasModule "Wasm4pmVerify.Generated.Wasm4pmCore" ;
   verif:aeneasDecl "ReplayCounts" ;
-  # verif:status is NOT asserted here — it is a builder-derived field, owned
-  # exclusively by scripts/build_verif.py, which emits it into the sibling
-  # generated fragment fragments/verif-status.generated.ttl (same subject
-  # IRI, this predicate only) from observed evidence. Defaults to "DECLARED"
-  # when no charon/aeneas/lake evidence exists yet. Never hand-set here.
-  verif:obligationStatement """theorem token_replay_counts_corr
-    (gen : Wasm4pmVerify.Generated.ReplayCounts)
-    (hm : gen.missing.val ≤ gen.consumed.val)
-    (hr : gen.remaining.val ≤ gen.produced.val) :
-    let spec := Wasm4pmVerify.toSpec gen hm hr
-    (spec.missing_le = hm) ∧
-    (spec.remaining_le = hr) ∧
-    (ProcInt.fitness spec =
-       (1 - (gen.missing.val : ℚ) / (gen.consumed.val : ℚ)) / 2 +
-         (1 - (gen.remaining.val : ℚ) / (gen.produced.val : ℚ)) / 2) ∧
-    (fitness_num gen = Result.ok (core.num.U64.saturating_sub gen.consumed gen.missing)) ∧
-    ((fitness_den gen = Result.ok Option.none ∨ ∃ d, fitness_den gen = Result.ok (Option.some d))) := by
-  intro spec
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · rfl
-  · rfl
-  · rfl
-  · rfl
-  · unfold fitness_den
-    cases h : U64.checked_add gen.produced gen.remaining with
-    | none => left; rfl
-    | some d => right; exact ⟨d, rfl⟩""" ;
-  verif:note "Pilot correspondence obligation (D1 of the plan's Part D ordering). rustFile is wasm4pm-core/src/conformance_counts.rs (already split out of the wasm4pm-compat façade per Part A), which holds the ReplayCounts{produced,consumed,missing,remaining} struct and fitness_num/fitness_den integer functions; leanDecl joins procint:Decl_ReplayCounts (packs/lean-math-pack/fragments/conformance.ttl, module Conformance.TokenReplay). Status is builder-derived by scripts/build_verif.py from observed charon/aeneas/lake evidence, never hand-set here. Conjunct 1 (ProcInt.fitness unfolds to the Rozinat-Aalst formula) is definitional (rfl). Conjunct 2 substitutes hnum_src/hden_src, then discharges the ℕ-truncated-subtraction-vs-ℤ-subtraction gap via Nat.cast_sub, using the ReplayCounts proof field missing_le : missing ≤ consumed (the ℕ addition side needs no such lemma — addition never truncates)." .
+  verif:proofPattern "ReplayCountsExactFitness" ;
+  verif:implementationType "ReplayCounts" ;
+  verif:implementationFunction "exactFitness" ;
+  verif:carrierName "replayCountsCarrier" ;
+  verif:specFunction "ProcInt.fitness" ;
+  verif:sourceCommit "bec4087ad8a91d314e07d03b04303a215a4722a3" ;
+  verif:note "D1 total exact token-replay fitness. Rust stores the two rational halves separately so every lawful u64 count tuple is representable without a 129-bit combined denominator, and keeps the exact-rational constructors private so denominator invariants cannot be forged. ggen manufactures the Lean implementation model, carrier map, correspondence theorem, bounds theorem, and perfect-replay theorem from this pattern. The generated model is not an Aeneas extraction; scripts/build_verif.py must refuse PROVEN until a real extracted image and matching source hash are observed." .
