@@ -1,0 +1,8 @@
+# MESSAGE: certification requests require an allow-list recipe field and typed request status
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  { BIND(mfp:CertificationRequestShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:recipe ] } }
+  UNION
+  { BIND(mfp:CertificationRequestShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:requestStatus ] } }
+}
