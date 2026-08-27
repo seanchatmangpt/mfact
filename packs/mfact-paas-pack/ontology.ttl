@@ -107,8 +107,8 @@ mfp:standingReceipt a owl:ObjectProperty ;
     rdfs:domain mfp:StandingRecord ;
     rdfs:range mfp:Receipt .
 
-mfp:coreRelease a owl:DatatypeProperty ;
-    rdfs:subPropertyOf dcterms:identifier ;
+mfp:certifiedRelease a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:type ;
     rdfs:domain mfp:StandingRecord ;
     rdfs:range xsd:string .
 
@@ -197,9 +197,9 @@ mfp:StandingRecordShape
           mfp:kind "relationship" ; mfp:ashName "receipt" ;
           mfp:targetModule "MfactPaaS.Generated.Receipt" ;
           mfp:predicateIri "https://mfact.dev/paas#standingReceipt" ; mfp:allowNil "false" ],
-        [ sh:path mfp:coreRelease ; sh:datatype xsd:string ; sh:minCount 0 ; sh:maxCount 1 ;
-          mfp:kind "attribute" ; mfp:ashName "core_release" ; mfp:ashType "string" ;
-          mfp:predicateIri "https://mfact.dev/paas#coreRelease" ; mfp:allowNil "true" ],
+        [ sh:path mfp:certifiedRelease ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "certified_release" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#certifiedRelease" ; mfp:allowNil "false" ],
         [ sh:path mfp:standingSha256 ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
           mfp:kind "attribute" ; mfp:ashName "standing_sha256" ; mfp:ashType "string" ;
           mfp:predicateIri "https://mfact.dev/paas#standingSha256" ; mfp:allowNil "false" ],
