@@ -38,6 +38,7 @@ defmodule MfactPaaSTest do
 
     assert receipt.exit_code == 0
     assert File.regular?(Path.join(@repo_root, receipt.receipt_path))
+    assert standing.certified_release == "PASS"
     assert standing.standing_sha256 =~ ~r/^[0-9a-f]{64}$/
     assert standing.source_path == "release/standing.env"
   end
