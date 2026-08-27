@@ -1,0 +1,68 @@
+@prefix mfps: <https://mfact.dev/paas/strategy#> .
+@prefix vi: <http://seanchatmangpt.github.io/packs/value-innovation-errc#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mfps:grid a vi:StrategyGrid ;
+  dcterms:title "mfact certification PaaS value innovation" ;
+  vi:domain "formal evidence and certification platform" ;
+  vi:subject "ontology-first Ash/AshR2RML/Reactor certification control plane" ;
+  vi:complete true ;
+  vi:hypothesis mfps:hypothesis .
+
+mfps:hypothesis a vi:ValueInnovationHypothesis ;
+  vi:valueRaised "Reusable queryable certification evidence with exact subject identity and semantic interoperability" ;
+  vi:wasteReduced "Hand-maintained semantic projections, bespoke Reactor error plumbing, and repeated strategy prose" ;
+  vi:test "Exact marketplace packs deterministically regenerate the ERRC strategy and Reactor error normalizer, then mfact PaaS tests execute against the same admitted subject" .
+
+mfps:generatedAuthority a vi:Factor ; rdfs:label "Generated source treated as authority" .
+mfps:bespokeControlPlane a vi:Factor ; rdfs:label "Bespoke certification control-plane logic" .
+mfps:evidenceBinding a vi:Factor ; rdfs:label "Evidence, identity, receipt and replay binding" .
+mfps:semanticPaaS a vi:Factor ; rdfs:label "Marketplace-composed semantic certification PaaS" .
+
+mfps:eliminateEvidence a vi:EvidenceObligation ; dcterms:description "ggen replay reconstructs generated Ash and strategy projections from canonical graphs" .
+mfps:reduceEvidence a vi:EvidenceObligation ; dcterms:description "Marketplace Reactor contract replaces local wrapper-specific normalization logic" .
+mfps:raiseEvidence a vi:EvidenceObligation ; dcterms:description "Certification execution requires exact repo, base ancestry, subject SHA, clean tracked tree, intent receipt and result receipt" .
+mfps:createEvidence a vi:EvidenceObligation ; dcterms:description "mfact PaaS consumes exact-SHA marketplace packs and passes its executable PaaS court" .
+
+mfps:eliminateFalsifier a vi:Falsifier ; dcterms:description "Any generated file contains semantic truth that cannot be regenerated from admitted source" .
+mfps:reduceFalsifier a vi:Falsifier ; dcterms:description "Marketplace reuse increases rather than decreases mfact-specific orchestration" .
+mfps:raiseFalsifier a vi:Falsifier ; dcterms:description "A certification consequence can execute without exact subject admission or a durable pre-actuation intent" .
+mfps:createFalsifier a vi:Falsifier ; dcterms:description "The PaaS cannot reproduce marketplace-generated artifacts from the pinned marketplace corpus" .
+
+mfps:eliminate a vi:Finding ;
+  vi:grid mfps:grid ; vi:action vi:Eliminate ; vi:factor mfps:generatedAuthority ;
+  vi:baseline "generated files can be mistaken for source" ; vi:target "zero generated semantic authority" ;
+  vi:baselineLevel "7"^^xsd:decimal ; vi:targetLevel "0"^^xsd:decimal ;
+  vi:rationale "Generated Ash, R2RML, strategy documents and normalizers are replayable projections; fix ontology/profile/templates upstream" ;
+  vi:owner "mfact PaaS architecture" ; vi:consumer "mfact operator" ;
+  vi:evidenceObligation mfps:eliminateEvidence ; vi:falsifier mfps:eliminateFalsifier ;
+  vi:metric "authoritative generated files" ; vi:directActuation false ; vi:reversibleProposal true ; vi:standing vi:Proposed .
+
+mfps:reduce a vi:Finding ;
+  vi:grid mfps:grid ; vi:action vi:Reduce ; vi:factor mfps:bespokeControlPlane ;
+  vi:baseline "repo-local semantic and Reactor plumbing" ; vi:target "thin mfact-specific admission and certification facts" ;
+  vi:baselineLevel "8"^^xsd:decimal ; vi:targetLevel "3"^^xsd:decimal ;
+  vi:rationale "Move reusable strategy and Reactor error contracts to marketplace packs while preserving mfact-specific proof and authority boundaries" ;
+  vi:owner "mfact PaaS maintainer" ; vi:consumer "Ash/Reactor service" ;
+  vi:evidenceObligation mfps:reduceEvidence ; vi:falsifier mfps:reduceFalsifier ;
+  vi:metric "mfact-specific reusable infrastructure" ; vi:directActuation false ; vi:reversibleProposal true ; vi:standing vi:Proposed .
+
+mfps:raise a vi:Finding ;
+  vi:grid mfps:grid ; vi:action vi:Raise ; vi:factor mfps:evidenceBinding ;
+  vi:baseline "partial certification observability" ; vi:target "exact-subject, receipted and replayable certification evidence" ;
+  vi:baselineLevel "5"^^xsd:decimal ; vi:targetLevel "10"^^xsd:decimal ;
+  vi:rationale "Increase standing only through observed execution bound to repo identity, admitted base, exact subject and receipts" ;
+  vi:owner "mfact verification court" ; vi:consumer "certification decision maker" ;
+  vi:evidenceObligation mfps:raiseEvidence ; vi:falsifier mfps:raiseFalsifier ;
+  vi:metric "certification transitions with complete identity and receipts" ; vi:directActuation false ; vi:reversibleProposal true ; vi:standing vi:Proposed .
+
+mfps:create a vi:Finding ;
+  vi:grid mfps:grid ; vi:action vi:Create ; vi:factor mfps:semanticPaaS ;
+  vi:baseline "absent" ; vi:target "marketplace-composed ontology-first certification PaaS" ;
+  vi:baselineLevel "0"^^xsd:decimal ; vi:targetLevel "10"^^xsd:decimal ;
+  vi:rationale "Compose public ontology semantics, ggen Marketplace packs, Ash, AshR2RML and Reactor without granting the strategy layer proof or DO authority" ;
+  vi:owner "ggen marketplace + mfact" ; vi:consumer "cross-domain formal evidence platform" ;
+  vi:evidenceObligation mfps:createEvidence ; vi:falsifier mfps:createFalsifier ;
+  vi:metric "independently replayable marketplace consumers" ; vi:directActuation false ; vi:reversibleProposal true ; vi:standing vi:Proposed .
