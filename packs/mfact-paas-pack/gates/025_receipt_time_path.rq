@@ -1,0 +1,10 @@
+# MESSAGE: receipts require durable path plus start/end time bounds
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  { BIND(mfp:ReceiptShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:receiptPath ] } }
+  UNION
+  { BIND(mfp:ReceiptShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:startedAt ] } }
+  UNION
+  { BIND(mfp:ReceiptShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:endedAt ] } }
+}
