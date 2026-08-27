@@ -292,25 +292,34 @@ defmodule MfactPaaS.CertificationReactor do
 
         case File.read(standing_path) do
           {:ok, body} ->
-            core_release =
+            certified_release =
               body
               |> String.split("\n")
               |> Enum.find_value(fn line ->
                 case String.split(line, "=", parts: 2) do
-                  ["CORE_RELEASE", value] -> value
+                  ["CERTIFIED_RELEASE", value] -> value
                   _ -> nil
                 end
               end)
 
-            sha256 = :crypto.hash(:sha256, body) |> Base.encode16(case: :lower)
+            if is_nil(certified_release) do
+              {:error,
+               %Refusal{
+                 code: "REFUSED_STANDING_INCOMPLETE",
+                 message: "standing evidence is missing CERTIFIED_RELEASE",
+                 details: %{path: standing_path}
+               }}
+            else
+              sha256 = :crypto.hash(:sha256, body) |> Base.encode16(case: :lower)
 
-            Ash.create(StandingRecord, %{
-              receipt_id: receipt.id,
-              core_release: core_release,
-              standing_sha256: sha256,
-              source_path: "release/standing.env",
-              captured_at: DateTime.utc_now()
-            })
+              Ash.create(StandingRecord, %{
+                receipt_id: receipt.id,
+                certified_release: certified_release,
+                standing_sha256: sha256,
+                source_path: "release/standing.env",
+                captured_at: DateTime.utc_now()
+              })
+            end
 
           {:error, reason} ->
             {:error,
