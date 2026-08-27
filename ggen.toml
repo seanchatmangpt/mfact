@@ -10,6 +10,12 @@ quad = "https://mfact.dev/quadrature#"
 compat = "https://wasm4pm.dev/ns#"
 pi = "https://wasm4pm.dev/pi#"
 verif = "https://mfact.dev/verif#"
+mfp = "https://mfact.dev/paas#"
+prov = "http://www.w3.org/ns/prov#"
+dcat = "http://www.w3.org/ns/dcat#"
+dcterms = "http://purl.org/dc/terms/"
+odrl = "http://www.w3.org/ns/odrl/2/"
+sh = "http://www.w3.org/ns/shacl#"
 rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 rdfs = "http://www.w3.org/2000/01/rdf-schema#"
 xsd = "http://www.w3.org/2001/XMLSchema#"
@@ -18,6 +24,7 @@ xsd = "http://www.w3.org/2001/XMLSchema#"
 lean-math-pack = { path = "packs/lean-math-pack", extra_ontologies = ["packs/lean-math-pack/fragments/verif.ttl"] }
 quadrature-pack = { path = "packs/quadrature-pack" }
 post-release-pack = { path = "packs/post-release-pack" }
+mfact-paas-pack = { path = "packs/mfact-paas-pack" }
 
 [templates]
 dir = "templates"
