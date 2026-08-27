@@ -30,3 +30,11 @@ procint/ProcInt/Playground/_scratch_*.lean
 # from source. Lives here, not in wasm4pm-compat, which stays a clean
 # source-only publishable crate.
 .verif-toolchain/
+
+# mfact PaaS — generated semantic projection, Mix build products, and runtime receipts.
+# The ontology/profile/templates are source; these paths are replayable or ephemeral.
+paas/lib/mfact_paas/generated/
+paas/_build/
+paas/deps/
+paas/priv/
+paas/var/
