@@ -1,0 +1,15 @@
+schema = "chatman.federated-capability-owner.v1"
+version = "26.9.1"
+repository = "seanchatmangpt/mfact"
+owner_id = "repository:mfact"
+control_plane_repository = "seanchatmangpt/chatman-ecosystem"
+control_plane_subject = "git:7430dfc9b3ca138e703430d25de7c6f48a8d6ade"
+base_sha = "10ce8e967b083a9abe12dd8702af5d40757c40e8"
+release_component = "mfact"
+release_role = "formal-proof"
+release_dependencies = ["ggen"]
+allowed_authorities = ["observe", "classify", "persist_control_plane"]
+simulation_only = false
+do_mode = "none"
+ambient_do = false
+automatic_irreversible_do = false
