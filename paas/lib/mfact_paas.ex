@@ -92,7 +92,7 @@ defmodule MfactPaaS.Steps.ExecuteJust do
   def run(%{recipe: recipe, repo_root: repo_root, request: request}, _context, _options) do
     with :ok <- admitted_recipe(recipe),
          {:ok, git} <- executable("git"),
-         :ok <- admitted_root(repo_root, request.subject_sha, git),
+         :ok <- admitted_root(repo_root, request.base_sha, request.subject_sha, git),
          {:ok, just} <- executable("just") do
       execute_receipted(just, recipe, repo_root, request)
     end
@@ -109,7 +109,7 @@ defmodule MfactPaaS.Steps.ExecuteJust do
      }}
   end
 
-  defp admitted_root(repo_root, subject_sha, git) do
+  defp admitted_root(repo_root, base_sha, subject_sha, git) do
     markers = [
       "AGENTS.md",
       "justfile",
@@ -120,12 +120,22 @@ defmodule MfactPaaS.Steps.ExecuteJust do
     with true <- Enum.all?(markers, &File.regular?(Path.join(repo_root, &1))),
          {head, 0} <- System.cmd(git, ["rev-parse", "HEAD"], cd: repo_root, stderr_to_stdout: true),
          true <- String.trim(head) == subject_sha,
+         {_output, 0} <-
+           System.cmd(git, ["merge-base", "--is-ancestor", base_sha, subject_sha],
+             cd: repo_root,
+             stderr_to_stdout: true
+           ),
          {remote, 0} <-
            System.cmd(git, ["remote", "get-url", "origin"],
              cd: repo_root,
              stderr_to_stdout: true
            ),
-         true <- MapSet.member?(@admitted_remotes, String.trim(remote)) do
+         true <- MapSet.member?(@admitted_remotes, String.trim(remote)),
+         {_output, 0} <-
+           System.cmd(git, ["diff", "--quiet", "--ignore-submodules", "HEAD", "--"],
+             cd: repo_root,
+             stderr_to_stdout: true
+           ) do
       :ok
     else
       false ->
@@ -133,7 +143,7 @@ defmodule MfactPaaS.Steps.ExecuteJust do
          %Refusal{
            code: "REFUSED_SUBJECT_IDENTITY",
            message: "checkout identity does not match the admitted mfact subject",
-           details: %{repo_root: repo_root, subject_sha: subject_sha}
+           details: %{repo_root: repo_root, base_sha: base_sha, subject_sha: subject_sha}
          }}
 
       {output, exit_code} ->
@@ -141,7 +151,13 @@ defmodule MfactPaaS.Steps.ExecuteJust do
          %Refusal{
            code: "REFUSED_SUBJECT_IDENTITY",
            message: "git could not establish the admitted mfact subject identity",
-           details: %{repo_root: repo_root, exit_code: exit_code, output: output}
+           details: %{
+             repo_root: repo_root,
+             base_sha: base_sha,
+             subject_sha: subject_sha,
+             exit_code: exit_code,
+             output: output
+           }
          }}
     end
   end
