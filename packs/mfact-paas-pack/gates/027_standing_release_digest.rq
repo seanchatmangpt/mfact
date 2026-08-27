@@ -1,0 +1,8 @@
+# MESSAGE: standing records require certified release and standing digest
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  { BIND(mfp:StandingRecordShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:certifiedRelease ] } }
+  UNION
+  { BIND(mfp:StandingRecordShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:standingSha256 ] } }
+}
