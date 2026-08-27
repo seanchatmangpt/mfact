@@ -71,6 +71,11 @@ defmodule {{ resource.ashModule }} do
       template "{{ resource.subjectTemplate }}"
       term_type :iri
     end
+{% for attribute in attributes %}{% if attribute.ownerId == resource.shapeId %}
+    property :{{ attribute.ashName }}, "{{ attribute.predicateIri }}"
+{% endif %}{% endfor %}{% for relationship in relationships %}{% if relationship.ownerId == resource.shapeId %}
+    reference :{{ relationship.ashName }}, "{{ relationship.predicateIri }}"
+{% endif %}{% endfor %}
   end
 
   actions do
@@ -84,10 +89,6 @@ defmodule {{ resource.ashModule }} do
     attribute :{{ attribute.ashName }}, :{{ attribute.ashType }} do
       allow_nil? {{ attribute.allowNil }}
       public? true
-
-      rdf do
-        predicate "{{ attribute.predicateIri }}"
-      end
     end
 {% endif %}{% endfor %}
   end
@@ -99,10 +100,6 @@ defmodule {{ resource.ashModule }} do
       public? true
       attribute_public? true
       attribute_writable? true
-
-      rdf do
-        predicate "{{ relationship.predicateIri }}"
-      end
     end
 {% endif %}{% endfor %}
   end
