@@ -2,8 +2,9 @@
 PREFIX mfp: <https://mfact.dev/paas#>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 SELECT ?shape WHERE {
-  BIND(mfp:CertificationRequestShape AS ?shape)
-  FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:baseSha ] }
+  { BIND(mfp:CertificationRequestShape AS ?shape)
+    FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:baseSha ] } }
   UNION
-  { BIND(mfp:CertificationRequestShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:subjectSha ] } }
+  { BIND(mfp:CertificationRequestShape AS ?shape)
+    FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:subjectSha ] } }
 }
