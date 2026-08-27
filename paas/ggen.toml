@@ -1,0 +1,16 @@
+[project]
+name = "mfact-paas-marketplace-consumer"
+
+[ontology]
+source = "strategy/ontology.ttl"
+
+[ontology.prefixes]
+vi = "http://seanchatmangpt.github.io/packs/value-innovation-errc#"
+dcterms = "http://purl.org/dc/terms/"
+prov = "http://www.w3.org/ns/prov#"
+rdfs = "http://www.w3.org/2000/01/rdf-schema#"
+xsd = "http://www.w3.org/2001/XMLSchema#"
+
+[packs]
+value-innovation-errc-pack = { path = "../../ggen-marketplace/packs/value-innovation-errc-pack" }
+ash-reactor-domain-error-contract-pack = { path = "../../ggen-marketplace/packs/ash-reactor-domain-error-contract-pack" }
