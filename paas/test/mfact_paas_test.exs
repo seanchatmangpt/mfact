@@ -57,4 +57,21 @@ defmodule MfactPaaSTest do
                []
              )
   end
+
+  test "non-ancestor bases are refused before certification execution" do
+    subject_sha = System.fetch_env!("MFACT_PAAS_SUBJECT_SHA")
+
+    fake_request = %{
+      id: Ash.UUID.generate(),
+      base_sha: String.duplicate("0", 40),
+      subject_sha: subject_sha
+    }
+
+    assert {:error, %Refusal{code: "REFUSED_SUBJECT_IDENTITY"}} =
+             ExecuteJust.run(
+               %{recipe: "status", repo_root: @repo_root, request: fake_request},
+               %{},
+               []
+             )
+  end
 end
