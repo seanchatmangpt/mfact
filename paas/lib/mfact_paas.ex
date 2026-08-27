@@ -56,7 +56,7 @@ end
 
 defmodule MfactPaaS.Repo do
   @moduledoc false
-  use AshPostgres.Repo, otp_app: :mfact_paaS
+  use AshPostgres.Repo, otp_app: :mfact_paas
 end
 
 defmodule MfactPaaS.Domain do
