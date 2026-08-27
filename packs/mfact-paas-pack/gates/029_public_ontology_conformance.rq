@@ -1,0 +1,12 @@
+# MESSAGE: mfact PaaS ontology must retain its declared public semantic boundaries
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?required WHERE {
+  VALUES ?required {
+    <https://www.w3.org/TR/prov-o/>
+    <https://www.w3.org/TR/vocab-dcat-3/>
+    <https://www.w3.org/TR/odrl-model/>
+    <https://www.w3.org/TR/shacl/>
+    <https://www.w3.org/TR/r2rml/>
+  }
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:conformsTo ?required }
+}
