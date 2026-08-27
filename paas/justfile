@@ -5,7 +5,7 @@ default:
     @just test
 
 render:
-    cd .. && rm -f ggen.lock && ggen sync run
+    cd .. && rm -f ggen.lock && ggen sync run && git restore -- ggen.lock
     test -f lib/mfact_paas/generated/resources.ex
 
 deps: render
