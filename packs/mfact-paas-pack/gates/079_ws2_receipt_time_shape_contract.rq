@@ -1,0 +1,10 @@
+# MESSAGE: receipt start/end mappings must remain required utc_datetime_usec attributes
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE {
+  BIND("receipt_time_shape_contract" AS ?v)
+  { FILTER NOT EXISTS { mfp:ReceiptShape sh:property [ sh:path mfp:startedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ; mfp:ashType "utc_datetime_usec" ; mfp:allowNil "false" ] . } }
+  UNION
+  { FILTER NOT EXISTS { mfp:ReceiptShape sh:property [ sh:path mfp:endedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ; mfp:ashType "utc_datetime_usec" ; mfp:allowNil "false" ] . } }
+}
