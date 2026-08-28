@@ -1,0 +1,5 @@
+# MESSAGE: standingReceipt must preserve receipt derivation
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?v WHERE { BIND("standing_receipt_lineage" AS ?v) FILTER NOT EXISTS { mfp:standingReceipt rdfs:subPropertyOf prov:wasDerivedFrom ; rdfs:domain mfp:StandingRecord ; rdfs:range mfp:Receipt . } }
