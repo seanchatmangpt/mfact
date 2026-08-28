@@ -1,0 +1,7 @@
+# MESSAGE: every receipt shape must retain its originating certification request relationship
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  BIND(mfp:ReceiptShape AS ?shape)
+  FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:receiptRequest ; sh:class mfp:CertificationRequest ] }
+}

@@ -1,0 +1,8 @@
+# MESSAGE: receipts require exit status and stdout digest evidence
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  { BIND(mfp:ReceiptShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:exitCode ] } }
+  UNION
+  { BIND(mfp:ReceiptShape AS ?shape) FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:stdoutSha256 ] } }
+}

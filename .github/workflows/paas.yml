@@ -1,0 +1,86 @@
+name: mfact PaaS
+
+on:
+  push:
+    branches:
+      - "feat/mfact-paas-ash-r2rml"
+  pull_request:
+    paths:
+      - "packs/mfact-paas-pack/**"
+      - "paas/**"
+      - "ggen.toml"
+      - "justfile"
+      - ".github/workflows/paas.yml"
+
+jobs:
+  paas:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mfact_paas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d mfact_paas"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      MFACT_PAAS_DB_USER: postgres
+      MFACT_PAAS_DB_PASSWORD: postgres
+      MFACT_PAAS_DB_HOST: localhost
+      MFACT_PAAS_DB_PORT: "5432"
+      MFACT_PAAS_DB_NAME: mfact_paas
+      MFACT_PAAS_BASE_SHA: ${{ github.event.pull_request.base.sha || '8a62a7c28e935b9afd05c68f455f475423ec0a7a' }}
+      MFACT_PAAS_SUBJECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The certification boundary proves exact base→subject ancestry.  A
+          # depth-1 checkout of GitHub's synthetic pull-request merge commit
+          # omits the admitted base object and causes a false fail-closed
+          # REFUSED_SUBJECT_IDENTITY.  Materialize the real source head and its
+          # ancestry so the runtime verifier can prove the exact subject.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Install Rust toolchain for ggen and just
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Build exact ggen ecosystem CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone https://github.com/seanchatmangpt/ggen.git /tmp/ggen
+          git -C /tmp/ggen checkout 1e9fcb9679a61460fbd641415cb72511c7e50b33
+          cargo build --manifest-path /tmp/ggen/Cargo.toml --release -p ggen-cli-lib --bin ggen
+          sudo install /tmp/ggen/target/release/ggen /usr/local/bin/ggen
+
+      - name: Install just
+        run: cargo install just --version 1.57.0 --locked
+
+      - name: Install BEAM toolchain matching AshR2RML
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18.4"
+          otp-version: "27.2.4"
+
+      - name: Manufacture and test PaaS through admitted recipes
+        run: cd paas && just ci
+
+      - name: Refuse checked-in generated semantic projections
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f paas/lib/mfact_paas/generated/resources.ex
+          git status --porcelain --untracked-files=all
+          if git ls-files --error-unmatch paas/lib/mfact_paas/generated/resources.ex >/dev/null 2>&1; then
+            echo "REFUSED: GENERATED_PROJECTION_TRACKED"
+            exit 1
+          fi

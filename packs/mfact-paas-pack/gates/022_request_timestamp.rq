@@ -1,0 +1,7 @@
+# MESSAGE: certification requests require a durable requested-at timestamp
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?shape WHERE {
+  BIND(mfp:CertificationRequestShape AS ?shape)
+  FILTER NOT EXISTS { ?shape sh:property [ sh:path mfp:requestedAt ; sh:minCount 1 ; sh:maxCount 1 ] }
+}

@@ -1,0 +1,211 @@
+@prefix mfp: <https://mfact.dev/paas#> .
+@prefix ar2: <https://ash-r2ml.dev/ns#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://mfact.dev/paas>
+    a owl:Ontology ;
+    dcterms:title "mfact certification PaaS application profile" ;
+    dcterms:description "Operational closure for projecting mfact certification evidence into Ash without granting semantic or actuation authority." ;
+    dcterms:conformsTo
+        <https://www.w3.org/TR/prov-o/>,
+        <https://www.w3.org/TR/vocab-dcat-3/>,
+        <https://www.w3.org/TR/odrl-model/>,
+        <https://www.w3.org/TR/shacl/>,
+        <https://www.w3.org/TR/r2rml/> .
+
+mfp:CertificationRequest
+    a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    skos:definition "A bounded request to execute one admitted mfact certification recipe." .
+
+mfp:Receipt
+    a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    skos:definition "A durable record of one attempted mfact certification recipe execution." .
+
+mfp:StandingRecord
+    a owl:Class ;
+    rdfs:subClassOf prov:Entity, dcat:Dataset ;
+    skos:definition "A digest-bound snapshot of mfact standing after a successful certification recipe." .
+
+mfp:CertificationPolicy
+    a owl:Class ;
+    rdfs:subClassOf odrl:Policy ;
+    skos:definition "An ODRL-aligned policy class for certification-service authority." .
+
+mfp:baseSha a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range xsd:string .
+
+mfp:subjectSha a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range xsd:string .
+
+mfp:recipe a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:type ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range xsd:string .
+
+mfp:requestStatus a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:type ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range xsd:string .
+
+mfp:requestedAt a owl:DatatypeProperty ;
+    rdfs:subPropertyOf prov:startedAtTime ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range xsd:dateTime .
+
+mfp:wasRequestedBy a owl:ObjectProperty ;
+    rdfs:subPropertyOf prov:wasAssociatedWith ;
+    rdfs:domain mfp:CertificationRequest ;
+    rdfs:range prov:Agent .
+
+mfp:receiptRequest a owl:ObjectProperty ;
+    rdfs:subPropertyOf prov:wasGeneratedBy ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range mfp:CertificationRequest .
+
+mfp:exitCode a owl:DatatypeProperty ;
+    rdfs:subPropertyOf prov:value ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range xsd:integer .
+
+mfp:stdoutSha256 a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range xsd:string .
+
+mfp:receiptPath a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range xsd:string .
+
+mfp:startedAt a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:date ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range xsd:dateTime .
+
+mfp:endedAt a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:date ;
+    rdfs:domain mfp:Receipt ;
+    rdfs:range xsd:dateTime .
+
+mfp:standingReceipt a owl:ObjectProperty ;
+    rdfs:subPropertyOf prov:wasDerivedFrom ;
+    rdfs:domain mfp:StandingRecord ;
+    rdfs:range mfp:Receipt .
+
+mfp:certifiedRelease a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:type ;
+    rdfs:domain mfp:StandingRecord ;
+    rdfs:range xsd:string .
+
+mfp:standingSha256 a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:StandingRecord ;
+    rdfs:range xsd:string .
+
+mfp:sourcePath a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain mfp:StandingRecord ;
+    rdfs:range xsd:string .
+
+mfp:capturedAt a owl:DatatypeProperty ;
+    rdfs:subPropertyOf prov:generatedAtTime ;
+    rdfs:domain mfp:StandingRecord ;
+    rdfs:range xsd:dateTime .
+
+# SHACL provides the operational closure required by Ash/Postgres.
+# mfp:* operational literals are application-profile facts consumed by ggen;
+# semantic meaning remains in the public-ontology terms above.
+mfp:CertificationRequestShape
+    a sh:NodeShape ;
+    sh:targetClass mfp:CertificationRequest ;
+    mfp:shapeId "certification_request" ;
+    mfp:ashModule "MfactPaaS.Generated.CertificationRequest" ;
+    mfp:table "mfact_certification_requests" ;
+    mfp:classIri "https://mfact.dev/paas#CertificationRequest" ;
+    mfp:subjectTemplate "https://mfact.dev/paas/certification-requests/{id}" ;
+    sh:property
+        [ sh:path mfp:baseSha ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "base_sha" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#baseSha" ; mfp:allowNil "false" ],
+        [ sh:path mfp:subjectSha ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "subject_sha" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#subjectSha" ; mfp:allowNil "false" ],
+        [ sh:path mfp:recipe ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "recipe" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#recipe" ; mfp:allowNil "false" ],
+        [ sh:path mfp:requestStatus ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "status" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#requestStatus" ; mfp:allowNil "false" ],
+        [ sh:path mfp:requestedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "requested_at" ; mfp:ashType "utc_datetime_usec" ;
+          mfp:predicateIri "https://mfact.dev/paas#requestedAt" ; mfp:allowNil "false" ] .
+
+mfp:ReceiptShape
+    a sh:NodeShape ;
+    sh:targetClass mfp:Receipt ;
+    mfp:shapeId "receipt" ;
+    mfp:ashModule "MfactPaaS.Generated.Receipt" ;
+    mfp:table "mfact_receipts" ;
+    mfp:classIri "https://mfact.dev/paas#Receipt" ;
+    mfp:subjectTemplate "https://mfact.dev/paas/receipts/{id}" ;
+    sh:property
+        [ sh:path mfp:receiptRequest ; sh:class mfp:CertificationRequest ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "relationship" ; mfp:ashName "request" ;
+          mfp:targetModule "MfactPaaS.Generated.CertificationRequest" ;
+          mfp:predicateIri "https://mfact.dev/paas#receiptRequest" ; mfp:allowNil "false" ],
+        [ sh:path mfp:exitCode ; sh:datatype xsd:integer ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "exit_code" ; mfp:ashType "integer" ;
+          mfp:predicateIri "https://mfact.dev/paas#exitCode" ; mfp:allowNil "false" ],
+        [ sh:path mfp:stdoutSha256 ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "stdout_sha256" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#stdoutSha256" ; mfp:allowNil "false" ],
+        [ sh:path mfp:receiptPath ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "receipt_path" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#receiptPath" ; mfp:allowNil "false" ],
+        [ sh:path mfp:startedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "started_at" ; mfp:ashType "utc_datetime_usec" ;
+          mfp:predicateIri "https://mfact.dev/paas#startedAt" ; mfp:allowNil "false" ],
+        [ sh:path mfp:endedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "ended_at" ; mfp:ashType "utc_datetime_usec" ;
+          mfp:predicateIri "https://mfact.dev/paas#endedAt" ; mfp:allowNil "false" ] .
+
+mfp:StandingRecordShape
+    a sh:NodeShape ;
+    sh:targetClass mfp:StandingRecord ;
+    mfp:shapeId "standing_record" ;
+    mfp:ashModule "MfactPaaS.Generated.StandingRecord" ;
+    mfp:table "mfact_standing_records" ;
+    mfp:classIri "https://mfact.dev/paas#StandingRecord" ;
+    mfp:subjectTemplate "https://mfact.dev/paas/standing/{id}" ;
+    sh:property
+        [ sh:path mfp:standingReceipt ; sh:class mfp:Receipt ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "relationship" ; mfp:ashName "receipt" ;
+          mfp:targetModule "MfactPaaS.Generated.Receipt" ;
+          mfp:predicateIri "https://mfact.dev/paas#standingReceipt" ; mfp:allowNil "false" ],
+        [ sh:path mfp:certifiedRelease ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "certified_release" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#certifiedRelease" ; mfp:allowNil "false" ],
+        [ sh:path mfp:standingSha256 ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "standing_sha256" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#standingSha256" ; mfp:allowNil "false" ],
+        [ sh:path mfp:sourcePath ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "source_path" ; mfp:ashType "string" ;
+          mfp:predicateIri "https://mfact.dev/paas#sourcePath" ; mfp:allowNil "false" ],
+        [ sh:path mfp:capturedAt ; sh:datatype xsd:dateTime ; sh:minCount 1 ; sh:maxCount 1 ;
+          mfp:kind "attribute" ; mfp:ashName "captured_at" ; mfp:ashType "utc_datetime_usec" ;
+          mfp:predicateIri "https://mfact.dev/paas#capturedAt" ; mfp:allowNil "false" ] .

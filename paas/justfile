@@ -1,0 +1,26 @@
+# mfact certification PaaS — all control-plane actuation enters through these recipes.
+# Generated Ash resources remain disposable projections of the RDF/SHACL profile.
+
+default:
+    @just test
+
+render:
+    cd .. && rm -f ggen.lock && ggen sync run && git restore -- ggen.lock
+    test -f lib/mfact_paas/generated/resources.ex
+
+deps: render
+    mix deps.get
+
+db: deps
+    mix ash_postgres.create
+    mix ash.codegen --dev
+    mix ash.migrate
+
+test: db
+    mix test
+
+r2rml: db
+    mix run -e 'case MfactPaaS.export_r2rml() do {:ok, ttl} -> IO.write(ttl); other -> IO.inspect(other); System.halt(1) end'
+
+ci: test
+    @echo "MFACT_PAAS=ALIVE_CANDIDATE"

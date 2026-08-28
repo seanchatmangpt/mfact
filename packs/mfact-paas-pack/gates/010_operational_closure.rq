@@ -1,0 +1,66 @@
+# MESSAGE: mfact PaaS SHACL resources require deterministic module/table/identity closure and fully typed properties
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+
+SELECT ?subject ?missing WHERE {
+  {
+    ?subject a sh:NodeShape .
+    {
+      FILTER NOT EXISTS { ?subject sh:targetClass ?v }
+      BIND(sh:targetClass AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:shapeId ?v }
+      BIND(mfp:shapeId AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:ashModule ?v }
+      BIND(mfp:ashModule AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:table ?v }
+      BIND(mfp:table AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:classIri ?v }
+      BIND(mfp:classIri AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:subjectTemplate ?v }
+      BIND(mfp:subjectTemplate AS ?missing)
+    }
+  } UNION {
+    ?shape a sh:NodeShape ; sh:property ?subject .
+    {
+      FILTER NOT EXISTS { ?subject sh:path ?v }
+      BIND(sh:path AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:kind ?v }
+      BIND(mfp:kind AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:ashName ?v }
+      BIND(mfp:ashName AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:predicateIri ?v }
+      BIND(mfp:predicateIri AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject mfp:allowNil ?v }
+      BIND(mfp:allowNil AS ?missing)
+    } UNION {
+      FILTER NOT EXISTS { ?subject sh:maxCount 1 }
+      BIND(sh:maxCount AS ?missing)
+    } UNION {
+      ?subject mfp:kind "attribute" .
+      FILTER NOT EXISTS { ?subject mfp:ashType ?v }
+      BIND(mfp:ashType AS ?missing)
+    } UNION {
+      ?subject mfp:kind "attribute" .
+      FILTER NOT EXISTS { ?subject sh:datatype ?v }
+      BIND(sh:datatype AS ?missing)
+    } UNION {
+      ?subject mfp:kind "relationship" .
+      FILTER NOT EXISTS { ?subject mfp:targetModule ?v }
+      BIND(mfp:targetModule AS ?missing)
+    } UNION {
+      ?subject mfp:kind "relationship" .
+      FILTER NOT EXISTS { ?subject sh:class ?v }
+      BIND(sh:class AS ?missing)
+    }
+  }
+}
+ORDER BY ?subject ?missing
