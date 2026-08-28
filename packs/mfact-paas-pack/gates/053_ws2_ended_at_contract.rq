@@ -1,0 +1,6 @@
+# MESSAGE: endedAt must remain a receipt date
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("ended_at_contract" AS ?v) FILTER NOT EXISTS { mfp:endedAt rdfs:subPropertyOf dcterms:date ; rdfs:domain mfp:Receipt ; rdfs:range xsd:dateTime . } }
