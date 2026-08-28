@@ -1,0 +1,6 @@
+# MESSAGE: standingSha256 must remain a standing identifier
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("standing_digest_contract" AS ?v) FILTER NOT EXISTS { mfp:standingSha256 rdfs:subPropertyOf dcterms:identifier ; rdfs:domain mfp:StandingRecord ; rdfs:range xsd:string . } }
