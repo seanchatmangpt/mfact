@@ -1,0 +1,6 @@
+# MESSAGE: requestedAt must preserve PROV start-time semantics
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("requested_at_contract" AS ?v) FILTER NOT EXISTS { mfp:requestedAt rdfs:subPropertyOf prov:startedAtTime ; rdfs:domain mfp:CertificationRequest ; rdfs:range xsd:dateTime . } }
