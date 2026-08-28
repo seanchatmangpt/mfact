@@ -1,0 +1,2 @@
+@prefix fta: <https://ggen.dev/ontology/forced-top25-admissibility#> .
+<urn:ws3:mfact:runtime-api> a fta:FanoutTarget ; fta:rank 11 ; fta:repo "seanchatmangpt/mfact" ; fta:exactHead "8a62a7c28e935b9afd05c68f455f475423ec0a7a" ; fta:producerHead "c779aec20d9c93727c7ad4464f1dd52ac8e066e4" ; fta:compatibilityState "COMPATIBLE_READY" ; fta:qualificationState "REQUALIFYING" ; fta:consumerShape "runtime-api" ; fta:authority "VERIFY|CONSTRUCT" ; fta:consequentialDo false .
