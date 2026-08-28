@@ -36,11 +36,19 @@ jobs:
       MFACT_PAAS_DB_HOST: localhost
       MFACT_PAAS_DB_PORT: "5432"
       MFACT_PAAS_DB_NAME: mfact_paas
-      MFACT_PAAS_BASE_SHA: "8a62a7c28e935b9afd05c68f455f475423ec0a7a"
-      MFACT_PAAS_SUBJECT_SHA: ${{ github.sha }}
+      MFACT_PAAS_BASE_SHA: ${{ github.event.pull_request.base.sha || '8a62a7c28e935b9afd05c68f455f475423ec0a7a' }}
+      MFACT_PAAS_SUBJECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The certification boundary proves exact base→subject ancestry.  A
+          # depth-1 checkout of GitHub's synthetic pull-request merge commit
+          # omits the admitted base object and causes a false fail-closed
+          # REFUSED_SUBJECT_IDENTITY.  Materialize the real source head and its
+          # ancestry so the runtime verifier can prove the exact subject.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
 
       - name: Install Rust toolchain for ggen and just
         uses: dtolnay/rust-toolchain@nightly
