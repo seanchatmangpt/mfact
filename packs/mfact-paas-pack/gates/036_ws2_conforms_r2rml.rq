@@ -1,0 +1,6 @@
+# MESSAGE: mfact PaaS profile must declare R2RML conformance
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?violation WHERE {
+  BIND("conforms_r2rml" AS ?violation)
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:conformsTo <https://www.w3.org/TR/r2rml/> . }
+}
