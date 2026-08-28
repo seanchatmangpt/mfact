@@ -1,0 +1,6 @@
+# MESSAGE: exitCode must remain an integer receipt value
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("exit_code_contract" AS ?v) FILTER NOT EXISTS { mfp:exitCode rdfs:subPropertyOf prov:value ; rdfs:domain mfp:Receipt ; rdfs:range xsd:integer . } }
