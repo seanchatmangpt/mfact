@@ -1,0 +1,5 @@
+# MESSAGE: stdout digest mapping must be required string attribute
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("stdout_digest_shape_contract" AS ?v) FILTER NOT EXISTS { mfp:ReceiptShape sh:property [ sh:path mfp:stdoutSha256 ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; mfp:kind "attribute" ; mfp:ashType "string" ; mfp:allowNil "false" ] . } }
