@@ -1,0 +1,6 @@
+# MESSAGE: mfact PaaS ontology must retain its declared title
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?violation WHERE {
+  BIND("ontology_title" AS ?violation)
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:title "mfact certification PaaS application profile" . }
+}

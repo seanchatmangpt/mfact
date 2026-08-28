@@ -1,0 +1,4 @@
+# MESSAGE: request shape must target CertificationRequest
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?v WHERE { BIND("request_shape_target" AS ?v) FILTER NOT EXISTS { mfp:CertificationRequestShape sh:targetClass mfp:CertificationRequest . } }

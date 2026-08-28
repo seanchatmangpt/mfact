@@ -1,0 +1,5 @@
+# MESSAGE: exit code mapping must be required integer attribute
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("exit_code_shape_contract" AS ?v) FILTER NOT EXISTS { mfp:ReceiptShape sh:property [ sh:path mfp:exitCode ; sh:datatype xsd:integer ; sh:minCount 1 ; sh:maxCount 1 ; mfp:kind "attribute" ; mfp:ashType "integer" ; mfp:allowNil "false" ] . } }

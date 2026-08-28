@@ -1,0 +1,6 @@
+# MESSAGE: mfact PaaS ontology must retain its authority-bounded description
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?violation WHERE {
+  BIND("ontology_description" AS ?violation)
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:description "Operational closure for projecting mfact certification evidence into Ash without granting semantic or actuation authority." . }
+}

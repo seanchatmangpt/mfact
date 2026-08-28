@@ -1,0 +1,4 @@
+# MESSAGE: receipt shape must target Receipt
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?v WHERE { BIND("receipt_shape_target" AS ?v) FILTER NOT EXISTS { mfp:ReceiptShape sh:targetClass mfp:Receipt . } }

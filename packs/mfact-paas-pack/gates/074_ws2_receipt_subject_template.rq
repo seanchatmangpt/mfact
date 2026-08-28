@@ -1,0 +1,3 @@
+# MESSAGE: receipt shape must preserve subject template
+PREFIX mfp: <https://mfact.dev/paas#>
+SELECT ?v WHERE { BIND("receipt_subject_template" AS ?v) FILTER NOT EXISTS { mfp:ReceiptShape mfp:subjectTemplate "https://mfact.dev/paas/receipts/{id}" . } }

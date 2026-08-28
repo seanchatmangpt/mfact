@@ -1,0 +1,6 @@
+# MESSAGE: subjectSha must remain a request string identifier
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+SELECT ?v WHERE { BIND("subject_sha_contract" AS ?v) FILTER NOT EXISTS { mfp:subjectSha rdfs:subPropertyOf dcterms:identifier ; rdfs:domain mfp:CertificationRequest ; rdfs:range xsd:string . } }

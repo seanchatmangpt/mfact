@@ -1,0 +1,5 @@
+# MESSAGE: receiptRequest must preserve request provenance
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?v WHERE { BIND("receipt_request_lineage" AS ?v) FILTER NOT EXISTS { mfp:receiptRequest rdfs:subPropertyOf prov:wasGeneratedBy ; rdfs:domain mfp:Receipt ; rdfs:range mfp:CertificationRequest . } }

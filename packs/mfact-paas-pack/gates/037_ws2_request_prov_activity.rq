@@ -1,0 +1,8 @@
+# MESSAGE: CertificationRequest must remain a PROV Activity
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?violation WHERE {
+  BIND("certification_request_is_prov_activity" AS ?violation)
+  FILTER NOT EXISTS { mfp:CertificationRequest rdfs:subClassOf prov:Activity . }
+}

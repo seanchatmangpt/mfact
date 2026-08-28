@@ -1,0 +1,6 @@
+# MESSAGE: mfact PaaS profile must declare SHACL conformance
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?violation WHERE {
+  BIND("conforms_shacl" AS ?violation)
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:conformsTo <https://www.w3.org/TR/shacl/> . }
+}

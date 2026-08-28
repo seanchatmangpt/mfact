@@ -1,0 +1,4 @@
+# MESSAGE: request status mapping must be required and singular
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?v WHERE { BIND("status_shape_cardinality" AS ?v) FILTER NOT EXISTS { mfp:CertificationRequestShape sh:property [ sh:path mfp:requestStatus ; sh:minCount 1 ; sh:maxCount 1 ; mfp:allowNil "false" ] . } }

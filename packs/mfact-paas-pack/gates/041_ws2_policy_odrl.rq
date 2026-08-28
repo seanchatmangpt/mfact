@@ -1,0 +1,5 @@
+# MESSAGE: CertificationPolicy must remain an ODRL Policy
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX odrl: <http://www.w3.org/ns/odrl/2/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?violation WHERE { BIND("certification_policy_is_odrl_policy" AS ?violation) FILTER NOT EXISTS { mfp:CertificationPolicy rdfs:subClassOf odrl:Policy . } }

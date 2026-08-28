@@ -1,0 +1,4 @@
+# MESSAGE: receipt request mapping must be required, singular, and relationship-typed
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+SELECT ?v WHERE { BIND("receipt_request_shape_relationship" AS ?v) FILTER NOT EXISTS { mfp:ReceiptShape sh:property [ sh:path mfp:receiptRequest ; sh:class mfp:CertificationRequest ; sh:minCount 1 ; sh:maxCount 1 ; mfp:kind "relationship" ; mfp:allowNil "false" ] . } }

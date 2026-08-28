@@ -1,0 +1,6 @@
+# MESSAGE: mfact PaaS profile must declare DCAT 3 conformance
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?violation WHERE {
+  BIND("conforms_dcat3" AS ?violation)
+  FILTER NOT EXISTS { <https://mfact.dev/paas> dcterms:conformsTo <https://www.w3.org/TR/vocab-dcat-3/> . }
+}
