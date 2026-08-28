@@ -1,0 +1,5 @@
+# MESSAGE: wasRequestedBy must preserve PROV agent association
+PREFIX mfp: <https://mfact.dev/paas#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?v WHERE { BIND("request_actor_contract" AS ?v) FILTER NOT EXISTS { mfp:wasRequestedBy rdfs:subPropertyOf prov:wasAssociatedWith ; rdfs:domain mfp:CertificationRequest ; rdfs:range prov:Agent . } }
