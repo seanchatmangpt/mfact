@@ -23,7 +23,10 @@ here — that's a core-repo decision, not a pylab one.
 | [008](ticket_008_tpot2_pipeline_automl.md) | Actual TPOT2 pipeline evolution over process-mining pipelines | Closes the loop | Answers the original "what about TPOT2" question with a real execution surface (pylab has one; procint doesn't) |
 | [009](ticket_009_mpops_cli.md) | mpops Outside-In CLI | UX / Tooling | Establishes the product-shaped developer cockpit while strictly preserving the trusted manufacturing boundary |
 | [010](ticket_010_mpops_rename.md) | Rename All mpops References (from math-factory-pylab) | DX / Naming | Finalizes the CLI namespace eradication of the old name |
-| [012](ticket_012_workflow_state.md) | Workflow state baseline (crown rail ALIVE snapshot) | Foundation | Baseline-state snapshot preceding the countermodel formalization work |
+| 011 | *(intentionally absent — see note below)* | — | — |
+| [012a](ticket_012_crown_countermodel.md) | Crown-jewel countermodel: infinite-transition soundness characterization | Crown / Formal Proof | Formalizes the STATED Lean-admitted countermodel theorem `WfNet.infinite_transition_countermodel_sound_not_bounded`, repairing van der Aalst's soundness characterization for the infinite-transition case |
+| [012b](ticket_012_receipt.md) | Ticket 012 receipt (theorem identity, files changed, guard) | Crown / Governance | Receipt for 012a's countermodel theorem: status key `WFNET_INFINITE_TRANSITION_COUNTERMODEL`, guard `countermodel_not_promoted`, files changed |
+| [012c](ticket_012_workflow_state.md) | Workflow state baseline (crown rail ALIVE snapshot) | Foundation | Baseline-state snapshot preceding the countermodel formalization work |
 | [013](ticket_013_v26_7_7_gap_audit.md) | v26.7.7 release gap audit | Governance | Five-rail gap audit before release cut; found a false PROVEN promotion on the countermodel theorem and an unbound D1 correspondence claim |
 | [014](ticket_014_standing_guard_mcp.md) | Standing Guard MCP server | Governance / Tooling | Read-only MCP server that continuously re-runs ticket 013's 8 check classes so the same gaps can't silently reappear between audits |
 | [015](ticket_015_v26_7_7_reconciliation.md) | v26.7.7 reconciliation and re-certification | Governance | Re-verifies ticket 013's findings against current disk truth (some closed by ticket 012's session work, some still open), fixes the standing.env dedup bug, re-certifies the release tag |
@@ -32,6 +35,11 @@ here — that's a core-repo decision, not a pylab one.
 | [018](ticket_018_praxis_graphlaw_benchmark_import.md) | praxis-graphlaw benchmark import | rslab rail | Runs the real, verified-runnable praxis-graphlaw benches/tests and receipts the raw evidence into rslab |
 | [019](ticket_019_rslab_paper_fragment_wiring.md) | rslab normalization and paper fragment wiring | rslab rail | Builder scripts turn the rslab receipt into ledgered, gate-wired `.tex` fragments the paper can cite |
 | [020](ticket_020_praxis_rslab_paper_sections.md) | praxis-graphlaw and rslab paper sections | Paper | Fills the two placeholder sections with prose once the rslab fragments exist to cite |
+
+**Note on ticket 011**: the number is intentionally absent. Ticket work branched
+directly from 010 to the 012 companion set (crown_countermodel / receipt /
+workflow_state) with no separate 011 scope ever drafted — this is a numbering
+gap in the sequence, not a missing file to recover or backfill.
 
 ## Suggested build order
 
