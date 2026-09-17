@@ -4,11 +4,18 @@ Unledgered review of stashed WIP recovery and classification.
 
 ## Dangling Commit (Recovery Pointer)
 
-**Commit Hash**: 7bc70a9a02cc3375dd3e8aae0ab9f3014333a630 (or similar — from concurrent work branch)
+**Commit Hash**: 7bc70a9a02cc3375dd3e8aae0ab9f3014333a630
 
 This commit served as the base for stashed changes during parallel work on the crown-jewel proof campaign. The stash was created while HEAD was at `1654a9b` (three commits behind the main proof work at that time).
 
-**Stash Base Branch**: likely `feat/crown-jewel-wip` or similar development branch
+**Stash Base Branch**: none — the repository is in a detached-HEAD state, currently at
+`1faf0bc` ("chore: regen artifacts"), with `184e3a3` ("chore: commit final post-victory
+receipt and ledger artifacts") as a verified ancestor commit
+(`git merge-base --is-ancestor 184e3a3 1faf0bc` succeeds). No branch named
+`feat/crown-jewel-wip` exists (`git branch -a` lists only `main` and `remotes/origin/main`;
+`git rev-parse --verify feat/crown-jewel-wip` fails). The crown-jewel proof-campaign work
+described below was carried out and reconciled entirely on this detached HEAD; no branch
+checkout is required to reproduce it.
 
 **Creation Context**: Stash captured work-in-progress from a separate research thread that included both draft theorem statements, infrastructure lemma sketches, and paper revisions. The stash was not applied until after both the formal proof campaign (32f4718, 150c342) completed and published, at which point the non-superseded fragments were cherry-picked into d7752a5.
 
