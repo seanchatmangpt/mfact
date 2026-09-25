@@ -1,1 +1,0 @@
-# hyperdimensional_cognitive
