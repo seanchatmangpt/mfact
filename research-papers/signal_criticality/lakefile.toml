@@ -1,6 +1,0 @@
-name = "signal_criticality"
-version = "0.1.0"
-defaultTargets = ["SignalCriticality"]
-
-[[lean_lib]]
-name = "SignalCriticality"
