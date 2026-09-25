@@ -1,2 +1,0 @@
-# Victory Auditor Directory
-This directory is for the independent Victory Auditor's coordination.
