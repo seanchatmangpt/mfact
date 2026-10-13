@@ -48,7 +48,7 @@ jobs:
 
       - name: Checkout local actions
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.workflow_sha }}
           fetch-depth: 1
@@ -82,7 +82,7 @@ jobs:
       # We fetch full depth so that we can compute the merge base.
       - name: Checkout PR head
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ github.repository }}
           ref: refs/pull/${{ github.event.issue.number }}/head
@@ -95,7 +95,7 @@ jobs:
       # here so that a single binary can fetch oleans for both checkouts.
       - name: Checkout tools branch (master)
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ github.repository }}
           ref: master
@@ -117,7 +117,7 @@ jobs:
 
       - name: Checkout merge base
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ github.repository }}
           ref: ${{ steps.merge_base.outputs.sha }}
@@ -270,7 +270,7 @@ jobs:
 
       - name: Upload full olean diff
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: olean-diff-full
           path: olean_diff_full.txt
@@ -286,7 +286,7 @@ jobs:
 
       - name: Emit bridge artifact
         if: steps.check_trigger.outputs.triggered == 'true'
-        uses: leanprover-community/privilege-escalation-bridge/emit@f5dfe313a79647c07315b451b2dc2a81a161a50d # v1.2.0
+        uses: leanprover-community/privilege-escalation-bridge/emit@120e98bbb1e9438be8973be645ef67e9cddc39ba # v2.1.0
         with:
           artifact: workflow-data
           outputs_file: bridge-outputs.json
