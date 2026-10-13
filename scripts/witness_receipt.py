@@ -56,6 +56,20 @@ TARGETS = [
     ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.cycle_capacity_invariant"),
     ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.closure_conservation"),
     ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.closure_invariant"),
+    # witness-coverage lane (2026-10-13): build-tested standalone modules with
+    # substantive unwitnessed safety theorems. ProcInt.Workflow.Countermodel was
+    # evaluated and EXCLUDED: ProcInt.crownCounter_sound depends on sorryAx
+    # (fails the axiom gate).
+    ("ProcInt.Petri.Firing", "ProcInt.PetriNet.step_deterministic"),
+    ("ProcInt.Petri.Boundedness", "ProcInt.PetriNet.bounded_of_finite_reach"),
+    ("ProcInt.Petri.Invariants", "ProcInt.PetriNet.pInvariant_reaches"),
+    ("ProcInt.Petri.StateEquation", "ProcInt.PetriNet.stateEquation_seq"),
+    ("ProcInt.Petri.Reachability", "ProcInt.PetriNet.firingSeq_reaches"),
+    ("ProcInt.Petri.Reachability", "ProcInt.PetriNet.reaches_add"),
+    ("ProcInt.Petri.Covering", "ProcInt.PetriNet.unbounded_self_cover"),
+    ("ProcInt.Petri.Covering", "ProcInt.PetriNet.exists_infinite_injective_run"),
+    ("ProcInt.Petri.Unfolding", "ProcInt.OccurrenceNet.acyclic_no_self_flow"),
+    ("ProcInt.Workflow.Soundness", "ProcInt.WfNet.sound_iff_shortCircuit_live_bounded"),
 ]
 
 WITNESS_FILE = ROOT / "witnesses.jsonl"
@@ -101,6 +115,7 @@ def module_sha256(module: str) -> str:
     # Modules live either directly under ProcInt/ (e.g. ProcInt.StrataStore)
     # or under ProcInt/Petri/ (the historical layout).
     candidates = [
+        ROOT / "procint" / "ProcInt" / (module.removeprefix("ProcInt.").replace(".", "/") + ".lean"),
         ROOT / "procint" / "ProcInt" / base,
         ROOT / "procint" / "ProcInt" / "Petri" / base,
     ]
