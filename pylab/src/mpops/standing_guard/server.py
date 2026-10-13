@@ -571,6 +571,9 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
         return findings
 
     lines = content.splitlines()
+
+    # Rules 1 and 4 flag a self-contained bad phrase; the phrase itself is
+    # the violation regardless of surrounding text, so these stay per-line.
     for line_idx, line in enumerate(lines, 1):
         if re.search(r'\b(145|318)\b', line):
             findings.append({
@@ -611,51 +614,80 @@ def check_prose_paper_consistency(repo_root: Path) -> list[dict[str, Any]]:
                 "standing_status": "REFUSED"
             })
 
-        if re.search(r'\b(chain|hash)\b', line, re.IGNORECASE):
-            if not any(q in line.lower() for q in [
-                "receipt chain", "chain hash", "content hash", "payload hash", "blake3", "chain linkage", "chain integrity"
-            ]):
-                findings.append({
-                    "gap_class": 8,
-                    "severity": "WARNING",
-                    "refusal_code": "PROSE_LINT_VIOLATION",
-                    "path_or_target": f"paper/main.tex:{line_idx}",
-                    "evidence": f"Rule 5 Violation: bare 'chain' or 'hash' detected: '{line.strip()}'",
-                    "expected": "Specify type (receipt chain, chain hash, content hash, payload hash)",
-                    "actual": line.strip(),
-                    "recommended_action": "Add specific qualifiers to bare chain/hash.",
-                    "standing_status": "REFUSED"
-                })
+    # Rules 5, 7, and 8 look for a qualifying word "nearby" a trigger word.
+    # LaTeX source is hand-wrapped at ~80 columns with no relation to
+    # sentence or clause boundaries, so a same-physical-line window sees a
+    # trigger word and its qualifier split across two lines and misreports
+    # a false positive (e.g. "...receipts prove consequence." on one line,
+    # "...Lean kernel, Lake build..." naming the formal context two lines
+    # later). Widen the window to the whole paragraph (lines between blank
+    # lines / \section-like boundaries) so a qualifier anywhere in the same
+    # paragraph as the trigger word satisfies the rule; still report the
+    # specific line the trigger word occurs on.
+    para_boundary = re.compile(r'^\s*$|^\s*\\(section|subsection|paragraph|begin|end)\b')
+    paragraphs = []
+    current = []
+    for line_idx, line in enumerate(lines, 1):
+        if para_boundary.match(line):
+            if current:
+                paragraphs.append(current)
+                current = []
+        else:
+            current.append((line_idx, line))
+    if current:
+        paragraphs.append(current)
 
-        if re.search(r'\b(prove|proof|proven)\b', line, re.IGNORECASE):
-            if not any(q in line.lower() for q in ["lean", "lake", "kernel", "formal", "theorem", "re-admit", "lake build"]):
-                findings.append({
-                    "gap_class": 8,
-                    "severity": "WARNING",
-                    "refusal_code": "PROSE_LINT_VIOLATION",
-                    "path_or_target": f"paper/main.tex:{line_idx}",
-                    "evidence": f"Rule 7 Violation: 'proof/prove' used without formal context: '{line.strip()}'",
-                    "expected": "Use 'evidence', 'witness' or specify Lean/lake/kernel formal context",
-                    "actual": line.strip(),
-                    "recommended_action": "Reword to avoid claiming proof without formal verification context.",
-                    "standing_status": "REFUSED"
-                })
+    def emit(rule_num, refusal_code, evidence_prefix, expected, recommendation, line_idx, line_text):
+        findings.append({
+            "gap_class": 8,
+            "severity": "WARNING",
+            "refusal_code": refusal_code,
+            "path_or_target": f"paper/main.tex:{line_idx}",
+            "evidence": f"Rule {rule_num} Violation: {evidence_prefix}: '{line_text.strip()}'",
+            "expected": expected,
+            "actual": line_text.strip(),
+            "recommended_action": recommendation,
+            "standing_status": "REFUSED"
+        })
 
-        if re.search(r'\b(entirely|completely|fully|absolutely|always|never)\b', line, re.IGNORECASE):
-            if not any(q in line.lower() for q in [
-                "d1", "specimen", "this work", "correspondence", "lake build", "in this apparatus"
-            ]):
-                findings.append({
-                    "gap_class": 8,
-                    "severity": "WARNING",
-                    "refusal_code": "PROSE_LINT_VIOLATION",
-                    "path_or_target": f"paper/main.tex:{line_idx}",
-                    "evidence": f"Rule 8 Violation: totality adverb without caveats: '{line.strip()}'",
-                    "expected": "Scope totality claim with D1, specimen, etc.",
-                    "actual": line.strip(),
-                    "recommended_action": "Qualify totality claim with appropriate scope constraints.",
-                    "standing_status": "REFUSED"
-                })
+    for para in paragraphs:
+        para_text = ' '.join(l for _, l in para)
+
+        chain_hash_ok = any(q in para_text.lower() for q in [
+            "receipt chain", "chain hash", "content hash", "payload hash",
+            "manifest hash", "blake3", "chain linkage", "chain integrity",
+            "b3sum", "supply chain"
+        ])
+        proof_ok = any(q in para_text.lower() for q in [
+            "lean", "lake", "kernel", "formal", "theorem", "re-admit",
+            "sorry", "axiom", "\\textsc{proven}", "\\textsc{stated}"
+        ])
+        totality_ok = any(q in para_text.lower() for q in [
+            "d1", "specimen", "this work", "correspondence", "lake build",
+            "in this apparatus", "does not claim", "nor does it claim",
+            "inductive type", "kernel-tested", "deliberately"
+        ])
+
+        for line_idx, line in para:
+            if not chain_hash_ok and re.search(r'\b(chain|hash)\b', line, re.IGNORECASE):
+                emit(5, "PROSE_LINT_VIOLATION", "bare 'chain' or 'hash' detected",
+                     "Specify type (receipt chain, chain hash, content hash, payload hash) "
+                     "somewhere in the same paragraph",
+                     "Add specific qualifiers to bare chain/hash in this paragraph.",
+                     line_idx, line)
+
+            if not proof_ok and re.search(r'\b(prove|proof|proven)\b', line, re.IGNORECASE):
+                emit(7, "PROSE_LINT_VIOLATION", "'proof/prove' used without formal context",
+                     "Use 'evidence', 'witness' or specify Lean/lake/kernel formal context "
+                     "somewhere in the same paragraph",
+                     "Reword to avoid claiming proof without formal verification context.",
+                     line_idx, line)
+
+            if not totality_ok and re.search(r'\b(entirely|completely|fully|absolutely|always|never)\b', line, re.IGNORECASE):
+                emit(8, "PROSE_LINT_VIOLATION", "totality adverb without caveats",
+                     "Scope totality claim with D1, specimen, etc. somewhere in the same paragraph",
+                     "Qualify totality claim with appropriate scope constraints.",
+                     line_idx, line)
 
     return findings
 

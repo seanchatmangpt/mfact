@@ -1,0 +1,137 @@
+\chapter{Evaluation}
+\label{ch:evaluation}
+
+Earlier chapters introduced the release's quantitative evidence
+piecemeal, in service of whatever argument was at hand: Chapter~\ref{ch:procint}
+cited the declaration catalog's proven/stated split while presenting
+\textsf{procint}'s module architecture; Chapter~\ref{ch:correspondence}
+cited the correspondence rail's status while presenting the D1 obligation;
+Chapter~\ref{ch:empirical} cited rslab's receipted test and benchmark
+counts while keeping them apart from kernel-checked standing. This
+chapter consolidates that evidence into a single evaluation treatment,
+following the structure of \texttt{paper/main.tex}'s own Evaluation
+section: it explains what each rendered table measures and how the
+number was computed, then defers to the rendered fragment itself for the
+number, rather than restating any count, hash, or status literal by hand
+in this chapter's prose. As Chapter~\ref{ch:mfact} argued and
+Chapter~\ref{ch:procint} exercised, a number typed into prose is exactly
+the kind of unreceipted assertion this thesis's manufacturing discipline
+exists to avoid; every quantitative claim below is either a macro from
+\texttt{release\_macros.tex} or an \verb|\input| of a ledgered fragment
+rendered from \texttt{release-manifest.json} or \texttt{quadrature.json}.
+
+\section{Formal Standing Evaluation}
+\label{sec:eval-formal}
+
+The first table this chapter reports is rendered directly from the
+release manifest of the certified run, \texttt{release-manifest.json},
+and from nothing else: no cell is written by hand, and the generation
+pipeline fails closed, so that if the manifest is absent or stale the
+fragment does not render and the surrounding document does not build for
+release. What the table measures is the release's own accounting of its
+declaration catalog: how many of the \TotalDecls\ declarations recorded
+at release time reached kernel-admitted, axiom-audited proven status
+(\KernelTheorems), how many remain formally stated with an open proof
+obligation (\StatedCount), and the release-wide \texttt{sorry} and
+unauthorized-\texttt{admit} counts (\SorryCount\ and \AdmitCount\
+respectively, both required to be zero for \CertifiedStatus\ to read
+PASS). These are not independently re-derived by this thesis; they are
+the same manifest values \texttt{release\_macros.tex} exposes as
+\LaTeX\ macros and Chapter~\ref{ch:procint} has already cited in context.
+
+\input{../paper/evaluation}
+
+\paragraph{Final status.} Table~\ref{tab:mfact-final-status} in
+Chapter~\ref{ch:mfact}, generated from the release manifest and the
+standing records that accompany it, aggregates the individual gate
+outcomes --- axiom audit, negative fixtures, certification, and standing
+quadrature --- into the single-row summary that \texttt{just status}
+(Chapter~\ref{ch:ai-development}) reads back at the command line; it is
+reproduced there rather than repeated here.
+
+\section{Standing Quadrature}
+\label{sec:eval-quadrature}
+
+The release is not evaluated only by whether the Lean packages build.
+\texttt{paper/main.tex} is explicit that it is evaluated by whether the
+declaration catalog, the admitted Lean corpus, the process evidence, the
+release manifest, and the paper's own claims form a \emph{closed standing
+graph}: the Standing Quadrature check rejects orphan declarations,
+unsupported claims, untraced artifacts, and any divergence between the
+manifest and the paper. This closure property is itself kernel-checked
+rather than asserted by a separate script running outside Lean's trust
+boundary: a generated witness module, \texttt{ProcInt.Release.Quadrature},
+carries the name-sorted proven surfaces of the catalog, the manifest, and
+the axiom audit as literal lists and proves their pairwise equality by
+\texttt{rfl} --- so that any orphan declaration on any one side makes the
+corresponding lists differ syntactically and the kernel refuses the
+witness outright, rather than the check silently passing on a mismatch.
+The same witness module encodes the manufacturing run itself as a
+\textsf{procint} process trace and proves, using the corpus's own
+\texttt{DeclareConstraint} semantics from Chapter~\ref{ch:procint}, that
+the run conforms to its declared process model: \textsf{procint} is, in
+this one specific and kernel-checked sense, used to model the process by
+which \textsf{mfact} manufactured \textsf{procint}. The table below is
+rendered from \texttt{quadrature.json}; three negative controls --- a
+corrupted evaluation number, a claim with no evidence, and a catalog
+declaration with no rendered symbol --- are each engineered to cause a
+typed refusal rather than a silent pass, in the same spirit as the
+negative fixtures Chapter~\ref{ch:procint} and Chapter~\ref{ch:mfact}
+describe for the Lean corpus itself.
+
+\input{../paper/quadrature}
+
+\section{Correspondence Status}
+\label{sec:eval-correspondence}
+
+Chapter~\ref{ch:correspondence} developed the Aeneas/Charon correspondence
+rail in detail, including the D1 token-replay-counts obligation, the
+guardrail requiring a correspondence theorem to quantify over its actual
+extracted declaration rather than a same-shaped hand-written stand-in, and
+that rail's own generated evaluation table (rendered by the correspondence
+builder from its receipt --- a charon/aeneas pipeline receipt, a
+\texttt{lake build} of the extracted module against \textsf{procint}, and
+an axiom-print check on the resulting theorem --- never written by hand),
+reproduced there rather than repeated here.
+
+\section{Falsifier and Valid Objection Surface}
+\label{sec:eval-falsifier}
+
+The evaluation above answers ``what does the release currently claim.''
+\texttt{paper/main.tex}'s Falsifier and Valid Objection Surface section
+answers a complementary question: what would it take for one of those
+claims to be wrong, and is that possibility engineered into the release
+gate rather than left as an informal hope. A valid objection to the
+release, in the sense that section defines, must exhibit at least one of
+eight closed failure classes: a declared admitted theorem contains
+\texttt{sorry}; a theorem depends on an axiom outside the authorized set;
+a manifest hash fails to match its artifact; a negative fixture passes
+when it is designed to fail; a generated evaluation number fails to match
+the manifest that is supposed to have produced it; a formally stated
+declaration is described, anywhere in the paper or its fragments, as
+proven; the catalog-to-Lean rendering step changes the theorem statement
+it was supposed to project; or the release cannot be replayed under its
+pinned dependencies.
+
+These eight classes are deliberately enumerated as \emph{closed} failure
+classes rather than left as an open-ended attack surface: each one is
+engineered into a specific gate, a typed refusal, or a non-admitted
+state, so that the release gate's design goal is that any occurrence of
+one of these cases prevents admission or produces a typed refusal, rather
+than passing silently through to a certified release. After certification,
+no constructor of this valid-objection surface is inhabited within the
+declared boundary --- the surface is empty in the sense that its
+negative controls, described alongside Section~\ref{sec:eval-quadrature}'s
+quadrature controls and Chapter~\ref{ch:procint}'s negative fixtures,
+each demonstrate the corresponding gate actually refusing on a poisoned
+copy, rather than the emptiness being asserted without a check that could
+have failed. It is worth restating the scope of this claim precisely, in
+the same register \texttt{paper/main.tex} insists on: a local objection
+to one proof, one citation, or one template is not automatically a
+refutation of the release's mathematical-manufacturing claim as a whole.
+It becomes one only if it crosses the admission boundary and invalidates
+a specific, claimed receipt --- and the eight classes above are exactly
+the enumerated ways of doing that, not a suggestive sample of a larger,
+unstated set. This same enumeration is the basis for
+Chapter~\ref{ch:discussion}'s discussion of what admission does, and does
+not, check.

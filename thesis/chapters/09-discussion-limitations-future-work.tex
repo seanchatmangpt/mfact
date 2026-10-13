@@ -1,0 +1,234 @@
+\chapter{Discussion, Limitations, and Future Work}
+\label{ch:discussion}
+
+The preceding chapters have made a sustained argument that standing must
+be earned through admission rather than asserted by prose, and
+Chapter~\ref{ch:evaluation} closed by enumerating the eight closed
+failure classes that would falsify the release if any were inhabited.
+This chapter turns that same scrutiny on the release's own boundaries:
+what the proven/stated discipline does and does not claim, what kernel
+admission does and does not check, what this thesis explicitly excludes,
+and --- in the Future Work section --- what remains open, including a
+frank account of a toolchain limitation specific to the sandbox this
+thesis was written in, kept carefully separate from any claim about the
+certified release itself.
+
+\section{Proven versus Stated}
+\label{sec:disc-proven-stated}
+
+\texttt{paper/main.tex}'s Limitations and Standing section states the
+library's discipline plainly: the library's standing is exactly the
+manifest's proven/stated split, and prose adds nothing to it. A
+\emph{stated} declaration, in this vocabulary, is a formal statement
+whose proof obligation is open: it compiles under the pinned toolchain,
+it is citable as a definition of the property it names, and it carries no
+more authority than that. Chapter~\ref{ch:procint} exercised this
+distinction on the \TotalDecls-declaration catalog, and it is worth
+restating the current split precisely, without smoothing the two
+categories together as this thesis's discipline forbids: \KernelTheorems\
+declarations are kernel-admitted, axiom-audited proven theorems, and
+\StatedCount\ remain formally stated with an open obligation.
+
+Among those \StatedCount\ stated declarations, two categories are worth
+distinguishing again here, because collapsing them is exactly the kind of
+mistake the proven/stated discipline exists to prevent. The first is a
+single declaration, \texttt{ProcInt.BranchingProcess.isUnfoldingOf\_statement}
+(\texttt{packs/lean-math-pack/fragments/petriext.ttl}), the unfolding-correctness
+statement tracked in \texttt{research/wfnet/obligations.toml} as
+obligation order 3, \texttt{name = "unfolding\_correctness"},
+\texttt{status = "STATED"} --- this is the one declaration in the current
+catalog that represents genuine open proof work, in the sense that
+closing it would add a new kernel-admitted theorem rather than merely
+documenting an intentional boundary. The second category is the five
+WF-net countermodel declarations in
+\texttt{packs/lean-math-pack/fragments/workflow\_countermodel.ttl} ---
+\texttt{crownCounter\_reaches\_mid}, \texttt{crownCounter\_reaches\_final},
+\texttt{crownCounter\_sound}, \texttt{crownCounter\_not\_bounded}, and
+\texttt{WfNet.infinite\_transition\_countermodel\_sound\_not\_bounded} ---
+which are \emph{deliberately and permanently} stated. These five
+declarations do not represent unfinished work; they witness why the
+crown-jewel equivalence requires its \texttt{[Finite~T]} hypothesis in
+the first place, by exhibiting a net that is sound and not bounded once
+that hypothesis is dropped. A guard, \texttt{countermodel\_not\_promoted},
+is engineered specifically to refuse (\texttt{COUNTERMODEL\_PROMOTION\_REFUSED})
+any attempt to promote these five to proven standing, precisely because
+promoting a deliberate negative witness to proven status would corrupt
+the very fact it is meant to record. \texttt{just status} in this
+sandbox's environment reports this family under its own status key,
+\texttt{WFNET\_INFINITE\_TRANSITION\_COUNTERMODEL=STATED}, distinct from
+the ordinary stated/proven split, for exactly this reason: it is a
+status that is correct and intended to remain STATED, not a gap awaiting
+closure alongside the unfolding-correctness obligation.
+
+\section{Crown-Jewel Scope}
+\label{sec:disc-crown-jewel}
+
+The crown-jewel theorem --- the workflow-net soundness equivalence
+(van der Aalst 1997, Lemma 8)~\cite{vanderaalst1997}, characterizing
+soundness as equivalent to short-circuit liveness and boundedness under
+\texttt{[Finite~T]} --- carries \CrownJewelStatus\ status at the current
+release. \texttt{paper/main.tex} is careful to scope this claim per
+direction: if only one direction of the equivalence were admitted at a
+given release, the claim would be that direction and nothing more, with
+the converse remaining a stated obligation in the manifest rather than an
+implicit part of the headline result. This chapter reproduces that
+caution rather than restating a stronger claim than the manifest
+supports; the crown-jewel status fragment rendered in
+Chapter~\ref{ch:evaluation} and Chapter~\ref{ch:procint} is the authority
+on which direction, or directions, the current release actually admits.
+
+\section{What Admission Does Not Check}
+\label{sec:disc-admission-limits}
+
+Kernel admission together with the axiom audit establishes a specific
+and narrow thing: that an admitted term proves its stated theorem under
+the pinned, authorized axiom set. It does not establish that the
+catalog-curated statement is a faithful rendering of the informal
+mathematical canon it claims to formalize. That correspondence --- does
+this Lean proposition actually say what van der Aalst's Lemma~8 says, or
+what the process-mining literature means by ``sound'' --- rests on
+citation-annotated statement curation reviewed against primary sources,
+and is exactly the kind of residual risk the semantic audits of Meek et
+al.~\cite{meek2026formalizing} target: compilation success can coexist
+with a silently weakened hypothesis or an incompletely stated multi-part
+theorem, and no amount of kernel-side checking distinguishes a faithful
+formalization from a subtly narrower one that still type-checks.
+Chapter~\ref{ch:background} introduced this diagnosis; this chapter
+returns to it as a standing limitation rather than a risk this pipeline
+claims to have retired. Fidelity of statements is, in this repository's
+own words, a review obligation, not a theorem.
+
+A second limit concerns novelty. Any ``first mechanization'' claim made
+elsewhere in this thesis or in \texttt{paper/main.tex} is scoped to a
+search of the Lean (Mathlib/CSLib), Coq, and Isabelle (AFP) ecosystems
+conducted at run time; it is a negative search result at a point in time,
+not a proof of absence, and later work in any of those ecosystems could
+in principle supersede it without this thesis's claim having been false
+when made.
+
+A third limit is that standing is not to be inferred from this document's
+prose at all. At release time, the crown-jewel rail, the countermodel
+rail, the correspondence rail, the product/DX rail, and the paper rail
+each carry independent manifest status; the paper, and by extension this
+thesis, is a publication surface reporting that status, not itself a
+source of truth. Where paper prose and manifest status diverge, the
+manifest and its receipts govern, and this chapter treats that as a
+standing methodological commitment rather than a hypothetical.
+
+\section{Exclusions}
+\label{sec:disc-exclusions}
+
+\texttt{paper/main.tex} enumerates, in tabular form, a set of claims this
+work explicitly does not make, and this thesis inherits that enumeration
+rather than relaxing it: that LLMs prove mathematics autonomously (they
+are treated throughout as untrusted candidate producers, per
+Chapter~\ref{ch:mfact} and Chapter~\ref{ch:ai-development}); that
+\textsf{procint} formalizes all of process intelligence (the v1 boundary
+is manifest-scoped, per Chapter~\ref{ch:procint}); that kernel admission
+proves informal intent (statement fidelity is a review obligation, per
+Section~\ref{sec:disc-admission-limits} above); that Rice's theorem is
+violated (arbitrary semantic correctness is not decided by anything in
+this pipeline); that external opinion enters the standing calculus (only
+receipted artifacts are parsed by the certification gate); that criticism
+outside the declared boundary is refuted by the empty-objection-surface
+claim of Chapter~\ref{ch:evaluation} (that claim is scoped strictly to
+the declared boundary and says nothing about objections outside it); that
+\textsf{ggen} output has standing merely by having been generated (only
+admitted output has standing, per the projection-versus-admission
+distinction of Chapter~\ref{ch:mfact}); and that a stated theorem is
+proven (stated means, without qualification, that the obligation remains
+open).
+
+\section{Future Work}
+\label{sec:disc-future-work}
+
+Four items make up this thesis's honest account of what remains open,
+ranging from a specific closable proof obligation to a limitation of this
+particular writing environment that this chapter is careful not to
+conflate with the certified release's own standing.
+
+\paragraph{(a) Closing the unfolding-correctness obligation.}
+The single genuinely open item in the current \TotalDecls-declaration
+catalog, \texttt{ProcInt.BranchingProcess.isUnfoldingOf\_statement}, is a
+concrete, scoped target for future proof work: its statement, as recorded
+in \texttt{packs/lean-math-pack/fragments/petriext.ttl}, characterizes
+when a branching process is a legal unfolding of a net~$N$ by conjoining
+acyclicity of the occurrence net, absence of backward conflict, and two
+conditions relating the occurrence net's pre/post-condition structure to
+$N$'s transitions on singleton arcs. The declaration's own doc-comment
+attributes the underlying homomorphism condition it specializes to
+Engelfriet 1991, Definition 3.1; this thesis reports that attribution
+exactly as the source states it, in prose rather than as a citation
+key, because no corresponding entry exists in \texttt{paper/refs.bib} and
+this thesis's discipline forbids inventing one. Closing this obligation
+means discharging its stated proposition under the same kernel-admission
+and axiom-audit gate every other \KernelTheorems-count theorem in the
+catalog passed through --- not weakening the statement to make it easier,
+and not asserting proven status without the mechanical check.
+
+\paragraph{(b) Un-run docs and post-release lanes.}
+\texttt{just next}, run read-only in this sandbox, lists two lanes that
+have not yet been attempted in this environment: the publication packet
+has not been manufactured (actionable via \texttt{just manufacture-post-release}),
+and the docs lane has not been attempted (actionable via \texttt{just docs}).
+Neither omission changes the certified release's proven/stated split or
+gate status; they are lanes downstream of certification, not inputs to
+it, and their non-execution here is reported as an open item rather than
+elided.
+
+\paragraph{(c) External-actuation packets.}
+\texttt{just status} in this sandbox reports \texttt{PUBLICATION\_ACTUATION=PENDING\_EXTERNAL\_ACTUATION},
+with the arXiv submission packet (\texttt{ARXIV\_PACKET}) and the
+GitHub-push packet (\texttt{GITHUB\_PUSH\_PACKET}) both currently
+\texttt{BLOCKED}, while the GitHub-release packet
+(\texttt{GITHUB\_RELEASE\_PACKET}) reports \texttt{ALIVE}. In this
+repository's status taxonomy, \texttt{PENDING\_EXTERNAL\_ACTUATION}
+denotes a packet that is itself complete but whose remaining step ---
+submitting to arXiv, pushing to a remote the agent does not have
+standing to push to --- is the user's action, not a further manufacturing
+step this pipeline can discharge on its own. Reporting these packets as
+blocked or pending is, consistent with this thesis's discipline
+throughout, preferable to describing the release as ``published'' before
+that external step has actually occurred.
+
+\paragraph{(d) A sandbox toolchain limitation, scoped to this environment.}
+This chapter closes with an honest report of a limitation particular to
+the sandbox this thesis was written in, stated carefully so that it is
+not read as a claim about the certified \ReleaseTag\ release itself.
+Checked in this sandbox on 2026-07-21: \texttt{lake} and \texttt{elan}
+are not on \texttt{PATH}, \texttt{ggen} is not on \texttt{PATH}, and
+\texttt{procint}'s and \textsf{mfact}'s pinned toolchain
+(\texttt{leanprover/lean4:v4.31.0}, per \texttt{lean-toolchain}) is not
+installed in this sandbox's \texttt{elan} toolchain list, which is empty.
+\texttt{just doctor}, itself a read-only diagnostic that does not dirty
+the tree, confirms each of these and additionally reports that the
+\texttt{lean-math-pack}, \texttt{quadrature-pack}, and
+\texttt{post-release-pack} sources are absent, because they live at a
+\texttt{/Users/sac/mfact} path this sandbox --- rooted at
+\texttt{/home/user/mfact} --- does not have. A single bounded
+installation attempt, \texttt{just install}, was run per this
+repository's actuation discipline (Chapter~\ref{ch:ai-development}); it
+proved to be a checker rather than an installer, printing guidance
+(\texttt{elan: not found --- install with: curl https://elan.dev/install.sh -sSf | sh};
+an analogous \texttt{ggen} instruction pointing at \texttt{just install-ggen}
+from a praxis checkout) without itself performing a network fetch, and no
+further installation was attempted, consistent with this repository's
+instruction not to bypass its own guarded actuation paths. Toolchain
+availability in this sandbox was unchanged, unavailable both before and
+after this bounded attempt.
+
+None of this bears on the certified release's own standing. \texttt{just status},
+read-only in the same sandbox, reports the core release --- tag
+\ReleaseTag, \TotalDecls\ declarations, \KernelTheorems\ proven,
+\StatedCount\ stated, all gates \CertifiedStatus, tree clean, and a
+93-artifact ledger --- as already certified from prior, checked-in
+release state; nothing in this session rebuilt or re-derived that
+standing, and nothing in this sandbox's missing toolchain retroactively
+unproves a theorem the pinned toolchain already admitted at
+certification time. STANDING.md is the governing record of that
+certification, independent of any later environment's ability to replay
+it locally. The limitation reported here is a property of this
+particular writing environment's bootstrap state, worth recording
+honestly precisely because this thesis's own discipline forbids asserting
+replay success without having actually run it --- not a property, claimed
+or implied, of the release the rest of this thesis reports on.

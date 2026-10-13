@@ -1,197 +1,185 @@
 #!/usr/bin/env python3
-import os
-import sys
-import json
+"""praxis_graphlaw paper-fragment renderer.
 
-# Ensure we run in the virtualenv with tomllib
-try:
-    import tomllib
-except ImportError:
-    # Try to re-execute with pylab/.venv/bin/python3
-    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    venv_python = os.path.join(root, 'pylab', '.venv', 'bin', 'python3')
-    if os.path.exists(venv_python) and sys.executable != venv_python:
-        os.execv(venv_python, [venv_python] + sys.argv)
-    else:
-        raise
+Ticket 019, step 2 of the rslab normalization pair (see
+rslab/scripts/collect_praxis_graphlaw.py for step 1, which must run first
+and produce rslab/receipts/praxis_graphlaw_benchmark_receipt.toml).
 
-ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+Doctrine (rslab/README.md): a paper fragment generated from an rslab
+receipt = A. This script renders that A: it reads ONLY the receipt (never
+the raw files directly as a numbers source, though it re-hashes them to
+catch drift) and emits a LaTeX table under rslab/paper_fragments/, ledgered
+in .mfact/artifacts.toml. Every number in the fragment traces to a receipted
+file hash; none is hand-typed.
+
+The fragment reports EXTRACTED empirical evidence — test/benchmark counts
+observed in one collection pass — never PROVEN or CERTIFIED language; rslab
+is not a proof engine (see rslab/README.md doctrine block).
+
+Fails closed if the receipt is missing, malformed, or any receipted raw file
+hash no longer matches its on-disk content (ARTIFACT_DRIFT_REFUSED).
+"""
+import os, re, subprocess, sys
+
+ROOT = os.environ.get('MFACT_ROOT',
+                      os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 RECEIPT_PATH = os.path.join(ROOT, 'rslab/receipts/praxis_graphlaw_benchmark_receipt.toml')
-RESULTS_PATH = os.path.join(ROOT, 'rslab/experiments/praxis_graphlaw/processed/results.json')
-OUT_DIR = os.path.join(ROOT, 'rslab/paper_fragments')
+OUT_FRAGMENT = os.path.join(ROOT, 'rslab/paper_fragments/praxis_graphlaw_evidence.tex')
 
-def tex_escape(s: str) -> str:
-    return (s.replace('\\', r'\textbackslash{}')
-             .replace('_', r'\_')
-             .replace('&', r'\&')
-             .replace('%', r'\%')
-             .replace('#', r'\#')
-             .replace('µ', r'$\mu$'))
+TEST_RESULT_RE = re.compile(r'test result: ok\. (\d+) passed; (\d+) failed')
+BENCH_LINE_RE = re.compile(r'^test \S+\s+\.\.\. bench:', re.M)       # bencher/libtest harness
+DIVAN_LINE_RE = re.compile(r'^╰─ ', re.M)                            # divan harness
+CRITERION_LINE_RE = re.compile(r'^\s*time:\s+\[', re.M)              # criterion harness
+RUNNING_BENCH_RE = re.compile(r'Running benches/(\S+\.rs)')
+
+
+def refuse(code, message):
+    print(f'REFUSED: {code} — {message}', file=sys.stderr)
+    sys.exit(1)
+
+
+def b3_file(path):
+    r = subprocess.run(['b3sum', '--no-names', path], capture_output=True)
+    if r.returncode != 0:
+        refuse('HASH_TOOL_FAILED', f'b3sum failed on {path}: {r.stderr.decode()}')
+    return r.stdout.decode().strip()
+
+
+def load_receipt():
+    if not os.path.exists(RECEIPT_PATH):
+        refuse('MISSING_RECEIPT',
+               f'{RECEIPT_PATH} not found — run rslab/scripts/collect_praxis_graphlaw.py first')
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        refuse('MISSING_TOML_READER', 'Python >=3.11 (tomllib) is required')
+    with open(RECEIPT_PATH, 'rb') as f:
+        return tomllib.load(f)
+
+
+def verify_no_drift(receipt):
+    for entry in receipt.get('files', []):
+        path = os.path.join(ROOT, entry['path'])
+        if not os.path.exists(path):
+            refuse('ARTIFACT_DRIFT_REFUSED', f'receipted raw file missing: {entry["path"]}')
+        actual = b3_file(path)
+        if actual != entry['hash']:
+            refuse('ARTIFACT_DRIFT_REFUSED',
+                   f'{entry["path"]} hash drift: receipt says {entry["hash"]}, on-disk is {actual}')
+
+
+def count_tests(path):
+    text = open(path).read()
+    passed = sum(int(m.group(1)) for m in TEST_RESULT_RE.finditer(text))
+    failed = sum(int(m.group(2)) for m in TEST_RESULT_RE.finditer(text))
+    return passed, failed
+
+
+def count_benches(path):
+    text = open(path).read()
+    measured = (len(BENCH_LINE_RE.findall(text)) + len(DIVAN_LINE_RE.findall(text))
+                + len(CRITERION_LINE_RE.findall(text)))
+    suites = sorted(set(RUNNING_BENCH_RE.findall(text)))
+    return measured, suites
+
+
+def escape_tex(s):
+    return s.replace('_', r'\_').replace('&', r'\&').replace('#', r'\#')
+
 
 def main():
-    if not os.path.exists(RECEIPT_PATH) or not os.path.exists(RESULTS_PATH):
-        print("RSLAB_EVIDENCE_MISSING")
-        sys.exit(1)
-        
-    with open(RECEIPT_PATH, 'rb') as f:
-        try:
-            receipt = tomllib.load(f)
-        except Exception as e:
-            print(f"Failed to parse receipt TOML: {e}", file=sys.stderr)
-            sys.exit(1)
-            
-    with open(RESULTS_PATH, 'r', encoding='utf-8') as f:
-        try:
-            results = json.load(f)
-        except Exception as e:
-            print(f"Failed to parse results JSON: {e}", file=sys.stderr)
-            sys.exit(1)
-            
-    os.makedirs(OUT_DIR, exist_ok=True)
-    
-    # 1. Render rslab_praxis_graphlaw_summary.tex
-    summary_path = os.path.join(OUT_DIR, 'rslab_praxis_graphlaw_summary.tex')
-    
-    # Extract headline metrics
-    # test_transitive_rule
-    trans_rule = results.get('bencher', {}).get('test_transitive_rule', {})
-    trans_rule_val = trans_rule.get('value')
-    trans_rule_unit = trans_rule.get('unit', 'ns')
-    trans_rule_str = f"{trans_rule_val:,} {trans_rule_unit}" if trans_rule_val is not None else "N/A"
-    
-    # graphlaw_materialize_delta
-    mat_delta = results.get('divan', {}).get('graphlaw_materialize_delta', {})
-    mat_delta_mean = mat_delta.get('mean')
-    mat_delta_unit = mat_delta.get('mean_unit', 'µs')
-    mat_delta_str = f"{mat_delta_mean:.1f} {tex_escape(mat_delta_unit)}" if mat_delta_mean is not None else "N/A"
-    
-    # receipt_validate/1000
-    rec_val = results.get('criterion', {}).get('receipt_validate/1000', {})
-    rec_val_point = rec_val.get('point')
-    rec_val_unit = rec_val.get('point_unit', 'ms')
-    rec_val_str = f"{rec_val_point:.4f} {rec_val_unit}" if rec_val_point is not None else "N/A"
-    
-    summary_content = f"""% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
-This section summarizes the empirical benchmark evidence collected for the \\texttt{{praxis-graphlaw}} engine. The suite evaluates query performance, rule materialization latency, incremental delta processing, and cryptographic receipt validation. The headline metrics are presented in Table~\\ref{{tab:praxis_graphlaw_headline}}.
+    receipt = load_receipt()
+    verify_no_drift(receipt)
 
-\\begin{{table}}[h!]
-\\centering
-\\begin{{tabular}}{{llr}}
-\\toprule
-\\textbf{{Benchmark Target}} & \\textbf{{Harness}} & \\textbf{{Measured Value}} \\\\
-\\midrule
-\\texttt{{test\\_transitive\\_rule}} & bencher & {trans_rule_str} \\\\
-\\texttt{{graphlaw\\_materialize\\_delta}} (mean) & divan & {mat_delta_str} \\\\
-\\texttt{{receipt\\_validate/1000}} (point) & criterion & {rec_val_str} \\\\
-\\bottomrule
-\\end{{tabular}}
-\\caption{{Headline empirical metrics for the praxis-graphlaw release.}}
-\\label{{tab:praxis_graphlaw_headline}}
-\\end{{table}}
-"""
-    with open(summary_path, 'w', encoding='utf-8') as f:
-        f.write(summary_content)
-        
-    # 2. Render rslab_praxis_graphlaw_benchmarks.tex
-    benchmarks_path = os.path.join(OUT_DIR, 'rslab_praxis_graphlaw_benchmarks.tex')
-    
-    # Bencher table rows
-    bencher_rows = []
-    bencher_data = results.get('bencher', {})
-    for name in sorted(bencher_data.keys()):
-        val = bencher_data[name].get('value')
-        unit = bencher_data[name].get('unit', 'ns')
-        val_str = f"{val:,} {unit}" if val is not None else "N/A"
-        bencher_rows.append(f"\\texttt{{{tex_escape(name)}}} & {val_str} \\\\")
-        
-    # Divan table rows
-    divan_rows = []
-    divan_data = results.get('divan', {})
-    for name in sorted(divan_data.keys()):
-        d = divan_data[name]
-        fastest = f"{d.get('fastest'):.2f} {tex_escape(d.get('fastest_unit', 'ns'))}"
-        slowest = f"{d.get('slowest'):.2f} {tex_escape(d.get('slowest_unit', 'ns'))}"
-        median = f"{d.get('median'):.2f} {tex_escape(d.get('median_unit', 'ns'))}"
-        mean = f"{d.get('mean'):.2f} {tex_escape(d.get('mean_unit', 'ns'))}"
-        samples = str(d.get('samples'))
-        divan_rows.append(f"\\texttt{{{tex_escape(name)}}} & {fastest} & {slowest} & {median} & {mean} & {samples} \\\\")
-        
-    # Criterion table rows
-    criterion_rows = []
-    criterion_data = results.get('criterion', {})
-    for name in sorted(criterion_data.keys()):
-        c = criterion_data[name]
-        lower = f"{c.get('lower'):.4f} {tex_escape(c.get('lower_unit', 'ns'))}"
-        point = f"{c.get('point'):.4f} {tex_escape(c.get('point_unit', 'ns'))}"
-        upper = f"{c.get('upper'):.4f} {tex_escape(c.get('upper_unit', 'ns'))}"
-        criterion_rows.append(f"\\texttt{{{tex_escape(name)}}} & {lower} & {point} & {upper} \\\\")
-        
-    benchmarks_content = f"""% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
-\\subsubsection{{Micro-Benchmarks (Bencher)}}
-\\begin{{table}}[h!]
-\\centering
-\\small
-\\begin{{tabular}}{{lr}}
-\\toprule
-\\textbf{{Benchmark Name}} & \\textbf{{Value}} \\\\
-\\midrule
-{chr(10).join(bencher_rows)}
-\\bottomrule
-\\end{{tabular}}
-\\caption{{Bencher micro-benchmarks for praxis-graphlaw.}}
-\\label{{tab:praxis_bencher}}
-\\end{{table}}
+    by_output = {os.path.basename(entry['path']): os.path.join(ROOT, entry['path'])
+                 for entry in receipt.get('files', [])}
 
-\\subsubsection{{Crate-Level \\& Control-Layer Benchmarks (Divan)}}
-\\begin{{table}}[h!]
-\\centering
-\\small
-\\begin{{tabular}}{{lrrrrr}}
-\\toprule
-\\textbf{{Benchmark Name}} & \\textbf{{Fastest}} & \\textbf{{Slowest}} & \\textbf{{Median}} & \\textbf{{Mean}} & \\textbf{{Samples}} \\\\
-\\midrule
-{chr(10).join(divan_rows)}
-\\bottomrule
-\\end{{tabular}}
-\\caption{{Divan micro-benchmarks for praxis-graphlaw.}}
-\\label{{tab:praxis_divan}}
-\\end{{table}}
+    test_rows = []
+    for name in ('test_graphlaw.txt', 'test_e2e.txt'):
+        if name not in by_output:
+            refuse('MISSING_RECEIPT', f'receipt has no files[] entry for {name}')
+        passed, failed = count_tests(by_output[name])
+        test_rows.append((name, passed, failed))
 
-\\subsubsection{{System-Level \\& Protocol Benchmarks (Criterion)}}
-\\begin{{table}}[h!]
-\\centering
-\\small
-\\begin{{tabular}}{{lrrr}}
-\\toprule
-\\textbf{{Benchmark Name}} & \\textbf{{Lower}} & \\textbf{{Point Estimate}} & \\textbf{{Upper}} \\\\
-\\midrule
-{chr(10).join(criterion_rows)}
-\\bottomrule
-\\end{{tabular}}
-\\caption{{Criterion benchmark results for the release.}}
-\\label{{tab:praxis_criterion}}
-\\end{{table}}
-"""
-    with open(benchmarks_path, 'w', encoding='utf-8') as f:
-        f.write(benchmarks_content)
-        
-    # 3. Render rslab_praxis_graphlaw_profiles.tex
-    profiles_path = os.path.join(OUT_DIR, 'rslab_praxis_graphlaw_profiles.tex')
-    profiles_content = """% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
-Profiling evidence was not collected because no profiler tooling exists in the praxis workspace as of this release.
-"""
-    with open(profiles_path, 'w', encoding='utf-8') as f:
-        f.write(profiles_content)
-        
-    # 4. Render rslab_readiness.tex
-    readiness_path = os.path.join(OUT_DIR, 'rslab_readiness.tex')
-    readiness_content = """% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.
-Throughput measured; latency percentiles not yet collected; profiling not yet available.
-"""
-    with open(readiness_path, 'w', encoding='utf-8') as f:
-        f.write(readiness_content)
-        
-    print("Successfully rendered all four paper fragments in rslab/paper_fragments/")
+    bench_rows = []
+    for name in ('bench_graphlaw.txt', 'bench_root.txt'):
+        if name not in by_output:
+            refuse('MISSING_RECEIPT', f'receipt has no files[] entry for {name}')
+        measured, suites = count_benches(by_output[name])
+        bench_rows.append((name, measured, len(suites)))
+
+    commands = receipt.get('commands', [])
+    cmd_by_output = {c['outputFile']: c for c in commands if c.get('outputFile')}
+
+    total_passed = sum(p for _, p, _ in test_rows)
+    total_failed = sum(f for _, _, f in test_rows)
+    total_measured = sum(m for _, m, _ in bench_rows)
+
+    lines = [
+        '% AUTO-RENDERED by rslab/scripts/render_paper_fragments.py — do not edit by hand.',
+        '% Regenerate: python3 rslab/scripts/collect_praxis_graphlaw.py '
+        '&& python3 rslab/scripts/render_paper_fragments.py',
+        '% Source: rslab/receipts/praxis_graphlaw_benchmark_receipt.toml (EXTRACTED tier;',
+        '% empirical evidence, not a Lean proof — see rslab/README.md doctrine).',
+        '\\begin{table}[h!]',
+        '\\centering',
+        '\\begin{tabular}{lrrr}',
+        '\\toprule',
+        '\\textbf{Command} & \\textbf{Duration (s)} & \\textbf{Passed} & \\textbf{Failed} \\\\',
+        '\\midrule',
+    ]
+    for name, passed, failed in test_rows:
+        cmd = cmd_by_output.get(name, {})
+        dur = cmd.get('durationSeconds')
+        dur_s = f'{dur:.2f}' if isinstance(dur, (int, float)) else '?'
+        lines.append(f'\\texttt{{{escape_tex(cmd.get("command", name))}}} & {dur_s} & {passed} & {failed} \\\\')
+    lines += [
+        '\\midrule',
+        f'\\textbf{{Total}} & & \\textbf{{{total_passed}}} & \\textbf{{{total_failed}}} \\\\',
+        '\\bottomrule',
+        '\\end{tabular}',
+        '\\caption{praxis-graphlaw conformance and end-to-end admission test counts, '
+        'extracted from the Ticket~018 raw command output and receipted by '
+        '\\texttt{rslab/scripts/collect\\_praxis\\_graphlaw.py} '
+        '(commit \\texttt{' + escape_tex(receipt.get('praxis_commit', '')[:12]) + '}). '
+        'EXTRACTED-tier empirical evidence, not a Lean proof obligation.}',
+        '\\label{tab:rslab-tests}',
+        '\\end{table}',
+        '',
+        '\\begin{table}[h!]',
+        '\\centering',
+        '\\begin{tabular}{lrr}',
+        '\\toprule',
+        '\\textbf{Command} & \\textbf{Duration (s)} & \\textbf{Benchmarks measured} \\\\',
+        '\\midrule',
+    ]
+    for name, measured, n_suites in bench_rows:
+        cmd = cmd_by_output.get(name, {})
+        dur = cmd.get('durationSeconds')
+        dur_s = f'{dur:.2f}' if isinstance(dur, (int, float)) else '?'
+        lines.append(f'\\texttt{{{escape_tex(cmd.get("command", name))}}} '
+                     f'({n_suites} bench file{"s" if n_suites != 1 else ""}) & {dur_s} & {measured} \\\\')
+    lines += [
+        '\\midrule',
+        f'\\textbf{{Total}} & & \\textbf{{{total_measured}}} \\\\',
+        '\\bottomrule',
+        '\\end{tabular}',
+        '\\caption{praxis-graphlaw benchmark suite coverage: per-benchmark output lines '
+        'counted per harness (\\texttt{bencher}/libtest \\texttt{bench:} lines, '
+        '\\texttt{criterion} \\texttt{time:} blocks, \\texttt{divan} leaf rows); '
+        'per-harness timings are not directly comparable, see receipted caveats. '
+        'Per-benchmark timing detail lives in the receipted raw output, not reproduced here.}',
+        '\\label{tab:rslab-benches}',
+        '\\end{table}',
+        '',
+    ]
+
+    os.makedirs(os.path.dirname(OUT_FRAGMENT), exist_ok=True)
+    open(OUT_FRAGMENT, 'w').write('\n'.join(lines))
+    print(f'{os.path.relpath(OUT_FRAGMENT, ROOT)}: '
+          f'{total_passed} tests passed / {total_failed} failed, '
+          f'{total_measured} benchmarks measured')
+
 
 if __name__ == '__main__':
     main()

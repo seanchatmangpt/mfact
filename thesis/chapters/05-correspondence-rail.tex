@@ -1,0 +1,211 @@
+\chapter{The Correspondence Rail: Bridging Rust and Lean}
+\label{ch:correspondence}
+
+Chapter~\ref{ch:procint} manufactured domain semantics --- Petri nets,
+workflow-net soundness, conformance, OCEL~2.0 --- from a declared
+obligation graph whose objects are entirely Lean statements about Lean
+structures. This chapter develops a second, structurally different
+manufacturing rail opened by \textsf{mfact}: implementation
+correspondence, in which the obligation graph relates a Lean declaration
+not to another Lean declaration but to code extracted from an external,
+unverified Rust crate, \texttt{wasm4pm-core}. Where the procint
+formalization's rail (Chapter~\ref{ch:procint}) manufactures theorems
+purely within Lean's own world of hand-written
+types, this rail manufactures theorems that reach outside that world to
+quantify over a generated Lean image of Rust source the pipeline itself
+did not author and does not trust by default. This chapter's central
+worked example, the D1 token-replay-counts correspondence obligation, is
+also this thesis's clearest illustration of one of the guardrails
+introduced after the post-\texttt{v26.7.7} five-rail audit: a
+correspondence theorem that fails to quantify over its actual extracted
+declaration is not a weaker version of the intended result, it is a
+different, insufficient result, and the repository's own history records
+a case where exactly this distinction was caught and corrected before the
+obligation was allowed to report proven status.
+
+\section{Aeneas, Charon, and Functional Extraction}
+\label{sec:correspondence-aeneas}
+
+Aeneas~\cite{ho2022aeneas} is a tool for verifying Rust programs by
+translating them into a purely functional representation suitable for a
+proof assistant, rather than by reasoning about Rust's operational
+semantics directly; its Charon front end~\cite{protzenko2024charon}
+separates this translation into two stages, first recovering a clean
+syntactic and typed representation of the Rust source (Charon's job),
+then performing the semantic translation into the functional target
+proper (Aeneas's job). Aeneas is designed to target whole Rust programs
+under a full memory model, including borrowing and mutation; the use of
+it in this repository is narrower by design, applied to a single,
+dependency-free arithmetic module of \texttt{wasm4pm-core} rather than to
+a full program, because --- consistent with the untrusted-producer
+discipline this thesis applies throughout --- a single bounded instance
+of the rail, fully receipted, is what standing requires before the rail
+is generalized to a wider Rust surface, not a demonstration that Aeneas
+can be pointed at arbitrary Rust code.
+
+Extraction's output is, by the same discipline that governs every other
+producer in this pipeline, a candidate, never a proof. A Charon/Aeneas
+run over \texttt{wasm4pm-core/src/conformance\_counts.rs} yields a Lean
+module of extracted, proof-free declarations --- the
+\texttt{ReplayCounts\{produced, consumed, missing, remaining\}} struct and
+the integer \texttt{fitness\_num}/\texttt{fitness\_den} functions, taken
+verbatim from the crate's arithmetic --- and this extracted image
+acquires no standing by virtue of having been extracted. Standing still
+requires kernel admission of a hand-authored correspondence theorem
+stated \emph{over} the extracted declaration: an abstraction function
+(\texttt{Abs.toSpec} in the repository's own naming) lifts the extracted,
+proof-free struct into \textsf{procint}'s own \texttt{ReplayCounts} type
+--- the same type introduced in \S\ref{sec:procint-conformance}, which
+carries \texttt{missing} \(\le\) \texttt{consumed} and \texttt{remaining}
+\(\le\) \texttt{produced} as proof fields, not merely as informal
+invariants --- given exactly those two inequalities as hypotheses. This
+is the general shape of every obligation on this rail: extraction
+produces data, the abstraction function is where the correspondence claim
+is actually made, and the correspondence theorem is where that claim is
+kernel-checked. Section~\ref{sec:correspondence-guard} returns to why the
+Lean statement's literal dependence on the extracted declaration, rather
+than on an independently hand-written stand-in of the same shape, is the
+part of this rail a guard specifically checks for.
+
+\section{The D1 Obligation Family and \texttt{ValidObjection}}
+\label{sec:correspondence-d1}
+
+The correspondence rail's status ladder --- declared, extracted, stated,
+proven --- mirrors the proven/stated distinction Chapter~\ref{ch:procint}
+uses throughout, but is computed independently, by a dedicated builder
+(\texttt{scripts/build\_verif.py}) reading observed evidence rather than
+by hand: a Charon/Aeneas pipeline receipt establishing that extraction
+actually ran and produced the declaration a correspondence theorem
+claims to quantify over, a \texttt{lake build} of the extracted module
+against \textsf{procint} establishing that the extracted image and the
+hand-authored model actually type-check together, and an axiom-print
+check on the resulting theorem establishing that its proof, if one
+exists, does not smuggle in an unaudited axiom. The rail's first
+obligation, and to date its only instance, is scoped deliberately
+narrowly: token-replay counts correspondence, obligation ``D1'' in the
+repository's own numbering, relating the extracted
+\texttt{fitness\_num}/\texttt{fitness\_den} integer functions to
+\textsf{procint}'s \texttt{ReplayCounts}/\texttt{fitness} model
+introduced in \S\ref{sec:procint-conformance}. The obligation does not
+assert that the crate's integer ratio and \textsf{procint}'s exact-rational
+fitness are numerically equal in general --- they are structurally
+different formulas, a single integer fraction against an average of two
+ratios --- only that each computes correctly from the same underlying
+counts; forcing a false numeric equality between them was rejected in
+favor of this honest, weaker, but kernel-provable statement, a choice
+\S\ref{sec:correspondence-d1-history} below traces through the
+repository's own record of arriving at it.
+
+This obligation family is exactly the kind of claim
+\texttt{ValidObjection R}, introduced in Chapter~\ref{ch:mfact} as the
+closed inductive family of admissible objection forms against a
+certified release \(R\), is positioned to police once the correspondence
+rail's evidence is folded into a release manifest: an unaudited
+correspondence theorem, a missing extraction receipt, or an unauthorized
+axiom in the correspondence proof are each instances of the same
+objection shapes \texttt{ValidObjection} already enumerates for the
+\textsf{procint} corpus, not a separate objection vocabulary invented for
+this rail. The correspondence rail does not relax the admission
+discipline of Chapter~\ref{ch:mfact}; it applies the same discipline to a
+second class of obligation, one whose statements happen to quantify over
+extracted rather than hand-written declarations.
+
+\section{A Worked Case: the Honest D1 Restatement}
+\label{sec:correspondence-d1-history}
+
+The repository's own record of this obligation's history, preserved in
+\texttt{docs/HONEST\_D1\_STATEMENT.md}, is a documented instance of the
+guardrail this chapter is centrally about, and is worth reconstructing in
+some detail because it shows the failure mode being caught in the
+repository's own past, not merely described in the abstract.
+
+An early, placeholder version of the D1 theorem, appropriate to
+\texttt{DECLARED} status but not to any status beyond it, took the shape
+\begin{center}
+\small
+\begin{tabular}{l}
+\texttt{theorem token\_replay\_counts\_corr}\\
+\texttt{\quad(c : ProcInt.ReplayCounts) (num den : ℕ) (hden : den ≠ 0)}\\
+\texttt{\quad(hnum : (num : ℚ) / (den : ℚ) = ProcInt.fitness c) :}\\
+\texttt{\quad ProcInt.fitness c = (num : ℚ) / (den : ℚ) := by sorry}
+\end{tabular}
+\end{center}
+This statement is tautological given its own hypothesis: it \emph{assumes}
+the very equality between the extracted ratio and \textsf{procint}'s
+fitness that the obligation is supposed to establish, then proves the
+symmetric restatement of that assumption. As a declared placeholder ---
+marking that the obligation exists and has a target shape, before any
+extraction evidence is available --- this was an honest artifact of where
+the obligation stood. Shipped as a \texttt{STATED} or \texttt{PROVEN}
+claim about the actual correspondence between Rust and Lean fitness, it
+would not have been: proving a restatement of an assumed equality
+establishes nothing about whether the assumption itself holds of the
+extracted code.
+
+The repository's own record documents the honest correction made instead
+of promoting this placeholder. \texttt{docs/HONEST\_D1\_STATEMENT.md}
+records that, as of 2026-07-07, the obligation was rewritten to remove
+the false assumption and replace it with two source hypotheses tracing
+the extracted integer values back to \texttt{ReplayCounts} fields
+(\texttt{num = c.consumed - c.missing}, \texttt{den = c.produced +
+c.remaining}), with a conclusion stating both fitness formulas exactly ---
+\textsf{procint}'s Rozinat-and-van-der-Aalst-style average of two ratios,
+and the crate's single-fraction ratio --- as a conjunction, rather than
+asserting they are equal. At that point in the obligation's history, the
+document records its \texttt{verif:aeneasDecl} field, which is meant to
+name the actual extracted Lean declaration the theorem quantifies over,
+as the literal placeholder string \texttt{"TBD"}: the honest theorem
+statement had been written, but the binding to a real Charon/Aeneas
+extraction output had not yet been completed, so the theorem, however
+honestly stated, could not yet be said to be \emph{about} extracted code
+in the sense the rail requires. This is precisely the situation the
+guardrail set out in \texttt{AGENTS.md} names directly: ``a receipt field
+like \texttt{aeneasDecl: "TBD"} is itself a refusal signal (the binding
+was never completed) and must block PROVEN status, not ship alongside
+it.'' The document's own status table records the obligation, at that
+point, as \texttt{STATED} with its proof body a \texttt{sorry} --- an
+honest report of an incomplete binding, not a claim dressed up as more
+complete than it was.
+
+\section{Completing the Binding}
+\label{sec:correspondence-guard}
+
+The obligation as currently recorded in
+\texttt{packs/lean-math-pack/fragments/verif.ttl} no longer carries a
+\texttt{"TBD"} \texttt{aeneasDecl} field: the field now names
+\texttt{ReplayCounts}, the actual extracted structure, and the
+theorem's own statement has changed to match, quantifying directly over
+\texttt{Wasm4pmVerify.Generated.ReplayCounts} --- the Charon/Aeneas
+extraction target named by \texttt{verif:aeneasModule} as
+\texttt{Wasm4pmVerify.Generated} --- rather than over a bare
+\texttt{num}/\texttt{den} pair related to it only by hypothesis. The
+current theorem takes a value \texttt{gen} of the extracted
+\texttt{Wasm4pmVerify.Generated.ReplayCounts} type together with the two
+proof obligations \texttt{gen.missing.val ≤ gen.consumed.val} and
+\texttt{gen.remaining.val ≤ gen.produced.val}, applies the abstraction
+function \texttt{Wasm4pmVerify.toSpec} to obtain a \textsf{procint}
+\texttt{ReplayCounts} value \texttt{spec}, and concludes a conjunction:
+that the abstraction preserves the two proof-field witnesses
+(\texttt{spec.missing\_le = hm}, \texttt{spec.remaining\_le = hr}), that
+\textsf{procint}'s fitness at \texttt{spec} computes to the
+Rozinat-and-van-der-Aalst average-of-ratios formula, that the extracted
+\texttt{fitness\_num} computes via saturating subtraction over the
+extracted fields, and that the extracted \texttt{fitness\_den} either is
+undefined or computes to some explicit value. This is exactly the
+completed form of the honest statement
+\S\ref{sec:correspondence-d1-history} traces the repository toward: the
+extraction binding named \texttt{"TBD"} is filled in, the statement
+quantifies over the real extracted declaration rather than over
+independently hand-written stand-ins of the same shape, and the guardrail
+this section is built around --- that a correspondence obligation
+reported as proven must actually import and quantify over its extraction
+via a declared abstraction function, not merely resemble it --- is
+satisfied by construction rather than by assertion. The live evidence for
+this obligation's current status, computed by \texttt{scripts/build\_verif.py}
+from the observed charon/aeneas/lake evidence trail rather than typed by
+hand into this chapter, is
+\input{../paper/correspondence_status}
+This table is regenerated by the same builder each time the underlying
+evidence changes; this chapter reports its structure and history, not its
+current numeric content, which is authoritative only in the rendered
+fragment above.

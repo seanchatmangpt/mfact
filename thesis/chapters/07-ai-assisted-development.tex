@@ -1,0 +1,455 @@
+\chapter{AI-Assisted Formal Development}
+\label{ch:ai-development}
+
+The chapters up to this point have described a manufacturing pipeline
+whose central move is treating every candidate producer as untrusted
+with respect to the formal corpus, regardless of what that producer is.
+This chapter turns the same discipline onto the process that actually
+built the pipeline reported in this thesis: Claude Code and related
+language-model tooling were used, throughout the run described in
+Chapter~\ref{ch:procint} and Chapter~\ref{ch:empirical}, to generate
+candidate patches, proof sketches, ontology fragments, documentation
+drafts, and release metadata. This chapter asks what standing that
+assistance has, what structural guardrails exist to keep it from
+acquiring standing it has not earned, and what happened the one
+documented time a gap in those guardrails let a claim through anyway.
+It also surveys two unledgered hand-authored surfaces --
+\texttt{pylab/} and \texttt{procint/Playground/} -- that exist
+precisely so that AI-assisted and human experimentation has somewhere
+to happen \emph{without} implicitly claiming release standing, and
+closes with a case study in this project's own self-correction
+discipline: a five-rail audit that found a real gap and the mechanized
+scanner built in direct response to it.
+
+\section{The Untrusted-Producer Doctrine, Applied to Its Own Construction}
+\label{sec:ai-doctrine}
+
+paper/main.tex's disclosure of generative-AI tool use states the
+governing separation directly: language-model outputs generated during
+the manufacturing run were treated throughout as untrusted candidate
+artifacts, admitted into \textsf{procint} only when accepted by the Lean
+kernel, the sorry census, the axiom audit, schema validation against the
+\texttt{procint:} ontology, and the negative-fixture and release-gate
+checks developed in Chapter~\ref{ch:mfact} and Chapter~\ref{ch:procint}.
+No language-model output is part of the trusted base; that base is the
+Lean kernel itself, Mathlib and CSLib~\cite{mathlib2020,cslib2026} at
+their pinned revisions, and the \texttt{lake}/\texttt{ggen} toolchain.
+The author of the accompanying paper reviewed and accepts responsibility
+for all submitted content, code, citations, and claims in both the paper
+and the repository -- a human accountability statement that this
+chapter's discussion of automated tooling does not dilute: nothing
+described below is offered as a substitute for that review, only as
+machinery that makes the review's job more tractable and its omissions
+more detectable.
+
+This separation is not a precaution taken in the abstract. General-purpose
+language models have a documented Lean~3/Lean~4 syntax-confusion failure
+mode, generating deprecated Lean~3 constructs despite explicit Lean~4
+instructions, with GPT-4-class and substantially smaller models reported
+at comparable, low accuracy on the MiniF2F-Valid
+benchmark~\cite{langconfusion2025}. Two families of approach trade some
+of the resulting untrusted-candidate distance for a higher raw acceptance
+rate: fine-tuning a general-purpose model toward Lean~4
+specifically~\cite{theoremllama2024}, or pairing a language model with
+solver-guided refinement~\cite{apollo2025}. \textsf{mfact} does not take
+either trade in the run this thesis reports: every candidate, however
+produced, passes through the same kernel-and-audit gate regardless of
+its source's measured reliability, which is precisely why the framework
+developed in Chapter~\ref{ch:mfact} needed to be built at all rather than
+substituted for by a higher-precision generator. A more capable producer
+changes how often a candidate is admitted; it does not change whether
+admission, rather than production, is what confers standing.
+
+\section{Genetic Tactic Search: Kernel-Accept Rate as the Only Fitness Signal}
+\label{sec:ai-genetic-search}
+
+One concrete, currently exploratory piece of tooling makes the
+untrusted-producer doctrine's consequences for automated search
+explicit. \texttt{docs/genetic-tactic-search.md} records a
+genetic-programming loop, modeled on the TPOT2 pipeline-search paradigm
+of evolving and selecting structured candidates by mutation and
+crossover, applied here to sequences of Lean tactics rather than
+scikit-learn pipeline stages. At the time that design note was written,
+two declarations in \texttt{research/wfnet/obligations.toml} --- the
+crown-jewel short-circuit soundness equivalence and the unfolding
+correctness statement --- were both \texttt{status = "stated"}, and the
+note is explicit that closing either requires new lemmas, not
+recombination of existing tactics, so the search does not target them
+directly. The crown-jewel obligation has since been discharged (its
+current classification, \CrownJewelStatus, is rendered below); the
+warm-up strategy the design note describes remains apt regardless, and
+today applies to whatever open obligations remain, currently the single
+declaration discussed in
+Section~\ref{sec:mfact-boundary} of Chapter~\ref{ch:mfact}.
+
+\begin{center}
+\input{../paper/crown_jewel_status}
+\end{center}
+
+The search loop itself runs entirely outside Lean, in
+\texttt{scripts/genetic\_tactic\_search.py}: each candidate genome is a
+sequence of tactic calls drawn from a small, hand-vetted vocabulary ---
+\texttt{aesop}, \texttt{simp}, \texttt{omega}, \texttt{exact},
+\texttt{apply}, \texttt{rcases}, \texttt{constructor}, \texttt{intro},
+\texttt{decide} --- spliced into a scratch \texttt{.lean} file and
+checked with \texttt{lake env lean}. \textbf{Fitness is kernel
+accept/reject, a hard, computed signal, never an LLM self-report or a
+heuristic estimate}: nothing in this tool claims a proof exists without
+the Lean kernel confirming it, following the same computed-not-asserted
+invariant the release manifest itself obeys. A secondary, shaping term
+in the fitness function draws on the empirical finding that tactics
+conforming to expert proof patterns are more likely to advance a proof
+successfully than arbitrary tactic
+choices~\cite{tacticexpertalign2026}; this term only breaks ties among
+sequences that already type-check, or biases mutation toward more
+plausible candidates -- it never substitutes for the primary
+kernel-accept signal. This is a modest but real precedent: native
+LLM-tactic integration into Lean~4 has reached substantial per-step
+automation rates elsewhere (Lean Copilot reports 74.2\% step-level
+automation against a 40.1\% \texttt{aesop}-only
+baseline~\cite{leancopilot2024}), which motivates treating expert-pattern
+conformance as plausible signal, without licensing the tool to call an
+LLM directly for tactic proposal in its first version -- a restraint the
+design note attributes in part to the syntax-confusion risk already
+discussed in Section~\ref{sec:ai-doctrine}~\cite{langconfusion2025}.
+Closing genuinely new theorems, as opposed to routine proof steps,
+remains hard even for purpose-built systems: HyperTree Proof Search
+reports 82.6\% on Metamath with online
+training~\cite{hypertree2022}, and HOList's benchmark targets a large but
+bounded tactic library rather than open-ended lemma
+discovery~\cite{holist2019}. Both results are cited in the design note as
+the reason the tool's v1 target is warm-up lemmas in
+\texttt{procint/ProcInt/Playground/TacticSearchWarmup.lean}, not either
+crown-jewel-class obligation directly. Infrastructure the design note
+surveys as relevant context but does not depend on in v1 includes
+Lean4Lean, an independently verified Lean~4
+typechecker~\cite{lean4lean2024}; Lean-auto, an interface to external
+automated theorem provers~\cite{leanauto2025}; LeanExplore, a semantic
+and lexical search engine over Lean declarations useful for premise
+selection if the tool grows beyond a fixed vocabulary~\cite{leanexplore2025};
+and large synthetic Mathlib4-derived theorem corpora for training
+proof-synthesis models at scale~\cite{mathlib4dataset2025}.
+
+The candidate-to-admission boundary for this tool is stated as
+precisely as the rest of the pipeline demands. A kernel-accepted tactic
+sequence the script finds is a legitimate \texttt{Mfact.Candidate} with
+\texttt{producer = "genetic\_tactic\_search"}, in the sense of
+Section~\ref{sec:mfact-candidates}. Promotion to \texttt{Admitted} --
+flipping a TTL fragment's \texttt{status} from \texttt{"stated"} to
+\texttt{"proven"} and re-running the full \texttt{just render \&\& just
+build \&\& just audit \&\& just manifest \&\& just certify} chain -- is a
+human-reviewed, separate step; the script itself never writes to
+\texttt{packs/*/fragments/*.ttl}. Success for the search is defined
+narrowly, as \texttt{lake env lean <candidate-file>} exiting~0, logged
+verbatim; the design note is explicit that no claim of a
+\textsc{Stated}-to-\textsc{Proven} transition is made without the full
+\texttt{just check} / \texttt{just manifest \&\& just certify} chain
+passing on a candidate a human has promoted. The tool's own status
+line is honest about its place in the larger system: exploratory,
+off-ledger tooling, not part of the certified pipeline.
+
+\section{Unledgered Hand-Authored Surfaces: \texttt{pylab/} and \texttt{procint/Playground/}}
+\label{sec:ai-unledgered}
+
+Section~\ref{sec:mfact-ledger} of Chapter~\ref{ch:mfact} introduced the
+ledger law's two permanently excluded surfaces by name;
+this section develops why they exist and what governs them.
+\texttt{procint/Playground/} is the pre-existing hand-authored, unledgered
+Lean demonstration surface: worked, runnable instances of algorithms the
+repository cares about, proving that \textsf{procint}'s own formal
+content is actually exercised, not merely declared, without those
+demonstrations themselves acquiring release standing. \texttt{pylab/} is
+the Python-language counterpart, existing for the same reason but for
+tools that have no reasonable Lean formalization: AutoML pipeline
+search, the \texttt{pm4py} process-mining ecosystem, and LLM-to-PDDL
+generation. Both surfaces share a governance tier, differing only in
+language: neither is ggen-rendered, neither is ledgered in
+\texttt{.mfact/artifacts.toml}, and neither carries standing, counts, or
+certification data -- their absence from the ledger is, per AGENTS.md,
+correct by design, not an omission awaiting correction. \texttt{pylab/}
+is explicitly never added to \texttt{just build}, \texttt{just check},
+\texttt{just release}, or the artifact ledger; a failure inside it is an
+ordinary code-review issue, never \texttt{ARTIFACT\_DRIFT\_REFUSED} or a
+release-standing regression, and PYLAB-PRD-ARD-v26.7.7.md is explicit
+that nothing in \texttt{pylab/} is claimed to be semantically equivalent
+to, or a proof about, any Lean formalization in
+\texttt{procint/ProcInt/} -- the same restraint the repository applies to
+its own \texttt{ProcInt.Planning.Pddl} module, whose relationship to any
+future \texttt{pddl-plus-parser}-based Python experiment is, in the PRD
+document's own words, ``two independent things that happen to model
+similar concepts,'' not a proven-equivalent pair, absent an actual
+correspondence proof this repository does not currently attempt.
+
+\texttt{pylab/}'s tool inventory, researched and wired via \texttt{uv
+add} rather than direct \texttt{pyproject.toml} edits, comprises five
+research libraries plus the FastMCP server framework used to expose
+them. \textbf{TPOT2} (merged into mainline \texttt{tpot} v1.1.0)
+provides genetic-programming AutoML, evolving scikit-learn pipelines as
+DAGs under multi-objective selection, and is the direct model for the
+tactic-search loop of Section~\ref{sec:ai-genetic-search}. \textbf{pm4py}
+is the foundation process-mining library and the confirmed reference
+implementation of both OCEL~2.0 and Improved Token-Based Replay, serving
+as a dependency for the two libraries that follow it. \textbf{powl}
+provides POWL~v2 discovery and Petri-net/BPMN/POWL conversion, hard-
+depending on \texttt{pm4py}; at the time of the PRD document, a real
+version incompatibility existed between \texttt{powl==2.3.7} and
+\texttt{pm4py==2.2.32} (a missing internal \texttt{pm4py} module path
+\texttt{powl} expects), handled in \texttt{pylab/}'s wrapper by a lazy
+import and a structured error rather than a crash. \textbf{ocpa}
+supplies object-centric process analysis over OCEL~2.0 data, including
+sqlite import and object-centric Petri-net discovery. \textbf{pddl-plus-parser}
+parses PDDL+, a continuous/hybrid superset of the PDDL~3.1 fragment
+already covered by the repository's Rust \texttt{pddl} crate, and is
+retained as a genuinely complementary parser for benchmark sourcing and
+cross-validation rather than a duplicate.
+
+Two decisions recorded in the PRD document are worth treating as
+governance case studies in their own right, because both concern tools
+that were seriously considered and then not adopted, for reasons the
+document is careful to record so the decision is not re-litigated.
+\textbf{SpiffWorkflow} was considered as a live POWL~v2 execution engine
+and explicitly rejected: it is fundamentally BPMN-token-based, compiling
+sequence flows and gateway types into a \texttt{TaskSpec} tree, and
+feeding it a POWL partial-order block would require a lossy graph
+transformation, since arbitrary partial orders do not reduce cleanly to
+nested AND/XOR gateways without auxiliary dummy tasks. Since the
+sibling \texttt{bcinr-powl} crate already implements POWL~v2 execution
+natively with an exact op-kind semantics, there was no reason to adopt a
+lossy BPMN intermediary in its place. \textbf{l2p}, an LLM-to-PDDL tool
+generating domain and problem PDDL from natural language, was scoped in
+the PRD document's first revision as a candidate front end
+(\texttt{breed\_l2p}, with a planned FastMCP wrapper); the revision
+actually applied instead built a general-purpose FastMCP server exposing
+read-only Lean/Lake/\texttt{just} introspection and one tool per
+\texttt{pylab} library, superseding the l2p-specific wrapper. AGENTS.md's
+governing rule since goes further than that supersession: \texttt{l2p} is
+to be deprecated outright -- not installed, referenced, or used as a
+planning library -- a stricter position than the PRD document's own
+``decided: built with FastMCP'' framing for it. This chapter treats the
+later, stricter AGENTS.md rule as authoritative and the PRD document's
+earlier framing as superseded history, which is itself a small instance
+of the governance discipline this chapter is about: a decision recorded
+once is not immutable, and a later, more restrictive rule in AGENTS.md
+governs current and future work regardless of what an earlier planning
+document scoped.
+
+\section{The Standing-Guard Scanner: Read-Only Gap Detection}
+\label{sec:ai-standing-guard}
+
+\texttt{pylab/src/mpops/standing\_guard/server.py} is itself an instance
+of the \texttt{pylab/} surface just described: an unledgered,
+hand-authored FastMCP server, described in its own module docstring as
+``read-only integrity, correctness, and guardrail scan check tools.'' It
+exposes a single tool, \texttt{scan}, which runs eight independent gap
+checks over the repository and returns each finding as a typed record
+carrying a gap class, a severity, a refusal code, the path or target
+affected, observed evidence, an expected value, an actual value, and a
+recommended action -- itself a small, non-Lean echo of the typed-refusal
+discipline of Section~\ref{sec:mfact-candidates}. The eight checks, in
+the order the scanner runs them, are:
+
+\begin{enumerate}
+\item \textbf{Sorry theorem promotion.} The scanner parses every TTL
+  fragment under \texttt{packs/lean-math-pack/fragments/} plus
+  \texttt{ontology.ttl} for declarations whose \texttt{procint:status} is
+  \texttt{"proven"}, compiles a single scratch Lean file importing each
+  declaration's module and running \texttt{\#print axioms} on each
+  proven name via \texttt{lake env lean --stdin}, and flags
+  \texttt{SORRY\_THEOREM\_PROMOTED} if the kernel output for that name
+  mentions \texttt{sorryAx}, or if the name is unknown to the Lean
+  environment at all.
+\item \textbf{Ledger drift.} The scanner walks every artifact recorded
+  in \texttt{.mfact/artifacts.toml}, recomputes a BLAKE3 hash of the file
+  on disk (falling back to the \texttt{b3sum} CLI if a native hash
+  implementation is unavailable), and flags \texttt{ARTIFACT\_MISSING} if
+  the file is absent, \texttt{ARTIFACT\_DRIFT\_REFUSED} if the computed
+  hash disagrees with the ledgered hash, and \texttt{ORPHAN\_ARTIFACT\_REFUSED}
+  if \texttt{git ls-files} or \texttt{git status --porcelain} reports the
+  ledgered file as untracked.
+\item \textbf{Orphan artifact scan.} The scanner globs
+  \texttt{release/**/*.json} and \texttt{paper/**/*.tex} (excluding
+  \texttt{procint/Playground/**}, \texttt{pylab/**}, and
+  \texttt{paper/main.tex} itself) for files absent from the ledger, and
+  flags \texttt{ORPHAN\_ARTIFACT\_REFUSED} when such a file's content
+  looks standing-bearing -- containing any of \emph{proven}, \emph{stated},
+  \emph{certified}, \emph{sorry}, \emph{hash}, \emph{audit},
+  \emph{quadrature}, or \emph{verif} -- or when it already lives under
+  \texttt{release/} or \texttt{paper/} regardless of content.
+\item \textbf{regen-check coverage gap.} The scanner extracts the body of
+  the justfile's \texttt{regen-check:} recipe and checks, for each
+  ledgered artifact, whether its declared producer -- \texttt{ggen}, a
+  script path, or another named command -- is textually referenced
+  inside that recipe body, flagging \texttt{REGEN\_CHECK\_COVERAGE\_GAP}
+  as a warning when it is not: a producer that only runs under some
+  other, separately invoked recipe is a coverage gap in
+  \texttt{regen-check}, not a convenience.
+\item \textbf{Correspondence binding.} The scanner reads
+  \texttt{release/verif-receipt.json} and, for each recorded obligation,
+  flags \texttt{STALE\_PROOF\_BINDING} if its \texttt{aeneasDecl} field is
+  the literal string \texttt{"TBD"}, or if its status is
+  \texttt{PROVEN} but the corresponding Lean proof file under
+  \texttt{dist/verif/lean/.../Corr/} is missing, or its comment-stripped
+  body does not reference the declared \texttt{aeneasModule}. This check
+  is developed further, alongside the correspondence rail proper, in
+  Chapter~\ref{ch:correspondence}.
+\item \textbf{Tag ancestry.} The scanner runs \texttt{git rev-parse} and
+  \texttt{git merge-base --is-ancestor} to confirm that the tag
+  \texttt{v26.7.7-procint-certified} is an ancestor of \texttt{HEAD} and,
+  when \texttt{release-manifest.json} carries a \texttt{runIdentifier},
+  that the identifier is itself an ancestor of the tag, flagging
+  \texttt{TAG\_ANCESTRY\_FAIL} otherwise -- the mechanized instance of the
+  core-identity protection developed in
+  Section~\ref{sec:mfact-core-identity}.
+\item \textbf{Untracked ontology fragments.} The scanner globs
+  \texttt{packs/*/fragments/*.ttl} and flags
+  \texttt{UNTRACKED\_ONTOLOGY\_FRAGMENT} for any fragment file git
+  reports as untracked, closing the gap between ``committed source
+  tree'' and ``what \texttt{cat fragments/*.ttl} actually concatenates.''
+\item \textbf{Prose/paper consistency.} The scanner reads
+  \texttt{paper/main.tex} line by line and paragraph by paragraph. Two
+  rules are self-contained per line: a stale bare count of 145 or 318
+  (the pre-\TotalDecls totals reported in STANDING.md's own historical
+  ladder) flags \texttt{STALE\_PAPER\_PROSE\_COUNT}, and a phrase
+  matching ``Aeneas proves/verified/checked/certified'' flags a
+  \texttt{PROSE\_LINT\_VIOLATION} in favor of the more precise ``Aeneas
+  extracts'' and ``Lean proves.'' Three further rules are scoped to the
+  whole paragraph rather than a single line, to avoid false positives
+  from LaTeX's hand-wrapped line breaks splitting a trigger word from its
+  qualifier: a bare \emph{chain} or \emph{hash} must be accompanied
+  somewhere in the same paragraph by a qualifying phrase such as
+  ``receipt chain'' or ``content hash''; a bare \emph{prove}/\emph{proof}/
+  \emph{proven} must be accompanied by a formal-context word such as
+  \emph{Lean}, \emph{kernel}, or \emph{axiom}; and a totality adverb --
+  \emph{entirely}, \emph{completely}, \emph{fully}, \emph{absolutely},
+  \emph{always}, \emph{never} -- must be accompanied by an explicit scope
+  qualifier. Each unaccompanied occurrence is reported as a
+  \texttt{PROSE\_LINT\_VIOLATION} warning at the specific line the
+  trigger word occurs on.
+\end{enumerate}
+
+The scanner is deliberately read-only: it reports findings, it does not
+repair the repository, and its own existence inside \texttt{pylab/} means
+it is subject to exactly the same governance tier -- no standing claim,
+no ledger entry -- as the surface it audits. It is, in effect, the
+Section~\ref{sec:ai-doctrine} doctrine applied reflexively: automated
+tooling checking the pipeline's own discipline is itself treated as an
+untrusted, unledgered producer of findings, not as a certifying
+authority in its own right.
+
+\section{The 2026-07-07 Five-Rail Audit: A Case Study in Self-Correction}
+\label{sec:ai-guardrail-audit}
+
+The standing-guard scanner's eight checks did not arise from abstract
+risk analysis. A five-rail audit conducted on 2026-07-07, recorded in
+\texttt{pylab/docs/jira/26.7.7/tickets/ticket\_013\_v26\_7\_7\_gap\_audit.md},
+found that a sorry-backed theorem had been ledgered with
+\texttt{procint:status "proven"} in the TTL catalog, with no guard in
+place that would have caught it, alongside several related silent-drift
+failure modes. AGENTS.md records the resulting structural rules under a
+``Guardrails (post-v26.7.7-audit)'' heading, framed explicitly as making
+each specific failure mode \emph{structurally impossible}, not merely
+discouraged, and each rule maps onto one of the scanner checks of
+Section~\ref{sec:ai-standing-guard}:
+
+\begin{itemize}
+\item \textbf{No status promotion without a checked guard.} Any TTL
+  fragment setting \texttt{procint:status "proven"} on a theorem must
+  have a corresponding entry in \texttt{release/gates.json}, or an
+  equivalent builder check, that mechanically verifies \texttt{\#print
+  axioms} shows no \texttt{sorryAx} for that declaration; a status
+  literal in TTL alone is never sufficient, and a human or agent setting
+  \texttt{"proven"} without a passing mechanical check is
+  \texttt{STATED\_PROMOTED\_TO\_PROVEN}. This rule's mechanized instance
+  is the scanner's sorry-theorem-promotion check
+  (Section~\ref{sec:ai-standing-guard}, item~1). A named companion
+  vocabulary applies specifically to the five deliberately stated
+  workflow-countermodel declarations introduced in
+  Section~\ref{sec:mfact-boundary}: their status key is
+  \texttt{WFNET\_INFINITE\_TRANSITION\_COUNTERMODEL}, the guard that must
+  never let them be promoted is named \texttt{countermodel\_not\_promoted},
+  and the refusal that guard fires is \texttt{COUNTERMODEL\_PROMOTION\_REFUSED}
+  -- language that exists precisely so these five declarations are never
+  mistaken for unfinished work awaiting the same promotion path as an
+  ordinary stated theorem.
+\item \textbf{regen-check must not have untracked-file blind spots.}
+  \texttt{git diff --exit-code} only sees tracked files, so a ledgered
+  artifact's producer script must itself be invoked by
+  \texttt{regen-check}/\texttt{check}, not merely by some separate recipe
+  outside that chain; newly created ledgered artifacts must be
+  \texttt{git add}ed in the same commit that introduces them, and an
+  untracked ledgered file whose disk hash disagrees with
+  \texttt{.mfact/artifacts.toml} is \texttt{ORPHAN\_ARTIFACT\_REFUSED} and
+  must actually fire, not merely exist as a documented category. This
+  rule's mechanized instances are the scanner's ledger-drift and
+  regen-check-coverage-gap checks (Section~\ref{sec:ai-standing-guard},
+  items~2 and~4).
+\item \textbf{Correspondence theorems must reference their extraction.}
+  A correspondence obligation reported as \texttt{PROVEN} must have its
+  Lean statement actually import and quantify over the extracted or
+  generated declaration -- for example an Aeneas \texttt{Generated.*}
+  type -- via its declared abstraction function, not merely present a
+  same-shaped statement over hand-written types; a receipt field such as
+  \texttt{aeneasDecl: "TBD"} is itself a refusal signal that must block
+  \texttt{PROVEN} status rather than ship alongside it. This rule's
+  mechanized instance is the scanner's correspondence-binding check
+  (Section~\ref{sec:ai-standing-guard}, item~5), developed further in
+  Chapter~\ref{ch:correspondence}.
+\item \textbf{Tag ancestry is part of certification.}
+  \texttt{just certify}/\texttt{just release} must verify the release
+  commit is an ancestor of, or equal to, the certified git tag before
+  reporting \texttt{CERTIFIED\_RELEASE=PASS}; a tag that predates the
+  currently rendered artifacts is \texttt{RECEIPT\_RECURSION\_REFUSED},
+  not a historical curiosity to note and move past. This rule's
+  mechanized instance is the scanner's tag-ancestry check
+  (Section~\ref{sec:ai-standing-guard}, item~6), and its target property
+  is exactly the core-identity protection of
+  Section~\ref{sec:mfact-core-identity}.
+\item \textbf{New fragments feeding \texttt{ontology.ttl} must be
+  tracked before \texttt{regen-check} runs.} An untracked \texttt{.ttl}
+  file silently concatenated into generated output is a source-provenance
+  gap distinct from ordinary generated-artifact drift: it means the
+  generated output is not reproducible from the committed source tree at
+  all. This rule's mechanized instance is the scanner's untracked-fragment
+  check (Section~\ref{sec:ai-standing-guard}, item~7).
+\end{itemize}
+
+Read together, the audit and its resulting guardrails are the strongest
+evidence this thesis can offer, internal to the repository itself, that
+the untrusted-producer doctrine of Section~\ref{sec:ai-doctrine} is
+enforced rather than merely stated. The failure the audit found was
+real, not hypothetical: a status literal reached \texttt{"proven"} in a
+committed fragment without the mechanical check that should have gated
+it. The response was not a promise to be more careful, but a scanner
+whose sorry-theorem-promotion check, run against the repository today,
+would have caught exactly that failure, together with six further checks
+covering the related silent-drift modes the same audit identified. This
+chapter's account of AI-assisted development therefore closes where
+Chapter~\ref{ch:mfact} opened: standing is never inferred from the fact
+that a candidate -- human-authored, agent-authored, or produced by a
+genetic search over tactic sequences -- made contact with the
+repository. It is conferred only by an admission step that a later,
+independent check can re-run and, when it fails, is designed to catch.
+
+\section{Summary}
+
+This chapter examined the pipeline's own construction under the same
+discipline the pipeline enforces on \textsf{procint}'s mathematical
+content. Generative-AI tooling is treated, by explicit disclosure and by
+mechanism, as an untrusted candidate producer whose output enters the
+trusted base only through kernel admission, sorry census, axiom audit,
+and release-gate checks -- never through the fact of having been
+produced by a more or less capable model. The genetic tactic search tool
+instantiates this doctrine for automated proof search specifically:
+fitness is kernel accept/reject, never an LLM's self-report, and
+promotion from a found candidate to an admitted theorem remains a
+separate, human-reviewed step outside the search script's own reach.
+\texttt{pylab/} and \texttt{procint/Playground/} provide governed spaces
+for hand-authored experimentation -- including the tool inventory and
+the SpiffWorkflow and l2p decisions recorded above -- that never acquire
+release standing by virtue of existing. And the standing-guard scanner,
+together with the five-rail audit and its resulting AGENTS.md guardrails,
+is this project's own record of a real gap in that discipline and the
+mechanized, read-only check subsequently built to close it. Chapter~\ref{ch:evaluation}
+now turns to consolidating the quantitative release evidence this and
+earlier chapters have referenced piecemeal into a single evaluation
+treatment.

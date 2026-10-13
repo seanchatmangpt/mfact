@@ -5,25 +5,25 @@
 path = "dist/arxiv/arxiv_check_report.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:12bc06cb691f4bc20546c61e743a2c1b2c88e678f85e6312da1f77925647183a"
+content_hash = "blake3:5f5ac8ab30ae5f4251260400ca715f6cff4ac820bf5b12c486c9273c793f62cd"
 
 [[artifact]]
 path = "dist/arxiv/arxiv_manifest.toml"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:0eefb66bd2321c91e04d3a9dad68d49ece0e563cb467248a1511654ef882ce66"
+content_hash = "blake3:469fd0b601598f2a3d9a087a767bf41ed87a14790fb5b4d6f3e509448d2b46a0"
 
 [[artifact]]
 path = "dist/github-release/body.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:4220b99b0adb22dc0374ad36b3cc8bc181dd6a0f87bbd092808eccc16a6c1d90"
+content_hash = "blake3:5a55577c82b85f7dee7cfd90c4e03c057cafd3e7fb40c85794f21a2d77380fc6"
 
 [[artifact]]
 path = "dist/github-release/checksums.txt"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:d8b05892e7b3a3d65d82578b0dd9c97a244b802dda16d849b5381200438a7e87"
+content_hash = "blake3:77f2db905242cc03f13fe67c9e7a47ada9c83408d127d0c3f875173cba916a7c"
 
 [[artifact]]
 path = "dist/github-release/title.txt"
@@ -77,7 +77,7 @@ content_hash = "blake3:fd0f33f8c39ac1aed01e08af1d227b5a5bb807cb792beaecca44f892e
 path = "paper/release_macros.tex"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:6ab0d2baeb40aa4fe0f94acea96002ae3e4addd9649c1dd070d634584f8e8f90"
+content_hash = "blake3:b4565eb43d6f825298f17e9767b20c07e5424414a1fc205bb344cb112f0ad3fc"
 
 [[artifact]]
 path = "paper/replay_status.tex"
@@ -365,13 +365,13 @@ content_hash = "blake3:793d6cdb8dc269dd00bcea6ebe38456bd8784b4924733033eeaec8827
 path = "procint/ProcInt/Release/PostRelease.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:d8636babf611d75fb846a0ef85a06591e326654d297b7dd3bcf10d583ee2b985"
+content_hash = "blake3:38ea8b5e3f0f585722346cc9b9cef84a76ad3b04244e59d912fa49378ab51a14"
 
 [[artifact]]
 path = "procint/ProcInt/Release/Quadrature.lean"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:8f356164af1ba13b0503e2f231ebf52ba770f0838a7397c7b2bff8c8ce79406c"
+content_hash = "blake3:854a385c996df52ffc370e146e39e782d389ff1a884b4281079f0b6a24f15a07"
 
 [[artifact]]
 path = "procint/ProcInt/Tests.lean"
@@ -443,13 +443,13 @@ content_hash = "blake3:1a6de110391160e9bf9baf70566fdb4a7aa8001255720a29493367d45
 path = "release/FINAL_STATUS.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:d9cd2150a7197e5872f76af06ba4f0983712515019a063c5c71082dd338de188"
+content_hash = "blake3:290ab8581eacf54ea3a5f21fe0f48b0fd835e5e7093f7a3bee55820ec14f2c09"
 
 [[artifact]]
 path = "release/final_status.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/lean-math-pack"
-content_hash = "blake3:3a4645274c966ba4799e6f51c7d1258a827eec55ca9db8cc3a283f48f7c1eadf"
+content_hash = "blake3:306c6e1ff4e3fe6b7e4d8e5b9df388ee24a782966c583aaea8b1a796454651f8"
 
 [[artifact]]
 path = "release/publication_plan.json"
@@ -467,13 +467,13 @@ content_hash = "blake3:8e591aa31e7c391fa2e5e54be0f88f35681d74a4e1bae12863a80e350
 path = "release/quadrature.json"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:923662b0d7927320e936eed563ac53a1c72af51c3d404a47f157175f393c82b7"
+content_hash = "blake3:6a9c2785f07125dbd777f35210e96cf5558a9d66a0de08ce2ba6c81ba1f9c958"
 
 [[artifact]]
 path = "release/quadrature.md"
 producer = "ggen"
 pack = "/Users/sac/mfact/packs/quadrature-pack"
-content_hash = "blake3:61b5eb8eaf12f3166de3367a7b3a35d086c06e94da29d62c6560cd1353755ecf"
+content_hash = "blake3:981fe85dd3898b1dc455065006ad23e1399e2bd43c5e57dcf8f6bb8834ce23e7"
 
 [[artifact]]
 path = "release/replay_plan.json"
@@ -509,7 +509,7 @@ content_hash = "blake3:30097e5f032c17edf9caf945be4b1985c4a0b034e714a31a2a14ad347
 path = "release/release-manifest.json"
 producer = "scripts/build_manifest.py"
 sources = ["packs/lean-math-pack/ontology.ttl"]
-content_hash = "blake3:17dc5992ca3a999b42d3bbc1ee0fbd0e64e8a697feb64889ab8fcb01c05d0faf"
+content_hash = "blake3:84758648d87a1c58e48c867d640273fc89620011f59de8c9f1339d0c31014aca"
 
 [[artifact]]
 path = "release/gates.json"
@@ -521,7 +521,7 @@ content_hash = "blake3:d3f6c8e8a0179e73ef5455ed24c51eaf04669ae155c030ed24c794599
 path = "release/standing.env"
 producer = "gates (computed fields; quadrature fields merged from release/quadrature.env)"
 sources = ["release/release-manifest.json", "release/quadrature.env"]
-content_hash = "blake3:518b272cad87f4158b58bc38d617e166296c42e78ffb9dbdb9180f162b5851e0"
+content_hash = "blake3:3cdcbdaa47f02e1a5a0d59318a31e46064a0a3834377a6a64a3f30e189ef7e90"
 
 [[artifact]]
 path = "paper/correspondence_status.tex"
@@ -550,29 +550,11 @@ content_hash = "blake3:32d79a726b2fda9455d96a06370fb1235e2bb5ecf7d5f9a41ce08b9db
 [[artifact]]
 path = "rslab/receipts/praxis_graphlaw_benchmark_receipt.toml"
 producer = "rslab/scripts/collect_praxis_graphlaw.py"
-sources = ["rslab/experiments/praxis_graphlaw/raw/bench_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/bench_root.txt", "rslab/experiments/praxis_graphlaw/raw/test_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/test_e2e.txt", "rslab/experiments/praxis_graphlaw/raw/toolchain_context.txt"]
-content_hash = "blake3:f2b6bffad0176fb5fcf23b2535cb16d28acf1b9d16aa8b17918fe6cc2cf96d87"
+sources = ["rslab/experiments/praxis_graphlaw/raw/bench_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/bench_root.txt", "rslab/experiments/praxis_graphlaw/raw/test_graphlaw.txt", "rslab/experiments/praxis_graphlaw/raw/test_e2e.txt", "rslab/experiments/praxis_graphlaw/raw/toolchain_context.txt", "rslab/experiments/praxis_graphlaw/raw/command_log.txt", "rslab/experiments/praxis_graphlaw/experiment_meta.toml", "rslab/schemas/benchmark_result.schema.json"]
+content_hash = "blake3:ae29dda61371cfde4d909d4e191f89bb848968c87418f2ca518838452b6a9a5a"
 
 [[artifact]]
-path = "rslab/paper_fragments/rslab_praxis_graphlaw_summary.tex"
+path = "rslab/paper_fragments/praxis_graphlaw_evidence.tex"
 producer = "rslab/scripts/render_paper_fragments.py"
-sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml", "rslab/experiments/praxis_graphlaw/processed/results.json"]
-content_hash = "blake3:46172c73479cfd42bab10912604e874f24b96d9ef4e2d9efec3a14960b4c7078"
-
-[[artifact]]
-path = "rslab/paper_fragments/rslab_praxis_graphlaw_benchmarks.tex"
-producer = "rslab/scripts/render_paper_fragments.py"
-sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml", "rslab/experiments/praxis_graphlaw/processed/results.json"]
-content_hash = "blake3:46c1c011d9ecc7f7bba75ae03ab239a61b478ac19668ca436cd7e93d8d6b2b34"
-
-[[artifact]]
-path = "rslab/paper_fragments/rslab_praxis_graphlaw_profiles.tex"
-producer = "rslab/scripts/render_paper_fragments.py"
-sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml", "rslab/experiments/praxis_graphlaw/processed/results.json"]
-content_hash = "blake3:fbc7d7c796cae65b2d2235fe97bf76e4ae49dd664e4a149799fdbdbb4f10072c"
-
-[[artifact]]
-path = "rslab/paper_fragments/rslab_readiness.tex"
-producer = "rslab/scripts/render_paper_fragments.py"
-sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml", "rslab/experiments/praxis_graphlaw/processed/results.json"]
-content_hash = "blake3:447fd72822756937d5d8f2bc4ba44407ab0d1d40e2dafb50dd67a241f22434d2"
+sources = ["rslab/receipts/praxis_graphlaw_benchmark_receipt.toml"]
+content_hash = "blake3:4951fec94d80e46c8bfa16f9b19475f4ff2d756549097f345d42f7b60673cc78"
