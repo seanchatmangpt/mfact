@@ -41,6 +41,8 @@ ADMITTED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 # (module, fully-qualified theorem)
 TARGETS = [
     ("ProcInt.Petri.PN64Conservation", "ProcInt.PN64.pn64_sequence_conserves"),
+    ("ProcInt.Petri.PN64Conservation", "ProcInt.PN64.fire_law_equivalence_on_enabled"),
+    ("ProcInt.Petri.PN64Conservation", "ProcInt.PN64.fire_law_diverges_off_domain"),
     ("ProcInt.Petri.ForkChoice", "ProcInt.head_unique"),
     ("ProcInt.Petri.NetLaws", "ProcInt.StrataNet.mempool_capacity"),
     ("ProcInt.Petri.JournalReplay", "ProcInt.StrataStore.recover_after_crash"),

@@ -375,17 +375,18 @@ theorem t01_nonfresh_counterexample :
 
 /-! ## Honest BLOCKED finding: the tabulated t04 masks do not implement the canonical run
 
-The mask table (strata-pn64-pack ontology.ttl) tabulates t04 with pre 0x0008 and
-post 0x0008. Under the PN64 fire law this pair is a no-op self-loop, and the
-canonical RONR walk t01->t02->t03 leaves DEBATABLE (bit 3) clear, so the tabulated
-t04 is not even enabled at m3. The sequence proofs above therefore use the
-semantically corrected t04 masks pre 0x0010, post 0x0008 ("consume
-AMENDMENT_PENDING, re-produce DEBATABLE"), which is what the transition's label
-requires. Both facts are proved below.
+The mask table originally tabulated t04 with pre 0x0008 and post 0x0008. Under
+the PN64 fire law that pair is a no-op self-loop, and the canonical RONR walk
+t01->t02->t03 leaves DEBATABLE (bit 3) clear, so it was not even enabled at m3:
+the canonical run was not a legal firing sequence. The mask table has been
+corrected to pre 0x0010, post 0x0008 ("consume AMENDMENT_PENDING, re-produce
+DEBATABLE"), which is what the transition's label requires; the Lean module and
+ontology.ttl now agree. The counterexamples below are proved against the
+original tabulation and are the falsifiers that forced the correction.
 -/
 
-/-- This module carries the corrected t04 masks (pre 0x0010, post 0x0008);
-ontology.ttl still tabulates (0x0008, 0x0008) — a divergence this finding records. -/
+/-- The corrected t04 masks, matching the corrected ontology.ttl
+(pre 0x0010 = AMENDMENT_PENDING, post 0x0008 = DEBATABLE). -/
 theorem t04_corrected_masks : t04 = (0x0010, 0x0008) := rfl
 
 /-- The tabulated t04 is a self-loop: at any enabled marking (e.g. 0x008C) the
@@ -402,6 +403,47 @@ sequence of the mask table as written. This is a real defect in the mask table,
 not in the fire law. -/
 theorem t04_tabulated_not_enabled_at_m3 :
     (Fire 0x0008 0x0010 (Fire 0x0002 0x000C (Fire 0x0081 0x0082 0x0081))) &&& 0x0008 = 0 := by
+  decide
+
+/-! ## Fire-law equivalence on the enabled domain (strata pn64 pack)
+
+The pn64 pack states the fire law in two forms: the xor form
+`m' = m ^ pre | post` (`Fire` above) and the clear-then-set form
+`m' = (m & !pre) | post`. They agree exactly on the enabled domain
+`(m & pre) = pre`; off-domain they diverge (counterexample below).
+
+Core Lean has no `Complement Nat`, so the clear-then-set form expresses
+`m & !pre` as `m ^ (m &&& pre)`, which is bitwise `m & !pre` at every bit.
+-/
+
+/-- Clear-then-set fire law: `m' = (m & !pre) | post`. The expression
+`m ^ (m &&& pre)` is bitwise `m & !pre` (per bit: `m_i && !pre_i`), since
+core Lean has no infinite Nat complement operator. -/
+def ClearThenSet (pre post m : Nat) : Nat :=
+  (m &&& pre ^^^ m) ||| post
+
+/-- **Fire-law equivalence on the enabled domain.** On the enabled domain
+`(m & pre) = pre` the xor form `m' = (m ^ pre) | post` and the clear-then-set
+form `m' = (m & !pre) | post` produce the same marking. The hypothesis is
+load-bearing: it identifies `pre` with `m & pre` inside the xor, after which
+the two forms differ only by the commutativity of xor. -/
+theorem fire_law_equivalence_on_enabled (pre post m : Nat) (h : Enabled pre m) :
+    Fire pre post m = ClearThenSet pre post m := by
+  show (m ^^^ pre) ||| post = ((m &&& pre) ^^^ m) ||| post
+  rw [Nat.xor_comm, h]
+
+/-- **Divergence witness off the enabled domain.** At `m = 0` with
+`pre = 1, post = 0` the transition is NOT enabled (`0 & 1 = 0 ≠ 1`), and the
+two fire laws disagree: the xor form fabricates a token in the pre place,
+the clear-then-set form does not. This is why the equivalence theorem must
+carry the enabledness hypothesis. -/
+theorem fire_law_diverges_off_domain :
+    ¬Enabled 1 0 ∧
+    Fire 1 0 0 = 1 ∧
+    ClearThenSet 1 0 0 = 0 ∧
+    Fire 1 0 0 ≠ ClearThenSet 1 0 0 := by
+  refine ⟨?_, rfl, rfl, by decide⟩
+  show ¬(0 &&& 1 = 1)
   decide
 
 end ProcInt.PN64
