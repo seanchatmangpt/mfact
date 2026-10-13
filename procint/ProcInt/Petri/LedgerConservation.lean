@@ -17,29 +17,33 @@
 --     there is no <= / >= tolerance anywhere in the template's sum gate. In the Nat
 --     model the u128 overflow half of the gate is vacuous (no overflow); this is an
 --     honest modeling gap, not a law mismatch.
---   Gate 4 (funds + capacity, against a shadow copy): per input line
---     `cur = self.balance(&id)` (reads the ORIGINAL ledger, not the shadow);
---     `cur < amt` -> InsufficientFunds; outputs add onto the shadow with checked
---     adds; capacity gate counts new accounts. Capacity and u128 overflow are
---     vacuous in the Nat model (an honest modeling gap); only the account-id
---     range half of the capacity gate is modeled, as `id < MAX_ACCOUNTS`.
---   Commit: inputs deducted into the shadow (OVERWRITE per line, each line's `cur`
---     read from the original), outputs added onto the shadow; zero-balance
---     non-output accounts are removed (irrelevant to the sum).
+--   Gate 4 (funds + capacity, against a shadow copy): FIXED (commit 1d16f2472,
+--     DUPLICATE-INPUT DEBIT ACCUMULATION LAW): same-account input rows are first
+--     ACCUMULATED into one per-account debit (`debits: BTreeMap` + checked_add,
+--     overflow refused), then each accumulated debit is checked once against the
+--     ORIGINAL balance (`cur < debit` -> InsufficientFunds) and applied once to
+--     the shadow; outputs add onto the shadow with checked adds; capacity gate
+--     counts new accounts. Capacity and u128 overflow are vacuous in the Nat
+--     model (an honest modeling gap); only the account-id range half of the
+--     capacity gate is modeled, as `id < MAX_ACCOUNTS`.
+--   Commit: accumulated debits deducted into the shadow (one deduction per
+--     account), outputs added onto the shadow; zero-balance non-output accounts
+--     are removed (irrelevant to the sum).
 --
--- ## LAW MISMATCH FOUND (real defect in the template, proved below)
+-- ## LAW MISMATCH FOUND, then FIXED (history retained below)
 --
--- The template reads each input line's `cur` from `self` (the original ledger) and
--- then OVERWRITES `shadow[id] = cur - amt`. If one tx lists the SAME input account
--- on two lines, the second line's insert overwrites the first line's deduction,
--- while Gate 3's `sum_in` still counts BOTH amounts and Gate 4 funds each line
--- against the original (unspent) balance. Net effect: value is CREATED. Proved
--- counterexample: s0 = [10, 0], inputs [(0,5),(0,5)], outputs [(1,10)] — every gate
--- passes, sum 10 = 10, but the committed state sums to 15, not 10. The main theorem
--- (`strata_ledger_total_value_conserved`) therefore carries the honest side
--- condition that the tx's input accounts are DISTINCT; under that condition the
--- template's overwrite-from-original coincides with a sequential deduction fold
--- (`deductFold`) and the conservation law holds.
+-- The OLD template read each input line's `cur` from `self` (the original ledger)
+-- and then OVERWROTE `shadow[id] = cur - amt`. If one tx listed the SAME input
+-- account on two lines, the second line's insert overwrote the first line's
+-- deduction, while Gate 3's `sum_in` still counted BOTH amounts. Net effect: value
+-- was CREATED (counterexample: s0 = [10, 0], inputs [(0,5),(0,5)], outputs
+-- [(1,10)] — committed state summed to 15, not 10). The main theorem then carried
+-- a NoDupIds side condition. The template was FIXED in commit 1d16f2472 (debit-
+-- delta accumulation): Σ conservation now holds UNCONDITIONALLY over every
+-- gate-passing tx, and the old counterexample tx admits with Σ conserved (or
+-- refuses when the accumulated debit exceeds the balance). The old per-row-read
+-- model and its value-creation counterexample are retained below as history
+-- (`duplicate_input_created_value_under_per_row_read`), modeled by `applyIns`.
 
 /-! # ProcInt.StrataLedger
 
@@ -48,16 +52,22 @@ Total-value conservation for strata-ledger-pack, modeled from the real
 
 Results:
 
-1. **Main theorem.** If a transaction's input accounts are distinct, then any
-   admitted transition (`Apply tx s = some s'`) conserves the total balance:
-   `Σ s' = Σ s`.
+1. **Main theorem (unconditional).** Every admitted transition
+   (`Apply tx s = some s'`) conserves the total balance: `Σ s' = Σ s`. No
+   NoDupIds side condition: the fixed template accumulates same-account input
+   rows into one per-account debit before the single balance check (commit
+   1d16f2472), and `Apply` mirrors that fold.
 
 2. **Refusal witnesses.** A value-changing tx violates the strict-equality sum
-   gate and is refused (`Apply = none`); the zero-nonce tx is refused.
+   gate and is refused (`Apply = none`); the zero-nonce tx is refused; the
+   historical duplicate-input counterexample tx with an underfunded accumulated
+   debit is refused.
 
-3. **Honest negative result (law mismatch, L34).** The template's masked-shadow
-   commit does NOT conserve total value for transactions with a duplicated input
-   account: value is created. Concrete decided counterexample proved.
+3. **History (law mismatch, L34; FIXED in 1d16f2472).** The OLD per-row-read
+   shadow commit (`applyIns`) did NOT conserve total value for transactions with
+   a duplicated input account: value was created. Concrete decided counterexample
+   retained (`duplicate_input_created_value_under_per_row_read`), plus the
+   post-fix witness `duplicate_input_now_admits_and_conserves`.
 -/
 
 namespace ProcInt.StrataLedger
@@ -177,27 +187,138 @@ the `Bal` model carries no per-account nonce store, so `nonce = 0` is refused. -
 def nonceOk (tx : Tx) : Bool :=
   tx.nonce != 0
 
-/-- Gate 4 (funds half): every input amount is covered by the ORIGINAL balance of
-its account (the template reads `cur = self.balance(&id)`, not the shadow). -/
+/-- First projections of a pair list are pairwise distinct (`NoDup` on the input
+account ids). Defined locally to keep the module core-Lean-only. Note: POST-FIX
+this is a shape fact about the accumulated debit map (BTreeMap keys), not a side
+condition on the theorem. -/
+def NoDupIds : List Nat → Prop
+  | [] => True
+  | a :: l => a ∉ l ∧ NoDupIds l
+
+/-- DUPLICATE-INPUT DEBIT ACCUMULATION (commit 1d16f2472): merge one `(id, amt)`
+row into the per-account debit map — add onto an existing entry, or append a new
+one. Mirrors `debits: BTreeMap<AccountId, u128>` + `checked_add` (the u128
+overflow refusal is vacuous in the Nat model). -/
+def updAcc : List (Nat × Nat) → Nat → Nat → List (Nat × Nat)
+  | [], id, a => [(id, a)]
+  | (id', a') :: rest, id, a =>
+      if id' = id then (id', a' + a) :: rest else (id', a') :: updAcc rest id a
+
+/-- Accumulate same-account input rows into one per-account debit list (the
+template's `debits` BTreeMap fold over `tx.inputs`). -/
+def accDebits : List (Nat × Nat) → List (Nat × Nat) → List (Nat × Nat)
+  | acc, [] => acc
+  | acc, (id, a) :: ins => accDebits (updAcc acc id a) ins
+
+/-- Ground fact: merging a row adds exactly its amount to the debit sum. -/
+theorem updAcc_sum : ∀ (acc : List (Nat × Nat)) (id a : Nat),
+    sumAmts (updAcc acc id a) = sumAmts acc + a := by
+  intro acc id a
+  induction acc with
+  | nil => simp [updAcc, sumAmts]
+  | cons p rest ih =>
+      obtain ⟨id', a'⟩ := p
+      by_cases h : id' = id
+      · rw [updAcc, if_pos h]
+        simp only [sumAmts]
+        omega
+      · rw [updAcc, if_neg h]
+        simp only [sumAmts]
+        rw [ih]
+        omega
+
+/-- Ground fact: accumulation preserves the amount sum. -/
+theorem accDebits_sum : ∀ (ins acc : List (Nat × Nat)),
+    sumAmts (accDebits acc ins) = sumAmts acc + sumAmts ins := by
+  intro ins
+  induction ins with
+  | nil => intro acc; simp [accDebits, sumAmts]
+  | cons p rest ih =>
+      intro acc
+      obtain ⟨id, a⟩ := p
+      have h := updAcc_sum acc id a
+      simp only [accDebits, sumAmts]
+      rw [ih]
+      omega
+
+/-- Ground fact: a merged row keeps the key list if the key is present, else
+appends it at the end (the BTreeMap fold's discovery order). -/
+theorem updAcc_keys : ∀ (acc : List (Nat × Nat)) (id a : Nat),
+    (updAcc acc id a).map Prod.fst =
+      if id ∈ acc.map Prod.fst then acc.map Prod.fst
+      else acc.map Prod.fst ++ [id] := by
+  intro acc id a
+  induction acc with
+  | nil => rfl
+  | cons p rest ih =>
+      obtain ⟨id', a'⟩ := p
+      by_cases h : id' = id
+      · subst h
+        simp [updAcc]
+      · simp only [updAcc, if_neg h, List.map_cons]
+        by_cases hm : id ∈ rest.map Prod.fst
+        · rw [ih, if_pos hm, if_pos (by simp [hm])]
+        · have h2 : ¬(id ∈ id' :: rest.map Prod.fst) := by
+            intro hc
+            rcases List.mem_cons.mp hc with hc1 | hc2
+            · exact h hc1.symm
+            · exact hm hc2
+          rw [ih, if_neg hm, if_neg h2]
+          simp [List.cons_append]
+
+/-- Ground fact: appending a fresh key preserves key distinctness. -/
+theorem NoDupIds_append : ∀ (l : List Nat) (x : Nat),
+    NoDupIds l → x ∉ l → NoDupIds (l ++ [x]) := by
+  intro l
+  induction l with
+  | nil =>
+      intro x _ _
+      show x ∉ ([] : List Nat) ∧ NoDupIds ([] : List Nat)
+      exact ⟨by simp, by simp [NoDupIds]⟩
+  | cons y ys ih =>
+      intro x h h0
+      obtain ⟨hnd, hrec⟩ : y ∉ ys ∧ NoDupIds ys := h
+      have hrest := ih x hrec (fun hc => h0 (List.mem_cons_of_mem _ hc))
+      refine ⟨?_, hrest⟩
+      intro hc
+      rcases List.mem_append.mp hc with h1 | h1
+      · exact hnd h1
+      · rcases List.mem_singleton.mp h1 with h1'
+        exact h0 (by rw [h1']; exact List.mem_cons_self ..)
+
+/-- Ground fact: the accumulated debit list has distinct keys (BTreeMap shape). -/
+theorem accDebits_nodup : ∀ (ins acc : List (Nat × Nat)),
+    NoDupIds (acc.map Prod.fst) →
+    NoDupIds ((accDebits acc ins).map Prod.fst) := by
+  intro ins
+  induction ins with
+  | nil => intro acc h; exact h
+  | cons p rest ih =>
+      intro acc h
+      obtain ⟨id, a⟩ := p
+      have hkeys := updAcc_keys acc id a
+      have hupd : NoDupIds ((updAcc acc id a).map Prod.fst) := by
+        rw [hkeys]
+        split
+        · exact h
+        · rename_i h0
+          exact NoDupIds_append _ _ h h0
+      exact ih _ hupd
+
+/-- Gate 4 (funds half, POST-FIX): every ACCUMULATED per-account debit is covered
+by the ORIGINAL balance of its account (one check per account, before any
+mutation — the template's `for (id, debit) in debits.iter()` loop). -/
 def fundsOk (tx : Tx) (s : Bal) : Bool :=
-  tx.inputs.all fun p => getB s p.1 ≥ p.2
+  (accDebits [] tx.inputs).all fun p => getB s p.1 ≥ p.2
 
 /-- Gate 3 (conservation): `sum_in = sum_out` **exactly** (strict equality in the
 template: `if sum_in != sum_out { return Err(LedgerRefusal::Conservation) }`). -/
 def consOk (tx : Tx) : Bool :=
   sumAmts tx.inputs == sumAmts tx.outputs
 
-/-- First projections of a pair list are pairwise distinct (`NoDup` on the input
-account ids). Defined locally to keep the module core-Lean-only. -/
-def NoDupIds : List Nat → Prop
-  | [] => True
-  | a :: l => a ∉ l ∧ NoDupIds l
-
-/-- Sequential deduction fold. Under distinct input accounts this coincides with
-the template's overwrite-from-original shadow commit (each input account is touched
-once, so "read the original" and "read the evolving shadow" agree); the
-`duplicate_input_creates_value` counterexample below exhibits the case where they
-diverge. -/
+/-- Sequential deduction fold over the ACCUMULATED per-account debit list
+(post-fix commit sequence). Each accumulated debit is deducted once against the
+original balance; distinct keys make the point updates independent. -/
 def deductFold (s : Bal) : List (Nat × Nat) → Bal
   | [] => s
   | (id, a) :: ins => deductFold (setB s id (getB s id - a)) ins
@@ -215,18 +336,20 @@ def applyIns (s0 shadow : Bal) : List (Nat × Nat) → Bal
   | [] => shadow
   | (id, a) :: ins => applyIns s0 (setB shadow id (getB s0 id - a)) ins
 
-/-- `Apply` mirrors `apply_transition`: every gate runs BEFORE any balance mutates
-(masked commit); on refusal return `none` and the state is untouched. -/
+/-- `Apply` mirrors `apply_transition` (POST-FIX, commit 1d16f2472): every gate
+runs BEFORE any balance mutates (masked commit); same-account input rows are
+accumulated into one per-account debit (`accDebits`) before the single funds
+check; on refusal return `none` and the state is untouched. -/
 def Apply (tx : Tx) (s : Bal) : Option Bal :=
   if nonceOk tx && rangeOk tx && fundsOk tx s && consOk tx then
-    some (addFold (deductFold s tx.inputs) tx.outputs)
+    some (addFold (deductFold s (accDebits [] tx.inputs)) tx.outputs)
   else
     none
 
-/-! ## Conservation of the deduction fold (distinct inputs) -/
+/-! ## Conservation of the deduction fold over accumulated debits -/
 
-/-- The deduction fold removes exactly the sum of its input amounts, provided each
-input account is touched once (NoDupIds) and every amount was funded. -/
+/-- The deduction fold removes exactly the sum of its debit amounts, provided the
+debit keys are distinct (true of the accumulated map) and every debit was funded. -/
 theorem deductFold_sum : ∀ (ins : List (Nat × Nat)) (s : Bal),
     NoDupIds (ins.map Prod.fst) →
     (∀ p ∈ ins, getB s p.1 ≥ p.2) →
@@ -273,11 +396,14 @@ theorem addFold_sum : ∀ (outs : List (Nat × Nat)) (s : Bal),
 
 /-! ## The main theorem -/
 
-/-- **Main theorem (strata-ledger total-value conservation).** If the tx's input
-accounts are distinct, every admitted transition conserves total value:
-`Apply tx s = some s' → Σ s' = Σ s`. -/
+/-- **Main theorem (strata-ledger total-value conservation, UNCONDITIONAL).**
+Every admitted transition conserves total value: `Apply tx s = some s' → Σ s' =
+Σ s`. No side condition on the tx's input accounts: the fixed template
+accumulates same-account input rows into one per-account debit before the single
+balance check (commit 1d16f2472, DUPLICATE-INPUT DEBIT ACCUMULATION LAW), and
+accumulation preserves both the amount sum (`accDebits_sum`) and key distinctness
+(`accDebits_nodup`). -/
 theorem strata_ledger_total_value_conserved (tx : Tx) (s s' : Bal)
-    (hnd : NoDupIds (tx.inputs.map Prod.fst))
     (h : Apply tx s = some s') : balSum s' = balSum s := by
   have hcond : (nonceOk tx && rangeOk tx && fundsOk tx s && consOk tx) = true := by
     cases hb : (nonceOk tx && rangeOk tx && fundsOk tx s && consOk tx) with
@@ -293,17 +419,23 @@ theorem strata_ledger_total_value_conserved (tx : Tx) (s s' : Bal)
   have hcon : sumAmts tx.inputs = sumAmts tx.outputs := by
     simp at hcons'
     exact hcons'
-  have hfunds' : (tx.inputs.all fun q => getB s q.1 ≥ q.2) = true := h2.2
-  have hfunds : ∀ p ∈ tx.inputs, getB s p.1 ≥ p.2 := fun p hp =>
+  have hfunds' : ((accDebits [] tx.inputs).all fun q => getB s q.1 ≥ q.2) = true := h2.2
+  have hfunds : ∀ p ∈ accDebits [] tx.inputs, getB s p.1 ≥ p.2 := fun p hp =>
     of_decide_eq_true (List.all_eq_true.mp hfunds' p hp)
-  have hs' : s' = addFold (deductFold s tx.inputs) tx.outputs := by
+  have hnd : NoDupIds ((accDebits [] tx.inputs).map Prod.fst) :=
+    accDebits_nodup tx.inputs [] (by simp [NoDupIds])
+  have hsum : sumAmts (accDebits [] tx.inputs) = sumAmts tx.inputs := by
+    have := accDebits_sum tx.inputs []
+    simpa [sumAmts] using this
+  have hs' : s' = addFold (deductFold s (accDebits [] tx.inputs)) tx.outputs := by
     simp only [Apply, hcond] at h
     exact Option.some.inj h.symm
   calc balSum s'
-        = balSum (addFold (deductFold s tx.inputs) tx.outputs) := by rw [hs']
-      _ = balSum (deductFold s tx.inputs) + sumAmts tx.outputs := addFold_sum _ _
+        = balSum (addFold (deductFold s (accDebits [] tx.inputs)) tx.outputs) := by rw [hs']
+      _ = balSum (deductFold s (accDebits [] tx.inputs)) + sumAmts tx.outputs :=
+          addFold_sum _ _
       _ = balSum s := by
-          have hd := deductFold_sum tx.inputs s hnd hfunds
+          have hd := deductFold_sum (accDebits [] tx.inputs) s hnd hfunds
           omega
 
 /-! ## Refusal witnesses: the strict-equality sum gate and the nonce valve -/
@@ -320,35 +452,54 @@ theorem apply_refuses_zero_nonce :
     (Apply { inputs := [(0, 2)], outputs := [(1, 2)], nonce := 0 } [7, 0]) = none := by
   rfl
 
-/-! ## Honest negative result: duplicated input accounts CREATE value (law mismatch)
+/-! ## History: duplicated input accounts CREATED value under the old per-row
+read (law mismatch, FIXED in commit 1d16f2472)
 
-This models the template commit FAITHFULLY (`applyIns`: each line reads `cur` from
+`applyIns` models the OLD template commit faithfully (each line reads `cur` from
 the original ledger and overwrites the shadow). Two lines at the same account: the
 second insert erases the first deduction, while Gate 3 counts both amounts in
-`sum_in` and Gate 4 funds each line against the untouched original balance. -/
+`sum_in`. The template was fixed by the DUPLICATE-INPUT DEBIT ACCUMULATION LAW
+(commit 1d16f2472): same-account rows fold into one per-account debit before the
+single balance check, so this model no longer matches the shipped projection —
+it is retained only as the historical counterexample. -/
 
-/-- **Counterexample (value creation).** `s0 = [10, 0]`, inputs `[(0,5),(0,5)]`,
-outputs `[(1,10)]`. All gates pass (`sum_in = 10 = sum_out`; each line's `cur = 10
-≥ 5`), the transition is ADMITTED, yet the committed state sums to 15, not 10:
-account 0 was deducted only once. This is a real defect in
-`ledger_state.rs.tera::apply_transition` (no per-tx input-account dedup), not in
-the conservation law. -/
-theorem duplicate_input_creates_value :
+/-- **Counterexample (value creation, OLD model only).** `s0 = [10, 0]`, inputs
+`[(0,5),(0,5)]`, outputs `[(1,10)]`. All gates pass (`sum_in = 10 = sum_out`),
+the transition is ADMITTED under the old per-row-read commit, yet the committed
+state sums to 15, not 10: account 0 was deducted only once. This defect in
+`ledger_state.rs.tera::apply_transition` was FIXED in commit 1d16f2472 (debit-
+delta accumulation); see `duplicate_input_now_admits_and_conserves` below for the
+post-fix behavior of the exact same tx under the current `Apply`. -/
+theorem duplicate_input_created_value_under_per_row_read :
     balSum (addFold (applyIns [10, 0] [10, 0] [(0, 5), (0, 5)]) [(1, 10)]) = 15 ∧
     balSum ([10, 0] : List Nat) = 10 ∧
     balSum (addFold (applyIns [10, 0] [10, 0] [(0, 5), (0, 5)]) [(1, 10)])
       ≠ balSum ([10, 0] : List Nat) := by
   refine ⟨by decide, rfl, by decide⟩
 
-/-- The same tx passes the full faithful gate sequence: the nonce is fresh, all ids
-are in range, every input line is funded against the original state, and the
-masked sums are equal (10 = 10) — so the gates refuse nothing while value is
-created. -/
+/-- The exact historical counterexample tx passes every gate of the FIXED model
+too: nonce fresh, ids in range, the ACCUMULATED debit (0,10) is funded by the
+balance-10 account, masked sums equal (10 = 10). -/
 theorem duplicate_input_tx_passes_all_gates :
     nonceOk { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } = true ∧
     rangeOk { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } = true ∧
     fundsOk { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } [10, 0] = true ∧
     consOk { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } = true := by
   refine ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ## Post-fix witness: the duplicate-input tx now admits AND conserves -/
+
+/-- **The exact counterexample tx, post-fix (commit 1d16f2472).** With balance 10
+the duplicate-input tx `inputs [(0,5),(0,5)], outputs [(1,10)]` now ADMITS and the
+result state is `[0, 10]` — Σ conserved (10 = 10), no value minted. With balance 5
+the ACCUMULATED debit (0,10) exceeds the balance, so the single funds check
+refuses (`Apply = none`). The unconditional main theorem then gives conservation
+for the admitting case directly. -/
+theorem duplicate_input_now_admits_and_conserves :
+    (Apply { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } [10, 0])
+      = some [0, 10] ∧
+    (Apply { inputs := [(0, 5), (0, 5)], outputs := [(1, 10)], nonce := 1 } [5, 0])
+      = none := by
+  refine ⟨rfl, rfl⟩
 
 end ProcInt.StrataLedger
