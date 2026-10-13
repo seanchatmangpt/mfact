@@ -29,14 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: python3 scripts/test_verif_codegen_contract.py
 
   build-ggen:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: seanchatmangpt/ggen
           ref: ed625aeecce7c412db4a022e67cda5bdc6068083
@@ -44,7 +44,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2026-06-22
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -57,7 +57,7 @@ jobs:
             cargo +nightly-2026-06-22 build --manifest-path .tools/ggen/Cargo.toml -p ggen-cli-lib --bin ggen
           fi
           .tools/ggen/target/debug/ggen --version
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pinned-ggen-cli
           path: .tools/ggen/target/debug/ggen
@@ -67,8 +67,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           name: pinned-ggen-cli
           path: .tools/ggen-bin
@@ -94,11 +94,11 @@ jobs:
           test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Generated/Wasm4pmCore.lean
           test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Abs.lean
           test -f /tmp/wasm4pm/verify/lean/Wasm4pmVerify/Corr/TokenReplayCounts.lean
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wasm4pm-verifier-projection
           path: dist/verif/lean/Wasm4pmVerify
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ggen-lock-candidate
           path: ggen.lock

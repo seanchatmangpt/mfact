@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Consume bridge artifact
         id: bridge
-        uses: leanprover-community/privilege-escalation-bridge/consume@f5dfe313a79647c07315b451b2dc2a81a161a50d # v1.2.0
+        uses: leanprover-community/privilege-escalation-bridge/consume@120e98bbb1e9438be8973be645ef67e9cddc39ba # v2.1.0
         with:
           artifact: workflow-data
           source_workflow: Add "ready-to-merge" and "delegated" label
@@ -40,7 +40,7 @@ jobs:
       - name: Download legacy artifact (fallback)
         id: download-legacy-artifact
         if: ${{ steps.bridge.outputs.pr_number == '' }}
-        uses: dawidd6/action-download-artifact@b6e2e70617bc3265edd6dab6c906732b2f1ae151 # v21
+        uses: dawidd6/action-download-artifact@eab87c9830c39eff17e5a6eadb20bfb4bc880477 # v27
         with:
           workflow: maintainer_bors.yml
           name: workflow-data
@@ -157,7 +157,7 @@ jobs:
         if: ${{ ! steps.inputs.outputs.mOrD == '' &&
           ( steps.user_permission.outputs.require-result == 'true' ||
             steps.inputs.outputs.bot == 'true' ) }}
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.workflow_sha }}
           fetch-depth: 1
@@ -173,7 +173,7 @@ jobs:
         if: ${{ ! steps.inputs.outputs.mOrD == '' &&
           ( steps.user_permission.outputs.require-result == 'true' ||
             steps.inputs.outputs.bot == 'true' ) }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.x'
 
