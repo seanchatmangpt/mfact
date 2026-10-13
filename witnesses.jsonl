@@ -1,0 +1,5 @@
+{"schema":"lean-witness/v1","theorem":"ProcInt.PN64.pn64_sequence_conserves","axioms":["propext","Quot.sound"],"source_sha256":"3b03a04dba536b7146027cc6f23315566bfa905d783f28b56e8eb3d1992667c0","toolchain":"leanprover/lean4:v4.31.0"}
+{"schema":"lean-witness/v1","theorem":"ProcInt.head_unique","axioms":["propext","Quot.sound"],"source_sha256":"04e1e2c0ee1c067d8466bfc4c75acbf1e379c5a6bf1075b744e204336d2c0de9","toolchain":"leanprover/lean4:v4.31.0"}
+{"schema":"lean-witness/v1","theorem":"ProcInt.StrataNet.mempool_capacity","axioms":["propext","Quot.sound"],"source_sha256":"46f328d01ee3458d606990de3dabc91c3578bde5e602fa32da647df82c29a700","toolchain":"leanprover/lean4:v4.31.0"}
+{"schema":"lean-witness/v1","theorem":"ProcInt.StrataStore.recover_after_crash","axioms":["propext","Quot.sound"],"source_sha256":"b5a0432aa4787294689799290c482aa038f0b914fed461575c5494ce54abf85e","toolchain":"leanprover/lean4:v4.31.0"}
+{"schema":"lean-witness/v1","theorem":"ProcInt.StrataLedger.strata_ledger_total_value_conserved","axioms":["propext","Quot.sound"],"source_sha256":"7399cdc4ec988684d7ef8bd3268c807ddc8565a6a8d74f4a5d14505af8aebb34","toolchain":"leanprover/lean4:v4.31.0"}
