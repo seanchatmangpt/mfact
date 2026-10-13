@@ -3,7 +3,7 @@
     {
       "event_id": "lean.witness:ProcInt.PN64.pn64_sequence_conserves",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.PN64.pn64_sequence_conserves",
         "axioms_count": 2,
@@ -19,7 +19,7 @@
     {
       "event_id": "lean.witness:ProcInt.PN64.fire_law_equivalence_on_enabled",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.PN64.fire_law_equivalence_on_enabled",
         "axioms_count": 2,
@@ -35,7 +35,7 @@
     {
       "event_id": "lean.witness:ProcInt.PN64.fire_law_diverges_off_domain",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.PN64.fire_law_diverges_off_domain",
         "axioms_count": 1,
@@ -51,7 +51,7 @@
     {
       "event_id": "lean.witness:ProcInt.head_unique",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.head_unique",
         "axioms_count": 2,
@@ -67,7 +67,7 @@
     {
       "event_id": "lean.witness:ProcInt.StrataNet.mempool_capacity",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.StrataNet.mempool_capacity",
         "axioms_count": 2,
@@ -83,7 +83,7 @@
     {
       "event_id": "lean.witness:ProcInt.StrataStore.recover_after_crash",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.StrataStore.recover_after_crash",
         "axioms_count": 2,
@@ -97,9 +97,73 @@
       ]
     },
     {
+      "event_id": "lean.witness:ProcInt.StrataStore.RollbackLaw.rollback_past_genesis_refuses",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataStore.RollbackLaw.rollback_past_genesis_refuses",
+        "axioms_count": 0,
+        "source_sha256": "ed50796a17620c6dac4fee7a361cfa3a69a4f1fc73d02f1cc73c01aa4a85fe21"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.StrataStore"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataStore.RollbackLaw.rollback_partial_txn_eq_initial",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataStore.RollbackLaw.rollback_partial_txn_eq_initial",
+        "axioms_count": 2,
+        "source_sha256": "ed50796a17620c6dac4fee7a361cfa3a69a4f1fc73d02f1cc73c01aa4a85fe21"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.StrataStore"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataStore.RollbackLaw.committed_survive_later_rollback",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataStore.RollbackLaw.committed_survive_later_rollback",
+        "axioms_count": 2,
+        "source_sha256": "ed50796a17620c6dac4fee7a361cfa3a69a4f1fc73d02f1cc73c01aa4a85fe21"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.StrataStore"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataStore.RollbackLaw.rollback_idem",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataStore.RollbackLaw.rollback_idem",
+        "axioms_count": 1,
+        "source_sha256": "ed50796a17620c6dac4fee7a361cfa3a69a4f1fc73d02f1cc73c01aa4a85fe21"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.StrataStore"
+        }
+      ]
+    },
+    {
       "event_id": "lean.witness:ProcInt.StrataLedger.strata_ledger_total_value_conserved",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.StrataLedger.strata_ledger_total_value_conserved",
         "axioms_count": 2,
@@ -115,7 +179,7 @@
     {
       "event_id": "lean.witness:ProcInt.StrataMerkle.merkle_inclusion_complete",
       "event_type": "lean.witness",
-      "event_time": "2026-10-13T14:00:51Z",
+      "event_time": "2026-10-13T15:48:41Z",
       "attributes": {
         "theorem": "ProcInt.StrataMerkle.merkle_inclusion_complete",
         "axioms_count": 3,
@@ -125,6 +189,70 @@
         {
           "qualifier": "module",
           "object_id": "ProcInt.Petri.MerkleCompleteness"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataValve.no_over_admission",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataValve.no_over_admission",
+        "axioms_count": 2,
+        "source_sha256": "adc18a96ed99d24ca92b064d843052887b07bff99a89584a559fb6b215d76c5f"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.Petri.ValveWindow"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataValve.cycle_capacity_invariant",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataValve.cycle_capacity_invariant",
+        "axioms_count": 1,
+        "source_sha256": "adc18a96ed99d24ca92b064d843052887b07bff99a89584a559fb6b215d76c5f"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.Petri.ValveWindow"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataValve.closure_conservation",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataValve.closure_conservation",
+        "axioms_count": 2,
+        "source_sha256": "adc18a96ed99d24ca92b064d843052887b07bff99a89584a559fb6b215d76c5f"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.Petri.ValveWindow"
+        }
+      ]
+    },
+    {
+      "event_id": "lean.witness:ProcInt.StrataValve.closure_invariant",
+      "event_type": "lean.witness",
+      "event_time": "2026-10-13T15:48:41Z",
+      "attributes": {
+        "theorem": "ProcInt.StrataValve.closure_invariant",
+        "axioms_count": 2,
+        "source_sha256": "adc18a96ed99d24ca92b064d843052887b07bff99a89584a559fb6b215d76c5f"
+      },
+      "relationships": [
+        {
+          "qualifier": "module",
+          "object_id": "ProcInt.Petri.ValveWindow"
         }
       ]
     }

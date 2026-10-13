@@ -46,8 +46,16 @@ TARGETS = [
     ("ProcInt.Petri.ForkChoice", "ProcInt.head_unique"),
     ("ProcInt.Petri.NetLaws", "ProcInt.StrataNet.mempool_capacity"),
     ("ProcInt.Petri.JournalReplay", "ProcInt.StrataStore.recover_after_crash"),
+    ("ProcInt.StrataStore", "ProcInt.StrataStore.RollbackLaw.rollback_past_genesis_refuses"),
+    ("ProcInt.StrataStore", "ProcInt.StrataStore.RollbackLaw.rollback_partial_txn_eq_initial"),
+    ("ProcInt.StrataStore", "ProcInt.StrataStore.RollbackLaw.committed_survive_later_rollback"),
+    ("ProcInt.StrataStore", "ProcInt.StrataStore.RollbackLaw.rollback_idem"),
     ("ProcInt.Petri.LedgerConservation", "ProcInt.StrataLedger.strata_ledger_total_value_conserved"),
     ("ProcInt.Petri.MerkleCompleteness", "ProcInt.StrataMerkle.merkle_inclusion_complete"),
+    ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.no_over_admission"),
+    ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.cycle_capacity_invariant"),
+    ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.closure_conservation"),
+    ("ProcInt.Petri.ValveWindow", "ProcInt.StrataValve.closure_invariant"),
 ]
 
 WITNESS_FILE = ROOT / "witnesses.jsonl"
@@ -89,8 +97,17 @@ def parse_axioms(output: str, theorem: str) -> list[str]:
 
 
 def module_sha256(module: str) -> str:
-    path = ROOT / "procint" / "ProcInt" / "Petri" / (module.rsplit(".", 1)[1] + ".lean")
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    base = module.rsplit(".", 1)[1] + ".lean"
+    # Modules live either directly under ProcInt/ (e.g. ProcInt.StrataStore)
+    # or under ProcInt/Petri/ (the historical layout).
+    candidates = [
+        ROOT / "procint" / "ProcInt" / base,
+        ROOT / "procint" / "ProcInt" / "Petri" / base,
+    ]
+    for path in candidates:
+        if path.exists():
+            return hashlib.sha256(path.read_bytes()).hexdigest()
+    raise RuntimeError(f"module source not found for {module}: tried {candidates}")
 
 
 def build_witnesses() -> list[dict]:
